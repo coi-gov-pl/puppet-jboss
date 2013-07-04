@@ -1,0 +1,11 @@
+#! /bin/bash
+
+JBOSSPATH=<%= scope.lookupvar('jboss_path') %>
+JBOSSCLI='./bin/jboss-cli.sh'
+
+CWD=`pwd`
+cd $JBOSSPATH
+$JBOSSCLI $@
+RET=$?
+cd $CWD
+exit $RET
