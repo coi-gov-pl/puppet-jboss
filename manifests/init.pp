@@ -31,8 +31,8 @@ class jboss inherits jboss::params {
     owner => $jboss::params::jboss_user,
     mode  => 2775
   }
-  
-   
+
+
 
   file { $jboss_parent_dir:
     ensure => 'directory',
@@ -129,6 +129,7 @@ class jboss inherits jboss::params {
     path    => '/usr/bin/jboss-cli',
     notify  => Service["jboss"]
   }
+
 
   service { "jboss":
     ensure     => running,

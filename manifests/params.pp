@@ -6,4 +6,6 @@ class jboss::params {
   $zip_name = "jboss-eap-6.1.0.zip"
   $version = "eap-6.1"
   $java_home = "/etc/alternatives/java_sdk"
+  $ear_folder = "/home/Downloads/ears"
+
 }

@@ -8,12 +8,14 @@
   "summary": "",
   "version": "0.0.1",
   "checksums": {
-    ".project": "1975a07954009f86e8638d7284d84d45",
+    ".project": "d32fa2f7909944db5253072715875bda",
     "Modulefile": "9d01941af48e5b38981dbac05d9188ca",
     "README.markdown": "626dde043a850bfbf376a7c748ae01ae",
     "Rakefile": "f37e6131fe7de9a49b09d31596f5fbf1",
+    "lib/puppet/provider/deploy/jbosscli.rb": "e7472a18885bd26e6cec63f71ce0ffb6",
+    "lib/puppet/type/deploy.rb": "046f699a4aba0cd125a00bc96ef8286f",
     "manifests/download.pp": "31b858c66f6045d26c614ec1ff71acd2",
-    "manifests/init.pp": "d7911f8c9f97c460b99c4a70b7e7492d",
+    "manifests/init.pp": "087c69140821da5b0ad4b233b90bf09a",
     "manifests/params.pp": "24a8ac5fdb42328cee665ce93ec09072",
     "spec/spec.opts": "a600ded995d948e393fbe2320ba8e51c",
     "spec/spec_helper.rb": "3ea886dd135e120afa31e0aab12e85b0",
@@ -23,5 +25,26 @@
     "templates/jboss2.erb": "642dfdcb8d7b9dfd30d618d7c13a6400",
     "tests/init.pp": "c2e8f20b178d74245743774a82012fd8"
   },
+  "types": [
+    {
+      "parameters": [
+        {
+          "name": "name",
+          "doc": "The JDBC resource name."
+        },
+        {
+          "name": "source",
+          "doc": "Path to the EAR/WAR file."
+        }
+      ],
+      "providers": [
+        {
+          "name": "jbosscli"
+        }
+      ],
+      "name": "deploy",
+      "doc": "Deploys EAR/WAR file on JBOSS"
+    }
+  ],
   "dependencies": []
 }
