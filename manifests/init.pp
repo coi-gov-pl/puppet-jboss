@@ -6,7 +6,7 @@ class jboss inherits jboss::params {
   $jboss_dir = "jboss-$version"
   $jboss_download_site = "http://public.prs.jakby.co/Virtualki"
   $jboss_path = "$jboss_parent_dir/$jboss_dir"
-
+  
   user { $jboss::params::jboss_user:
     ensure     => "present",
     managehome => true
