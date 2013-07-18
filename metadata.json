@@ -20,12 +20,17 @@
     "Modulefile": "9d01941af48e5b38981dbac05d9188ca",
     "README.markdown": "626dde043a850bfbf376a7c748ae01ae",
     "Rakefile": "f37e6131fe7de9a49b09d31596f5fbf1",
+    "lib/puppet/provider/datasource/jbosscli.rb": "60438a07be971db21e769cd1b6829447",
     "lib/puppet/provider/deploy/jbosscli.rb": "68898d66ce388de9650d1062a6710de2",
-    "lib/puppet/provider/jbosscli.rb": "0eb4cfee1e6400d0a215f8dedc741048",
-    "lib/puppet/type/datasource.rb": "508fdb9398d4d3dd2abfad30d085c80e",
+    "lib/puppet/provider/jbosscli.rb": "9573648917a0c9c62ce5c8ff224bba13",
+    "lib/puppet/provider/jmsqueue/jbosscli.rb": "824931c2b28fd92c7dfbc785baa773d9",
+    "lib/puppet/provider/securitydomain/jbosscli.rb": "dba683c81e36edcef7645cf8b5913dca",
+    "lib/puppet/type/datasource.rb": "b5443d4484245d508803a0a3fa4113bd",
     "lib/puppet/type/deploy.rb": "f535dd11dbe3fee4d1017f19a09b1a47",
-    "manifests/download.pp": "31b858c66f6045d26c614ec1ff71acd2",
-    "manifests/init.pp": "d4676f5bfae4a4b345ed78b59516565a",
+    "lib/puppet/type/jmsqueue.rb": "ef2bde85243d501ec9fe32012b843601",
+    "lib/puppet/type/securitydomain.rb": "d5abfac07b3f344cd31941e1901b445b",
+    "manifests/download.pp": "fb07da82f613744c94ca53cbb1aded6f",
+    "manifests/init.pp": "1ecf6fb41a032aa9c77dee73755d9339",
     "manifests/params.pp": "1f27a16afe19ac99a0eb48f1b682c0e6",
     "spec/spec.opts": "a600ded995d948e393fbe2320ba8e51c",
     "spec/spec_helper.rb": "3ea886dd135e120afa31e0aab12e85b0",
@@ -33,7 +38,7 @@
     "templates/jboss-cli.erb": "0848e84d8d2283de6d5011ca96fa673f",
     "templates/jboss-init.erb": "7d7ed0a2f4e77c130cf9feda1b868184",
     "templates/jboss2.erb": "642dfdcb8d7b9dfd30d618d7c13a6400",
-    "tests/init.pp": "447ce608bf1344ef78669fa5ebdae0d0"
+    "tests/init.pp": "c2e8f20b178d74245743774a82012fd8"
   },
   "types": [
     {
@@ -59,27 +64,118 @@
       "parameters": [
         {
           "name": "name",
-          "doc": "The JDBC resource name."
+          "doc": ""
         },
         {
-          "name": "portbase",
-          "doc": "The Glassfish domain port base. Default: 4800"
+          "name": "profile",
+          "doc": "The JBoss datasource profile name"
         },
         {
-          "name": "asadminuser",
-          "doc": "The internal Glassfish user asadmin uses. Default: admin"
+          "name": "jndiname",
+          "doc": "jndi-name"
         },
         {
-          "name": "passwordfile",
-          "doc": "The file containing the password for the user."
+          "name": "drivername",
+          "doc": "driver-name"
         },
         {
-          "name": "user",
-          "doc": "The user to run the command as."
+          "name": "minpoolsize",
+          "doc": "min-pool-size"
+        },
+        {
+          "name": "maxpoolsize",
+          "doc": "max-pool-size"
+        },
+        {
+          "name": "username",
+          "doc": "user-name"
+        },
+        {
+          "name": "password",
+          "doc": "The internal JBoss user asadmin uses. Default: admin"
+        },
+        {
+          "name": "validateonmatch",
+          "doc": "validate-on-match"
+        },
+        {
+          "name": "backgroundvalidation",
+          "doc": "background-validation"
+        },
+        {
+          "name": "sharepreparestatements",
+          "doc": "share-prepare-statements"
+        },
+        {
+          "name": "xadatasourceproperties",
+          "doc": "xa-datasource-properties list, separated by comma"
+        }
+      ],
+      "providers": [
+        {
+          "name": "jbosscli"
         }
       ],
       "name": "datasource",
       "doc": "Data source for JBoss domains"
+    },
+    {
+      "parameters": [
+        {
+          "name": "name",
+          "doc": ""
+        },
+        {
+          "name": "profile",
+          "doc": "The JBoss profile name"
+        },
+        {
+          "name": "moduleoptions",
+          "doc": "module-options given as a table"
+        },
+        {
+          "name": "code",
+          "doc": "code for JBOSS security-domain"
+        },
+        {
+          "name": "codeflag",
+          "doc": "codeflag for JBOSS security-domain"
+        }
+      ],
+      "providers": [
+        {
+          "name": "jbosscli"
+        }
+      ],
+      "name": "securitydomain",
+      "doc": "Security-domain for jboss-cli"
+    },
+    {
+      "parameters": [
+        {
+          "name": "name",
+          "doc": ""
+        },
+        {
+          "name": "profile",
+          "doc": "The JBoss profile name"
+        },
+        {
+          "name": "entries",
+          "doc": "entries separeted with comma"
+        },
+        {
+          "name": "durable",
+          "doc": "durable true/false"
+        }
+      ],
+      "providers": [
+        {
+          "name": "jbosscli"
+        }
+      ],
+      "name": "jmsqueue",
+      "doc": "jms for jboss-cli"
     }
   ],
   "dependencies": []

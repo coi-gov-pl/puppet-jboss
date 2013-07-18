@@ -3,39 +3,53 @@ Puppet::Type.newtype(:datasource) do
   ensurable
 
   newparam(:name) do
-    desc "The JDBC resource name."
+    desc ""
     isnamevar
   end
 
-
-
-  newparam(:portbase) do
-    desc "The Glassfish domain port base. Default: 4800"
-    defaultto "4800"
+  newparam(:profile) do
+    desc "The JBoss datasource profile name"
+    defaultto "default"
   end
 
-  newparam(:asadminuser) do
-    desc "The internal Glassfish user asadmin uses. Default: admin"
-    defaultto "admin"
+  newparam(:jndiname) do
+    desc "jndi-name"
   end
 
-  newparam(:passwordfile) do
-    desc "The file containing the password for the user."
-
-    validate do |value|
-      unless File.exists? value
-        raise ArgumentError, "%s does not exists" % value
-      end
-    end
+  newparam(:drivername) do
+    desc "driver-name"
   end
 
-  newparam(:user) do
-    desc "The user to run the command as."
-
-    validate do |user|
-      unless Puppet.features.root?
-        self.fail "Only root can execute commands as other users"
-      end
-    end
+  newparam(:minpoolsize) do
+    desc "min-pool-size"
   end
+
+  newparam(:maxpoolsize) do
+    desc "max-pool-size"
+  end
+
+  newparam(:username) do
+    desc "user-name"
+  end
+
+  newparam(:password) do
+    desc "The internal JBoss user asadmin uses. Default: admin"
+  end
+
+  newparam(:validateonmatch) do
+    desc "validate-on-match"
+  end
+
+  newparam(:backgroundvalidation) do
+    desc "background-validation"
+  end
+
+  newparam(:sharepreparestatements) do
+    desc "share-prepare-statements"
+  end
+
+  newparam(:xadatasourceproperties) do
+    desc "xa-datasource-properties list, separated by comma"
+  end
+
 end
