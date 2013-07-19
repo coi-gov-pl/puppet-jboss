@@ -68,6 +68,33 @@
         },
         {
           "name": "profile",
+          "doc": "The JBoss profile name"
+        },
+        {
+          "name": "entries",
+          "doc": "entries separeted with comma"
+        },
+        {
+          "name": "durable",
+          "doc": "durable true/false"
+        }
+      ],
+      "providers": [
+        {
+          "name": "jbosscli"
+        }
+      ],
+      "name": "jmsqueue",
+      "doc": "jms for jboss-cli"
+    },
+    {
+      "parameters": [
+        {
+          "name": "name",
+          "doc": ""
+        },
+        {
+          "name": "profile",
           "doc": "The JBoss datasource profile name"
         },
         {
@@ -149,33 +176,6 @@
       ],
       "name": "securitydomain",
       "doc": "Security-domain for jboss-cli"
-    },
-    {
-      "parameters": [
-        {
-          "name": "name",
-          "doc": ""
-        },
-        {
-          "name": "profile",
-          "doc": "The JBoss profile name"
-        },
-        {
-          "name": "entries",
-          "doc": "entries separeted with comma"
-        },
-        {
-          "name": "durable",
-          "doc": "durable true/false"
-        }
-      ],
-      "providers": [
-        {
-          "name": "jbosscli"
-        }
-      ],
-      "name": "jmsqueue",
-      "doc": "jms for jboss-cli"
     }
   ],
   "dependencies": []
