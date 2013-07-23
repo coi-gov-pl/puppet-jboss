@@ -38,7 +38,7 @@
     "templates/jboss-cli.erb": "0848e84d8d2283de6d5011ca96fa673f",
     "templates/jboss-init.erb": "7d7ed0a2f4e77c130cf9feda1b868184",
     "templates/jboss2.erb": "642dfdcb8d7b9dfd30d618d7c13a6400",
-    "tests/init.pp": "06b6a3c320e17ceb61fd8149513b7d51"
+    "tests/init.pp": "e781607cd473fddcb246641525b65eee"
   },
   "types": [
     {
