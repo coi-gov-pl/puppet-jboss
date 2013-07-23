@@ -20,17 +20,17 @@
     "Modulefile": "9d01941af48e5b38981dbac05d9188ca",
     "README.markdown": "626dde043a850bfbf376a7c748ae01ae",
     "Rakefile": "f37e6131fe7de9a49b09d31596f5fbf1",
-    "lib/puppet/provider/datasource/jbosscli.rb": "60438a07be971db21e769cd1b6829447",
+    "lib/puppet/provider/datasource/jbosscli.rb": "b704e8928d9820ebbe0fad2549081618",
     "lib/puppet/provider/deploy/jbosscli.rb": "68898d66ce388de9650d1062a6710de2",
-    "lib/puppet/provider/jbosscli.rb": "9573648917a0c9c62ce5c8ff224bba13",
-    "lib/puppet/provider/jmsqueue/jbosscli.rb": "824931c2b28fd92c7dfbc785baa773d9",
-    "lib/puppet/provider/securitydomain/jbosscli.rb": "dba683c81e36edcef7645cf8b5913dca",
+    "lib/puppet/provider/jbosscli.rb": "5971e6a8736f403bb5832f9b6d95b384",
+    "lib/puppet/provider/jmsqueue/jbosscli.rb": "5c04d8f6185a8512622542364aa725a3",
+    "lib/puppet/provider/securitydomain/jbosscli.rb": "b5b8cf167accb2285c81bc3dc45ba528",
     "lib/puppet/type/datasource.rb": "b5443d4484245d508803a0a3fa4113bd",
     "lib/puppet/type/deploy.rb": "f535dd11dbe3fee4d1017f19a09b1a47",
-    "lib/puppet/type/jmsqueue.rb": "ef2bde85243d501ec9fe32012b843601",
-    "lib/puppet/type/securitydomain.rb": "d5abfac07b3f344cd31941e1901b445b",
+    "lib/puppet/type/jmsqueue.rb": "0b3c16682c023863f5a7b6ff0521c4de",
+    "lib/puppet/type/securitydomain.rb": "1baa1690f5d22f603262f2e861a31d56",
     "manifests/download.pp": "fb07da82f613744c94ca53cbb1aded6f",
-    "manifests/init.pp": "1ecf6fb41a032aa9c77dee73755d9339",
+    "manifests/init.pp": "a617da9cc5871f7db5d95a99b9ef5f11",
     "manifests/params.pp": "1f27a16afe19ac99a0eb48f1b682c0e6",
     "spec/spec.opts": "a600ded995d948e393fbe2320ba8e51c",
     "spec/spec_helper.rb": "3ea886dd135e120afa31e0aab12e85b0",
@@ -38,33 +38,14 @@
     "templates/jboss-cli.erb": "0848e84d8d2283de6d5011ca96fa673f",
     "templates/jboss-init.erb": "7d7ed0a2f4e77c130cf9feda1b868184",
     "templates/jboss2.erb": "642dfdcb8d7b9dfd30d618d7c13a6400",
-    "tests/init.pp": "c2e8f20b178d74245743774a82012fd8"
+    "tests/init.pp": "06b6a3c320e17ceb61fd8149513b7d51"
   },
   "types": [
     {
       "parameters": [
         {
           "name": "name",
-          "doc": "The JDBC resource name."
-        },
-        {
-          "name": "source",
-          "doc": "Path to the EAR/WAR file."
-        }
-      ],
-      "providers": [
-        {
-          "name": "jbosscli"
-        }
-      ],
-      "name": "deploy",
-      "doc": "Deploys EAR/WAR file on JBOSS"
-    },
-    {
-      "parameters": [
-        {
-          "name": "name",
-          "doc": ""
+          "doc": "name"
         },
         {
           "name": "profile",
@@ -86,6 +67,37 @@
       ],
       "name": "jmsqueue",
       "doc": "jms for jboss-cli"
+    },
+    {
+      "parameters": [
+        {
+          "name": "name",
+          "doc": ""
+        },
+        {
+          "name": "profile",
+          "doc": "The JBoss profile name"
+        },
+        {
+          "name": "moduleoptions",
+          "doc": "module-options given as a table"
+        },
+        {
+          "name": "code",
+          "doc": "code for JBOSS security-domain"
+        },
+        {
+          "name": "codeflag",
+          "doc": "codeflag for JBOSS security-domain"
+        }
+      ],
+      "providers": [
+        {
+          "name": "jbosscli"
+        }
+      ],
+      "name": "securitydomain",
+      "doc": "Security-domain for jboss-cli"
     },
     {
       "parameters": [
@@ -150,23 +162,11 @@
       "parameters": [
         {
           "name": "name",
-          "doc": ""
+          "doc": "The JDBC resource name."
         },
         {
-          "name": "profile",
-          "doc": "The JBoss profile name"
-        },
-        {
-          "name": "moduleoptions",
-          "doc": "module-options given as a table"
-        },
-        {
-          "name": "code",
-          "doc": "code for JBOSS security-domain"
-        },
-        {
-          "name": "codeflag",
-          "doc": "codeflag for JBOSS security-domain"
+          "name": "source",
+          "doc": "Path to the EAR/WAR file."
         }
       ],
       "providers": [
@@ -174,8 +174,8 @@
           "name": "jbosscli"
         }
       ],
-      "name": "securitydomain",
-      "doc": "Security-domain for jboss-cli"
+      "name": "deploy",
+      "doc": "Deploys EAR/WAR file on JBOSS"
     }
   ],
   "dependencies": []

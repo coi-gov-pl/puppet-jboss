@@ -3,7 +3,7 @@ Puppet::Type.newtype(:jmsqueue) do
   ensurable
 
   newparam(:name) do
-    desc ""
+    desc "name"
     isnamevar
   end
 
@@ -19,6 +19,5 @@ Puppet::Type.newtype(:jmsqueue) do
   newparam(:durable) do
     desc "durable true/false"
   end
-
 
 end

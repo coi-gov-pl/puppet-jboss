@@ -1,11 +1,18 @@
 require 'puppet/provider/jbosscli'
+
 Puppet::Type.type(:jmsqueue).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
   commands :jbosscli => "#{Puppet::Provider::Jbosscli.jbossclibin}"
-
-
   def create
-    cmd = "jms-queue --profile=#{@resource[:profile]} add --queue-address=#{@resource[:name]} --entries=[#{@resource[:entries]}]"
+    cmd = "jms-queue --profile=#{@resource[:profile]} add --queue-address=#{@resource[:name]} --entries=["
+    @resource[:entries].each_with_index {|value, index|
+      cmd += "\"#{value}\""
+      if index == @resource[:entries].length - 1
+      break
+      end
+      cmd += ","
+    }
+    cmd += "]"
     return execute(cmd)[:result]
   end
 
@@ -16,14 +23,15 @@ Puppet::Type.type(:jmsqueue).provide(:jbosscli, :parent => Puppet::Provider::Jbo
 
   #
   def exists?
-    Puppet.debug("testing2")
-
     res = execute_datasource("/profile=#{@resource[:profile]}/subsystem=messaging/hornetq-server=default/jms-queue=#{@resource[:name]}:read-resource")
-    Puppet.debug("testing3  "   + res.to_s )
-    #Puppet.debug("testing4  " + res[:data]["entries"].to_s)
 
     if res == false
-      return false
+    return false
+    end
+
+    if !@resource[:entries].nil? && !res[:data]["entries"].nil? && res[:data]["entries"] != @resource[:entries]
+      destroy
+    return false
     end
 
     return true

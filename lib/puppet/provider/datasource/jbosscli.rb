@@ -17,11 +17,8 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
   #
   def exists?
 
-    Puppet.debug("testing-12")
-    #res = execute("xa-data-source --profile=#{@resource[:profile]} read-resource --name=#{@resource[:name]}")
-
     res = execute_datasource("/profile=#{@resource[:profile]}/subsystem=datasources/xa-data-source=#{@resource[:name]}:read-resource()")
-    Puppet.debug("testing-13  "   + res.to_s )
+
     if res == false
       return false
     end
@@ -43,14 +40,6 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
 
     return true
 
-    #for line in res[:lines]
-    #  line.strip!
-    #  Puppet.debug("testing-14a: " + line)
-    #if line == self.basename
-    #  return true
-    #end
-    #end
-    #return false
   end
 #
 end

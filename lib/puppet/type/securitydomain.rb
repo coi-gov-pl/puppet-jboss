@@ -24,5 +24,4 @@ Puppet::Type.newtype(:securitydomain) do
     desc "codeflag for JBOSS security-domain"
   end
 
-
 end
