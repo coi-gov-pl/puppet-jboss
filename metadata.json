@@ -45,19 +45,11 @@
       "parameters": [
         {
           "name": "name",
-          "doc": "name"
+          "doc": "The JDBC resource name."
         },
         {
-          "name": "profile",
-          "doc": "The JBoss profile name"
-        },
-        {
-          "name": "entries",
-          "doc": "entries separeted with comma"
-        },
-        {
-          "name": "durable",
-          "doc": "durable true/false"
+          "name": "source",
+          "doc": "Path to the EAR/WAR file."
         }
       ],
       "providers": [
@@ -65,39 +57,8 @@
           "name": "jbosscli"
         }
       ],
-      "name": "jmsqueue",
-      "doc": "jms for jboss-cli"
-    },
-    {
-      "parameters": [
-        {
-          "name": "name",
-          "doc": ""
-        },
-        {
-          "name": "profile",
-          "doc": "The JBoss profile name"
-        },
-        {
-          "name": "moduleoptions",
-          "doc": "module-options given as a table"
-        },
-        {
-          "name": "code",
-          "doc": "code for JBOSS security-domain"
-        },
-        {
-          "name": "codeflag",
-          "doc": "codeflag for JBOSS security-domain"
-        }
-      ],
-      "providers": [
-        {
-          "name": "jbosscli"
-        }
-      ],
-      "name": "securitydomain",
-      "doc": "Security-domain for jboss-cli"
+      "name": "deploy",
+      "doc": "Deploys EAR/WAR file on JBOSS"
     },
     {
       "parameters": [
@@ -162,11 +123,23 @@
       "parameters": [
         {
           "name": "name",
-          "doc": "The JDBC resource name."
+          "doc": ""
         },
         {
-          "name": "source",
-          "doc": "Path to the EAR/WAR file."
+          "name": "profile",
+          "doc": "The JBoss profile name"
+        },
+        {
+          "name": "moduleoptions",
+          "doc": "module-options given as a table"
+        },
+        {
+          "name": "code",
+          "doc": "code for JBOSS security-domain"
+        },
+        {
+          "name": "codeflag",
+          "doc": "codeflag for JBOSS security-domain"
         }
       ],
       "providers": [
@@ -174,8 +147,35 @@
           "name": "jbosscli"
         }
       ],
-      "name": "deploy",
-      "doc": "Deploys EAR/WAR file on JBOSS"
+      "name": "securitydomain",
+      "doc": "Security-domain for jboss-cli"
+    },
+    {
+      "parameters": [
+        {
+          "name": "name",
+          "doc": "name"
+        },
+        {
+          "name": "profile",
+          "doc": "The JBoss profile name"
+        },
+        {
+          "name": "entries",
+          "doc": "entries separeted with comma"
+        },
+        {
+          "name": "durable",
+          "doc": "durable true/false"
+        }
+      ],
+      "providers": [
+        {
+          "name": "jbosscli"
+        }
+      ],
+      "name": "jmsqueue",
+      "doc": "jms for jboss-cli"
     }
   ],
   "dependencies": []
