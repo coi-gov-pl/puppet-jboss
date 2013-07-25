@@ -1,4 +1,11 @@
-class jboss ($jboss_download_site = "http://example.org/virtual-machines") inherits jboss::params {
+class jboss (
+  $jboss_user = $jboss::params::jboss_user,
+  $jboss_group = $jboss::params::jboss_group,
+  $jboss_download = $jboss::params::jboss_download,
+  $version = $jboss::params::version,
+  $java_version = $jboss::params::java_version,
+) inherits jboss::params {
+  
   include jboss::download
   $download_dir = '/opt/download'
   $download_file = "jboss-$version.zip"
@@ -6,56 +13,68 @@ class jboss ($jboss_download_site = "http://example.org/virtual-machines") inher
   $jboss_dir = "jboss-$version"
   $jboss_path = "$jboss_parent_dir/$jboss_dir"
 
-  user { $jboss::params::jboss_user:
+  user { $jboss_user:
     ensure     => "present",
-    managehome => true
+    managehome => true,
   }
 
-  group { $jboss::params::jboss_group:
+  group { $jboss_group:
     ensure  => "present",
-    require => User[$jboss::params::jboss_user],
-    members => User[$jboss::params::jboss_user],
+    require => User[$jboss_user],
+    members => User[$jboss_user],
   }
 
   file { $jboss_path:
-    group => $jboss::params::jboss_group,
-    owner => $jboss::params::jboss_user,
-    mode  => 2775
+    group => $jboss_group,
+    owner => $jboss_user,
+    mode  => 2775,
   }
 
   file { jboss-as:
     path   => "/etc/jboss-as",
     ensure => directory,
-    group  => $jboss::params::jboss_group,
-    owner  => $jboss::params::jboss_user,
-    mode   => 2775
+    group  => $jboss_group,
+    owner  => $jboss_user,
+    mode   => 2775,
   }
+  
+  class { 'java':
+	  distribution => 'jdk',
+	  version      => $java_version,
+	}
 
   file { $jboss_parent_dir: ensure => 'directory', }
 
   Exec {
-    path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", }
+    path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", 
+  }
 
   file { $download_dir: ensure => 'directory', }
 
-  jboss::download::download { "$download_dir/$zip_name":
-    uri     => "$jboss_download_site/$zip_name",
-    require => [File[$jboss_path], File[$jboss_parent_dir], File[$download_dir]]
+  jboss::download::download { "$download_dir/$download_file":
+    uri     => "$jboss_download",
+    require => [
+      File[$jboss_path], 
+      File[$jboss_parent_dir], 
+      File[$download_dir],
+    ],
   }
 
   package { unzip: ensure => "installed" }
-
-  package { "java-1.6.0-openjdk-devel.x86_64": ensure => "installed" }
+  
 
   file { "$download_dir/$jboss_dir": }
 
   file { "$download_dir/$download_file": }
 
   exec { 'unzip-downloaded':
-    command => "unzip $zip_name",
+    command => "unzip $download_file",
     cwd     => $download_dir,
     creates => $jboss_path,
-    require => [File["$download_dir/$download_file"], Package[unzip]]
+    require => [
+      File["$download_dir/$download_file"], 
+      Package[unzip]
+    ],
   }
 
   define setgroupaccess ($user, $group, $dir, $glpath) {
@@ -76,9 +95,9 @@ class jboss ($jboss_download_site = "http://example.org/virtual-machines") inher
   }
 
   setgroupaccess { 'set-perm':
-    user    => $jboss::params::jboss_user,
-    group   => $jboss::params::jboss_group,
-    require => Group[$jboss::params::jboss_group],
+    user    => $jboss_user,
+    group   => $jboss_group,
+    require => Group[$jboss_group],
     dir     => "$download_dir/$jboss_dir",
     glpath  => $jboss_path,
   }
@@ -115,7 +134,7 @@ class jboss ($jboss_download_site = "http://example.org/virtual-machines") inher
     hasrestart => true,
   }
 
-  Jboss::Download::Download["$download_dir/$zip_name"] -> Exec['unzip-downloaded'] -> Setgroupaccess['set-perm'] -> Exec['move-downloaded'
+  Jboss::Download::Download["$download_dir/$download_file"] -> Exec['unzip-downloaded'] -> Setgroupaccess['set-perm'] -> Exec['move-downloaded'
     ] -> Exec['jboss-service-link'] -> File[jboss-as] -> File[jboss-as-conf] -> File[jbosscli]
 
   # File[servicefile] -> Service['jboss']

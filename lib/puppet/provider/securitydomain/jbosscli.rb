@@ -21,8 +21,6 @@ Puppet::Type.type(:securitydomain).provide(:jbosscli, :parent => Puppet::Provide
   def destroy
     cmd = "/profile=default/subsystem=security/security-domain=#{@resource[:name]}:remove()"
     return execute(cmd)[:result]
-
-    return false
   end
 
   #
