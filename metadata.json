@@ -1,9 +1,18 @@
 {
   "name": "coi-jboss",
   "version": "0.0.1",
-  "summary": "",
-  "author": "coi",
-  "description": "",
+  "summary": "JBoss - instalation and management module",
+  "author": "Centralny Ośrodek Informatyki COI (MSW)",
+  "description": "COI / JBoss\n\u003d\u003d\u003d\n\nInstalation and management of JBoss Aplication Server.\n\nSupports:\n---\n\n* Installs JBoss AS ora JBoss EAP\n* Installs required JDK (defaults: JDK 7)\n* Manage instalation parametrers\n* Management of: \n    * datasources, \n    * deployments, \n    * jms queues, \n    * security domains",
+  "source": "http://git.prs.coi.local/coi-deploy.git",
+  "project_page": "",
+  "license": "Proprietary - Copyright © COI"
+  "dependencies": [
+    {
+      "name": "puppetlabs/java",
+      "version_requirement": "\u003e\u003d0.3.0"
+    }
+  ],
   "types": [
     {
       "parameters": [
@@ -140,12 +149,6 @@
       ],
       "name": "jmsqueue",
       "doc": "jms for jboss-cli"
-    }
-  ],
-  "dependencies": [
-    {
-      "name": "puppetlabs/java",
-      "version_requirement": "\u003e\u003d0.3.0"
     }
   ]
 }
