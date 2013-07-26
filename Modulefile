@@ -4,8 +4,9 @@ version '0.0.1'
 author 'Centralny Ośrodek Informatyki COI (MSW)'
 license 'Proprietary - Copyright © COI'
 project_page ''
-source 'http://git.prs.coi.local/coi-deploy.git'
+source 'http://git.prs.internal/coi-deploy.git'
 summary 'JBoss - instalation and management module'
+dependency 'puppetlabs-java', '>= 0.4.0'
 description 'COI / JBoss
 ===
 
@@ -22,3 +23,4 @@ Supports:
     * deployments, 
     * jms queues, 
     * security domains'
+

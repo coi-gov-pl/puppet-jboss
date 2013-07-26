@@ -10,7 +10,7 @@
   "dependencies": [
     {
       "name": "puppetlabs/java",
-      "version_requirement": "\u003e\u003d0.3.0"
+      "version_requirement": "\u003e\u003d 0.4.0"
     }
   ],
   "types": [
@@ -122,6 +122,25 @@
       ],
       "name": "securitydomain",
       "doc": "Security-domain for jboss-cli"
+    },
+    {
+      "parameters": [
+        {
+          "name": "name",
+          "doc": "The JDBC resource name."
+        },
+        {
+          "name": "source",
+          "doc": "Path to the EAR/WAR file."
+        }
+      ],
+      "providers": [
+        {
+          "name": "jbosscli"
+        }
+      ],
+      "name": "deploy",
+      "doc": "Deploys EAR/WAR file on JBOSS"
     },
     {
       "parameters": [

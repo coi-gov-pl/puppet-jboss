@@ -7,7 +7,7 @@ class jboss (
 ) inherits jboss::params {
   
   include jboss::download
-  $download_dir = '/opt/download'
+  $download_dir = "/opt/download-$version"
   $download_file = "jboss-$version.zip"
   $jboss_parent_dir = '/usr/local/lib'
   $jboss_dir = "jboss-$version"
@@ -76,35 +76,49 @@ class jboss (
       Package[unzip]
     ],
   }
+  
+  exec { 'move-unzipped':
+    cwd     => $download_dir,
+    command => "mv $(basename $(find -type d | egrep -v '^\\.$' | head -n 1)) $jboss_dir",
+    require => [
+      Exec['unzip-downloaded'],
+    ],
+  }
 
-  define setgroupaccess ($user, $group, $dir, $glpath) {
+  define setgroupaccess ($user, $group, $dir, $jbpath) {
     exec { "rwX $name":
       command => "chmod -R g+rwX $dir",
-      creates => $glpath,
+      creates => $jbpath,
     }
 
     exec { "find $name":
       command => "find $dir -type d -exec chmod g+s {} +",
-      creates => $glpath,
+      creates => $jbpath,
     }
 
     exec { "group $name":
       command => "chown -R $user:$group $dir",
-      creates => $glpath,
+      creates => $jbpath,
     }
   }
 
   setgroupaccess { 'set-perm':
     user    => $jboss_user,
     group   => $jboss_group,
-    require => Group[$jboss_group],
+    require => [
+      Group[$jboss_group],
+      Exec['move-unzipped'],
+    ],
     dir     => "$download_dir/$jboss_dir",
-    glpath  => $jboss_path,
+    jbpath  => $jboss_path,
   }
 
   exec { 'move-downloaded':
     command => "mv $download_dir/$jboss_dir $jboss_path",
     cwd     => $download_dir,
+    require => [
+      Setgroupaccess['set-perm'],
+    ],
     creates => $jboss_path,
   }
 
@@ -134,10 +148,16 @@ class jboss (
     hasrestart => true,
   }
 
-  Jboss::Download::Download["$download_dir/$download_file"] -> Exec['unzip-downloaded'] -> Setgroupaccess['set-perm'] -> Exec['move-downloaded'
-    ] -> Exec['jboss-service-link'] -> File[jboss-as] -> File[jboss-as-conf] -> File[jbosscli]
+  Class['java'] -> 
+  Jboss::Download::Download["$download_dir/$download_file"] -> 
+  Exec['unzip-downloaded'] -> 
+  Setgroupaccess['set-perm'] -> 
+  Exec['move-downloaded'] -> 
+  Exec['jboss-service-link'] -> 
+  File[jboss-as] -> 
+  File[jboss-as-conf] -> 
+  File[jbosscli]
 
-  # File[servicefile] -> Service['jboss']
   File[jboss-as-conf] -> Service['jboss']
 }
 
