@@ -80,6 +80,7 @@ class jboss (
   exec { 'move-unzipped':
     cwd     => $download_dir,
     command => "mv $(basename $(find -type d | egrep -v '^\\.$' | head -n 1)) $jboss_dir",
+    creates => $jboss_path,
     require => [
       Exec['unzip-downloaded'],
     ],
