@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:deploy) do
-  @doc = "Deploys EAR/WAR file on JBOSS"
+  @doc = "Deploys and undeploys EAR/WAR artifacts on JBoss Application Server"
   ensurable
 
   newparam(:name) do
@@ -11,9 +11,9 @@ Puppet::Type.newtype(:deploy) do
     desc "Path to the EAR/WAR file."
   end
 
-  # newparam(:portbase) do
-    # desc "The Glassfish domain port base. Default: 4800"
-    # defaultto "4800"
-  # end
+  newparam(:runasdomain) do
+    desc "Run server in domain mode"
+    defaultto true
+  end
 
 end

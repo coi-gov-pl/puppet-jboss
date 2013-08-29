@@ -5,7 +5,7 @@ JBOSSCLI='./bin/jboss-cli.sh'
 
 CWD=`pwd`
 cd $JBOSSPATH
-$JBOSSCLI $@
+$JBOSSCLI "$@"
 RET=$?
 cd $CWD
 exit $RET

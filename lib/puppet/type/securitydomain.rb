@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:securitydomain) do
-  @doc = "Security-domain for jboss-cli"
+  @doc = "Security-domain configuration for JBoss Application Sever"
   ensurable
 
   newparam(:name) do
@@ -22,6 +22,11 @@ Puppet::Type.newtype(:securitydomain) do
 
   newparam(:codeflag) do
     desc "codeflag for JBOSS security-domain"
+  end
+  
+  newparam(:runasdomain) do
+    desc "Run server in domain mode"
+    defaultto true
   end
 
 end

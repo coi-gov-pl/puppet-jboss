@@ -1,10 +1,15 @@
 Puppet::Type.newtype(:datasource) do
-  @doc = "Data source for JBoss domains"
+  @doc = "Data sources configuration for JBoss Application Sever"
   ensurable
 
   newparam(:name) do
     desc ""
     isnamevar
+  end
+  
+  newparam(:runasdomain) do
+    desc "Run server in domain mode"
+    defaultto true
   end
 
   newparam(:profile) do

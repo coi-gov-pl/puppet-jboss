@@ -9,7 +9,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
 
   def self.jbosshome
-    home=`grep 'JBOSS_HOME=' /etc/jboss-as/jboss-as.conf | cut -d '=' -f 2`
+    home=`grep 'JBOSS_HOME=' /etc/jboss-as/jboss-as.conf 2>/dev/null | cut -d '=' -f 2`
     home.strip!
     return home
   end

@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:jmsqueue) do
-  @doc = "jms for jboss-cli"
+  @doc = "JMS Queues configuration for JBoss Application Sever"
   ensurable
 
   newparam(:name) do
@@ -18,6 +18,11 @@ Puppet::Type.newtype(:jmsqueue) do
 
   newparam(:durable) do
     desc "durable true/false"
+  end
+    
+  newparam(:runasdomain) do
+    desc "Run server in domain mode"
+    defaultto true
   end
 
 end
