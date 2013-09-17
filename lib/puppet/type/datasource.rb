@@ -3,7 +3,7 @@ Puppet::Type.newtype(:datasource) do
   ensurable
 
   newparam(:name) do
-    desc ""
+    desc "Name of type resource"
     isnamevar
   end
   

@@ -1,5 +1,6 @@
 require 'puppet/provider/jbosscli'
 Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
+  desc "JBoss CLI datasource provider"
 
   commands :jbosscli => "#{Puppet::Provider::Jbosscli.jbossclibin}"
 
@@ -33,8 +34,8 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
         || !@resource[:backgroundvalidation].nil? && @resource[:backgroundvalidation] != res[:data]["background-validation"] \
         || !@resource[:sharepreparestatements].nil? && @resource[:sharepreparestatements] != res[:data]["share-prepared-statements"] \
         || !@resource[:xadatasourceproperties].nil? && @resource[:xadatasourceproperties] != res[:data]["xa-datasource-properties"]
-      Puppet.debug("xa-data-source configuration is different, updating xa-data-source: #{@resource[:name]}" + @resource[:name])
-      destroy
+      Puppet.debug("xa-data-source configuration is different, updating xa-data-source: #{@resource[:name]}")
+      #destroy
       return false
     end
 

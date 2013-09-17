@@ -22,19 +22,17 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
 
     File.open(path, 'w') {|f| f.write(passed_args + "\n") }
 
+    ENV['JBOSS_HOME'] = Puppet::Provider::Jbosscli.jbosshome
     cmd = "#{Puppet::Provider::Jbosscli.jbossclibin} --connect --file=#{path}"
+    Puppet.debug("JBOSS_HOME: " + Puppet::Provider::Jbosscli.jbosshome)
     Puppet.debug("Wykonywana komenda: " + cmd)
     Puppet.debug("Komenda do JBoss-cli: " + passed_args)
     lines = `#{cmd}`
     result = $?
     Puppet.debug("Output from jbosscli: " + lines)
     Puppet.debug("Result from jbosscli: " + result.inspect)
+    # deletes the temp file
     File.unlink(path)
-    #    # deletes the temp file
-    if result != 0 || result == 256
-    #fail lines
-    return false
-    end
     return {
       :result => result == 0,
       :lines => lines
@@ -44,7 +42,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   def execute_datasource(passed_args)
     ret = execute(passed_args)
     if ret == false
-    return false
+        return false
     end
 
     #wskazanie typu dla undefined
@@ -52,7 +50,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     evalines = eval(ret[:lines])
     return {
       :result  => evalines["outcome"] == "success",
-      :data    => evalines["result"]
+      :data    => (evalines["outcome"] == "success" ? evalines["result"] : evalines["failure-description"])
     }
   end
 end

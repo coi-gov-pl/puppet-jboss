@@ -10,7 +10,7 @@
 ### END INIT INFO
 
 USER=<%= scope.lookupvar('jboss::params::jboss_user') %>
-JBOSSPATH=<%= scope.lookupvar('jboss_path') %>/bin
+JBOSSPATH=<%= scope.lookupvar('jboss_home') %>/bin
 __NAME="Application Server"
 echo $USER
 echo $USER

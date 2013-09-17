@@ -51,7 +51,7 @@ fi
 # Set defaults.
 
 if [ -z "$JBOSS_HOME" ]; then
-  JBOSS_HOME=<%= scope.lookupvar('jboss_path') %>/bin
+  JBOSS_HOME=<%= scope.lookupvar('jboss_home') %>/bin
 fi
 export JBOSS_HOME
 
