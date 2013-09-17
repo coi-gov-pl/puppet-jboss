@@ -1,18 +1,22 @@
 require 'tempfile'
 
 class Puppet::Provider::Jbosscli < Puppet::Provider
+
   @@bin = "bin/jboss-cli.sh"
-  def self.jbossclibin
+
+  def jbossclibin
     home = self.jbosshome
     path = "#{home}/#{@@bin}"
     return path
   end
 
-  def self.jbosshome
+  def jbosshome
     home=`grep 'JBOSS_HOME=' /etc/jboss-as/jboss-as.conf 2>/dev/null | cut -d '=' -f 2`
     home.strip!
     return home
   end
+
+  #commands :jbosscli => jbossclibin
 
   def execute(passed_args)
     file = Tempfile.new('jbosscli')
@@ -22,9 +26,13 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
 
     File.open(path, 'w') {|f| f.write(passed_args + "\n") }
 
-    ENV['JBOSS_HOME'] = Puppet::Provider::Jbosscli.jbosshome
-    cmd = "#{Puppet::Provider::Jbosscli.jbossclibin} --connect --file=#{path}"
-    Puppet.debug("JBOSS_HOME: " + Puppet::Provider::Jbosscli.jbosshome)
+    ENV['JBOSS_HOME'] = self.jbosshome
+    cmd = "#{self.jbossclibin} --connect --file=#{path}"
+    if(resource[:runasdomain] == true )
+      cmd = "#{cmd} --controller=#{resource[:controller]}"
+    end
+
+    Puppet.debug("JBOSS_HOME: " + self.jbosshome)
     Puppet.debug("Wykonywana komenda: " + cmd)
     Puppet.debug("Komenda do JBoss-cli: " + passed_args)
     lines = `#{cmd}`
@@ -34,14 +42,14 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     # deletes the temp file
     File.unlink(path)
     return {
-      :result => result == 0,
+      :result => result.exitstatus == 0,
       :lines => lines
     }
   end
 
   def execute_datasource(passed_args)
     ret = execute(passed_args)
-    if ret == false
+    if ret[:result] == false
         return false
     end
 

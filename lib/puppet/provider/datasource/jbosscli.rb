@@ -2,9 +2,6 @@ require 'puppet/provider/jbosscli'
 Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
   desc "JBoss CLI datasource provider"
 
-  commands :jbosscli => "#{Puppet::Provider::Jbosscli.jbossclibin}"
-
-
   def create
     cmd = "xa-data-source --profile=#{@resource[:profile]} add --name=#{@resource[:name]} --jndi-name=#{@resource[:jndiname]} --driver-name=#{@resource[:drivername]} --min-pool-size=#{@resource[:minpoolsize]} --max-pool-size=#{@resource[:maxpoolsize]} --user-name=#{@resource[:username]} --password=#{@resource[:password]} --validate-on-match=#{@resource[:validateonmatch]} --background-validation=#{@resource[:backgroundvalidation]} --share-prepared-statements=#{@resource[:sharepreparestatements]} --xa-datasource-properties=Url=#{@resource[:xadatasourceproperties]},"
     return execute(cmd)[:result]

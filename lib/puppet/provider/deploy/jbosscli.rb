@@ -1,32 +1,50 @@
 require 'puppet/provider/jbosscli'
 Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
-  commands :jbosscli => "#{Puppet::Provider::Jbosscli.jbossclibin}"
-
-
   def basename
     File.basename(@resource[:source])
   end
 
   def create
-    cmd = "deploy #{@resource[:source]} --all-server-groups"
-    return execute(cmd)[:result]
+    cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}"
+    if(@resource[:servergroup])
+      cmd = "#{cmd} --server-groups=#{@resource[:servergroup]}"
+    else
+      cmd = "#{cmd} --all-server-groups"
+    end
+    if(@resource[:redeploy])
+      cmd = "#{cmd} --force"
+    end
+    res = execute(cmd)
+    if not res[:result]
+      raise "Deployment failed: #{res[:lines]}"
+    end
   end
 
   def destroy
-    cmd = "undeploy #{self.basename} --all-relevant-server-groups"
+    cmd = "undeploy #{@resource[:name]}"
+    if(@resource[:servergroup])
+      cmd = "#{cmd} --server-groups=#{@resource[:servergroup]}"
+    else
+      cmd = "#{cmd} --all-relevant-server-groups"
+    end
     return execute(cmd)[:result]
   end
 
   #
   def exists?
-    res = execute("ls deployment")
+    res = execute("deployment-info --name=#{@resource[:name]} --server-group=#{@resource[:servergroup]}")
+    if(res[:result] == false)
+        return false
+    end
     for line in res[:lines]
       line.strip!
-      if line == self.basename
+      if line =~ /[ ]+#{@resource[:name]}[ ]+/
+        Puppet.debug("Deployment found: #{line}")
         return true
       end
     end
+    Puppet.debug("No deployment matching #{@resource[:name]} found.")
     return false
   end
 #

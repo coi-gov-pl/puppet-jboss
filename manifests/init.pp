@@ -18,12 +18,46 @@ define setgroupaccess ($user, $group, $dir) {
     }
 }
 
+define jboss::module(
+    $jboss_home,
+    $layer,
+    $file) {
+    if(!defined(File["${jboss_home}/modules/system/layers/${layer}"])) {
+        file {"${jboss_home}/modules/system/layers/${layer}":
+            ensure => 'directory',
+            owner  => $jboss::params::jboss_user,
+            group  => $jboss::params::jboss_group,
+        }
+    }
+
+    if(!defined(Exec["layer_${layer}"])) {
+        exec {"layer_${layer}":
+            command => "/bin/awk -F'=' 'BEGIN {ins = 0} /^layers=/ { ins = ins + 1; print \$1=${layer},\$2 } END {if(ins == 0) print \"layers=${layer},base\"}' > ${jboss_home}/modules/layers.conf",
+            unless  => "/bin/egrep -e '^layers=.*${layer}.*' ${jboss_home}/modules/layers.conf",
+            require => File["${jboss_home}/modules/system/layers/${layer}"],
+            
+        }
+    }
+    $file_tmp = inline_template('/tmp/<%= File.basename(scope.lookupvar("file")) %>')
+    file {"mktmp_layer_file_${file}":
+        name    => $file_tmp,
+        ensure  => 'file',
+        source  => $file,
+        require => Exec["layer_${layer}"],
+    } ~>
+    exec {"untgz $file":
+        command     => "/bin/tar -C ${jboss_home}/modules/system/layers/${layer} -zxf ${file_tmp}",
+        #onlyif      => "cd ${jboss_home}; tar -ztf ${file_tmp} | xargs ls",
+        refreshonly => true,
+    }
+}
+
 class jboss (
   $jboss_user = $jboss::params::jboss_user,
   $jboss_group = $jboss::params::jboss_group,
   $download_url = $jboss::params::download_url,
   $download_dir = $jboss::params::download_dir,
-  $download_file = $jboss::params::download_file,
+  $download_file = undef,
   $version = $jboss::params::version,
   $java_version = $jboss::params::java_version,
   $install_dir = $jboss::params::install_dir,
@@ -37,6 +71,9 @@ class jboss (
 
   require jboss::download
   $jboss_home = "$install_dir/$jboss_dir"
+  if($download_file == undef) {
+    $download_file = inline_template('<%= File.basename( scope.lookupvar(download_url) ) %>')
+  }
 
     File {
         owner => $jboss_user,
@@ -44,7 +81,7 @@ class jboss (
         mode  => '2750',
     }
     Exec {
-        path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", 
         logoutput => 'on_failure',
     }
 
@@ -74,9 +111,9 @@ class jboss (
     }
   
     class { 'java':
-        distribution => 'jdk',
-        version      => $java_version,
-    }
+	    distribution => 'jdk',
+	    version      => $java_version,
+	}
 
     file { $download_dir:
         ensure => 'directory',
@@ -99,7 +136,7 @@ class jboss (
             Package['unzip']
         ],
     }
-
+  
     exec { 'move-unzipped':
         command => "mv $(find ${download_dir}/ -maxdepth 1 -type d -print | egrep -v '(/|\\.)$') ${jboss_home}",
         creates => $jboss_home,
@@ -128,12 +165,17 @@ class jboss (
     if($domain_xml) {
         $domain_config = inline_template('<%= File.basename(domain_xml) %>')
         file {'custom jboss domain.xml':
-            path   => "${jboss_home}/domain/configuration/$domain_config",
+            path   => "${jboss_home}/domain/configuration/${domain_config}_staged",
             ensure => 'present',
             source => $domain_xml,
-            notify => Service['jboss'],
+            notify => [ Service['jboss'], Exec['overwrite domain.xml config'] ],
             before => [ File['jboss-as-conf'], ],
             require => Setgroupaccess['set-perm'],
+        }
+        # hack: nie nadpisuj pliku króry lokalnie się zmienił, ale jeśli w puppecie się zmienił to nadpisz.
+        exec {'overwrite domain.xml config':
+            refreshonly => true,
+            command     => "/bin/cp ${jboss_home}/domain/configuration/${domain_config}_staged ${jboss_home}/domain/configuration/${domain_config}",
         }
         #--server-config=standalone-ha.xml
         #$JBOSS_DOMAIN_CONFIG = $domain_config
@@ -156,7 +198,7 @@ class jboss (
         # Default settings
         $host_config = ''
     }
-
+    
     file { 'jboss-as-conf':
         path     => "/etc/jboss-as/jboss-as.conf",
         mode     => 755,

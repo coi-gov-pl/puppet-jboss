@@ -2,7 +2,6 @@ require 'puppet/provider/jbosscli'
 
 Puppet::Type.type(:jmsqueue).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
-  commands :jbosscli => "#{Puppet::Provider::Jbosscli.jbossclibin}"
   def create
     cmd = "jms-queue --profile=#{@resource[:profile]} add --queue-address=#{@resource[:name]} --entries=["
     @resource[:entries].each_with_index {|value, index|
