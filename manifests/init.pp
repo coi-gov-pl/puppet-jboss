@@ -52,12 +52,41 @@ define jboss::module(
     }
 }
 
+define jboss::user(
+    $user = $name,
+    $password,
+    $realm = 'ManagementRealm',
+    $jboss_home,
+    ) {
+    case $realm {
+        'ManagementRealm': {
+            exec {"add jboss user ${name}/${realm}":
+                environment => ["JBOSS_HOME=${jboss_home}", ],
+                command     => "${jboss_home}/bin/add-user.sh -u ${name} -p ${password} -s",
+                unless      => "/bin/egrep -e '^${name}=' ${jboss_home}/domain/configuration/mgmt-users.properties",
+                logoutput   => 'on_failure',
+            }
+        }
+        'ApplicationRealm': {
+            exec {"add jboss user ${name}/${realm}":
+                environment => ["JBOSS_HOME=${jboss_home}", ],
+                command     => "${jboss_home}/bin/add-user.sh -u ${name} -p ${password} -s -a",
+                unless      => "/bin/egrep -e '^${name}=' ${jboss_home}/domain/configuration/application-users.properties",
+                logoutput   => 'on_failure',
+            }
+        }
+        default: {
+            fail("Unknown realm ${realm} for jboss::user")
+        }
+    }
+}
+
 class jboss (
   $jboss_user = $jboss::params::jboss_user,
   $jboss_group = $jboss::params::jboss_group,
   $download_url = $jboss::params::download_url,
   $download_dir = $jboss::params::download_dir,
-  $download_file = undef,
+  $download_file = inline_template('<%= File.basename( scope.lookupvar("download_url") ) %>'),
   $version = $jboss::params::version,
   $java_version = $jboss::params::java_version,
   $install_dir = $jboss::params::install_dir,
@@ -71,9 +100,6 @@ class jboss (
 
   require jboss::download
   $jboss_home = "$install_dir/$jboss_dir"
-  if($download_file == undef) {
-    $download_file = inline_template('<%= File.basename( scope.lookupvar(download_url) ) %>')
-  }
 
     File {
         owner => $jboss_user,
