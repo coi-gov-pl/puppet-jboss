@@ -17,44 +17,72 @@ Puppet::Type.newtype(:datasource) do
     defaultto "default"
   end
 
-  newparam(:jndiname) do
+  newparam(:controller) do
+    desc "Domain controller host:port address"
+    defaultto "localhost:9999"
+    validate do |value|
+      if value !~ /\w:\d/ and @resource[:runasdomain]
+        raise ArgumentError, "Domain controller must be provided"
+      else
+        super
+      end
+    end
+  end
+
+  newproperty(:jndiname) do
     desc "jndi-name"
   end
 
-  newparam(:drivername) do
+  newproperty(:drivername) do
     desc "driver-name"
+    isrequired
   end
 
-  newparam(:minpoolsize) do
+  newproperty(:minpoolsize) do
     desc "min-pool-size"
+    defaultto 1
   end
 
-  newparam(:maxpoolsize) do
+  newproperty(:maxpoolsize) do
     desc "max-pool-size"
+    defaultto 50
   end
 
-  newparam(:username) do
+  newproperty(:username) do
     desc "user-name"
+    isrequired
   end
 
-  newparam(:password) do
+  newproperty(:password) do
     desc "The internal JBoss user asadmin uses. Default: admin"
+    isrequired
   end
 
-  newparam(:validateonmatch) do
+  newproperty(:validateonmatch) do
     desc "validate-on-match"
+    newvalues(true, false)
+    defaultto false
   end
 
-  newparam(:backgroundvalidation) do
+  newproperty(:backgroundvalidation) do
     desc "background-validation"
   end
 
-  newparam(:sharepreparestatements) do
-    desc "share-prepare-statements"
+  newproperty(:sharepreparedstatements) do
+    desc "share-prepared-statements"
+    newvalues(true, false)
+    defaultto false
   end
 
-  newparam(:xadatasourceproperties) do
-    desc "xa-datasource-properties list, separated by comma"
+  newproperty(:xadatasourceproperties) do
+    desc "xa-datasource-properties=URL"
+    isrequired
+    validate do |value|
+      unless value =~ /\w:\d/
+        raise ArgumentError, "Datasource URL (xadatasourceproperties) must be provided (host:port)"
+      else
+        super
+      end
+    end
   end
-
 end

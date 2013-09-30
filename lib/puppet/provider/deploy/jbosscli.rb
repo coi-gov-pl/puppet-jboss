@@ -28,7 +28,10 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
     else
       cmd = "#{cmd} --all-relevant-server-groups"
     end
-    return execute(cmd)[:result]
+    res = execute(cmd)
+    if not res[:result]
+      raise "UnDeployment failed: #{res[:lines]}"
+    end
   end
 
   #

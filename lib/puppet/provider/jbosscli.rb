@@ -49,13 +49,16 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
 
   def execute_datasource(passed_args)
     ret = execute(passed_args)
+    #Puppet.debug("exec ds result: " + ret.inspect)
     if ret[:result] == false
-        return false
+        return {:result => false,
+                :data => ret[:lines]
+               }
     end
-
     #wskazanie typu dla undefined
     undefined = nil
     evalines = eval(ret[:lines])
+    Puppet.debug(evalines.inspect)
     return {
       :result  => evalines["outcome"] == "success",
       :data    => (evalines["outcome"] == "success" ? evalines["result"] : evalines["failure-description"])
