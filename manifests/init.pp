@@ -1,5 +1,5 @@
 define setgroupaccess ($user, $group, $dir) {
-    anchor {"setgroupaccess::begin": } ->
+    anchor {"jboss::setgroupaccess::${name}::begin": } ->
     exec { "rwX $name":
         command => "chmod -R g=rwX ${dir}",
         unless  => "test $(stat -c '%a' ${dir} | cut -c2) == '7'"
@@ -13,8 +13,8 @@ define setgroupaccess ($user, $group, $dir) {
         unless  => "test $(stat -c '%U:%G' ${dir}) == '${user}:${group}'"
     }
 
-    anchor {"setgroupaccess::end":
-        require => [ Exec["rwX $name"], Exec["group $name"], ],
+    anchor {"jboss::setgroupaccess::${name}::end":
+        require => [ Anchor["jboss::setgroupaccess::${name}::begin"], Exec["rwX $name"], Exec["group $name"], ],
     }
 }
 
@@ -98,7 +98,6 @@ class jboss (
   
   anchor {"jboss::begin": }
 
-  require jboss::download
   $jboss_home = "$install_dir/$jboss_dir"
 
     File {
@@ -145,19 +144,21 @@ class jboss (
         ensure => 'directory',
     }
 
-    jboss::download::download { "${download_dir}/${download_file}":
+    jboss::download { "${download_dir}/${download_file}":
         uri     => $download_url,
         require => File[$download_dir],
     }
 
-    package { unzip: ensure => "installed" }
+    package { "unzip":
+        ensure => "installed"
+    }
   
     exec { 'unzip-downloaded':
         command   => "unzip -o -q ${download_dir}/${download_file} -d ${download_dir}",
         cwd       => $download_dir,
         unless    => "find ${download_dir} -type f -name jboss-as-domain.sh | grep jboss-as-domain.sh",
         require   => [
-            Jboss::Download::Download["${download_dir}/${download_file}"],
+            Jboss::Download["${download_dir}/${download_file}"],
             File[$download_dir],
             Package['unzip']
         ],
@@ -239,16 +240,17 @@ class jboss (
         path    => '/usr/bin/jboss-cli',
         require => Setgroupaccess['set-perm'],
     }
+    anchor { "jboss::installed": }
     service { 'jboss':
         ensure     => running,
         enable     => true,
         hasstatus  => true,
         hasrestart => true,
-        require    => [Class['java'], Exec['jboss-service-link'], Setgroupaccess['set-perm'], File['jboss-as-conf'], ],
+        require    => [Class['java'], Exec['jboss-service-link'], Setgroupaccess['set-perm'], File['jboss-as-conf'], Anchor["jboss::installed"], ],
     }
 
     anchor{ "jboss::end":
-        require => [ Anchor['jboss::begin'], File['jbosscli'], Service['jboss'], ],
+        require => [ Anchor['jboss::begin'], File['jbosscli'], Anchor["jboss::installed"], Service['jboss'], ],
     }
 }
 
