@@ -1,11 +1,11 @@
 require 'puppet/provider/jbosscli'
 Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
   desc "JBoss CLI datasource provider"
-
+  
   $data = nil
 
   def create
-    cmd = "xa-data-source --profile=#{@resource[:profile]} add --name=#{@resource[:name]} --jndi-name=#{@resource[:jndiname]} --driver-name=#{@resource[:drivername]} --min-pool-size=#{@resource[:minpoolsize]} --max-pool-size=#{@resource[:maxpoolsize]} --user-name=#{@resource[:username]} --password=#{@resource[:password]} --validate-on-match=#{@resource[:validateonmatch]} --background-validation=#{@resource[:backgroundvalidation]} --share-prepared-statements=#{@resource[:sharepreparedstatements]} --xa-datasource-properties=Url=#{@resource[:xadatasourceproperties]},"
+    cmd = "xa-data-source --profile=#{@resource[:profile]} add --name=#{@resource[:name]} --jndi-name=#{@resource[:jndiname]} --driver-name=#{@resource[:drivername]} --min-pool-size=#{@resource[:minpoolsize]} --max-pool-size=#{@resource[:maxpoolsize]} --user-name=#{@resource[:username]} --password=#{@resource[:password]} --validate-on-match=#{@resource[:validateonmatch]} --background-validation=#{@resource[:backgroundvalidation]} --share-prepared-statements=#{@resource[:sharepreparedstatements]} --xa-datasource-properties=URL=#{@resource[:xadatasourceproperties]},"
     res = execute(cmd)
     if not res[:result]
       raise "XA DS add failed: #{res[:lines]}"
@@ -42,8 +42,8 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
       raise "Cannot set #{name}: #{res[:data]}"
     end
 
-  end
-
+  end 
+ 
   def jndiname
     $data['jndi-name']
   end
@@ -119,15 +119,15 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
   end
 
   def xadatasourceproperties
-    if($data['xa-datasource-properties'].nil? || $data['xa-datasource-properties']['Url'].nil?)
+    if($data['xa-datasource-properties'].nil? || $data['xa-datasource-properties']['URL'].nil?)
         return nil
     end
-    $data['xa-datasource-properties']['Url']['value']
+    $data['xa-datasource-properties']['URL']['value']
   end
 
   def xadatasourceproperties=(value)
     Puppet.debug('XA DS URL setting to ' + value)
-    cmd = "/profile=#{@resource[:profile]}/subsystem=datasources/xa-data-source=#{@resource[:name]}/xa-datasource-properties=Url:write-attribute(name=value, value=#{value})"
+    cmd = "/profile=#{@resource[:profile]}/subsystem=datasources/xa-data-source=#{@resource[:name]}/xa-datasource-properties=URL:write-attribute(name=value, value=#{value})"
     res = execute_datasource(cmd)
     Puppet.debug(res.inspect)
     if not res[:result]

@@ -38,12 +38,13 @@ define jboss::module(
             
         }
     }
-    $file_tmp = inline_template('/tmp/<%= File.basename(scope.lookupvar("file")) %>')
+    $file_tmp = inline_template("/${jboss_home}/modules/system/layers/<%= File.basename(scope.lookupvar('file')) %>")
     file {"mktmp_layer_file_${file}":
         name    => $file_tmp,
         ensure  => 'file',
         source  => $file,
         require => Exec["layer_${layer}"],
+        backup  => false,
     } ~>
     exec {"untgz $file":
         command     => "/bin/tar -C ${jboss_home}/modules/system/layers/${layer} -zxf ${file_tmp}",
@@ -86,9 +87,10 @@ class jboss (
   $jboss_group = $jboss::params::jboss_group,
   $download_url = $jboss::params::download_url,
   $download_dir = $jboss::params::download_dir,
-  $download_file = inline_template('<%= File.basename( scope.lookupvar("download_url") ) %>'),
+  $download_file = inline_template('<%= File.basename( scope.lookupvar("download_url") ) %>'), #(
   $version = $jboss::params::version,
   $java_version = $jboss::params::java_version,
+  $java_package = undef,
   $install_dir = $jboss::params::install_dir,
   $jboss_dir = $version,
   $download_dir = "${install_dir}/download-${version}",
@@ -138,6 +140,7 @@ class jboss (
     class { 'java':
 	    distribution => 'jdk',
 	    version      => $java_version,
+        package      => $java_package,
 	}
 
     file { $download_dir:

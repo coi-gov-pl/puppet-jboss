@@ -86,3 +86,4 @@ Puppet::Type.newtype(:datasource) do
     end
   end
 end
+
