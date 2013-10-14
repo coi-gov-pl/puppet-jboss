@@ -112,14 +112,18 @@ class jboss (
         logoutput => 'on_failure',
     }
 
-    group { $jboss_group:
+    if(!defined(Group[$jboss_group])) {
+      group { $jboss_group:
         ensure  => 'present',
+      }
     }
 
-    user { $jboss_user:
+    if(!defined(User[$jboss_user])) {
+      user { $jboss_user:
         ensure     => 'present',
         managehome => true,
         gid        => $jboss_group,
+      }
     }
 
     file { $install_dir:
