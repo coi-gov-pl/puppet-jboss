@@ -7,7 +7,7 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
 
   def create
     cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}"
-    if(@resource[:servergroup])
+    if(@resource[:servergroups])
       cmd = "#{cmd} --server-groups=#{@resource[:servergroups]}"
     else
       cmd = "#{cmd} --all-server-groups"
@@ -74,9 +74,6 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
 
       toset = value - current
       cmd = "deploy --name=#{@resource[:name]} --server-groups=#{toset.join(',')}"
-      if(@resource[:redeploy])
-        cmd = "#{cmd} --force"
-      end
       res = execute(cmd)
       if not res[:result]
         raise "Deployment to servergroups failed: #{res[:lines]}"
