@@ -6,7 +6,8 @@ license 'Proprietary - Copyright © COI'
 project_page ''
 source 'http://git.prs.internal/coi-deploy.git'
 summary 'JBoss - instalation and management module'
-dependency 'puppetlabs/java', '>= 1.0.1'
+dependency 'puppetlabs-java', '>=1.0.1'
+dependency 'puppetlabs-stdlib', '>=3.2.0'
 description 'COI / JBoss
 ===
 
