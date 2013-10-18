@@ -84,183 +84,60 @@ define jboss::user(
 }
 
 class jboss (
-  $jboss_user = $jboss::params::jboss_user,
-  $jboss_group = $jboss::params::jboss_group,
-  $download_url = $jboss::params::download_url,
-  $download_dir = $jboss::params::download_dir,
-  $download_file = inline_template('<%= File.basename( scope.lookupvar("download_url") ) %>'), #(
-  $version = $jboss::params::version,
-  $java_version = $jboss::params::java_version,
-  $java_package = undef,
-  $install_dir = $jboss::params::install_dir,
-  $jboss_dir = $version,
-  $download_dir = "${install_dir}/download-${version}",
-  $domain_xml = undef,
-  $host_xml = undef,
+  $jboss_user       = $jboss::params::jboss_user,
+  $jboss_group      = $jboss::params::jboss_group,
+  $download_url     = $jboss::params::download_url,
+  $version          = $jboss::params::version,
+  $java_autoinstall = $jboss::params::java_autoinstall,
+  $java_version     = $jboss::params::java_version,
+  $java_package     = $jboss::params::java_package,
+  $install_dir      = $jboss::params::install_dir,
+  # Deprecated: use jboss::xml::domain resource or other specific resources
+  $domain_xml       = undef,
+  # Deprecated: use jboss::xml::host resource or other specific resources
+  $host_xml         = undef,
 ) inherits jboss::params {
   
-  anchor {"jboss::begin": }
-
-  $jboss_home = "$install_dir/$jboss_dir"
-
-    File {
-        owner => $jboss_user,
-        group => $jboss_group,
-        mode  => '2750',
-    }
-    Exec {
-        path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", 
-        logoutput => 'on_failure',
-    }
-
-    if(!defined(Group[$jboss_group])) {
-      group { $jboss_group:
-        ensure  => 'present',
-      }
-    }
-
-    if(!defined(User[$jboss_user])) {
-      user { $jboss_user:
-        ensure     => 'present',
-        managehome => true,
-        gid        => $jboss_group,
-      }
-    }
-
-    file { $install_dir:
-        ensure => 'directory',
-        owner  => undef,
-        group  => undef,
-        mode   => undef,
-    }
-
-    file { 'jboss-as':
-        path   => '/etc/jboss-as',
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '755',
-    }
+  anchor { "jboss::begin": }
   
-    class { 'java':
-	    distribution => 'jdk',
-	    version      => $java_version,
-        package      => $java_package,
-	}
-
-    file { $download_dir:
-        ensure => 'directory',
-    }
-
-    jboss::download { "${download_dir}/${download_file}":
-        uri     => $download_url,
-        require => File[$download_dir],
-    }
-
-    package { "unzip":
-        ensure => "installed"
-    }
+  class { 'jboss::package':
+    version          => $version,
+    jboss_user       => $jboss_user,
+    jboss_group      => $jboss_group,
+    download_url     => $download_url,
+    java_autoinstall => $java_autoinstall,
+    java_version     => $java_version,
+    java_package     => $java_package,
+    install_dir      => $install_dir,
+    require          => Anchor['jboss::begin'],     
+  }
   
-    exec { 'unzip-downloaded':
-        command   => "unzip -o -q ${download_dir}/${download_file} -d ${download_dir}",
-        cwd       => $download_dir,
-        unless    => "find ${download_dir} -type f -name jboss-as-domain.sh | grep jboss-as-domain.sh",
-        require   => [
-            Jboss::Download["${download_dir}/${download_file}"],
-            File[$download_dir],
-            Package['unzip']
-        ],
+  if $domain_xml {
+    jboss::xml::domain { $domain_xml: 
+      ensure  => 'present',
+      require => Anchor['jboss::package::end'],
     }
+  }
   
-    exec { 'move-unzipped':
-        command => "mv $(find ${download_dir}/ -maxdepth 1 -type d -print | egrep -v '(/|\\.)$') ${jboss_home}",
-        creates => $jboss_home,
-        require => Exec['unzip-downloaded'],
+  if $host_xml {
+    jboss::xml::host { $host_xml: 
+      ensure  => 'present',
+      require => Anchor['jboss::package::end'],
     }
+  }
 
-    exec { 'test-extraction':
-        command => "echo '${jboss_home}/bin/init.d not found!' 1>&2; exit 1",
-        unless  => "test -d ${jboss_home}/bin/init.d",
-        require => Exec['move-unzipped'],
-    }
+  class { 'jboss::service':
+    require      => Anchor['jboss::begin'],
+  }
 
-    setgroupaccess { 'set-perm':
-        user    => $jboss_user,
-        group   => $jboss_group,
-        dir     => $jboss_home,
-        require => [ User[$jboss_user], Exec['test-extraction'], ],
-    }
-
-    exec { 'jboss-service-link':
-        command => "ln -sf ${jboss_home}/bin/init.d/jboss-as-domain.sh /etc/init.d/jboss",
-        creates => '/etc/init.d/jboss',
-        require => Setgroupaccess['set-perm'],
-    }
-
-    if($domain_xml) {
-        $domain_config = inline_template('<%= File.basename(domain_xml) %>')
-        file {'custom jboss domain.xml':
-            path   => "${jboss_home}/domain/configuration/${domain_config}_staged",
-            ensure => 'present',
-            source => $domain_xml,
-            notify => [ Service['jboss'], Exec['overwrite domain.xml config'] ],
-            before => [ File['jboss-as-conf'], ],
-            require => Setgroupaccess['set-perm'],
-        }
-        # hack: nie nadpisuj pliku króry lokalnie się zmienił, ale jeśli w puppecie się zmienił to nadpisz.
-        exec {'overwrite domain.xml config':
-            refreshonly => true,
-            command     => "/bin/cp ${jboss_home}/domain/configuration/${domain_config}_staged ${jboss_home}/domain/configuration/${domain_config}",
-        }
-        #--server-config=standalone-ha.xml
-        #$JBOSS_DOMAIN_CONFIG = $domain_config
-    } else {
-        # Default settings
-        $domain_config = ''
-    }
-    if($host_xml) {
-        $host_config = inline_template('<%= File.basename(host_xml) %>')
-        file {'custom jboss host.xml':
-            path    => "${jboss_home}/domain/configuration/$host_config",
-            ensure  => 'present',
-            source  => $host_xml,
-            notify  => Service['jboss'],
-            before  => [ File['jboss-as-conf'], ],
-            require => Setgroupaccess['set-perm'],
-        }
-        #$JBOSS_HOST_CONFIG = $host_config
-    } else {
-        # Default settings
-        $host_config = ''
-    }
-    
-    file { 'jboss-as-conf':
-        path     => "/etc/jboss-as/jboss-as.conf",
-        mode     => 755,
-        content  => template('jboss/jboss-as.conf.erb'),
-        notify   => Service["jboss"],
-        require  => Setgroupaccess['set-perm'],
-    }
-
-    file { 'jbosscli':
-        content => template('jboss/jboss-cli.erb'),
-        mode    => 755,
-        path    => '/usr/bin/jboss-cli',
-        require => Setgroupaccess['set-perm'],
-    }
-    anchor { "jboss::installed": 
-        require => File['jbosscli'],
-    }
-    service { 'jboss':
-        ensure     => running,
-        enable     => true,
-        hasstatus  => true,
-        hasrestart => true,
-        require    => [Class['java'], Exec['jboss-service-link'], Setgroupaccess['set-perm'], File['jboss-as-conf'], Anchor["jboss::installed"], ],
-    }
-
-    anchor{ "jboss::end":
-        require => [ Anchor['jboss::begin'], File['jbosscli'], Anchor["jboss::installed"], Service['jboss'], ],
-    }
+  anchor { "jboss::end": 
+    require => [
+      Class['jboss::package'],
+      Class['jboss::service'],
+      Anchor['jboss::begin'],
+      Anchor["jboss::package::end"], 
+      Anchor["jboss::service::end"], 
+    ], 
+  }
 }
 

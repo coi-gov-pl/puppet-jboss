@@ -1,4 +1,4 @@
-define jboss::download (
+define jboss::util::download (
   $uri, 
   $dest = $name, 
   $timeout = 300,
@@ -7,7 +7,9 @@ define jboss::download (
 
   case $uri {
     /^http/ : {
-      package { "wget": ensure => "installed" }
+      if ! defined(Package['wget']) {
+        package { 'wget': ensure => "installed" }
+      }
 
       exec { "download ${name}":
         command => "wget -q '$uri' -O ${dest}",

@@ -9,7 +9,7 @@ define jboss::xml::host (
     default   => 'absent',
   }
   
-  $host_config = basename($path)
+  $host_config = jboss_basename($path)
   if $content {
     file { "jboss::xml::host::${name}":
       path    => "${::jboss_home}/domain/configuration/${host_config}_staged",

@@ -1,9 +1,29 @@
-JBOSS_HOME=<%= scope.lookupvar('jboss_home') %>
-JBOSS_USER=<%= scope.lookupvar('jboss::params::jboss_user') %>
-JBOSS_DOMAIN_CONFIG=<%= scope.lookupvar('domain_config') %>
-JBOSS_HOST_CONFIG=<%= scope.lookupvar('host_config') %>
+# General configuration for the init.d scripts,
+# not necessarily for JBoss AS itself.
 
-export JBOSS_HOME
-export JBOSS_USER
-export JBOSS_DOMAIN_CONFIG
-export JBOSS_HOST_CONFIG
+# The Jboss home directory.
+#
+JBOSS_HOME=<%= @jboss_home %>
+
+# The username who should own the process.
+#
+JBOSS_USER=<%= @jboss_user %>
+
+# The amount of time to wait for startup
+#
+# STARTUP_WAIT=30
+
+# The amount of time to wait for shutdown
+#
+# SHUTDOWN_WAIT=30
+
+# Location to keep the console log
+#
+# JBOSS_CONSOLE_LOG=/var/log/jboss-as/console.log
+
+<% if @domain_config -%>
+JBOSS_DOMAIN_CONFIG=<%= @domain_config %>
+<% end -%>
+<% if @host_config -%>
+JBOSS_HOST_CONFIG=<%= @host_config %>
+<% end -%>
