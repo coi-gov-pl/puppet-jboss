@@ -60,7 +60,7 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
       for line in res[:lines]
           line.strip!
           depinf = line.split
-          if(depinf[1] == "enabled")
+          if(depinf[1] == "enabled" || depinf[1] == "added")
               groups.push(depinf[0])
           end
       end
