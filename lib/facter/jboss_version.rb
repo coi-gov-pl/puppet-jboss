@@ -8,7 +8,16 @@ Facter.add(:jboss_version) do
       end
       re = /([0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+)/
       match = full.match re
-      out = match.captures[0].chomp
+      version = match.captures[0].chomp
+      eap = false
+      if full.match(/Enterprise Application Platform/)
+        eap = true
+      end
+      desc = case eap
+        when true then 'eap'
+        else 'as'
+      end
+      out = '%s-%s' % [desc, version]
     rescue Exception => e
       out = nil
     end

@@ -12,6 +12,15 @@ class jboss::package (
   $download_file = jboss_basename($download_url)
   $download_dir  = "/usr/src/download-jboss-${version}"
   $jboss_home    = "$install_dir/jboss-${version}"
+  
+  case $version {
+    /^(?:eap|as)-[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+/: {
+      debug("Running in version: $1 -> $0")
+    }
+    default: {
+      fail("Invalid Jboss version passed! Pass valid version for ex.: `eap-6.1.0.GA`")
+    }
+  }
 
   anchor { "jboss::package::begin":
     require => Anchor['jboss::begin'],
