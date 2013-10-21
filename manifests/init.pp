@@ -112,6 +112,8 @@ class jboss (
     require          => Anchor['jboss::begin'],     
   }
   
+  $home = $jboss::package::jboss_home
+  
   if $domain_xml {
     jboss::xml::domain { $domain_xml: 
       ensure  => 'present',
