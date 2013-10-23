@@ -25,7 +25,8 @@ define jboss::module (
       require => File["${home}/modules/system/layers/${layer}"],
     }
   }
-  $file_tmp = inline_template("/${home}/modules/system/layers/<%= File.basename(scope.lookupvar('file')) %>")
+  $file_basename = jboss_basename($file)
+  $file_tmp = inline_template("${home}/modules/system/layers/${file_basename}")
   file { "mktmp_layer_file_${file}":
     path    => $file_tmp,
     ensure  => 'file',

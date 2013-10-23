@@ -6,7 +6,7 @@ if [ -f /etc/jboss-as/jboss-as.conf ]; then
 fi
 
 if [ ! -z "$JBOSS_HOME" ]; then
-    JBOSS_HOME=<%= scope.lookupvar('jboss_home') %>
+    JBOSS_HOME=<%= @home %>
 fi
 JBOSSPATH=$JBOSS_HOME
 JBOSSCLI='./bin/jboss-cli.sh'

@@ -3,7 +3,7 @@
 
 # The Jboss home directory.
 #
-JBOSS_HOME=<%= @jboss_home %>
+JBOSS_HOME=<%= @home %>
 
 # The username who should own the process.
 #
@@ -19,11 +19,4 @@ JBOSS_USER=<%= @jboss_user %>
 
 # Location to keep the console log
 #
-# JBOSS_CONSOLE_LOG=/var/log/jboss-as/console.log
-
-<% if @domain_config -%>
-JBOSS_DOMAIN_CONFIG=<%= @domain_config %>
-<% end -%>
-<% if @host_config -%>
-JBOSS_HOST_CONFIG=<%= @host_config %>
-<% end -%>
+JBOSS_CONSOLE_LOG=/var/log/jboss-as/console.log

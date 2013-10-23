@@ -98,7 +98,10 @@ class jboss (
   $host_xml         = undef,
 ) inherits jboss::params {
   
-  anchor { "jboss::begin": }
+  $home = "${install_dir}/jboss-${version}"
+  
+  include jboss::configuration
+  include jboss::service
   
   class { 'jboss::package':
     version          => $version,
@@ -111,30 +114,26 @@ class jboss (
     install_dir      => $install_dir,
     require          => Anchor['jboss::begin'],     
   }
-  
-  $home = $jboss::package::jboss_home
+  include jboss::package
+
+  anchor { "jboss::begin": }
   
   if $domain_xml {
     jboss::xml::domain { $domain_xml: 
       ensure  => 'present',
-      require => Anchor['jboss::package::end'],
     }
   }
   
   if $host_xml {
     jboss::xml::host { $host_xml: 
       ensure  => 'present',
-      require => Anchor['jboss::package::end'],
     }
-  }
-
-  class { 'jboss::service':
-    require      => Anchor['jboss::begin'],
   }
 
   anchor { "jboss::end": 
     require => [
       Class['jboss::package'],
+      Class['jboss::configuration'],
       Class['jboss::service'],
       Anchor['jboss::begin'],
       Anchor["jboss::package::end"], 

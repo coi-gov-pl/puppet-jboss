@@ -8,18 +8,19 @@ class jboss::package (
   $java_package     = $jboss::params::java_package,
   $install_dir      = $jboss::params::install_dir,
 ) inherits jboss::params {
+  include jboss
   
   $download_rootdir = $jboss::params::internal::download_rootdir
   $download_file = jboss_basename($download_url)
   $download_dir  = "$download_rootdir/download-jboss-${version}"
-  $jboss_home    = "$install_dir/jboss-${version}"
+  $home = $jboss::home
   
   case $version {
-    /^(?:eap|as)-[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+/: {
-      debug("Running in version: $1 -> $0")
+    /^(?:eap|as)-[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
+      debug("Running in version: $1 -> $version")
     }
     default: {
-      fail("Invalid Jboss version passed! Pass valid version for ex.: `eap-6.1.0.GA`")
+      fail("Invalid Jboss version passed: `$version`! Pass valid version for ex.: `eap-6.1.0.GA`")
     }
   }
 
@@ -52,10 +53,26 @@ class jboss::package (
 
   file { 'jboss::/etc/jboss-as':
     path   => '/etc/jboss-as',
-    ensure => directory,
+    ensure => 'directory',
     owner  => 'root',
     group  => 'root',
     mode   => '755',
+  }
+  
+  file { 'jboss::/var/log/jboss-as':
+    path   => '/var/log/jboss-as',
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'jboss',
+    mode   => '2770',
+  }
+  
+  file { 'jboss::/var/log/jboss-as/console.log':
+    path   => '/var/log/jboss-as/console.log',
+    ensure => 'file',
+    owner  => 'root',
+    group  => 'jboss',
+    mode   => '0660',
   }
   
   if $java_autoinstall {
@@ -83,7 +100,7 @@ class jboss::package (
   exec { 'jboss::unzip-downloaded':
     command => "unzip -o -q ${download_dir}/${download_file} -d ${download_dir}",
     cwd     => $download_dir,
-    creates => $jboss_home,
+    creates => $jboss::home,
     require => [
       Jboss::Util::Download["${download_dir}/${download_file}"], 
       File[$download_dir], 
@@ -93,18 +110,18 @@ class jboss::package (
 
   exec { 'jboss::move-unzipped':
     cwd     => $download_dir,
-    command => "mv $(unzip -l ${download_file} | head -n 4 | tail -n 1 | awk '{print \$4}') ${jboss_home}",
-    creates => $jboss_home,
+    command => "mv $(unzip -l ${download_file} | head -n 4 | tail -n 1 | awk '{print \$4}') ${jboss::home}",
+    creates => $jboss::home,
     require => Exec['jboss::unzip-downloaded'],
   }
 
   exec { 'jboss::test-extraction':
-    command => "echo '${jboss_home}/bin/init.d not found!' 1>&2 && exit 1",
-    unless  => "test -d ${jboss_home}/bin/init.d",
+    command => "echo '${jboss::home}/bin/init.d not found!' 1>&2 && exit 1",
+    unless  => "test -d ${jboss::home}/bin/init.d",
     require => Exec['jboss::move-unzipped'],
   }
 
-  jboss::util::groupaccess { $jboss_home:
+  jboss::util::groupaccess { $jboss::home:
     user    => $jboss_user,
     group   => $jboss_group,
     require => [
@@ -116,37 +133,29 @@ class jboss::package (
   file { 'jboss::service-link::domain':
     ensure  => 'link',
     path    => '/etc/init.d/jboss-domain',
-    target  => "${jboss_home}/bin/init.d/jboss-as-domain.sh",
-    require => Jboss::Util::Groupaccess[$jboss_home],
+    target  => "${jboss::home}/bin/init.d/jboss-as-domain.sh",
+    require => Jboss::Util::Groupaccess[$jboss::home],
   }
   
   file { 'jboss::service-link::standalone':
     ensure  => 'link',
     path    => '/etc/init.d/jboss-standalone',
-    target  => "${jboss_home}/bin/init.d/jboss-as-standalone.sh",
-    require => Jboss::Util::Groupaccess[$jboss_home],
+    target  => "${jboss::home}/bin/init.d/jboss-as-standalone.sh",
+    require => Jboss::Util::Groupaccess[$jboss::home],
   }
   
   file { 'jboss::service-link':
     ensure  => 'link',
     path    => '/etc/init.d/jboss',
     target  => '/etc/init.d/jboss-domain',
-    require => Jboss::Util::Groupaccess[$jboss_home],
+    require => Jboss::Util::Groupaccess[$jboss::home],
   }
   
-  file { 'jboss::jboss-as.conf':
-    path    => "/etc/jboss-as/jboss-as.conf",
-    mode    => 644,
-    content => template('jboss/jboss-as.conf.erb'),
-    notify  => Service["jboss"],
-    require => Jboss::Util::Groupaccess[$jboss_home],
-  }
-
   file { 'jboss::jbosscli':
     content => template('jboss/jboss-cli.erb'),
     mode    => 755,
     path    => '/usr/bin/jboss-cli',
-    require => Jboss::Util::Groupaccess[$jboss_home],
+    require => Jboss::Util::Groupaccess[$jboss::home],
   }
   
   exec { 'jboss::package::check-for-java':
@@ -158,10 +167,11 @@ class jboss::package (
 
   anchor { "jboss::installed":
     require => [
-      Jboss::Util::Groupaccess[$jboss_home],
+      Jboss::Util::Groupaccess[$jboss::home],
       Exec['jboss::test-extraction'],
+      File['jboss::/etc/jboss-as'],
+      File['jboss::/var/log/jboss-as/console.log'],
       File['jboss::jbosscli'],
-      File['jboss::jboss-as.conf'],
       File['jboss::service-link'],
     ],
     before  => Anchor["jboss::package::end"], 

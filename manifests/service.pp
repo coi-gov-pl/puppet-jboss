@@ -7,7 +7,9 @@ class jboss::service {
   
   anchor { "jboss::service::begin": }
   
-  service { 'jboss':
+  $servicename = 'jboss'
+  
+  service { $servicename:
     ensure     => running,
     enable     => true,
     hasstatus  => true,
@@ -18,7 +20,17 @@ class jboss::service {
     ],
   }
   
+  exec { 'jboss::service::test-running':
+    command     => "ps aux | grep ${servicename} | grep -vq grep || ( tail -n 50 /var/log/jboss-as/console.log && exit 1 )",
+    logoutput   => true,
+    refreshonly => true,
+    subscribe   => Service['jboss'],
+  }
+  
   anchor { "jboss::service::end": 
-    require => Service['jboss'], 
+    require => [
+      Service[$servicename],
+      Exec['jboss::service::test-running'],
+    ], 
   }
 }
