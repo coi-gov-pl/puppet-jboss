@@ -31,11 +31,13 @@ define jboss::xml::domain (
   if $file_ensure == 'file' {
     File["jboss::xml::domain::${name}"] ~> Exec["jboss::xml::domain::overwrite::${name}"]
     
-    concat::fragment { "jboss::jboss-as.conf::xml::domain::${name}":
-      target  => "/etc/jboss-as/jboss-as.conf",
-      order   => '010',
-      notify  => Service['jboss'],
-      content => template('jboss/xml/jboss-as.conf_domain.erb'),
+    if $active {
+      concat::fragment { "jboss::jboss-as.conf::xml::domain::${name}":
+        target  => "/etc/jboss-as/jboss-as.conf",
+        order   => '010',
+        notify  => Service['jboss'],
+        content => template('jboss/xml/jboss-as.conf_domain.erb'),
+      }
     }
     file { "${jboss::home}/domain/configuration/${domain_config}":
       ensure  => 'file',

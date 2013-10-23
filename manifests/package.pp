@@ -15,6 +15,9 @@ class jboss::package (
   $download_dir  = "$download_rootdir/download-jboss-${version}"
   $home = $jboss::home
   
+  $logdir  = $jboss::params::internal::logdir
+  $logfile = $jboss::params::internal::logfile
+  
   case $version {
     /^(?:eap|as)-[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
       debug("Running in version: $1 -> $version")
@@ -51,7 +54,7 @@ class jboss::package (
     }
   }
 
-  file { 'jboss::/etc/jboss-as':
+  file { 'jboss::confdir':
     path   => '/etc/jboss-as',
     ensure => 'directory',
     owner  => 'root',
@@ -59,19 +62,19 @@ class jboss::package (
     mode   => '755',
   }
   
-  file { 'jboss::/var/log/jboss-as':
-    path   => '/var/log/jboss-as',
+  file { 'jboss::logdir':
+    path   => $logdir,
     ensure => 'directory',
     owner  => 'root',
-    group  => 'jboss',
+    group  => $jboss_group,
     mode   => '2770',
   }
   
-  file { 'jboss::/var/log/jboss-as/console.log':
-    path   => '/var/log/jboss-as/console.log',
+  file { 'jboss::logfile':
+    path   => $logfile,
     ensure => 'file',
     owner  => 'root',
-    group  => 'jboss',
+    group  => $jboss_group,
     mode   => '0660',
   }
   
@@ -169,8 +172,8 @@ class jboss::package (
     require => [
       Jboss::Util::Groupaccess[$jboss::home],
       Exec['jboss::test-extraction'],
-      File['jboss::/etc/jboss-as'],
-      File['jboss::/var/log/jboss-as/console.log'],
+      File['jboss::confdir'],
+      File['jboss::logfile'],
       File['jboss::jbosscli'],
       File['jboss::service-link'],
     ],
