@@ -9,8 +9,9 @@ class jboss::package (
   $install_dir      = $jboss::params::install_dir,
 ) inherits jboss::params {
   
+  $download_rootdir = $jboss::params::internal::download_rootdir
   $download_file = jboss_basename($download_url)
-  $download_dir  = "/usr/src/download-jboss-${version}"
+  $download_dir  = "$download_rootdir/download-jboss-${version}"
   $jboss_home    = "$install_dir/jboss-${version}"
   
   case $version {
