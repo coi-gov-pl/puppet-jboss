@@ -6,7 +6,7 @@ define jboss::util::download (
   anchor { "jboss::download::${name}::begin": }
 
   case $uri {
-    /^http/ : {
+    /^(?:http|ftp)s?:/ : {
       if ! defined(Package['wget']) {
         package { 'wget': ensure => "installed" }
       }

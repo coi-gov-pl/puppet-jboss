@@ -7,12 +7,13 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
 
   def create
     cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}"
-    if(@resource[:servergroups])
-      cmd = "#{cmd} --server-groups=#{@resource[:servergroups].join(',')}"
-    else
+    servergroups = @resource[:servergroups] 
+    if servergroups.nil? or servergroups.empty? or servergroups == [''] 
       cmd = "#{cmd} --all-server-groups"
+    else
+      cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
     end
-    if(@resource[:redeploy])
+    if @resource[:redeploy]
       cmd = "#{cmd} --force"
     end
     res = execute(cmd)
