@@ -18,7 +18,7 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
     end
     res = execute(cmd)
     if not res[:result]
-      raise "Deployment failed: #{res[:lines]}"
+      raise "Deployment failed: #{res[:lines]}\n#{printlog 100}"
     end
   end
 
@@ -34,8 +34,8 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
       raise "UnDeployment failed: #{res[:lines]}"
     end
   end
-
-  def exists?
+  
+  def name_exists?
     #groups = @resource[:servergroup].split(",")
     res = execute("deployment-info --name=#{@resource[:name]}")# --server-group=#{@resource[:servergroup]}")
     if(res[:result] == false)
@@ -49,7 +49,19 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
       end
     end
     Puppet.debug("No deployment matching #{@resource[:name]} found.")
-    return false
+    return false    
+  end
+  
+  def is_exact_deployment?
+    true
+  end
+
+  def exists?
+    if name_exists?
+      is_exact_deployment?
+    else
+      false
+    end
   end
 
   def servergroups

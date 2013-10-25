@@ -10,33 +10,40 @@ define jboss::module::fromfile (
     default => $jboss_home,
   }
   
-  if (!defined(File["${home}/modules/system/layers/${layer}"])) {
-    file { "${home}/modules/system/layers/${layer}":
+  if (!defined(File["jboss::module::fromfile::${layer}"])) {
+    file { "jboss::module::fromfile::${layer}":
+      alias  => "${home}/modules/system/layers/${layer}", # Deprecated
+      path   => "${home}/modules/system/layers/${layer}",
       ensure => 'directory',
       owner  => $jboss::jboss_user,
       group  => $jboss::jboss_group,
+      notify => Service['jboss'],
     }
   }
 
-  if (!defined(Exec["layer_${layer}"])) {
-    exec { "layer_${layer}":
-      command => "/bin/awk -F'=' 'BEGIN {ins = 0} /^layers=/ { ins = ins + 1; print \$1=${layer},\$2 } END {if(ins == 0) print \"layers=${layer},base\"}' > ${home}/modules/layers.conf",
-      unless  => "/bin/egrep -e '^layers=.*${layer}.*' ${home}/modules/layers.conf",
-      require => File["${home}/modules/system/layers/${layer}"],
-    }
-  }
   $file_basename = jboss_basename($file)
-  $file_tmp = inline_template("${home}/modules/system/layers/${file_basename}")
-  file { "mktmp_layer_file_${file}":
+  $file_tmp = "${home}/modules/system/layers/${file_basename}"
+  
+  file { "jboss::module::fromfile::mktmplayerfile(${file})":
+    alias   => "mktmp_layer_file_${file}", # Deprecated
     path    => $file_tmp,
     ensure  => 'file',
     source  => $file,
-    require => Exec["layer_${layer}"],
+    require => Exec["jboss::module::layer::${layer}"],
+    notify  => Service['jboss'],
     backup  => false,
-  } ~>
-  exec { "untgz $file":
+  }
+  exec { "jboss::module::fromfile::untgz($file)":
+    alias       => "untgz $file", # Deprecated
     command     => "/bin/tar -C ${home}/modules/system/layers/${layer} -zxf ${file_tmp}",
-    # onlyif      => "cd ${home}; tar -ztf ${file_tmp} | xargs ls",
     refreshonly => true,
+    subscribe   => File["jboss::module::fromfile::mktmplayerfile(${file})"],
+    notify      => Service['jboss'],
+    # onlyif      => "cd ${home}; tar -ztf ${file_tmp} | xargs ls",
+  }
+  
+  jboss::module::registerlayer { "jboss::module::fromfile::${name}($layer)":
+    layer   => $layer,
+    require => Exec["jboss::module::fromfile::untgz($file)"],
   }
 }

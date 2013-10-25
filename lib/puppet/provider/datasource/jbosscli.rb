@@ -1,11 +1,24 @@
 require 'puppet/provider/jbosscli'
+
+module Coi
+  module Puppet
+    module Functions
+      def self.to_bool input
+        return true if input == true || input =~ (/(true|t|yes|y|1)$/i)
+        return false if input == false || input.nil? || input.empty? || input =~ (/(false|f|no|n|0)$/i)
+        raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
+      end    
+    end
+  end
+end
+
 Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
   desc "JBoss CLI datasource provider"
   
   $data = nil
 
   def create
-    cmd = "xa-data-source --profile=#{@resource[:profile]} add --name=#{@resource[:name]} --jndi-name=#{@resource[:jndiname]} --driver-name=#{@resource[:drivername]} --min-pool-size=#{@resource[:minpoolsize]} --max-pool-size=#{@resource[:maxpoolsize]} --user-name=#{@resource[:username]} --password=#{@resource[:password]} --validate-on-match=#{@resource[:validateonmatch]} --background-validation=#{@resource[:backgroundvalidation]} --share-prepared-statements=#{@resource[:sharepreparedstatements]} --xa-datasource-properties=URL=#{@resource[:xadatasourceproperties]},"
+    cmd = "xa-data-source --profile=#{@resource[:profile]} add --name=#{@resource[:name]} --jta=#{@resource[:jta]} --jndi-name=#{@resource[:jndiname]} --driver-name=#{@resource[:drivername]} --min-pool-size=#{@resource[:minpoolsize]} --max-pool-size=#{@resource[:maxpoolsize]} --user-name=#{@resource[:username]} --password=#{@resource[:password]} --validate-on-match=#{@resource[:validateonmatch]} --background-validation=#{@resource[:backgroundvalidation]} --share-prepared-statements=#{@resource[:sharepreparedstatements]} --xa-datasource-properties=URL=#{@resource[:xadatasourceproperties]},"
     res = execute(cmd)
     if not res[:result]
       raise "XA DS add failed: #{res[:lines]}"
@@ -28,7 +41,7 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
         Puppet.debug("XA DS does NOT exist")
         return false
     end
-    Puppet.debug("XA DS exists")
+    Puppet.debug("XA DS exists: #{res[:data].inspect}")
     $data = res[:data]
     return true
   end
@@ -41,7 +54,6 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
     if not res[:result]
       raise "Cannot set #{name}: #{res[:data]}"
     end
-
   end 
  
   def jndiname
@@ -51,7 +63,7 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
   def jndiname=(value)
     setattrib('jndi-name', value)
   end
-
+  
   def drivername
     $data['driver-name']
   end
@@ -61,7 +73,7 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
   end
 
   def minpoolsize
-    $data['min-pool-size']
+    $data['min-pool-size'].to_s
   end
 
   def minpoolsize=(value)
@@ -69,7 +81,7 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
   end
 
   def maxpoolsize
-    $data['max-pool-size']
+    $data['max-pool-size'].to_s
   end
 
   def maxpoolsize=(value)
@@ -93,30 +105,37 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
   end
 
   def validateonmatch
-    $data['validate-on-match']
+    $data['validate-on-match'].to_s
   end
 
   def validateonmatch=(value)
-    value = 'true' if value or 'false'
-    setattrib('validate-on-match', value)
+    setattrib('validate-on-match', value.to_s)
   end
 
   def backgroundvalidation
-    $data['background-validation']
+    $data['background-validation'].to_s
   end
 
   def backgroundvalidation=(value)
-    setattrib('background-validation', value)
+    setattrib('background-validation', value.to_s)
   end
 
   def sharepreparedstatements
-    $data['share-prepared-statements']
+    $data['share-prepared-statements'].to_s
   end
 
   def sharepreparedstatements=(value)
-    value = 'true' if value or 'false'
-    setattrib('share-prepared-statements', value)
+    setattrib('share-prepared-statements', value.to_s)
   end
+  
+  def jta
+    $data['jta'].to_s
+  end
+
+  def jta=(value)
+    setattrib('jta', value.to_s)
+  end
+
 
   def xadatasourceproperties
     if($data['xa-datasource-properties'].nil? || $data['xa-datasource-properties']['URL'].nil?)

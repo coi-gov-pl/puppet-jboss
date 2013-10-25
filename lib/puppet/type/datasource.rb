@@ -32,6 +32,12 @@ Puppet::Type.newtype(:datasource) do
   newproperty(:jndiname) do
     desc "jndi-name"
   end
+  
+  newproperty(:jta) do
+    desc "jta"
+    newvalues(true, false)
+    defaultto true
+  end
 
   newproperty(:drivername) do
     desc "driver-name"

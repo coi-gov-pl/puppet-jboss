@@ -48,6 +48,10 @@ define jboss::module::assemble (
     require => Anchor['jboss::package::end'],
   }
   
+  jboss::module::registerlayer { "jboss::module::assemble::${name}($layer)": 
+    layer => $layer,
+  }
+  
 }
 
 define jboss::module::assemble::process_artifacts ($dir) {

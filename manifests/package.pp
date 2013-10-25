@@ -147,6 +147,20 @@ class jboss::package (
     require => Jboss::Util::Groupaccess[$jboss::home],
   }
   
+  file { 'jboss::configuration-link::domain':
+    ensure  => 'link',
+    path    => '/etc/jboss-as/domain.xml',
+    target  => "${jboss::home}/domain/configuration/domain.xml",
+    require => Jboss::Util::Groupaccess[$jboss::home],
+  }
+  
+  file { 'jboss::configuration-link::standalone':
+    ensure  => 'link',
+    path    => '/etc/jboss-as/standalone.xml',
+    target  => "${jboss::home}/standalone/configuration/standalone.xml",
+    require => Jboss::Util::Groupaccess[$jboss::home],
+  }
+  
   file { 'jboss::service-link':
     ensure  => 'link',
     path    => '/etc/init.d/jboss',

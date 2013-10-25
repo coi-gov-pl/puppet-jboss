@@ -11,12 +11,26 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
 
   def jbosshome
-    home=`grep 'JBOSS_HOME=' /etc/jboss-as/jboss-as.conf 2>/dev/null | cut -d '=' -f 2`
+    home=`grep -E '^JBOSS_HOME=' /etc/jboss-as/jboss-as.conf 2>/dev/null | cut -d '=' -f 2`
     home.strip!
     return home
   end
+  
+  def jbosslog
+    log=`grep -E '^JBOSS_CONSOLE_LOG=' /etc/jboss-as/jboss-as.conf 2>/dev/null | cut -d '=' -f 2`
+    log.strip!
+    return log
+  end
 
   #commands :jbosscli => jbossclibin
+  
+  def getlog(lines)
+    last_lines = `tail -n #{lines} #{jbosslog}`
+  end
+  
+  def printlog(lines)
+    return " ---\n JBoss AS log (last #{lines} lines): \n#{getlog lines}" 
+  end
 
   def execute(passed_args)
     file = Tempfile.new('jbosscli')
@@ -51,9 +65,10 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     ret = execute(passed_args)
     #Puppet.debug("exec ds result: " + ret.inspect)
     if ret[:result] == false
-        return {:result => false,
-                :data => ret[:lines]
-               }
+        return {
+          :result => false,
+          :data => ret[:lines]
+        }
     end
     #wskazanie typu dla undefined
     undefined = nil

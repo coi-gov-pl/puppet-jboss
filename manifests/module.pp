@@ -7,6 +7,11 @@ define jboss::module (
   $dependencies = [],
 ) {
   
+  $home = $jboss_home ? { # Deprecated, it is not needed, will be removed
+    undef   => $jboss::home,
+    default => $jboss_home,
+  }
+  
   if $file {
     jboss::module::fromfile { $name:
       layer      => $layer,
@@ -21,4 +26,5 @@ define jboss::module (
       dependencies => $dependencies, 
     }
   }
+  
 }
