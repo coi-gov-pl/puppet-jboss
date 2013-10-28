@@ -22,10 +22,7 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
     if runasdomain
       cmd = "/profile=#{profile}#{cmd}"
     end
-    res = execute(cmd)
-    if not res[:result]
-      raise "Registering JDBC driver failed: #{res[:lines]}"
-    end
+    bringUp('JDBC-Driver', cmd)
   end
 
   def destroy
@@ -34,10 +31,7 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
     if runasdomain
       cmd = "/profile=#{@resource[:profile]}#{cmd}"
     end
-    res = execute(cmd)
-    if not res[:result]
-      raise "Removing JDBC driver failed: #{res[:lines]}"
-    end
+    bringDown('JDBC-Driver', cmd)
   end
   
   def exists?
@@ -59,7 +53,7 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
   
   def setattrib(name, value)
     Puppet.debug(name + ' setting to ' + value)
-    cmd = "/profile=#{@resource[:profile]}/subsystem=datasources/jdbc-driver=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
+    cmd = "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
     runasdomain = @resource[:runasdomain]
     if runasdomain
       cmd = "/profile=#{@resource[:profile]}#{cmd}"

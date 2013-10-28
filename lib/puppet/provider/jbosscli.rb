@@ -56,9 +56,48 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     # deletes the temp file
     File.unlink(path)
     return {
+      :cmd    => passed_args,
       :result => result.exitstatus == 0,
-      :lines => lines
+      :lines  => lines
     }
+  end
+  
+  def setattribute(path, name, value)
+    Puppet.debug(name + ' setting to ' + value)
+    cmd = "#{path}=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
+    runasdomain = @resource[:runasdomain]
+    if runasdomain
+      cmd = "/profile=#{@resource[:profile]}#{cmd}"
+    end
+    res = execute_datasource(cmd)
+    Puppet.debug(res.inspect)
+    if not res[:result]
+      raise "Cannot set #{name}: #{res[:data]}"
+    end
+  end 
+  
+  def bringUp(typename, args)
+    return executeWithFail(typename, args, 'to create')
+  end
+  
+  def bringDown(typename, args)
+    return executeWithFail(typename, args, 'to remove')
+  end
+  
+  def isprintinglog=(setting)
+    $add_log = setting
+  end
+  
+  def executeWithFail(typename, passed_args, way)
+    executed = execute(passed_args)
+    if not executed[:result]
+      ex = "#{typename} failed #{way}:\ncmd: #{executed[:cmd]}\nerror: #{executed[:lines]}"
+      if not $add_log.nil? and $add_log > 0
+        ex = "#{ex}\n#{printlog $add_log}"
+      end 
+      raise ex
+    end
+    return executed
   end
 
   def execute_datasource(passed_args)

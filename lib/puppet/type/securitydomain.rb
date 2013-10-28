@@ -28,5 +28,17 @@ Puppet::Type.newtype(:securitydomain) do
     desc "Run server in domain mode"
     defaultto true
   end
+  
+  newparam(:controller) do
+    desc "Domain controller host:port address"
+    defaultto "localhost:9999"
+    validate do |value|
+      if value == nil and @resource[:runasdomain]
+        raise ArgumentError, "Domain controller must be provided"
+      else
+        super
+      end
+    end
+  end
 
 end

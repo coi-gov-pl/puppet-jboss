@@ -16,23 +16,20 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
     if @resource[:redeploy]
       cmd = "#{cmd} --force"
     end
-    res = execute(cmd)
-    if not res[:result]
-      raise "Deployment failed: #{res[:lines]}\n#{printlog 100}"
-    end
+    isprintinglog = 100
+    bringUp('Deployment', cmd)
   end
 
   def destroy
     cmd = "undeploy #{@resource[:name]}"
-    #if(@resource[:servergroup])
-    #  cmd = "#{cmd} --server-groups=#{@resource[:servergroup]}"
-    #else
+    servergroups = @resource[:servergroups] 
+    if servergroups.nil? or servergroups.empty? or servergroups == [''] 
       cmd = "#{cmd} --all-relevant-server-groups"
-    #end
-    res = execute(cmd)
-    if not res[:result]
-      raise "UnDeployment failed: #{res[:lines]}"
+    else
+      cmd = "#{cmd} --server-groups=#{@resource[:servergroup]}"
     end
+    isprintinglog = 0
+    bringDown('Deployment', cmd)
   end
   
   def name_exists?

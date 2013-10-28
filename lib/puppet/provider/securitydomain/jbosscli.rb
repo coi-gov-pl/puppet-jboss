@@ -3,8 +3,17 @@ require 'puppet/provider/jbosscli'
 Puppet::Type.type(:securitydomain).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
   def create
-    cmd = "/profile=default/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add(login-modules=[{code=>\"#{@resource[:code]}\",flag=>\"#{@resource[:codeflag]}\",module-options=>["
+    runasdomain = @resource[:runasdomain]
+    profile = @resource[:profile]
+    cmd = "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add(login-modules=[{code=>\"#{@resource[:code]}\",flag=>\"#{@resource[:codeflag]}\",module-options=>["
+    if runasdomain
+      cmd = "/profile=#{profile}#{cmd}"
+    end
     @resource[:moduleoptions].each_with_index do |(key, value), index|
+      if not value.is_a? String
+        value = value.to_s
+      end
+      value.gsub!(/\n/, ' ')
       cmd += "#{key}=>\"#{value}\""
       if index == @resource[:moduleoptions].length - 1
         break
@@ -12,22 +21,40 @@ Puppet::Type.type(:securitydomain).provide(:jbosscli, :parent => Puppet::Provide
       cmd += ","
     end
     cmd += "]}])"
-    execute("/profile=default/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)")[:result]
-    return execute(cmd)[:result]
+    cmd2 = "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
+    if runasdomain
+      cmd2 = "/profile=#{profile}#{cmd2}"
+    end
+    bringUp('Security Domain Cache Type', cmd2)[:result]
+    bringUp('Security Domain', cmd)[:result]
   end
 
   def destroy
-    cmd = "/profile=default/subsystem=security/security-domain=#{@resource[:name]}:remove()"
-    return execute(cmd)[:result]
+    runasdomain = @resource[:runasdomain]
+    profile = @resource[:profile]
+    cmd = "/subsystem=security/security-domain=#{@resource[:name]}:remove()"
+    if runasdomain
+      cmd = "/profile=#{profile}#{cmd}"
+    end
+    bringDown('Security Domain', cmd)[:result]
   end
 
   #
   def exists?
-    res = execute("/profile=default/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:read-resource()")
-
-    if res == false
+    runasdomain = @resource[:runasdomain]
+    profile = @resource[:profile]
+    Puppet.debug("Securitydomain > Exists? > Profile = #{profile.inspect}")
+    
+    cmd = "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:read-resource(recursive=true)"
+    if runasdomain
+      cmd = "/profile=#{profile}#{cmd}"
+    end
+    res = execute(cmd)
+    if not res[:result]
+      Puppet.debug("Security Domain does NOT exist")
       return false
     end
+    Puppet.debug("Security Domain exists: #{res[:data].inspect}")
 
     lines = res[:lines]
     lines = lines.gsub( "(\"", "{\"" )
@@ -41,6 +68,10 @@ Puppet::Type.type(:securitydomain).provide(:jbosscli, :parent => Puppet::Provide
     if !@resource[:moduleoptions].nil?
       givenmodulessize = @resource[:moduleoptions].size
       @resource[:moduleoptions].each_with_index do |(key, value), index|
+        if not value.is_a? String
+          value = value.to_s
+        end
+        value.gsub!(/\n/, ' ')
         givenmoduleoptionshash["#{key}"] = "#{value}"
       end
     end
@@ -55,9 +86,11 @@ Puppet::Type.type(:securitydomain).provide(:jbosscli, :parent => Puppet::Provide
     end
 
     if !existingmoduleoptionshash.nil? && !givenmoduleoptionshash.nil? && existingmoduleoptionshash != givenmoduleoptionshash
-      #destroy
+      Puppet.notice("Security domain should be recreated!")
+      destroy
       return false
     end
     return true
   end
+  
 end

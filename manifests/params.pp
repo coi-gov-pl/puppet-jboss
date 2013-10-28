@@ -26,4 +26,7 @@ class jboss::params inherits jboss::params::internal {
   # Target installation directory root
   $install_dir      = hiera('jboss::params::install_dir', "/usr/lib")
   
+  # Runs JBoss Application Server in domain mode
+  $runasdomain      = hiera('jboss::params::runasdomain', true)  
+  
 }

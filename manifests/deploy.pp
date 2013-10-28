@@ -5,16 +5,22 @@ define jboss::deploy (
   $ensure       = 'present',
   $jndi         = $name,
   $path,
-  $runasdomain  = hiera('jboss::deploy::runasdomain', true),
   $redeploy     = false,
   $servergroups = hiera('jboss::deploy::servergroups', undef),
   $controller   = hiera('jboss::deploy::controller','localhost:9999'),
+  $runasdomain  = undef,
 ) {
+  include jboss
+  
+  $realrunasdomain = $runasdomain ? {
+    undef   => $jboss::runasdomain,
+    default => $runasdomain,
+  }
   
   deploy { $jndi:
     ensure       => $ensure,
     source       => $path,
-    runasdomain  => $runasdomain,
+    runasdomain  => $realrunasdomain,
     redeploy     => $redeploy,
     servergroups => $servergroups,
     controller   => $controller,

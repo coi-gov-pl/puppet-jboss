@@ -7,15 +7,20 @@ define jboss::datasource (
   $jndiname                = "java:jboss/datasources/${name}",
   $jta                     = hiera('jboss::datasource::jta', true),
   $profile                 = hiera('jboss::datasource::profile', 'default'),
-  $runasdomain             = hiera('jboss::datasource::runasdomain', true),
   $controller              = hiera('jboss::datasource::controller', 'localhost:9999'),
   $minpoolsize             = hiera('jboss::datasource::minpoolsize', 1),
   $maxpoolsize             = hiera('jboss::datasource::maxpoolsize', 50),
   $validateonmatch         = hiera('jboss::datasource::validateonmatch', false),
   $backgroundvalidation    = hiera('jboss::datasource::backgroundvalidation', false),
   $sharepreparedstatements = hiera('jboss::datasource::sharepreparedstatements', false),
+  $runasdomain             = undef,
 ) {
+  include jboss
   
+  $realrunasdomain = $runasdomain ? {
+    undef   => $jboss::runasdomain,
+    default => $runasdomain,
+  }
   $drivername = $driver['name']
   
   if ! defined(Jboss_jdbcdriver[$drivername]) and $ensure == 'present' {
@@ -24,7 +29,7 @@ define jboss::datasource (
       classname           => $driver['classname'],
       modulename          => $driver['modulename'],
       datasourceclassname => $driver['datasourceclassname'],
-      runasdomain         => $runasdomain,
+      runasdomain         => $realrunasdomain,
       profile             => $profile,
       controller          => $controller,
       require             => Anchor['jboss::service::end'],
@@ -33,7 +38,7 @@ define jboss::datasource (
   
   datasource { $name:
     ensure                  => $ensure,
-    runasdomain             => $runasdomain,
+    runasdomain             => $realrunasdomain,
     profile                 => $profile,
     controller              => $controller,
     jndiname                => $jndiname,

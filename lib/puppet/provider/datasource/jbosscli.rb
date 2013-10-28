@@ -19,18 +19,12 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
 
   def create
     cmd = "xa-data-source --profile=#{@resource[:profile]} add --name=#{@resource[:name]} --jta=#{@resource[:jta]} --jndi-name=#{@resource[:jndiname]} --driver-name=#{@resource[:drivername]} --min-pool-size=#{@resource[:minpoolsize]} --max-pool-size=#{@resource[:maxpoolsize]} --user-name=#{@resource[:username]} --password=#{@resource[:password]} --validate-on-match=#{@resource[:validateonmatch]} --background-validation=#{@resource[:backgroundvalidation]} --share-prepared-statements=#{@resource[:sharepreparedstatements]} --xa-datasource-properties=URL=#{@resource[:xadatasourceproperties]},"
-    res = execute(cmd)
-    if not res[:result]
-      raise "XA DS add failed: #{res[:lines]}"
-    end
+    bringUp('Datasource', cmd)
   end
 
   def destroy
     cmd = "xa-data-source --profile=#{@resource[:profile]} remove --name=#{@resource[:name]}"
-    res = execute(cmd)
-    if not res[:result]
-      raise "XA DS remove failed: #{res[:lines]}"
-    end
+    bringDown('Datasource', cmd) 
   end
 
   #
@@ -48,7 +42,11 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
 
   def setattrib(name, value)
     Puppet.debug(name + ' setting to ' + value)
-    cmd = "/profile=#{@resource[:profile]}/subsystem=datasources/xa-data-source=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
+    cmd = "/subsystem=datasources/xa-data-source=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
+    runasdomain = @resource[:runasdomain]
+    if runasdomain
+      cmd = "/profile=#{@resource[:profile]}#{cmd}"
+    end
     res = execute_datasource(cmd)
     Puppet.debug(res.inspect)
     if not res[:result]
