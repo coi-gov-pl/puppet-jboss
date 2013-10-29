@@ -20,6 +20,7 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
   def create
     cmd = "xa-data-source --profile=#{@resource[:profile]} add --name=#{@resource[:name]} --jta=#{@resource[:jta]} --jndi-name=#{@resource[:jndiname]} --driver-name=#{@resource[:drivername]} --min-pool-size=#{@resource[:minpoolsize]} --max-pool-size=#{@resource[:maxpoolsize]} --user-name=#{@resource[:username]} --password=#{@resource[:password]} --validate-on-match=#{@resource[:validateonmatch]} --background-validation=#{@resource[:backgroundvalidation]} --share-prepared-statements=#{@resource[:sharepreparedstatements]} --xa-datasource-properties=URL=#{@resource[:xadatasourceproperties]},"
     bringUp('Datasource', cmd)
+    setenabled true
   end
 
   def destroy
@@ -27,10 +28,26 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
     bringDown('Datasource', cmd) 
   end
 
-  #
+  def setenabled setting
+    Puppet.debug "setenabled #{setting.inspect}"
+    cmd = compilecmd "/subsystem=datasources/xa-data-source=#{@resource[:name]}:read-attribute(name=enabled)"
+    res = execute_datasource cmd
+    enabled = res[:data]
+    Puppet.debug "Enabling datasource #{@resource[:name]} = #{enabled}: #{setting}"
+    if enabled != setting
+      if setting
+        cmd = compilecmd "/subsystem=datasources/xa-data-source=#{@resource[:name]}:enable(persistent=true)"
+      else
+        cmd = compilecmd "/subsystem=datasources/xa-data-source=#{@resource[:name]}:disable(persistent=true)"
+      end
+      bringUp "Datasource enable set to #{setting.to_s}", cmd
+    end
+  end
+
   def exists?
     $data = nil
-    res = execute_datasource("/profile=#{@resource[:profile]}/subsystem=datasources/xa-data-source=#{@resource[:name]}:read-resource(recursive=true)")
+    cmd = compilecmd "/subsystem=datasources/xa-data-source=#{@resource[:name]}:read-resource(recursive=true)"
+    res = execute_datasource cmd
     if(res[:result] == false)
         Puppet.debug("XA DS does NOT exist")
         return false
@@ -133,7 +150,15 @@ Puppet::Type.type(:datasource).provide(:jbosscli, :parent => Puppet::Provider::J
   def jta=(value)
     setattrib('jta', value.to_s)
   end
+  
+  def enabled
+    $data['enabled'].to_s
+  end
 
+  def enabled= value
+    Puppet.debug "Enabling datasource #{@resource[:name]} to #{value}"
+    setenabled value
+  end
 
   def xadatasourceproperties
     if($data['xa-datasource-properties'].nil? || $data['xa-datasource-properties']['URL'].nil?)

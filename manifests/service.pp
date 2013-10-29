@@ -27,10 +27,24 @@ class jboss::service {
     subscribe   => Service['jboss'],
   }
   
+  exec { 'jboss::service::restart':
+    command     => 'service jboss restart',
+    refreshonly => true,
+    require     => Exec['jboss::service::test-running'],
+  }
+  
   anchor { "jboss::service::end": 
     require => [
       Service[$servicename],
       Exec['jboss::service::test-running'],
+    ], 
+  }
+  
+  anchor { "jboss::service::started": 
+    require => [
+      Service[$servicename],
+      Anchor["jboss::service::end"], 
+      Exec['jboss::service::restart'],
     ], 
   }
 }

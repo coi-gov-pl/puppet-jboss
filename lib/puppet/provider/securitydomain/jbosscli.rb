@@ -3,92 +3,61 @@ require 'puppet/provider/jbosscli'
 Puppet::Type.type(:securitydomain).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
   def create
-    runasdomain = @resource[:runasdomain]
-    profile = @resource[:profile]
-    cmd = "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add(login-modules=[{code=>\"#{@resource[:code]}\",flag=>\"#{@resource[:codeflag]}\",module-options=>["
-    if runasdomain
-      cmd = "/profile=#{profile}#{cmd}"
-    end
+    cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add(login-modules=[{code=>\"#{@resource[:code]}\",flag=>\"#{@resource[:codeflag]}\",module-options=>["
     @resource[:moduleoptions].each_with_index do |(key, value), index|
-      if not value.is_a? String
-        value = value.to_s
-      end
-      value.gsub!(/\n/, ' ')
-      cmd += "#{key}=>\"#{value}\""
+      val = value.to_s.gsub(/\n/, ' ').strip
+      cmd += '%s => "%s"' % [key, val]
       if index == @resource[:moduleoptions].length - 1
         break
       end
       cmd += ","
     end
     cmd += "]}])"
-    cmd2 = "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
-    if runasdomain
-      cmd2 = "/profile=#{profile}#{cmd2}"
-    end
+    cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
     bringUp('Security Domain Cache Type', cmd2)[:result]
     bringUp('Security Domain', cmd)[:result]
   end
 
   def destroy
-    runasdomain = @resource[:runasdomain]
-    profile = @resource[:profile]
-    cmd = "/subsystem=security/security-domain=#{@resource[:name]}:remove()"
-    if runasdomain
-      cmd = "/profile=#{profile}#{cmd}"
-    end
+    cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:remove()"
     bringDown('Security Domain', cmd)[:result]
+  end
+
+  def preparelines lines
+    lines.gsub(/\((\"[^\"]+\") => (\"[^\"]+\")\)/, '\1 => \2').gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
   end
 
   #
   def exists?
-    runasdomain = @resource[:runasdomain]
-    profile = @resource[:profile]
-    cmd = "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:read-resource()"
-    if runasdomain
-      cmd = "/profile=#{profile}#{cmd}"
-    end
-    res = execute(cmd)
+    cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:read-resource()"
+    res = execute cmd
     if not res[:result]
-      Puppet.debug("Security Domain does NOT exist")
+      Puppet.debug "Security Domain does NOT exist"
       return false
     end
-    Puppet.debug("Security Domain exists: #{res[:data].inspect}")
+    undefined = nil
+    lines = preparelines res[:lines]
+    data = eval(lines)['result']
+    Puppet.debug "Security Domain exists: #{data.inspect}"
 
-    lines = res[:lines]
-    lines = lines.gsub( "(\"", "{\"" )
-    lines = lines.gsub( "\")", "\"}" )
-    lines = lines.gsub( "undefined", "nil" )
-    b = eval(lines)
-    existingmodulessize = b["result"]['login-modules'][0]['module-options'].size
-    existingmoduleoptionshash = Hash.new
-    givenmoduleoptionshash = Hash.new
+    existinghash = Hash.new
+    givenhash = Hash.new
 
     if !@resource[:moduleoptions].nil?
-      givenmodulessize = @resource[:moduleoptions].size
-      @resource[:moduleoptions].each_with_index do |(key, value), index|
-        if not value.is_a? String
-          value = value.to_s
-        end
-        value.gsub!(/\n/, ' ')
-        givenmoduleoptionshash["#{key}"] = "#{value}"
+      @resource[:moduleoptions].each do |key, value|
+        givenhash["#{key}"] = value.to_s.gsub(/\n/, ' ').strip
       end
     end
-
-    i = 0
-
-    while i < existingmodulessize  do
-      begin
-        k = b["result"]['login-modules'][0]['module-options'][i].keys
-        v = b["result"]['login-modules'][0]['module-options'][i].values
-        existingmoduleoptionshash["#{k}"] = "#{v}"
-      rescue
-        Puppet.debug "Invalid: " + b["result"]['login-modules'].inspect
-      end
-      i += 1
+    
+    data['login-modules'][0]['module-options'].each do |key, value|
+      existinghash[key.to_s] = value.to_s.gsub(/\n/, ' ').strip
     end
 
-    if !existingmoduleoptionshash.nil? && !givenmoduleoptionshash.nil? && existingmoduleoptionshash != givenmoduleoptionshash
-      Puppet.notice("Security domain should be recreated!")
+    if !existinghash.nil? && !givenhash.nil? && existinghash != givenhash
+      diff = givenhash.to_a - existinghash.to_a
+      Puppet.notice "Security domain should be recreated. Diff: #{diff.inspect}"
+      Puppet.debug "Security domain moduleoptions existing hash => #{existinghash.inspect}"
+      Puppet.debug "Security domain moduleoptions given hash => #{givenhash.inspect}"
       destroy
       return false
     end

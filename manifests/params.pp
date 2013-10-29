@@ -27,6 +27,9 @@ class jboss::params inherits jboss::params::internal {
   $install_dir      = hiera('jboss::params::install_dir', "/usr/lib")
   
   # Runs JBoss Application Server in domain mode
-  $runasdomain      = hiera('jboss::params::runasdomain', true)  
+  $runasdomain      = hiera('jboss::params::runasdomain', true)
+  
+  # Enable JBoss Application Server management console
+  $enableconsole    = hiera('jboss::params::enableconsole', false)  
   
 }

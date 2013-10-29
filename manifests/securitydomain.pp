@@ -3,7 +3,7 @@ define jboss::securitydomain (
   $codeflag                = undef,
   $moduleoptions           = undef,
   $ensure                  = 'present',
-  $profile                 = hiera('jboss::datasource::profile', 'default'),
+  $profile                 = hiera('jboss::datasource::profile', 'full-ha'),
   $controller              = hiera('jboss::datasource::controller', 'localhost:9999'),
   $runasdomain             = undef,
 ) {
@@ -21,6 +21,7 @@ define jboss::securitydomain (
     runasdomain             => $realrunasdomain,
     profile                 => $profile,
     controller              => $controller,
+    notify                  => Exec['jboss::service::restart'],
     require                 => [
       Anchor['jboss::service::end'],
     ],

@@ -79,6 +79,12 @@ Puppet::Type.newtype(:datasource) do
     newvalues(true, false)
     defaultto false
   end
+  
+  newproperty(:enabled) do
+    desc "Is datasource enabled?"
+    newvalues(true, false)
+    defaultto true
+  end
 
   newproperty(:xadatasourceproperties) do
     desc "xa-datasource-properties=URL"

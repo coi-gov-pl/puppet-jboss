@@ -127,15 +127,15 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     trace 'security='
     if value == 'application'
       setconnectionattr 'security-application', true
-      setconnectionattr 'security-domain-and-application', false
-      setconnectionattr 'security-domain', false
+      setconnectionattr 'security-domain-and-application', nil
+      setconnectionattr 'security-domain', nil
     elsif value == 'domain-and-application'
-      setconnectionattr 'security-application', false
+      setconnectionattr 'security-application', nil
       setconnectionattr 'security-domain-and-application', true
-      setconnectionattr 'security-domain', false
+      setconnectionattr 'security-domain', nil
     elsif value == 'domain'
-      setconnectionattr 'security-application', false
-      setconnectionattr 'security-domain-and-application', false
+      setconnectionattr 'security-application', nil
+      setconnectionattr 'security-domain-and-application', nil
       setconnectionattr 'security-domain', true
     else
       raise "Invalid value for security: #{value}. Supported values are: application, domain-and-application, domain"
@@ -167,15 +167,15 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     case @resource[:security]
     when 'application'
         params[:connection]['security-application'] = true
-        params[:connection]['security-domain-and-application'] = false
-        params[:connection]['security-domain'] = false
+        params[:connection]['security-domain-and-application'] = nil
+        params[:connection]['security-domain'] = nil
     when 'domain-and-application'
-        params[:connection]['security-application'] = false
+        params[:connection]['security-application'] = nil
         params[:connection]['security-domain-and-application'] = true
-        params[:connection]['security-domain'] = false
+        params[:connection]['security-domain'] = nil
     when 'domain'
-        params[:connection]['security-application'] = false
-        params[:connection]['security-domain-and-application'] = false
+        params[:connection]['security-application'] = nil
+        params[:connection]['security-domain-and-application'] = nil
         params[:connection]['security-domain'] = true
     end
     return params
@@ -188,7 +188,13 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
   
   def makejbprops input
     trace 'makejbprops'
-    input.inspect.gsub('=>', '=').gsub(/[\{\}]/, '').gsub(/\"([^\"]+)\"=/,'\1=')
+    inp = {}
+    input.each do |k, v|
+      if not v.nil?
+        inp[k] = v
+      end
+    end
+    inp.inspect.gsub('=>', '=').gsub(/[\{\}]/, '').gsub(/\"([^\"]+)\"=/,'\1=')
   end
   
   def setbasicattr name, value
@@ -200,7 +206,12 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     trace "setconnectionattr #{name.inspect}, #{value.inspect}"
     jndiname = @resource[:jndiname]
     jndiescaped = escapeforjbname jndiname
-    setattribute "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}/connection-definitions=#{jndiescaped}", name, value
+    if value.nil?
+      cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}/connection-definitions=#{jndiescaped}:undefine-attribute(name=#{name})"
+      bringDown "Resource adapter connection definition attribute #{name}", cmd
+    else
+      setattribute "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}/connection-definitions=#{jndiescaped}", name, value
+    end
   end
   
   def getconnectionattr name

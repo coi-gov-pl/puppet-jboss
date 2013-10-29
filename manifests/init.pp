@@ -93,6 +93,7 @@ class jboss (
   $java_package     = $jboss::params::java_package,
   $install_dir      = $jboss::params::install_dir,
   $runasdomain      = $jboss::params::runasdomain,
+  $enableconsole    = $jboss::params::enableconsole,
   # Deprecated: use jboss::xml::domain resource or other specific resources
   $domain_xml       = undef,
   # Deprecated: use jboss::xml::host resource or other specific resources

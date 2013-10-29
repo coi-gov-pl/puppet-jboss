@@ -6,7 +6,7 @@ define jboss::resourceadapter (
   $classname,
   $security                = hiera('jboss::resourceadapter::security', 'application'),
   $backgroundvalidation    = hiera('jboss::resourceadapter::backgroundvalidation', false),
-  $profile                 = hiera('jboss::resourceadapter::profile', 'default'),
+  $profile                 = hiera('jboss::resourceadapter::profile', 'full-ha'),
   $controller              = hiera('jboss::resourceadapter::controller', 'localhost:9999'),
   $runasdomain             = undef,
 ) {
@@ -29,5 +29,6 @@ define jboss::resourceadapter (
     profile              => $profile,
     runasdomain          => $runasdomain,
     require              => Anchor['jboss::service::end'],
+    notify               => Exec['jboss::service::restart'],
   }
 } 

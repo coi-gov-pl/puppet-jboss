@@ -17,7 +17,7 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
       cmd = "#{cmd} --force"
     end
     isprintinglog = 100
-    bringUp('Deployment', cmd)
+    bringUp 'Deployment', cmd
   end
 
   def destroy
@@ -29,7 +29,7 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
       cmd = "#{cmd} --server-groups=#{@resource[:servergroup]}"
     end
     isprintinglog = 0
-    bringDown('Deployment', cmd)
+    bringDown 'Deployment', cmd
   end
   
   def name_exists?

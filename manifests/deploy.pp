@@ -24,7 +24,10 @@ define jboss::deploy (
     redeploy     => $redeploy,
     servergroups => $servergroups,
     controller   => $controller,
-    require      => Anchor['jboss::service::end'],
+    require      => [
+      Anchor['jboss::service::end'],
+      Exec['jboss::service::restart'],
+    ],
   }
   
 }

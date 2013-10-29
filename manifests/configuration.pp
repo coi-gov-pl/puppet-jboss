@@ -5,6 +5,7 @@ class jboss::configuration {
   $home = $jboss::home
   $user = $jboss::jboss_user
   $logfile = $jboss::params::internal::logfile
+  $enableconsole = $jboss::enableconsole
   
   anchor { "jboss::configuration::begin":
     require => Anchor['jboss::package::end'],

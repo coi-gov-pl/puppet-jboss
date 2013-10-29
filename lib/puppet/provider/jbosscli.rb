@@ -32,13 +32,13 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     return " ---\n JBoss AS log (last #{lines} lines): \n#{getlog lines}" 
   end
 
-  def execute(passed_args)
+  def execute(jbosscmd)
     file = Tempfile.new('jbosscli')
     path = file.path
     file.close
     file.unlink
 
-    File.open(path, 'w') {|f| f.write(passed_args + "\n") }
+    File.open(path, 'w') {|f| f.write(jbosscmd + "\n") }
 
     ENV['JBOSS_HOME'] = self.jbosshome
     cmd = "#{self.jbossclibin} --connect --file=#{path}"
@@ -47,7 +47,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     end
 
     Puppet.debug("JBOSS_HOME: " + self.jbosshome)
-    Puppet.debug("Komenda do JBoss-cli: " + passed_args)
+    Puppet.debug("Komenda do JBoss-cli: " + jbosscmd)
     lines = `#{cmd}`
     result = $?
     Puppet.debug("Output from jbosscli: " + lines)
@@ -55,7 +55,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     # deletes the temp file
     File.unlink(path)
     return {
-      :cmd    => passed_args,
+      :cmd    => jbosscmd,
       :result => result.exitstatus == 0,
       :lines  => lines
     }
@@ -86,6 +86,8 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   def bringDown(typename, args)
     return executeWithFail(typename, args, 'to remove')
   end
+  
+  $add_log = nil
   
   def isprintinglog=(setting)
     $add_log = setting
