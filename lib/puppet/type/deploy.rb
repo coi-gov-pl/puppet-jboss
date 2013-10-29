@@ -23,7 +23,6 @@ Puppet::Type.newtype(:deploy) do
   end
 
   newproperty(:servergroups, :array_matching => :all) do
-    isrequired
     desc "Array of server groups on which deployment should be done"
   end
 

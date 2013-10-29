@@ -43,9 +43,7 @@ Puppet::Type.type(:securitydomain).provide(:jbosscli, :parent => Puppet::Provide
   def exists?
     runasdomain = @resource[:runasdomain]
     profile = @resource[:profile]
-    Puppet.debug("Securitydomain > Exists? > Profile = #{profile.inspect}")
-    
-    cmd = "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:read-resource(recursive=true)"
+    cmd = "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:read-resource()"
     if runasdomain
       cmd = "/profile=#{profile}#{cmd}"
     end
@@ -79,9 +77,13 @@ Puppet::Type.type(:securitydomain).provide(:jbosscli, :parent => Puppet::Provide
     i = 0
 
     while i < existingmodulessize  do
-      k = b["result"]['login-modules'][0]['module-options'][i].keys
-      v = b["result"]['login-modules'][0]['module-options'][i].values
-      existingmoduleoptionshash["#{k}"] = "#{v}"
+      begin
+        k = b["result"]['login-modules'][0]['module-options'][i].keys
+        v = b["result"]['login-modules'][0]['module-options'][i].values
+        existingmoduleoptionshash["#{k}"] = "#{v}"
+      rescue
+        Puppet.debug "Invalid: " + b["result"]['login-modules'].inspect
+      end
       i += 1
     end
 

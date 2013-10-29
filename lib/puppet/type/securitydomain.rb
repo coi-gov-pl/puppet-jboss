@@ -15,14 +15,6 @@ Puppet::Type.newtype(:securitydomain) do
   newparam(:moduleoptions) do
     desc "module-options given as a table"
   end
-
-  newparam(:code) do
-    desc "code for JBOSS security-domain"
-  end
-
-  newparam(:codeflag) do
-    desc "codeflag for JBOSS security-domain"
-  end
   
   newparam(:runasdomain) do
     desc "Run server in domain mode"
@@ -39,6 +31,14 @@ Puppet::Type.newtype(:securitydomain) do
         super
       end
     end
+  end
+  
+  newparam(:code) do
+    desc "code for JBOSS security-domain"
+  end
+
+  newparam(:codeflag) do
+    desc "codeflag for JBOSS security-domain"
   end
 
 end

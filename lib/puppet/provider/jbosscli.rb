@@ -47,7 +47,6 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     end
 
     Puppet.debug("JBOSS_HOME: " + self.jbosshome)
-    Puppet.debug("Wykonywana komenda: " + cmd)
     Puppet.debug("Komenda do JBoss-cli: " + passed_args)
     lines = `#{cmd}`
     result = $?
@@ -63,8 +62,12 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
   
   def setattribute(path, name, value)
-    Puppet.debug(name + ' setting to ' + value)
-    cmd = "#{path}=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
+    Puppet.debug(name.inspect + ' setting to ' + value.inspect)
+    val = value.to_s
+    if value.is_a? String
+      val = "\"#{val}\""
+    end
+    cmd = "#{path}:write-attribute(name=\"#{name.to_s}\", value=#{val})"
     runasdomain = @resource[:runasdomain]
     if runasdomain
       cmd = "/profile=#{@resource[:profile]}#{cmd}"
@@ -91,13 +94,22 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   def executeWithFail(typename, passed_args, way)
     executed = execute(passed_args)
     if not executed[:result]
-      ex = "#{typename} failed #{way}:\ncmd: #{executed[:cmd]}\nerror: #{executed[:lines]}"
+      ex = "\n#{typename} failed #{way}:\n[CLI command]: #{executed[:cmd]}\n[Error message]: #{executed[:lines]}"
       if not $add_log.nil? and $add_log > 0
         ex = "#{ex}\n#{printlog $add_log}"
       end 
       raise ex
     end
     return executed
+  end
+  
+  def compilecmd cmd
+    runasdomain = @resource[:runasdomain]
+    out = cmd.to_s
+    if runasdomain
+      out = "/profile=#{@resource[:profile]}#{out}"
+    end
+    return out
   end
 
   def execute_datasource(passed_args)

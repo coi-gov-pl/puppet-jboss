@@ -62,9 +62,10 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
   end
 
   def servergroups
+      servergroups = @resource[:servergroups] 
       res = execute("deployment-info --name=#{@resource[:name]}")
-      if(res[:result] == false)
-          return []
+      if not res[:result]
+        return []
       end
       groups = []
       for line in res[:lines]
@@ -73,6 +74,9 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
           if(depinf[1] == "enabled" || depinf[1] == "added")
               groups.push(depinf[0])
           end
+      end
+      if servergroups.nil? or servergroups.empty? or servergroups == ['']
+        return servergroups
       end
       return groups
   end
@@ -84,9 +88,6 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
 
       toset = value - current
       cmd = "deploy --name=#{@resource[:name]} --server-groups=#{toset.join(',')}"
-      res = execute(cmd)
-      if not res[:result]
-        raise "Deployment to servergroups failed: #{res[:lines]}"
-      end
+      res = bringUp('Deployment', cmd)
   end
 end
