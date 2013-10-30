@@ -58,16 +58,27 @@ define jboss::module::assemble::process_artifacts ($dir) {
   include jboss
   $base = jboss_basename($name)
   $target = "${jboss::home}/${dir}/${base}"
-  jboss::util::download { $target:
-    uri     => $name,
-    notify  => Service['jboss'],
-    require => Anchor['jboss::package::end'],
+  if $name =~ /^(?:http|ftp)s?:/ {
+    jboss::util::download { $target:
+      uri     => $name,
+      notify  => Service['jboss'],
+      require => Anchor['jboss::package::end'],
+    }
+    file { $target:
+      mode    => '0640',
+      owner   => $jboss::jboss_user,
+      group   => $jboss::jboss_group,
+      require => Jboss::Util::Download[$target],
+      notify  => Service['jboss'],
+    }  
+  } else {
+    file { $target:
+      source  => $name,
+      mode    => '0640',
+      owner   => $jboss::jboss_user,
+      group   => $jboss::jboss_group,
+      notify  => Service['jboss'],
+    }
   }
-  file { $target:
-    mode    => '0640',
-    owner   => $jboss::jboss_user,
-    group   => $jboss::jboss_group,
-    require => Jboss::Util::Download[$target],
-    notify  => Service['jboss'],
-  }
+  
 }

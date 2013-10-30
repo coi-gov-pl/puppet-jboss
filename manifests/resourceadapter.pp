@@ -27,7 +27,7 @@ define jboss::resourceadapter (
     jndiname             => $jndiname,
     controller           => $controller,
     profile              => $profile,
-    runasdomain          => $runasdomain,
+    runasdomain          => $realrunasdomain,
     require              => Anchor['jboss::service::end'],
     notify               => Exec['jboss::service::restart'],
   }

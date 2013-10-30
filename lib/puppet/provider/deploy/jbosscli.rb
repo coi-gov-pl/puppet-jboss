@@ -7,11 +7,13 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
 
   def create
     cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}"
-    servergroups = @resource[:servergroups] 
-    if servergroups.nil? or servergroups.empty? or servergroups == [''] 
-      cmd = "#{cmd} --all-server-groups"
-    else
-      cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
+    if @resource[:runasdomain]
+      servergroups = @resource[:servergroups]
+      if servergroups.nil? or servergroups.empty? or servergroups == [''] 
+        cmd = "#{cmd} --all-server-groups"
+      else
+        cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
+      end
     end
     if @resource[:redeploy]
       cmd = "#{cmd} --force"
@@ -22,11 +24,13 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
 
   def destroy
     cmd = "undeploy #{@resource[:name]}"
-    servergroups = @resource[:servergroups] 
-    if servergroups.nil? or servergroups.empty? or servergroups == [''] 
-      cmd = "#{cmd} --all-relevant-server-groups"
-    else
-      cmd = "#{cmd} --server-groups=#{@resource[:servergroup]}"
+    if @resource[:runasdomain]
+      servergroups = @resource[:servergroups]
+      if servergroups.nil? or servergroups.empty? or servergroups == [''] 
+        cmd = "#{cmd} --all-relevant-server-groups"
+      else
+        cmd = "#{cmd} --server-groups=#{@resource[:servergroup]}"
+      end
     end
     isprintinglog = 0
     bringDown 'Deployment', cmd
@@ -62,32 +66,38 @@ Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jboss
   end
 
   def servergroups
-      servergroups = @resource[:servergroups] 
-      res = execute("deployment-info --name=#{@resource[:name]}")
-      if not res[:result]
-        return []
-      end
-      groups = []
-      for line in res[:lines]
-          line.strip!
-          depinf = line.split
-          if(depinf[1] == "enabled" || depinf[1] == "added")
-              groups.push(depinf[0])
-          end
-      end
-      if servergroups.nil? or servergroups.empty? or servergroups == ['']
-        return servergroups
-      end
-      return groups
+    if not @resource[:runasdomain]
+      return @resource[:servergroups]
+    end
+    servergroups = @resource[:servergroups] 
+    res = execute("deployment-info --name=#{@resource[:name]}")
+    if not res[:result]
+      return []
+    end
+    groups = []
+    for line in res[:lines]
+        line.strip!
+        depinf = line.split
+        if(depinf[1] == "enabled" || depinf[1] == "added")
+            groups.push(depinf[0])
+        end
+    end
+    if servergroups.nil? or servergroups.empty? or servergroups == ['']
+      return servergroups
+    end
+    return groups
   end
 
   def servergroups=(value)
-      current = servergroups()
-      Puppet.debug(current.inspect())
-      Puppet.debug(value.inspect())
+    if not @resource[:runasdomain]
+      return nil
+    end
+    current = servergroups()
+    Puppet.debug(current.inspect())
+    Puppet.debug(value.inspect())
 
-      toset = value - current
-      cmd = "deploy --name=#{@resource[:name]} --server-groups=#{toset.join(',')}"
-      res = bringUp('Deployment', cmd)
+    toset = value - current
+    cmd = "deploy --name=#{@resource[:name]} --server-groups=#{toset.join(',')}"
+    res = bringUp('Deployment', cmd)
   end
 end

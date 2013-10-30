@@ -164,8 +164,29 @@ class jboss::package (
   file { 'jboss::service-link':
     ensure  => 'link',
     path    => '/etc/init.d/jboss',
-    target  => '/etc/init.d/jboss-domain',
+    target  => $jboss::runasdomain ? {
+      true    => '/etc/init.d/jboss-domain',
+      default => '/etc/init.d/jboss-standalone',
+    },
     require => Jboss::Util::Groupaccess[$jboss::home],
+    notify  => [
+      Exec['jboss::kill-existing::domain'],
+      Exec['jboss::kill-existing::standalone'],
+    ],
+  }
+  
+  exec { 'jboss::kill-existing::domain':
+    command     => '/etc/init.d/jboss-domain stop',
+    refreshonly => true,
+    onlyif      => '/etc/init.d/jboss-domain status',
+    before      => Service['jboss'],
+  }
+  
+  exec { 'jboss::kill-existing::standalone':
+    command     => '/etc/init.d/jboss-standalone stop',
+    refreshonly => true,
+    onlyif      => '/etc/init.d/jboss-standalone status',
+    before      => Service['jboss'],
   }
   
   file { 'jboss::jbosscli':
