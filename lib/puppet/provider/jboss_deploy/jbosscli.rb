@@ -1,5 +1,5 @@
 require 'puppet/provider/jbosscli'
-Puppet::Type.type(:deploy).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
+Puppet::Type.type(:jboss_deploy).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
   def basename
     File.basename(@resource[:source])

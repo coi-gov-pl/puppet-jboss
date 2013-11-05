@@ -1,4 +1,4 @@
-Puppet::Type.newtype(:deploy) do
+Puppet::Type.newtype(:jboss_deploy) do
   @doc = "Deploys and undeploys EAR/WAR artifacts on JBoss Application Server"
   ensurable
 
@@ -12,11 +12,6 @@ Puppet::Type.newtype(:deploy) do
     desc "Path to the EAR/WAR file."
   end
 
-  newparam(:runasdomain, :boolean => true) do
-    desc "Run server in domain mode"
-    defaultto true
-  end
-
   newparam(:redeploy, :boolean => true) do
     desc "Force redeployment"
     defaultto false
@@ -26,6 +21,11 @@ Puppet::Type.newtype(:deploy) do
     desc "Array of server groups on which deployment should be done"
   end
 
+  newparam(:runasdomain, :boolean => true) do
+    desc "Indicate that server is in domain mode"
+    defaultto true
+  end
+  
   newparam(:controller) do
     desc "Domain controller host:port address"
     defaultto "localhost:9999"

@@ -49,7 +49,7 @@ define jboss::datasource (
     }
   }
   
-  datasource { $name:
+  jboss_datasource { $name:
     ensure                  => $ensure,
     enabled                 => $enabled,
     runasdomain             => $realrunasdomain,

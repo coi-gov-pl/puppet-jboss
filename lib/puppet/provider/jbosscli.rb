@@ -1,5 +1,17 @@
 require 'tempfile'
 
+module Coi
+  module Puppet
+    module Functions
+      def self.to_bool input
+        return true if input == true || input =~ (/(true|t|yes|y|1)$/i)
+        return false if input == false || input.nil? || input.empty? || input =~ (/(false|f|no|n|0)$/i)
+        raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
+      end    
+    end
+  end
+end
+
 class Puppet::Provider::Jbosscli < Puppet::Provider
 
   @@bin = "bin/jboss-cli.sh"

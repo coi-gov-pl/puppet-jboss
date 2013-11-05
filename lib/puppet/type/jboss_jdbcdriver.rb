@@ -21,10 +21,10 @@ Puppet::Type.newtype(:jboss_jdbcdriver) do
     desc "Datasource Java class name."
     isrequired
   end
-  
+
   newparam(:profile) do
     desc "The JBoss profile name"
-    defaultto "default"
+    defaultto "full-ha"
   end
 
   newparam(:runasdomain, :boolean => true) do

@@ -1,23 +1,27 @@
-Puppet::Type.newtype(:securitydomain) do
-  @doc = "Security-domain configuration for JBoss Application Sever"
+Puppet::Type.newtype(:jboss_jmsqueue) do
+  @doc = "JMS Queues configuration for JBoss Application Sever"
   ensurable
 
   newparam(:name) do
-    desc ""
+    desc "name"
     isnamevar
   end
 
-  newparam(:profile) do
-    desc "The JBoss profile name"
-    defaultto "full"
+  newparam(:entries) do
+    desc "entries separeted with comma"
   end
 
-  newparam(:moduleoptions) do
-    desc "module-options given as a table"
+  newparam(:durable) do
+    desc "durable true/false"
   end
-  
-  newparam(:runasdomain) do
-    desc "Run server in domain mode"
+    
+  newparam(:profile) do
+    desc "The JBoss profile name"
+    defaultto "full-ha"
+  end
+
+  newparam(:runasdomain, :boolean => true) do
+    desc "Indicate that server is in domain mode"
     defaultto true
   end
   
@@ -31,14 +35,6 @@ Puppet::Type.newtype(:securitydomain) do
         super
       end
     end
-  end
-  
-  newparam(:code) do
-    desc "code for JBOSS security-domain"
-  end
-
-  newparam(:codeflag) do
-    desc "codeflag for JBOSS security-domain"
   end
 
 end

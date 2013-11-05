@@ -13,7 +13,8 @@ define jboss::securitydomain (
     undef   => $jboss::runasdomain,
     default => $runasdomain,
   }
-  securitydomain { $name:
+  
+  jboss_securitydomain { $name:
     code                    => $code,
     codeflag                => $codeflag,
     moduleoptions           => $moduleoptions,

@@ -17,7 +17,7 @@ define jboss::deploy (
     default => $runasdomain,
   }
   
-  deploy { $jndi:
+  jboss_deploy { $jndi:
     ensure       => $ensure,
     source       => $path,
     runasdomain  => $realrunasdomain,

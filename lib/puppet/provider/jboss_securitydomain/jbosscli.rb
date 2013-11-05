@@ -1,6 +1,6 @@
 require 'puppet/provider/jbosscli'
 
-Puppet::Type.type(:securitydomain).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
+Puppet::Type.type(:jboss_securitydomain).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
   def create
     cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add(login-modules=[{code=>\"#{@resource[:code]}\",flag=>\"#{@resource[:codeflag]}\",module-options=>["

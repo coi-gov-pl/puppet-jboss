@@ -1,4 +1,4 @@
-Puppet::Type.newtype(:datasource) do
+Puppet::Type.newtype(:jboss_datasource) do
   @doc = "Data sources configuration for JBoss Application Sever"
   ensurable
 
@@ -7,28 +7,6 @@ Puppet::Type.newtype(:datasource) do
     isnamevar
   end
   
-  newparam(:runasdomain) do
-    desc "Run server in domain mode"
-    defaultto true
-  end
-
-  newparam(:profile) do
-    desc "The JBoss datasource profile name"
-    defaultto "default"
-  end
-
-  newparam(:controller) do
-    desc "Domain controller host:port address"
-    defaultto "localhost:9999"
-    validate do |value|
-      if value !~ /\w:\d/ and @resource[:runasdomain]
-        raise ArgumentError, "Domain controller must be provided"
-      else
-        super
-      end
-    end
-  end
-
   newproperty(:jndiname) do
     desc "jndi-name"
   end
@@ -92,6 +70,28 @@ Puppet::Type.newtype(:datasource) do
     validate do |value|
       unless value =~ /\w:\d/
         raise ArgumentError, "Datasource URL (xadatasourceproperties) must be provided (host:port)"
+      else
+        super
+      end
+    end
+  end
+
+  newparam(:profile) do
+    desc "The JBoss profile name"
+    defaultto "full-ha"
+  end
+
+  newparam(:runasdomain, :boolean => true) do
+    desc "Indicate that server is in domain mode"
+    defaultto true
+  end
+  
+  newparam(:controller) do
+    desc "Domain controller host:port address"
+    defaultto "localhost:9999"
+    validate do |value|
+      if value == nil and @resource[:runasdomain]
+        raise ArgumentError, "Domain controller must be provided"
       else
         super
       end
