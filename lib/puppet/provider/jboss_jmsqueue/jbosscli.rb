@@ -14,6 +14,18 @@ Puppet::Type.type(:jboss_jmsqueue).provide(:jbosscli, :parent => Puppet::Provide
       raise "Array of entries can not be empty"
     end
     durable = @resource[:durable].to_bool
+    extcmd = "/extension=org.jboss.as.messaging"
+    if not execute("#{extcmd}:read-resource()")[:result]
+      bringUp "Extension - messaging", "#{extcmd}:add()"
+    end
+    syscmd = compilecmd "/subsystem=messaging"
+    if not execute("#{syscmd}:read-resource()")[:result]
+      bringUp "Subsystem - messaging", "#{syscmd}:add()"
+    end
+    hornetcmd = compilecmd "/subsystem=messaging/hornetq-server=default"
+    if not execute("#{hornetcmd}:read-resource()")[:result]
+      bringUp "Default HornetQ", "#{hornetcmd}:add()"
+    end
     cmd = "jms-queue #{profile} add --queue-address=#{@resource[:name]} --entries=#{entries} --durable=\"#{durable.to_s}\""
     bringUp "JMS Queue", cmd
   end
