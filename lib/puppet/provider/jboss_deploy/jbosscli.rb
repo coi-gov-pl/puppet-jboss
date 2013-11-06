@@ -1,10 +1,6 @@
 require 'puppet/provider/jbosscli'
 Puppet::Type.type(:jboss_deploy).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
-  def basename
-    File.basename(@resource[:source])
-  end
-
   def create
     cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}"
     if @resource[:runasdomain]

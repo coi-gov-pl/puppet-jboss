@@ -1,13 +1,35 @@
 require 'tempfile'
 
+class Object
+  def blank?
+    return true if self.nil?
+    self.respond_to?(:empty?) ? self.empty? : !self
+  end
+  
+  def to_bool
+    if self.respond_to?(:empty?)
+      str = self
+    else
+      str = self.to_s
+    end
+    if self.is_a? Numeric
+      return self != 0
+    end
+    return true if self == true || str =~ (/(true|t|yes|y)$/i)
+    return false if self == false || self.blank? || str =~ (/(false|f|no|n)$/i)
+    raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
+  end
+end
 module Coi
   module Puppet
     module Functions
       def self.to_bool input
-        return true if input == true || input =~ (/(true|t|yes|y|1)$/i)
-        return false if input == false || input.nil? || input.empty? || input =~ (/(false|f|no|n|0)$/i)
-        raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
-      end    
+        input.to_bool
+      end
+      
+      def self.basename file
+        File.basename file
+      end 
     end
   end
 end
@@ -35,6 +57,10 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
 
   #commands :jbosscli => jbossclibin
+  
+  def runasdomain?
+    @resource[:runasdomain]
+  end
   
   def getlog(lines)
     last_lines = `tail -n #{lines} #{jbosslog}`
@@ -74,22 +100,27 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
   
   def setattribute(path, name, value)
-    Puppet.debug(name.inspect + ' setting to ' + value.inspect)
     val = value.to_s
     if value.is_a? String
       val = "\"#{val}\""
+    else
+      val = value.inspect
     end
-    cmd = "#{path}:write-attribute(name=\"#{name.to_s}\", value=#{val})"
-    runasdomain = @resource[:runasdomain]
-    if runasdomain
+    setattribute_raw path, name, val
+  end
+  
+  def setattribute_raw(path, name, value)
+    Puppet.debug "#{name.inspect} setting to #{value.inspect} for path: #{path}"
+    cmd = "#{path}:write-attribute(name=\"#{name.to_s}\", value=#{value})"
+    if runasdomain?
       cmd = "/profile=#{@resource[:profile]}#{cmd}"
     end
     res = execute_datasource(cmd)
     Puppet.debug(res.inspect)
     if not res[:result]
-      raise "Cannot set #{name}: #{res[:data]}"
+      raise "Cannot set #{name} for #{path}: #{res[:data]}"
     end
-  end 
+  end
   
   def bringUp(typename, args)
     return executeWithFail(typename, args, 'to create')
@@ -103,6 +134,10 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   
   def isprintinglog=(setting)
     $add_log = setting
+  end
+  
+  def trace method
+    Puppet.debug "TRACE > IN > #{method}"
   end
   
   def executeWithFail(typename, passed_args, way)
@@ -128,8 +163,8 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
 
   def execute_datasource(passed_args)
     ret = execute(passed_args)
-    #Puppet.debug("exec ds result: " + ret.inspect)
-    if ret[:result] == false
+    # Puppet.debug("exec ds result: " + ret.inspect)
+    if not ret[:result]
         return {
           :result => false,
           :data => ret[:lines]

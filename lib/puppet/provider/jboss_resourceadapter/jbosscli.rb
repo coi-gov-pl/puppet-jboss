@@ -111,13 +111,13 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
   
   def security
     trace 'security'
-    if to_bool(getconnectionattr 'security-application')
+    if Coi::Puppet::Functions.to_bool(getconnectionattr 'security-application')
       return 'application'
     end
-    if to_bool(getconnectionattr 'security-domain-and-application')
+    if Coi::Puppet::Functions.to_bool(getconnectionattr 'security-domain-and-application')
       return 'domain-and-application'
     end
-    if to_bool(getconnectionattr 'security-domain')
+    if Coi::Puppet::Functions.to_bool(getconnectionattr 'security-domain')
       return 'domain'
     end
     return nil
@@ -143,13 +143,6 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
   end
   
   protected
-  
-  def to_bool input
-    trace 'to_bool'
-    return true if input == true || input =~ (/(true|t|yes|y|1)$/i)
-    return false if input == false || input.nil? || input.empty? || input =~ (/(false|f|no|n|0)$/i)
-    raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
-  end
   
   def prepareconfig
     trace 'prepareconfig'
@@ -230,10 +223,6 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
       return conndef.keys[0]  
     end
     return nil
-  end
-  
-  def trace method
-    Puppet.debug "TRACE > IN > #{method}"
   end
   
 end

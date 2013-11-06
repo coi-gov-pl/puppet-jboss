@@ -3,8 +3,8 @@
  */
 define jboss::jmsqueue (
   $ensure       = 'present',
-  $jndi         = $name,
-  $path,
+  $entries,
+  $durable      = hiera('jboss::jmsqueue::durable', false),
   $profile      = hiera('jboss::jmsqueue::profile', 'full-ha'),
   $controller   = hiera('jboss::jmsqueue::controller','localhost:9999'),
   $runasdomain  = undef,
@@ -17,12 +17,14 @@ define jboss::jmsqueue (
   }
   
   jboss_jmsqueue { $name:
-    ensure                  => $ensure,
-    runasdomain             => $realrunasdomain,
-    profile                 => $profile,
-    controller              => $controller,
-    notify                  => Exec['jboss::service::restart'],
-    require                 => [
+    durable       => $durable,
+    entries       => $entries,
+    ensure        => $ensure,
+    runasdomain   => $realrunasdomain,
+    profile       => $profile,
+    controller    => $controller,
+    notify        => Exec['jboss::service::restart'],
+    require       => [
       Anchor['jboss::service::end'],
     ],
   }

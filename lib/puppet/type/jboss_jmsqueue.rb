@@ -7,11 +7,13 @@ Puppet::Type.newtype(:jboss_jmsqueue) do
     isnamevar
   end
 
-  newparam(:entries) do
-    desc "entries separeted with comma"
+  newproperty(:entries, :array_matching => :all) do
+    desc "entries passed as array"
   end
 
-  newparam(:durable) do
+  newproperty(:durable, :boolean => true) do
+    newvalues :true, :false
+    defaultto false
     desc "durable true/false"
   end
     
