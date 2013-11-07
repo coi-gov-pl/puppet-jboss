@@ -64,16 +64,32 @@ Puppet::Type.newtype(:jboss_datasource) do
     defaultto true
   end
 
-  newproperty(:xadatasourceproperties) do
-    desc "xa-datasource-properties=URL"
+  newproperty(:host) do
+    desc "host to connect"
     isrequired
     validate do |value|
-      unless value =~ /\w:\d/
-        raise ArgumentError, "Datasource URL (xadatasourceproperties) must be provided (host:port)"
+      unless value =~ /\w/
+        raise ArgumentError, "Datasource host is invalid"
       else
         super
       end
     end
+  end
+  
+  newproperty(:port) do
+    desc "port to connect"
+    isrequired
+    validate do |value|
+      unless value =~ /\d/
+        raise ArgumentError, "Datasource port is invalid"
+      else
+        super
+      end
+    end
+  end
+  
+  newproperty(:jdbcsheme) do
+    desc "jdbcsheme to be used"
   end
 
   newparam(:profile) do

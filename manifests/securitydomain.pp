@@ -3,8 +3,8 @@ define jboss::securitydomain (
   $codeflag                = undef,
   $moduleoptions           = undef,
   $ensure                  = 'present',
-  $profile                 = hiera('jboss::datasource::profile', 'full-ha'),
-  $controller              = hiera('jboss::datasource::controller', 'localhost:9999'),
+  $profile                 = hiera('jboss::settings::profile', 'full-ha'),
+  $controller              = hiera('jboss::settings::controller', 'localhost:9999'),
   $runasdomain             = undef,
 ) {
   include jboss

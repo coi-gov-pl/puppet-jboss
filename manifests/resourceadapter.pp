@@ -6,8 +6,8 @@ define jboss::resourceadapter (
   $classname,
   $security                = hiera('jboss::resourceadapter::security', 'application'),
   $backgroundvalidation    = hiera('jboss::resourceadapter::backgroundvalidation', false),
-  $profile                 = hiera('jboss::resourceadapter::profile', 'full-ha'),
-  $controller              = hiera('jboss::resourceadapter::controller', 'localhost:9999'),
+  $profile                 = hiera('jboss::settings::profile', 'full-ha'),
+  $controller              = hiera('jboss::settings::controller', 'localhost:9999'),
   $runasdomain             = undef,
 ) {
   include jboss

@@ -1,13 +1,15 @@
 define jboss::datasource (
   $username,
   $password,
+  $jdbcsheme,
+  $host,
+  $port,
   $driver,
-  $connection              = undef,
   $ensure                  = 'present',
   $jndiname                = "java:jboss/datasources/${name}",
   $jta                     = hiera('jboss::datasource::jta', true),
-  $profile                 = hiera('jboss::datasource::profile', 'full-ha'),
-  $controller              = hiera('jboss::datasource::controller', 'localhost:9999'),
+  $profile                 = hiera('jboss::settings::profile', 'full-ha'),
+  $controller              = hiera('jboss::settings::controller', 'localhost:9999'),
   $minpoolsize             = hiera('jboss::datasource::minpoolsize', 1),
   $maxpoolsize             = hiera('jboss::datasource::maxpoolsize', 50),
   $validateonmatch         = hiera('jboss::datasource::validateonmatch', false),
@@ -15,22 +17,12 @@ define jboss::datasource (
   $sharepreparedstatements = hiera('jboss::datasource::sharepreparedstatements', false),
   $enabled                 = hiera('jboss::datasource::enabled', true),
   $runasdomain             = undef,
-  $baseconnection          = undef,
 ) {
   include jboss
-  
-  if $baseconnection == undef and $connection == undef {
-    fail('Provide at least one of $baseconnection or $connection')
-  }
   
   $realrunasdomain = $runasdomain ? {
     undef   => $jboss::runasdomain,
     default => $runasdomain,
-  }
-  
-  $realconnection = $connection ? {
-    undef   => "${baseconnection}/${name}",
-    default => $connection,
   }
   
   $drivername = $driver['name']
@@ -62,10 +54,12 @@ define jboss::datasource (
     maxpoolsize             => $maxpoolsize,
     username                => $username,
     password                => $password,
+    host                    => $host,
+    port                    => $port,
+    jdbcsheme               => $jdbcsheme,
     validateonmatch         => $validateonmatch,
     backgroundvalidation    => $backgroundvalidation,
     sharepreparedstatements => $sharepreparedstatements,
-    xadatasourceproperties  => $realconnection,
     notify                  => Exec['jboss::service::restart'],
     require                 => [
       Anchor['jboss::service::end'],

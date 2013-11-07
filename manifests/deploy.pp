@@ -7,7 +7,7 @@ define jboss::deploy (
   $path,
   $redeploy     = false,
   $servergroups = hiera('jboss::deploy::servergroups', undef),
-  $controller   = hiera('jboss::deploy::controller','localhost:9999'),
+  $controller   = hiera('jboss::settings::controller','localhost:9999'),
   $runasdomain  = undef,
 ) {
   include jboss
