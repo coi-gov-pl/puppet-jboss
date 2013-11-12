@@ -11,6 +11,18 @@ Puppet::Type.type(:jboss_configproperty).provide(:jbosscli, :parent => Puppet::P
   end
 
   def exists?
+    res = execute_datasource "#{compiledpath}:read-resource()"
+    key = @resource[:key]
+    if res[:result] and not res[:data][key]
+      return true
+    end
     return false
+  end
+  
+  private
+  
+  def compiledpath
+    path = @resource[:path]
+    cmd = compilecmd path
   end
 end

@@ -1,11 +1,15 @@
+/**
+ * 
+ */
 define jboss::configuration::property (
-  $path,
-  $key         = $name,
+  $key,
+  $path        = $name,
   $value       = undef,
   $ensure      = 'present',
   $profile     = hiera('jboss::settings::profile', 'full-ha'),
   $controller  = hiera('jboss::settings::controller', 'localhost:9999'),
   $runasdomain = undef,
+  $dorestart   = true,
 ) {
   include jboss
   
@@ -22,7 +26,10 @@ define jboss::configuration::property (
     controller  => $controller,
     profile     => $profile,
     runasdomain => $realrunasdomain,
-    notify      => Exec['jboss::service::restart'],
     require     => Anchor['jboss::service::end'],
+  }
+  
+  if $dorestart {
+    Jboss_configproperty[$name] ~> Exec['jboss::service::restart']
   }
 }

@@ -9,16 +9,16 @@ Puppet::Type.newtype(:jboss_configproperty) do
   
   newparam(:key) do
     desc "The key of the property to ensure"
-    isnamevar
     isrequired
   end
 
-  newparam(:value) do
+  newproperty(:value) do
     desc "The value for attribute"
   end
   
   newparam(:path) do
     desc "The JBoss configuration path to be processed"
+    isnamevar
     isrequired
   end
 

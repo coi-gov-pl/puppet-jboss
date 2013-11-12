@@ -9,7 +9,7 @@ Puppet::Type.newtype(:jboss_confignode) do
     isrequired
   end
   
-  newparam(:properties, :array_matching => :all) do 
+  newproperty(:properties, :array_matching => :all) do 
     desc "Additional properties for node"
     defaultto []
   end
