@@ -5,13 +5,28 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   $data = nil
 
   def create
-    cmd = "xa-data-source --profile=#{@resource[:profile]} add --name=#{@resource[:name]} --jta=#{@resource[:jta]} --jndi-name=#{@resource[:jndiname]} --driver-name=#{@resource[:drivername]} --min-pool-size=#{@resource[:minpoolsize]} --max-pool-size=#{@resource[:maxpoolsize]} --user-name=#{@resource[:username]} --password=#{@resource[:password]} --validate-on-match=#{@resource[:validateonmatch]} --background-validation=#{@resource[:backgroundvalidation]} --share-prepared-statements=#{@resource[:sharepreparedstatements]} --xa-datasource-properties=URL=#{@resource[:xadatasourceproperties]},"
+    cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ] 
+    cmd.push "--jta=#{@resource[:jta]}"
+    cmd.push "--jndi-name=#{@resource[:jndiname]}"
+    cmd.push "--driver-name=#{@resource[:drivername]}"
+    cmd.push "--min-pool-size=#{@resource[:minpoolsize]}"
+    cmd.push "--max-pool-size=#{@resource[:maxpoolsize]}"
+    cmd.push "--user-name=#{@resource[:username]}"
+    cmd.push "--password=#{@resource[:password]}"
+    cmd.push "--validate-on-match=#{@resource[:validateonmatch]}"
+    cmd.push "--background-validation=#{@resource[:backgroundvalidation]}"
+    cmd.push "--share-prepared-statements=#{@resource[:sharepreparedstatements]}"
+    if @resource[:xa]
+      cmd.push "--xa-datasource-properties={URL=#{@resource[:xadatasourceproperties]}}"
+    else
+      cmd.push "--connection-url=#{@resource[:xadatasourceproperties]}}"
+    end
     bringUp('Datasource', cmd)
     setenabled true
   end
 
   def destroy
-    cmd = "xa-data-source --profile=#{@resource[:profile]} remove --name=#{@resource[:name]}"
+    cmd = "#{create_delete_cmd} remove --name=#{@resource[:name]}"
     bringDown('Datasource', cmd) 
   end
 
@@ -147,20 +162,34 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     setenabled value
   end
 
-  def xadatasourceproperties
-    if($data['xa-datasource-properties'].nil? || $data['xa-datasource-properties']['URL'].nil?)
-        return nil
+  # def xadatasourceproperties
+    # if($data['xa-datasource-properties'].nil? || $data['xa-datasource-properties']['URL'].nil?)
+        # return nil
+    # end
+    # $data['xa-datasource-properties']['URL']['value']
+  # end
+# 
+  # def xadatasourceproperties=(value)
+    # Puppet.debug('XA DS URL setting to ' + value)
+    # cmd = "/profile=#{@resource[:profile]}/subsystem=datasources/xa-data-source=#{@resource[:name]}/xa-datasource-properties=URL:write-attribute(name=value, value=#{value})"
+    # res = execute_datasource(cmd)
+    # Puppet.debug(res.inspect)
+    # if not res[:result]
+      # raise "Cannot set #{name}: #{res[:data]}"
+    # end
+  # end
+  
+  private
+  
+  def create_delete_cmd
+    cmd = "data-source"
+    if @resource[:xa]
+      cmd = "xa-#{cmd}"
     end
-    $data['xa-datasource-properties']['URL']['value']
-  end
-
-  def xadatasourceproperties=(value)
-    Puppet.debug('XA DS URL setting to ' + value)
-    cmd = "/profile=#{@resource[:profile]}/subsystem=datasources/xa-data-source=#{@resource[:name]}/xa-datasource-properties=URL:write-attribute(name=value, value=#{value})"
-    res = execute_datasource(cmd)
-    Puppet.debug(res.inspect)
-    if not res[:result]
-      raise "Cannot set #{name}: #{res[:data]}"
+    if @resource[:runasdomain]
+      cmd = "#{cmd} --profile=#{@resource[:profile]}"
     end
+    return cmd
   end
+  
 end

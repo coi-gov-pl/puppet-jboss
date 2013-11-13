@@ -1,4 +1,3 @@
-require 'puppet/parameter/boolean'
 Puppet::Type.newtype(:jboss_confignode) do
   @doc = "Generic configuration entry for JBoss Application Sever"
   ensurable
@@ -19,8 +18,9 @@ Puppet::Type.newtype(:jboss_confignode) do
     defaultto "full-ha"
   end
 
-  newparam(:runasdomain, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+  newparam(:runasdomain, :boolean => true) do
     desc "Indicate that server is in domain mode"
+    newvalues :true, :false
     defaultto true
   end
   

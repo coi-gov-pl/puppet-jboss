@@ -83,6 +83,7 @@ class jboss::package (
       distribution => 'jdk',
       version      => $java_version,
       package      => $java_package,
+      notify       => Service['jboss'],
     }
     Class['java'] -> Exec['jboss::package::check-for-java']
   }

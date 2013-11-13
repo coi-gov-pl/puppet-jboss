@@ -7,6 +7,17 @@ Puppet::Type.newtype(:jboss_datasource) do
     isnamevar
   end
   
+  newparam(:dbname) do
+    desc "The database's name"
+    defaultto value(:name)
+  end
+  
+  newparam(:xa) do
+    desc "Is it XA Datasource?"
+    newvalues :true, :false
+    defaultto false
+  end
+  
   newproperty(:jndiname) do
     desc "jndi-name"
   end
@@ -88,8 +99,9 @@ Puppet::Type.newtype(:jboss_datasource) do
     end
   end
   
-  newproperty(:jdbcsheme) do
-    desc "jdbcsheme to be used"
+  newproperty(:jdbcscheme) do
+    desc "jdbcscheme to be used"
+    isrequired
   end
 
   newparam(:profile) do
