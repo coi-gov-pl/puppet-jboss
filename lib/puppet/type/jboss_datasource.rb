@@ -7,15 +7,14 @@ Puppet::Type.newtype(:jboss_datasource) do
     isnamevar
   end
   
-  newparam(:dbname) do
-    desc "The database's name"
-    defaultto value(:name)
-  end
-  
   newparam(:xa) do
     desc "Is it XA Datasource?"
     newvalues :true, :false
     defaultto false
+  end
+  
+  newproperty(:dbname) do
+    desc "The database's name"
   end
   
   newproperty(:jndiname) do

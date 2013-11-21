@@ -64,7 +64,6 @@ define jboss::datasource (
     validateonmatch         => $validateonmatch,
     backgroundvalidation    => $backgroundvalidation,
     sharepreparedstatements => $sharepreparedstatements,
-    notify                  => Exec['jboss::service::restart'],
     require                 => [
       Anchor['jboss::service::end'],
       Jboss_jdbcdriver[$drivername],
