@@ -62,16 +62,6 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     $data = res[:data]
     return true
   end
-
-  def setattrib name, value
-    Puppet.debug name + ' setting to ' + value
-    cmd = compilecmd "#{datasource_path}:write-attribute(name=#{name}, value=#{value})"
-    res = execute_datasource cmd
-    Puppet.debug res.inspect
-    if not res[:result]
-      raise "Cannot set #{name}: #{res[:data]}"
-    end
-  end 
  
   def jndiname
     $data['jndi-name']
@@ -163,7 +153,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def jdbcscheme
-    connectionHash[:Scheme]
+    connectionHash()[:Scheme]
   end
   
   def jdbcscheme= value
@@ -171,7 +161,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def host
-    connectionHash[:ServerName]
+    connectionHash()[:ServerName]
   end
   
   def host= value
@@ -179,7 +169,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def port
-    connectionHash[:PortNumber]
+    connectionHash()[:PortNumber]
   end
   
   def port= value
@@ -187,7 +177,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def dbname
-    connectionHash[:DatabaseName]
+    connectionHash()[:DatabaseName]
   end
   
   def dbname= value
@@ -196,7 +186,13 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   
   private
   
+  def setattrib name, value
+    trace 'setattrib(%s, %s)' % [ name.inspect, value.inspect ]
+    setattribute datasource_path, name, value
+  end 
+  
   def createXaProperties
+    trace 'createXaProperties'
     out = []
     props = [:ServerName, :PortNumber, :DatabaseName]
     props.each do |prop|
@@ -207,6 +203,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def writeConnection property, value
+    trace 'writeConnection(%s, %s)' % [ property.inspect, value.inspect ]
     if xa?
       writeXaProperty property, value
     else
@@ -220,6 +217,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def getPuppetKey property
+    trace 'getPuppetKey(%s)' % property.inspect
     case property
       when :Scheme
         return :jdbcscheme
@@ -235,49 +233,66 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def writeXaProperty property, value
+    trace 'readXaProperty(%s, %s)' % [ property.inspect, value.inspect ]
     if property == :Scheme
       $data['xa-datasource-properties'][property.to_s]['value'] = value
       return
     end
     cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:read-resource()"
-    if not execute(cmd)[:result]
-      cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:add()"
-      bringUp "XA Datasource Property " + property.to_s, cmd
+    if execute(cmd)[:result]
+      cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:remove()"
+      bringDown "XA Datasource Property " + property.to_s, cmd
     end
-    cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:write-attribute(name=value,value=#{value})"
+    cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:add(value=#{escape value})"
     bringUp "XA Datasource Property set " + property.to_s, cmd
     $data['xa-datasource-properties'][property.to_s]['value'] = value
   end
   
   def readXaProperty property
+    trace 'readXaProperty(%s)' % property.inspect
     if property == :Scheme
-      $data['xa-datasource-properties'][property.to_s]['value'] = @resource[getPuppetKey property]
-      return @resource[getPuppetKey property]
+      key = getPuppetKey property
+      trace 'readXaProperty puppetKey = %s' % [key.inspect]
+      scheme = @resource[key]
+      if $data['xa-datasource-properties'][property.to_s].nil?
+        $data['xa-datasource-properties'][property.to_s] = {}
+      end
+      $data['xa-datasource-properties'][property.to_s]['value'] = scheme
+      return scheme
     end
     readed = $data['xa-datasource-properties']
-    if readed.nil? or readed[property.to_s].nil? or readed[property.to_s]['value'].nil?
+    key = property.to_s
+    if readed.nil? or readed[key].nil? or readed[key]['value'].blank?
       name = @resource[:name]
-      cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:read-attribute(name=value)"
+      cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{key}:read-attribute(name=value)"
       result = execute_datasource cmd
-      readed[property.to_s]['value'] = result[:data] 
+      readed[key]['value'] = result[:data] 
     end 
-    return readed[property.to_s]['value']
+    return readed[key]['value']
   end
   
   def connectionHashFromXa
-    props = [:ServerName, :PortNumber, :DatabaseName]
-    ret = {}
+    trace 'connectionHashFromXa'
+    props = [:Scheme, :ServerName, :PortNumber, :DatabaseName]
+    out = {}
     props.each do |sym|
-      ret[sym] = readXaProperty sym
+      trace 'connectionHashFromXa::loop -> %s' % sym.inspect
+      property = readXaProperty sym
+      trace 'connectionHashFromXa::loop -> %s : property = %s' % [sym.inspect, property.inspect]
+      trace 'connectionHashFromXa::loop -> %s : out = %s' % [sym.inspect, out.inspect]
+      out[sym] = property
     end
-    return ret
+    trace 'connectionHashFromXa : out = %s' % [out.inspect]
+    return out
   end
   
   def connectionHashFromStd
+    trace 'connectionHashFromStd'
     parseConnectionUrl $data['connection-url'].to_s
   end
   
   def connectionHash
+    trace 'connectionHash'
     if xa?
       begin
         return connectionHashFromXa
@@ -306,15 +321,18 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def xa?
+    trace 'xa?'
     @resource[:xa]
   end
   
   def oracle?
+    trace 'oracle?'
     scheme = @resource[:jdbcscheme]
     scheme[0, 6] == 'oracle'
   end
   
   def create_delete_cmd
+    trace 'create_delete_cmd'
     cmd = "data-source"
     if xa?
       cmd = "xa-#{cmd}"
@@ -326,6 +344,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def datasource_path
+    trace 'datasource_path'
     if xa?
       "/subsystem=datasources/xa-data-source=#{@resource[:name]}"
     else
@@ -334,6 +353,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def parseConnectionUrl url
+    trace 'parseConnectionUrl(%s)' % url.inspect
     begin
       if oracle?
         splited = url.split '@'
@@ -360,6 +380,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def connectionUrl
+    trace 'connectionUrl'
     scheme = @resource[:jdbcscheme]
     host = @resource[:host]
     port = @resource[:port]

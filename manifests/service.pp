@@ -21,6 +21,7 @@ class jboss::service {
   }
   
   exec { 'jboss::service::test-running':
+    loglevel    => 'emerg',
     command     => 'tail -n 50 /var/log/jboss-as/console.log && exit 1',
     unless      => "ps aux | grep ${servicename} | grep -vq grep",
     logoutput   => true,

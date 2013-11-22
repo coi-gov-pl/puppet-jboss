@@ -2,15 +2,17 @@ Puppet::Type.newtype(:jboss_confignode) do
   @doc = "Generic configuration entry for JBoss Application Sever"
   ensurable
   
-  newparam(:path) do
-    desc "The JBoss configuration path to be ensured"
-    isnamevar
-    isrequired
+  newparam(:name) do
+    desc "The name of resource"
   end
   
-  newproperty(:properties, :array_matching => :all) do 
+  newparam(:path) do
+    desc "The JBoss configuration path to be ensured"
+  end
+  
+  newproperty(:properties) do 
     desc "Additional properties for node"
-    defaultto []
+    defaultto {}
   end
 
   newparam(:profile) do

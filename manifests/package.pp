@@ -154,6 +154,13 @@ class jboss::package (
     target  => "${jboss::home}/domain/configuration/domain.xml",
     require => Jboss::Util::Groupaccess[$jboss::home],
   }
+  $hostfile = 'host.xml'
+  file { 'jboss::configuration-link::host':
+    ensure  => 'link',
+    path    => "/etc/jboss-as/${hostfile}",
+    target  => "${jboss::home}/domain/configuration/${hostfile}",
+    require => Jboss::Util::Groupaccess[$jboss::home],
+  }
   
   file { 'jboss::configuration-link::standalone':
     ensure  => 'link',

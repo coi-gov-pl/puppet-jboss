@@ -100,13 +100,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
   
   def setattribute(path, name, value)
-    val = value.to_s
-    if value.is_a? String
-      val = "\"#{val}\""
-    else
-      val = value.inspect
-    end
-    setattribute_raw path, name, val
+    setattribute_raw path, name, escape(value)
   end
   
   def setattribute_raw(path, name, value)
@@ -140,6 +134,14 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     Puppet.debug "TRACE > IN > #{method}"
   end
   
+  def escape value
+    if value.respond_to? :empty?
+      str = '"%s"' % value.gsub(/([^\\])\"/, '\1\\"')
+    else
+      str = value.to_s
+    end
+  end
+  
   def executeWithFail(typename, passed_args, way)
     executed = execute(passed_args)
     if not executed[:result]
@@ -155,14 +157,14 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   def compilecmd cmd
     runasdomain = @resource[:runasdomain]
     out = cmd.to_s
-    if runasdomain
+    if runasdomain && out[0..9] == '/subsystem'
       out = "/profile=#{@resource[:profile]}#{out}"
     end
     return out
   end
 
-  def execute_datasource(passed_args)
-    ret = execute(passed_args)
+  def execute_datasource passed_args
+    ret = execute passed_args
     # Puppet.debug("exec ds result: " + ret.inspect)
     if not ret[:result]
         return {
@@ -170,10 +172,12 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
           :data => ret[:lines]
         }
     end
-    #wskazanie typu dla undefined
+    # Wskazanie typu dla undefined
     undefined = nil
-    evalines = eval(ret[:lines])
-    Puppet.debug(evalines.inspect)
+    # Obsługa expression z JBossa
+    ret[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
+    evalines = eval ret[:lines]
+    Puppet.debug evalines.inspect
     return {
       :result  => evalines["outcome"] == "success",
       :data    => (evalines["outcome"] == "success" ? evalines["result"] : evalines["failure-description"])

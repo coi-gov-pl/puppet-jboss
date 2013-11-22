@@ -11,6 +11,15 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def exists?
+    if @resource[:path].nil?
+      @resource[:path] = @resource[:name]
+    end
+    @resource[:properties].each do |key, value|
+      if value == "undef"
+        @resource[:properties][key] = nil
+      end
+    end
+    
     res = execute_datasource "#{compiledpath}:read-resource()"
     if res[:result]
       $data = {}
@@ -34,7 +43,7 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
     newprops.each do |key, value|
       if not $data.key? key or $data[key] != value
         writekey key, value
-        Puppet.notice "Key `#{key}` with value `#{value}` for path `#{compiledpath}` has been set."
+        Puppet.notice "JBoss::Property: Key `#{key}` with value `#{value.inspect}` for path `#{compiledpath}` has been set."
       end 
     end
   end
@@ -42,8 +51,12 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
   private
   
   def writekey key, value
-    preparedval = prepareval value
-    bringUp 'Configuration node property', "#{compiledpath}:write-attribute(name=#{key}, value=#{preparedval})"
+    if value.nil?
+      bringDown 'Configuration node property', "#{compiledpath}:undefine-attribute(name=#{key})"
+    else
+      preparedval = escape value
+      bringUp 'Configuration node property', "#{compiledpath}:write-attribute(name=#{key}, value=#{preparedval})"
+    end
   end
   
   def compiledpath
@@ -51,20 +64,11 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
     cmd = compilecmd path
   end
   
-  def prepareval value
-    if value.is_a? String
-      preparedval = '"%s"' % value
-    else
-      preparedval = value.to_s
-    end
-    preparedval
-  end
-  
   def compileprops
     props = @resource[:properties]
     arr = []
     props.each do |key, value|
-      preparedval = prepareval value
+      preparedval = escape value
       arr.push "#{key}=#{preparedval}"
     end
     arr.join ', '

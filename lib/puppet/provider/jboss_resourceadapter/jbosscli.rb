@@ -6,34 +6,17 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     trace 'create'
     name = @resource[:name]
     jndiname = @resource[:jndiname]
-    jndiescaped = escapeforjbname @resource[:jndiname]
     params = prepareconfig()
     basicsParams = makejbprops params[:basics]
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}:add(#{basicsParams})"
     bringUp "Resource adapter", cmd
-    createconn jndiescaped
+    createConnections
   end
 
   def destroy
     trace 'destroy'
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}:remove()"
     bringDown "Resource adapter", cmd
-  end
-  
-  def createconn jndiname
-    trace 'createconn'
-    name = @resource[:name]
-    params = prepareconfig()
-    connectionParams = makejbprops params[:connection]
-    cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{jndiname}:add(#{connectionParams})"
-    bringUp "Resource adapter connection-definition", cmd
-  end
-  
-  def destroyconn jndiname
-    trace 'destroyconn'
-    name = @resource[:name]
-    cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{jndiname}:remove()"
-    bringDown "Resource adapter connection-definition", cmd
   end
   
   def exists?
@@ -71,22 +54,36 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
   
   def jndiname
     trace 'jndiname'
-    jndi = getactualjndi
+    jndi = []
+    $data['connection-definitions'].each do |connName, config|
+      jndi.push config['jndi-name']
+    end
+    given = @resource[:jndiname]
+    if jndi - given == [] and given - jndi == []
+      # Returning in apopriate order to prevent changes
+      jndi = given
+    end
     Puppet.debug "JNDI getter -------- POST! => #{jndi.inspect}"
     return jndi
   end
   
   def jndiname= value
-    trace 'jndiname='
+    trace 'jndiname=(%s)' % value.inspect
     Puppet.debug "JNDI setter -------- PRE!"
-    actualjndi = getactualjndi
-    if not actualjndi.nil?
-      actualjndi = escapeforjbname actualjndi
-      destroyconn actualjndi
-    end 
-    newjndi = escapeforjbname value
-    createconn newjndi
-    exists?
+    toremove = jndiname - value # Existing array minus new provides array to be removed
+    trace 'jndiname=(%s) :: toremove=%s' % [value.inspect, toremove.inspect]
+    toadd = value - jndiname    # New array minus existing provides array to be added
+    trace 'jndiname=(%s) :: toadd=%s' % [value.inspect, toadd.inspect]
+    toremove.each do |jndi|
+      name = escapeforjbname jndi
+      destroyconn name  
+    end
+    toadd.each do |jndi|
+      name = escapeforjbname jndi
+      config = prepareconfig()
+      createconn name, config[:connections][name]
+    end
+    exists? # Re read
   end
   
   def classname
@@ -144,6 +141,40 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
   
   protected
   
+  def createConnections
+    trace 'createConnections'
+    prepareconfig()[:connections].each do |connectionName, config|
+      if not connExists? connectionName
+        createconn connectionName, config
+      end
+    end
+  end
+  
+  def connExists? connectionName
+    trace 'connExists?(%s)' % [ connectionName.inspect ]
+    if not $data['connection-definitions'][connectionName].nil?
+      return true
+    end
+    name = @resource[:name]
+    cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{connectionName}:read-resource()"
+    return execute(cmd)[:result]
+  end
+  
+  def createconn connectionName, config
+    trace 'createconn(%s, %s)' % [ connectionName.inspect, config.inspect ]
+    name = @resource[:name]
+    connectionParams = makejbprops config
+    cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{connectionName}:add(#{connectionParams})"
+    bringUp "Resource adapter connection-definition", cmd
+  end
+  
+  def destroyconn connectionName
+    trace 'destroyconn(%s)' % connectionName.inspect
+    name = @resource[:name]
+    cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{connectionName}:remove()"
+    bringDown "Resource adapter connection-definition", cmd
+  end
+  
   def prepareconfig
     trace 'prepareconfig'
     params = {
@@ -151,36 +182,40 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
         'archive'             => @resource[:archive],
         'transaction-support' => @resource[:transactionsupport],        
       },
-      :connection => {
-        'jndi-name'             => @resource[:jndiname],
+      :connections => {}
+    }
+    @resource[:jndiname].each do |jndiname|
+      escaped = escapeforjbname jndiname
+      params[:connections][escaped] = {
+        'jndi-name'             => jndiname,
         'class-name'            => @resource[:classname],
         'background-validation' => @resource[:backgroundvalidation],
       }
-    }
-    case @resource[:security]
-    when 'application'
-        params[:connection]['security-application'] = true
-        params[:connection]['security-domain-and-application'] = nil
-        params[:connection]['security-domain'] = nil
-    when 'domain-and-application'
-        params[:connection]['security-application'] = nil
-        params[:connection]['security-domain-and-application'] = true
-        params[:connection]['security-domain'] = nil
-    when 'domain'
-        params[:connection]['security-application'] = nil
-        params[:connection]['security-domain-and-application'] = nil
-        params[:connection]['security-domain'] = true
+      case @resource[:security]
+      when 'application'
+          params[:connections][escaped]['security-application'] = true
+          params[:connections][escaped]['security-domain-and-application'] = nil
+          params[:connections][escaped]['security-domain'] = nil
+      when 'domain-and-application'
+          params[:connections][escaped]['security-application'] = nil
+          params[:connections][escaped]['security-domain-and-application'] = true
+          params[:connections][escaped]['security-domain'] = nil
+      when 'domain'
+          params[:connections][escaped]['security-application'] = nil
+          params[:connections][escaped]['security-domain-and-application'] = nil
+          params[:connections][escaped]['security-domain'] = true
+      end
     end
     return params
   end
   
   def escapeforjbname input
-    trace 'escapeforjbname'
+    trace 'escapeforjbname(%s)' % input.inspect
     input.gsub(/([^\\])\//, '\1\\/').gsub(/([^\\]):/, '\1\\:')
   end
   
   def makejbprops input
-    trace 'makejbprops'
+    trace 'makejbprops(%s)' % input.inspect
     inp = {}
     input.each do |k, v|
       if not v.nil?
@@ -191,38 +226,38 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
   end
   
   def setbasicattr name, value
-    trace 'setbasicattr'
+    trace 'setbasicattr(%s, %s)' % [name.inspect, value.inspect]
     setattribute "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}", name, value
+    $data[name] = value
   end
   
   def setconnectionattr name, value
-    trace "setconnectionattr #{name.inspect}, #{value.inspect}"
-    jndiname = @resource[:jndiname]
-    jndiescaped = escapeforjbname jndiname
-    if value.nil?
-      cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}/connection-definitions=#{jndiescaped}:undefine-attribute(name=#{name})"
-      bringDown "Resource adapter connection definition attribute #{name}", cmd
-    else
-      setattribute "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}/connection-definitions=#{jndiescaped}", name, value
+    trace "setconnectionattr(#{name.inspect}, #{value.inspect})"
+    prepareconfig()[:connections].each do |connectionName, config|
+      jndi = config['jndi-name']
+      if not connExists? jndi
+        createconn connectionName, config
+        next
+      end
+      if value.nil?
+        cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}/connection-definitions=#{connectionName}:undefine-attribute(name=#{name})"
+        bringDown "Resource adapter connection definition attribute #{name}", cmd
+      else
+        setattribute "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}/connection-definitions=#{connectionName}", name, value
+      end
+      $data['connection-definitions'][jndi][name] = value
     end
   end
   
   def getconnectionattr name
-    trace "getconnectionattr #{name.inspect}"
-    jndi = getactualjndi
-    if jndi.nil?
-      return nil
+    trace "getconnectionattr(#{name.inspect})"
+    prepareconfig()[:connections].each do |connectionName, config|
+      jndi = config['jndi-name']
+      if not connExists? jndi
+        return nil
+      end
+      return $data['connection-definitions'][jndi][name]
     end
-    $data['connection-definitions'][jndi][name]
-  end
-  
-  def getactualjndi
-    trace 'getactualjndi'
-    conndef = $data['connection-definitions']
-    if not conndef.nil?
-      return conndef.keys[0]  
-    end
-    return nil
   end
   
 end

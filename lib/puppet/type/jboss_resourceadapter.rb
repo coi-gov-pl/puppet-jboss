@@ -18,7 +18,7 @@ Puppet::Type.newtype(:jboss_resourceadapter) do
     isrequired
   end
   
-  newproperty(:jndiname) do
+  newproperty(:jndiname, :array_matching => :all) do
     desc "The resource adapter connection definition jndi name."
     isrequired
   end
