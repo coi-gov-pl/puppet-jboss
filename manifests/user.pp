@@ -1,6 +1,7 @@
 define jboss::user (
-  $user = $name, 
-  $realm = 'ManagementRealm', 
+  $user       = $name,
+  $ensure     = 'present',
+  $realm      = 'ManagementRealm', 
   $password, 
   $jboss_home = undef, # Deprecated, it is not needed, will be removed
 ) {
@@ -12,25 +13,45 @@ define jboss::user (
     default => $jboss_home,
   }
   
-  case $realm {
-    'ManagementRealm'  : {
-      exec { "add jboss user ${name}/${realm}":
+  $dir = $jboss::runasdomain ? {
+    true    => 'domain',
+    default => 'standalone',
+  }
+  
+  $file = $realm ? {
+    'ManagementRealm'  => 'mgmt-users.properties',
+    'ApplicationRealm' => 'application-users.properties',
+    default            => undef,
+  }
+  
+  if $file == undef {
+    fail("Unknown realm `${realm}` for jboss::user")
+  }
+  
+  $filepath = "${home}/${dir}/configuration/${file}"
+  
+  case $ensure {
+    'present': {
+      exec { "jboss::user::add(${realm}/${name})":
+        alias       => "add jboss user ${name}/${realm}", # Deprecated, it is not needed, will be removed
         environment => ["JBOSS_HOME=${home}",],
-        command     => "${home}/bin/add-user.sh -u ${name} -p ${password} -s",
-        unless      => "/bin/egrep -e '^${name}=' ${home}/domain/configuration/mgmt-users.properties",
+        command     => "${home}/bin/add-user.sh -u '${name}' -p '${password}' -s",
+        unless      => "/bin/egrep -e '^${name}=' ${filepath}",
+        require     => Anchor['jboss::package::end'],
         logoutput   => 'on_failure',
       }
     }
-    'ApplicationRealm' : {
-      exec { "add jboss user ${name}/${realm}":
-        environment => ["JBOSS_HOME=${home}",],
-        command     => "${home}/bin/add-user.sh -u ${name} -p ${password} -s -a",
-        unless      => "/bin/egrep -e '^${name}=' ${home}/domain/configuration/application-users.properties",
+    'absent':{
+      exec { "jboss::user::remove(${realm}/${name})":
+        command     => "sed -iE 's/^${name}=.*$//g' ${filepath}",
+        onlyif      => "/bin/egrep -e '^${name}=' ${filepath}",
+        require     => Anchor['jboss::package::end'],
         logoutput   => 'on_failure',
       }
     }
-    default            : {
-      fail("Unknown realm ${realm} for jboss::user")
+    default: {
+      fail("Ensure must be eiter present or absent, provided: `${ensure}`!")
     }
   }
+  
 }
