@@ -41,7 +41,7 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
     if runasdomain
       cmd = "/profile=#{@resource[:profile]}#{cmd}"
     end
-    res = execute_datasource(cmd)
+    res = executeAndGet(cmd)
     if(res[:result] == false)
         Puppet.debug("JDBC Driver #{@resource[:name]} does NOT exist")
         return false
@@ -58,7 +58,7 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
     if runasdomain
       cmd = "/profile=#{@resource[:profile]}#{cmd}"
     end
-    res = execute_datasource(cmd)
+    res = executeAndGet(cmd)
     Puppet.debug(res.inspect)
     if not res[:result]
       raise "Cannot set #{name}: #{res[:data]}"

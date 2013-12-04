@@ -20,7 +20,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
   def exists?
     $data = nil
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}:read-resource(recursive=true)"
-    res = execute_datasource(cmd)
+    res = executeAndGet(cmd)
     if not res[:result]
       Puppet.debug "Resource Adapter is not set"
       return false
@@ -58,7 +58,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
       # Returning in apopriate order to prevent changes
       jndis = given
     end
-    Puppet.debug "JNDI getter -------- POST! => #{jndi.inspect}"
+    Puppet.debug "JNDI getter -------- POST! => #{jndis.inspect}"
     return jndis
   end
   
@@ -149,7 +149,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     name = @resource[:name]
     connectionName = escapeforjbname jndi
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{connectionName}:read-resource()"
-    res = execute_datasource cmd
+    res = executeAndGet cmd
     if res[:result]
       $data['connection-definitions'][jndi] = res[:data]
     end
@@ -177,14 +177,13 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
         'archive'             => @resource[:archive],
         'transaction-support' => @resource[:transactionsupport],        
       },
-      :connections => {}
+      :connections => {},
     }
     if @resource[:jndiname].nil?
       @resource[:jndiname] = []
     end
     @resource[:jndiname].each do |jndiname|
       params[:connections][jndiname] = {
-        'jbname'                => escapeforjbname(jndi),
         'jndi-name'             => jndiname,
         'class-name'            => @resource[:classname],
         'background-validation' => @resource[:backgroundvalidation],

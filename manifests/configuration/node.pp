@@ -1,13 +1,30 @@
+include jboss::params
+
+/**
+ * Generic configuration tool
+ */
 define jboss::configuration::node (
   $path        = $name,
   $properties  = undef,
   $ensure      = 'present',
-  $profile     = hiera('jboss::settings::profile', 'full-ha'),
-  $controller  = hiera('jboss::settings::controller', 'localhost:9999'),
+  $profile     = $jboss::params::profile,
+  $controller  = $jboss::params::controller,
   $runasdomain = undef,
   $dorestart   = true,
 ) {
   include jboss
+  
+  case $ensure {
+    'running':  {} 
+    'stopped':  {}
+    'absent':   {}
+    'present':  {}
+    'enabled':  {}
+    'disabled': {}
+    default:   {
+      fail("Invalid value for ensure: `${ensure}`. Supported values are: `present`, `absent`, `running`, `stopped`, `enabled`, `disabled`")
+    }
+  }
   
   $realrunasdomain = $runasdomain ? {
     undef   => $jboss::runasdomain,

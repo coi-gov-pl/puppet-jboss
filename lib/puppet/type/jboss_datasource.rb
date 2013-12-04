@@ -7,7 +7,7 @@ Puppet::Type.newtype(:jboss_datasource) do
     isnamevar
   end
   
-  newparam(:xa) do
+  newproperty(:xa) do
     desc "Is it XA Datasource?"
     newvalues :true, :false
     defaultto false
@@ -105,7 +105,7 @@ Puppet::Type.newtype(:jboss_datasource) do
 
   newparam(:profile) do
     desc "The JBoss profile name"
-    defaultto "full-ha"
+    defaultto "full"
   end
 
   newparam(:runasdomain, :boolean => true) do

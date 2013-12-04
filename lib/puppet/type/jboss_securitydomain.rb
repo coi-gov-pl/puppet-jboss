@@ -13,7 +13,7 @@ Puppet::Type.newtype(:jboss_securitydomain) do
 
   newparam(:profile) do
     desc "The JBoss profile name"
-    defaultto "full-ha"
+    defaultto "full"
   end
   
   newparam(:runasdomain) do

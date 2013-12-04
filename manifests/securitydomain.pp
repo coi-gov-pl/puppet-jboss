@@ -1,10 +1,14 @@
+include jboss::params
+/**
+ * Creates JBoss security domain
+ */
 define jboss::securitydomain (
   $code                    = undef,
   $codeflag                = undef,
   $moduleoptions           = undef,
   $ensure                  = 'present',
-  $profile                 = hiera('jboss::settings::profile', 'full-ha'),
-  $controller              = hiera('jboss::settings::controller', 'localhost:9999'),
+  $profile                 = $jboss::params::profile,
+  $controller              = $jboss::params::controller,
   $runasdomain             = undef,
 ) {
   include jboss

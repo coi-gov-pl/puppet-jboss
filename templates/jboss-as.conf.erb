@@ -20,3 +20,12 @@ JBOSS_USER=<%= @user %>
 # Location to keep the console log
 #
 JBOSS_CONSOLE_LOG=<%= @logfile %>
+
+# Runs JBoss in domain mode?
+JBOSS_RUNASDOMAIN=<%= @runasdomain.inspect %>
+
+# Default JBoss domain controller
+JBOSS_CONTROLLER=<%= @controller %>
+
+# Default JBoss domain profile
+JBOSS_PROFILE=<%= @profile %>

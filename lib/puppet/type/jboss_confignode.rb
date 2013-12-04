@@ -1,7 +1,15 @@
 Puppet::Type.newtype(:jboss_confignode) do
   @doc = "Generic configuration entry for JBoss Application Sever"
-  ensurable
   
+  newproperty(:ensure) do
+    desc "Whether a configuration node should be in one of `present`, `absent`, `running`, `stopped`, `disabled` or `enabled` state."
+
+    newvalues :stopped, :running, :present, :absent, :enabled, :disabled
+
+    aliasvalue(:true, :present)
+    aliasvalue(:false, :absent)
+
+  end  
   newparam(:name) do
     desc "The name of resource"
   end
@@ -14,10 +22,10 @@ Puppet::Type.newtype(:jboss_confignode) do
     desc "Additional properties for node"
     defaultto {}
   end
-
+  
   newparam(:profile) do
     desc "The JBoss profile name"
-    defaultto "full-ha"
+    defaultto "full"
   end
 
   newparam(:runasdomain, :boolean => true) do

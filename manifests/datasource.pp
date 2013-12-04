@@ -1,3 +1,8 @@
+include jboss::params
+
+/**
+ * Creates JBoss datasources, standard and xa
+ */
 define jboss::datasource (
   $username,
   $password,
@@ -10,8 +15,8 @@ define jboss::datasource (
   $jndiname                = "java:jboss/datasources/${name}",
   $xa                      = hiera('jboss::datasource::xa', true),
   $jta                     = hiera('jboss::datasource::jta', true),
-  $profile                 = hiera('jboss::settings::profile', 'full-ha'),
-  $controller              = hiera('jboss::settings::controller', 'localhost:9999'),
+  $profile                 = $jboss::params::profile,
+  $controller              = $jboss::params::controller,
   $minpoolsize             = hiera('jboss::datasource::minpoolsize', 1),
   $maxpoolsize             = hiera('jboss::datasource::maxpoolsize', 50),
   $validateonmatch         = hiera('jboss::datasource::validateonmatch', false),

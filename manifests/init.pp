@@ -94,6 +94,8 @@ class jboss (
   $install_dir      = $jboss::params::install_dir,
   $runasdomain      = $jboss::params::runasdomain,
   $enableconsole    = $jboss::params::enableconsole,
+  $controller       = $jboss::params::controller,
+  $profile          = $jboss::params::profile,
   # Deprecated: use jboss::xml::domain resource or other specific resources
   $domain_xml       = undef,
   # Deprecated: use jboss::xml::host resource or other specific resources

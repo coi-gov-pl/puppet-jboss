@@ -44,7 +44,7 @@ Puppet::Type.type(:jboss_jmsqueue).provide(:jbosscli, :parent => Puppet::Provide
   def exists?
     $data = nil
     cmd = compilecmd "/subsystem=messaging/hornetq-server=default/jms-queue=#{@resource[:name]}:read-resource()"
-    res = execute_datasource cmd
+    res = executeAndGet cmd
 
     if not res[:result]
       Puppet.debug "JMS Queue do not exists"

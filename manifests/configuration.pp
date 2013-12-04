@@ -1,11 +1,15 @@
 class jboss::configuration {
   include jboss
+  include jboss::params
   include jboss::params::internal
   
-  $home = $jboss::home
-  $user = $jboss::jboss_user
-  $logfile = $jboss::params::internal::logfile
+  $home          = $jboss::home
+  $user          = $jboss::jboss_user
+  $logfile       = $jboss::params::internal::logfile
   $enableconsole = $jboss::enableconsole
+  $runasdomain   = $jboss::runasdomain
+  $controller    = $jboss::controller
+  $profile       = $jboss::profile
   
   anchor { "jboss::configuration::begin":
     require => Anchor['jboss::package::end'],
@@ -28,14 +32,16 @@ class jboss::configuration {
       'any-address'  => undef,
     }
   }
-  
+
   jboss::configuration::node { 'jboss::configuration::management::inet-address':
+    ensure     => 'present',
     path       => '/host=master/interface=management',
     properties => {
       'inet-address' => $manageprops['inet-address'],
     },
   }
   jboss::configuration::node { 'jboss::configuration::management::any-address':
+    ensure     => 'present',
     path       => '/host=master/interface=management',
     properties => {
       'any-address'  => $manageprops['any-address'],

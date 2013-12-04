@@ -19,7 +19,7 @@ Puppet::Type.newtype(:jboss_jmsqueue) do
     
   newparam(:profile) do
     desc "The JBoss profile name"
-    defaultto "full-ha"
+    defaultto "full"
   end
 
   newparam(:runasdomain, :boolean => true) do

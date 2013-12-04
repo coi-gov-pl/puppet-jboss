@@ -20,6 +20,17 @@ class Object
     raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
   end
 end
+class Hash
+  def hashbackmap
+    result = {}
+  
+    self.each do |key, val|
+      result[key] = yield val
+    end
+  
+    result
+  end
+end
 module Coi
   module Puppet
     module Functions
@@ -37,26 +48,52 @@ end
 class Puppet::Provider::Jbosscli < Puppet::Provider
 
   @@bin = "bin/jboss-cli.sh"
+  @@contents = nil
 
-  def jbossclibin
+  def self.jbossclibin
     home = self.jbosshome
     path = "#{home}/#{@@bin}"
     return path
   end
 
-  def jbosshome
-    home=`grep -E '^JBOSS_HOME=' /etc/jboss-as/jboss-as.conf 2>/dev/null | cut -d '=' -f 2`
-    home.strip!
-    return home
+  def self.jbosshome
+    return self.read_config 'JBOSS_HOME'
   end
   
-  def jbosslog
-    log=`grep -E '^JBOSS_CONSOLE_LOG=' /etc/jboss-as/jboss-as.conf 2>/dev/null | cut -d '=' -f 2`
-    log.strip!
-    return log
+  def self.jbosslog
+    return self.read_config 'JBOSS_CONSOLE_LOG'
+  end
+  
+  def self.config_runasdomain
+    ret = self.read_config 'JBOSS_RUNASDOMAIN', 'false'
+    return ret.to_bool
   end
 
-  #commands :jbosscli => jbossclibin
+  def self.config_controller
+    return self.read_config 'JBOSS_CONTROLLER', 'localhost:9999'
+  end
+
+  def self.config_profile
+    return self.read_config 'JBOSS_PROFILE', 'full'
+  end
+  
+  def self.read_config variable, defaults=nil
+    begin
+      if @@contents.nil?
+        @@contents = File.read '/etc/jboss-as/jboss-as.conf'
+      end
+      re = Regexp.new "^\s*#{variable}=(.+)\s*$"
+      match = re.match @@contents
+      if match.nil?
+        return nil?
+      end
+      return match[1].strip
+    rescue
+      return defaults
+    end
+  end
+
+  # commands :jbosscli => Puppet::Provider::Jbosscli.jbossclibin
   
   def runasdomain?
     @resource[:runasdomain]
@@ -70,8 +107,13 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     return " ---\n JBoss AS log (last #{lines} lines): \n#{getlog lines}" 
   end
 
-  def execute(jbosscmd)
-    file = Tempfile.new('jbosscli')
+  def execute jbosscmd
+    controller  = @resource[:controller]
+    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, controller
+  end
+  
+  def self.execute jbosscmd, runasdomain, controller
+    file = Tempfile.new 'jbosscli'
     path = file.path
     file.close
     file.unlink
@@ -80,18 +122,16 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
 
     ENV['JBOSS_HOME'] = self.jbosshome
     cmd = "#{self.jbossclibin} --connect --file=#{path}"
-    if(resource[:runasdomain] == true )
-      cmd = "#{cmd} --controller=#{resource[:controller]}"
+    if runasdomain
+      cmd = "#{cmd} --controller=#{controller}"
     end
 
-    Puppet.debug("JBOSS_HOME: " + self.jbosshome)
-    Puppet.debug("Komenda do JBoss-cli: " + jbosscmd)
+    Puppet.debug "Komenda do JBoss-cli: " + jbosscmd
     lines = `#{cmd}`
     result = $?
-    Puppet.debug("Output from jbosscli: " + lines)
-    Puppet.debug("Result from jbosscli: " + result.inspect)
+    Puppet.debug "Output from JBoss-cli[%s]: %s" % [result.inspect, lines]
     # deletes the temp file
-    File.unlink(path)
+    File.unlink path
     return {
       :cmd    => jbosscmd,
       :result => result.exitstatus == 0,
@@ -109,11 +149,12 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     if runasdomain?
       cmd = "/profile=#{@resource[:profile]}#{cmd}"
     end
-    res = execute_datasource(cmd)
+    res = executeAndGet(cmd)
     Puppet.debug(res.inspect)
     if not res[:result]
       raise "Cannot set #{name} for #{path}: #{res[:data]}"
     end
+    @property_hash[name] = value
   end
   
   def bringUp(typename, args)
@@ -131,15 +172,23 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
   
   def trace method
-    Puppet.debug "TRACE > IN > #{method}"
+    Puppet.debug '%s[%s] > IN > %s' % [self.class, @resource[:name], method]
   end
   
-  def escape value
+  def traceout method, retval
+    Puppet.debug '%s[%s] > OUT > %s: %s' % [self.class, @resource[:name], method, retval.inspect]
+  end
+  
+  def self.escape value
     if value.respond_to? :empty?
       str = '"%s"' % value.gsub(/([^\\])\"/, '\1\\"')
     else
       str = value.to_s
     end
+  end
+  
+  def escape value
+    Puppet::Provider::Jbosscli.escape value
   end
   
   def executeWithFail(typename, passed_args, way)
@@ -155,17 +204,19 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
   
   def compilecmd cmd
-    runasdomain = @resource[:runasdomain]
+    Puppet::Provider::Jbosscli.compilecmd @resource[:runasdomain], @resource[:profile], cmd
+  end
+  
+  def self.compilecmd runasdomain, profile, cmd
     out = cmd.to_s
     if runasdomain && out[0..9] == '/subsystem'
-      out = "/profile=#{@resource[:profile]}#{out}"
+      out = "/profile=#{profile}#{out}"
     end
     return out
   end
 
-  def execute_datasource passed_args
-    ret = execute passed_args
-    # Puppet.debug("exec ds result: " + ret.inspect)
+  def self.executeAndGet cmd, runasdomain, controller
+    ret = self.execute cmd, runasdomain, controller
     if not ret[:result]
         return {
           :result => false,
@@ -176,11 +227,24 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     undefined = nil
     # Obsługa expression z JBossa
     ret[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
-    evalines = eval ret[:lines]
-    Puppet.debug evalines.inspect
-    return {
-      :result  => evalines["outcome"] == "success",
-      :data    => (evalines["outcome"] == "success" ? evalines["result"] : evalines["failure-description"])
-    }
+    begin
+      evalines = eval ret[:lines]
+      Puppet.debug evalines.inspect
+      return {
+        :result  => evalines["outcome"] == "success",
+        :data    => (evalines["outcome"] == "success" ? evalines["result"] : evalines["failure-description"])
+      }
+    rescue Exception => e
+      Puppet.err e
+      return {
+        :result  => false,
+        :data    => ret[:lines]
+      }
+    end
+  end
+
+  def executeAndGet jbosscmd
+    controller  = @resource[:controller]
+    return Puppet::Provider::Jbosscli.executeAndGet jbosscmd, runasdomain?, controller
   end
 end

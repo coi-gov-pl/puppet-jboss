@@ -1,3 +1,5 @@
+include jboss::params
+
 /**
  * Creates JBoss JMS Queue 
  */
@@ -5,8 +7,8 @@ define jboss::jmsqueue (
   $ensure       = 'present',
   $entries,
   $durable      = hiera('jboss::jmsqueue::durable', false),
-  $profile      = hiera('jboss::settings::profile', 'full-ha'),
-  $controller   = hiera('jboss::settings::controller','localhost:9999'),
+  $profile      = $jboss::params::profile,
+  $controller   = $jboss::params::controller,
   $runasdomain  = undef,
 ) {
   include jboss
