@@ -43,7 +43,7 @@ define jboss::user (
     }
     'absent':{
       exec { "jboss::user::remove(${realm}/${name})":
-        command     => "sed -iE 's/^${name}=.*$//g' ${filepath}",
+        command     => "/bin/sed -iE 's/^${name}=.*$//g' ${filepath}",
         onlyif      => "/bin/egrep -e '^${name}=' ${filepath}",
         require     => Anchor['jboss::package::end'],
         logoutput   => 'on_failure',
