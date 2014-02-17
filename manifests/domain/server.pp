@@ -5,7 +5,7 @@ include jboss::params
 define jboss::domain::server (
   $group                      = false,
   $ensure                     = 'running',
-  $host                       = 'master',
+  $host                       = $name,
   $autostart                  = true,
   $socket_binding_group       = undef,
   $socket_binding_port_offset = 0,
