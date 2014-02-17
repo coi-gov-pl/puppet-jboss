@@ -23,6 +23,13 @@ define jboss::user (
     'ApplicationRealm' => 'application-users.properties',
     default            => undef,
   }
+
+  # -a is needed to set in application-users.properties file
+  $extraarg = $realm ? {
+    'ApplicationRealm' => '-a',
+    default            => '',
+  }
+
   
   if $file == undef {
     fail("Unknown realm `${realm}` for jboss::user")
@@ -35,7 +42,7 @@ define jboss::user (
       exec { "jboss::user::add(${realm}/${name})":
         alias       => "add jboss user ${name}/${realm}", # Deprecated, it is not needed, will be removed
         environment => ["JBOSS_HOME=${home}",],
-        command     => "${home}/bin/add-user.sh -u '${name}' -p '${password}' -s",
+        command     => "${home}/bin/add-user.sh -u '${name}' -p '${password}' -r '${realm}' ${extraarg} -s",
         unless      => "/bin/egrep -e '^${name}=' ${filepath}",
         require     => Anchor['jboss::package::end'],
         logoutput   => 'on_failure',
