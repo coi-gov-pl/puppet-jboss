@@ -32,17 +32,23 @@ class jboss::configuration {
       'any-address'  => undef,
     }
   }
+  
+  if $runasdomain {
+    $managementPath = '/host=master/interface=management'
+  } else {
+    $managementPath = '/interface=management'
+  }
 
   jboss::configuration::node { 'jboss::configuration::management::inet-address':
     ensure     => 'present',
-    path       => '/host=master/interface=management',
+    path       => $managementPath,
     properties => {
       'inet-address' => $manageprops['inet-address'],
     },
   }
   jboss::configuration::node { 'jboss::configuration::management::any-address':
     ensure     => 'present',
-    path       => '/host=master/interface=management',
+    path       => $managementPath,
     properties => {
       'any-address'  => $manageprops['any-address'],
     },
