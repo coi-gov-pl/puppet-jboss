@@ -227,6 +227,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     undefined = nil
     # Obsługa expression z JBossa
     ret[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
+    ret[:lines].gsub!(/=> (\d+)L/, '=> \1')
     begin
       evalines = eval ret[:lines]
       Puppet.debug evalines.inspect
