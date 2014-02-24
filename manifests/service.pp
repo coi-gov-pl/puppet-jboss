@@ -25,7 +25,7 @@ class jboss::service {
     command     => 'tail -n 50 /var/log/jboss-as/console.log && exit 1',
     unless      => "ps aux | grep ${servicename} | grep -vq grep",
     logoutput   => true,
-    subscribe   => Service['jboss'],
+    subscribe   => Service[$servicename],
   }
   
   exec { 'jboss::service::restart':
