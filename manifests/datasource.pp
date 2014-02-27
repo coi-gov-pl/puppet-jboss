@@ -35,16 +35,28 @@ define jboss::datasource (
   $drivername = $driver['name']
   
   if ! defined(Jboss_jdbcdriver[$drivername]) and $ensure == 'present' {
+    
+    $datasourceclassname = has_key($driver, 'datasourceclassname') ? {
+      true    => $driver['datasourceclassname'],
+      default => undef,
+    }
+    
+    $xadatasourceclassname = has_key($driver, 'xadatasourceclassname') ? {
+      true    => $driver['xadatasourceclassname'],
+      default => undef,
+    }
+    
     jboss_jdbcdriver { $drivername:
-      ensure              => 'present',
-      classname           => $driver['classname'],
-      modulename          => $driver['modulename'],
-      datasourceclassname => $driver['datasourceclassname'],
-      runasdomain         => $realrunasdomain,
-      profile             => $profile,
-      controller          => $controller,
-      require             => Anchor['jboss::service::end'],
-      notify              => Exec['jboss::service::restart'],
+      ensure                => 'present',
+      classname             => $driver['classname'],
+      modulename            => $driver['modulename'],
+      datasourceclassname   => $datasourceclassname,
+      xadatasourceclassname => $xadatasourceclassname,
+      runasdomain           => $realrunasdomain,
+      profile               => $profile,
+      controller            => $controller,
+      require               => Anchor['jboss::service::end'],
+      notify                => Exec['jboss::service::restart'],
     }
   }
   

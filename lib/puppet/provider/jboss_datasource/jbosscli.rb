@@ -347,7 +347,10 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     end
     cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:add(value=#{escape value})"
     bringUp "XA Datasource Property set " + property.to_s, cmd
-    getattrib('xa-datasource-properties')[property.to_s]['value'] = value
+    props = getattrib 'xa-datasource-properties'
+    props = {} if props.nil?
+    props[property.to_s] = {} if props[property.to_s].nil?
+    props[property.to_s]['value'] = value
   end
   
   def readXaProperty property

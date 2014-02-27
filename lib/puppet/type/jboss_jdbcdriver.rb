@@ -19,9 +19,12 @@ Puppet::Type.newtype(:jboss_jdbcdriver) do
   
   newparam(:datasourceclassname) do
     desc "Datasource Java class name."
-    isrequired
   end
 
+  newparam(:xadatasourceclassname) do
+    desc "XA Datasource Java class name."
+  end
+  
   newparam(:profile) do
     desc "The JBoss profile name"
     defaultto "full"

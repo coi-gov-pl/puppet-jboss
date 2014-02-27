@@ -1,72 +1,47 @@
 require 'puppet/provider/jbosscli'
 Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
   
-  $data = nil
+  @data = {}
 
   def create
     name = @resource[:name]
-    modulename = @resource[:modulename]
-    datasourceclassname = @resource[:datasourceclassname]
-    runasdomain = @resource[:runasdomain]
-    classname = @resource[:classname]
-    profile = @resource[:profile]
-    if runasdomain
-      dspart = "driver-xa-datasource-class-name=#{datasourceclassname}"
-    else
-      # FIXME: Untested on Jboss AS!
-      dspart = "driver-datasource-class-name=#{datasourceclassname}"
-    end
-    driveropt = ''
-    driveropt = ",driver-class-name=#{classname}" if classname 
-    cmd = "/subsystem=datasources/jdbc-driver=#{name}:add(driver-name=#{name},driver-module-name=#{modulename},#{dspart}#{driveropt})"
-    if runasdomain
-      cmd = "/profile=#{profile}#{cmd}"
-    end
-    bringUp('JDBC-Driver', cmd)
+    map = get_attribs_map
+     
+    cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{name}:add(#{cmdlize_attribs_map map})"
+    bringUp 'JDBC-Driver', cmd
   end
 
   def destroy
-    cmd = "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:remove"
-    runasdomain = @resource[:runasdomain]
-    if runasdomain
-      cmd = "/profile=#{@resource[:profile]}#{cmd}"
-    end
-    bringDown('JDBC-Driver', cmd)
+    cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:remove"
+    bringDown 'JDBC-Driver', cmd
   end
   
   def exists?
-    $data = nil
-    cmd = "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:read-resource(recursive=true)"
-    runasdomain = @resource[:runasdomain]
-    if runasdomain
-      cmd = "/profile=#{@resource[:profile]}#{cmd}"
-    end
-    res = executeAndGet(cmd)
+    @data = {}
+    cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:read-resource(recursive=true)"
+    res = executeAndGet cmd
     if(res[:result] == false)
         Puppet.debug("JDBC Driver #{@resource[:name]} does NOT exist")
         return false
     end
     Puppet.debug("JDBC Driver exists: #{res[:data].inspect}")
-    $data = res[:data]
+    @data = res[:data]
     return true
   end
   
-  def setattrib(name, value)
+  def setattrib name, value
     Puppet.debug(name + ' setting to ' + value)
-    cmd = "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
-    runasdomain = @resource[:runasdomain]
-    if runasdomain
-      cmd = "/profile=#{@resource[:profile]}#{cmd}"
-    end
-    res = executeAndGet(cmd)
-    Puppet.debug(res.inspect)
+    cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
+    res = executeAndGet cmd
+    Puppet.debug res.inspect
     if not res[:result]
       raise "Cannot set #{name}: #{res[:data]}"
     end
+    @data[name] = value
   end 
   
   def classname
-    $data['driver-class-name']
+    @data['driver-class-name']
   end
   
   def classname= value
@@ -74,7 +49,7 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def modulename
-    $data['driver-module-name']
+    @data['driver-module-name']
   end
   
   def modulename= value
@@ -82,21 +57,45 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def datasourceclassname
-    if @resource[:runasdomain]
-      $data['driver-xa-datasource-class-name']
-    else
-      $data['driver-datasource-class-name']
-    end
+    @data['driver-datasource-class-name']
   end
   
   def datasourceclassname= value
-    if @resource[:runasdomain]
-      setattrib 'driver-xa-datasource-class-name', value
-      setattrib 'driver-datasource-class-name', nil
-    else
-      setattrib 'driver-xa-datasource-class-name', nil
-      setattrib 'driver-datasource-class-name', value
+    setattrib 'driver-datasource-class-name', value
+  end
+  
+  def xadatasourceclassname
+    @data['driver-xa-datasource-class-name']
+  end
+  
+  def xadatasourceclassname= value
+    setattrib 'driver-xa-datasource-class-name', value
+  end
+  
+  private
+  
+  def get_attribs_map
+    name = @resource[:name]
+    modulename = @resource[:modulename]
+    datasourceclassname = @resource[:datasourceclassname]
+    xadatasourceclassname = @resource[:xadatasourceclassname]
+    classname = @resource[:classname]
+    map = {
+      'driver-name'        => name,
+      'driver-module-name' => modulename
+    }
+    map['driver-datasource-class-name'] = datasourceclassname if datasourceclassname
+    map['driver-xa-datasource-class-name'] = xadatasourceclassname if xadatasourceclassname
+    map['driver-class-name'] = classname if classname
+    map
+  end
+  
+  def cmdlize_attribs_map input
+    list = []
+    input.each do |key, value|
+      list.push "#{key}=#{value.inspect}"
     end
+    list.join ','
   end
 
 end

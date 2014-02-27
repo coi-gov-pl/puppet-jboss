@@ -32,8 +32,8 @@ define jboss::user (
   }
   
   $file = $application_realm ? {
-    true   => 'application-users.properties',
-    false  => 'mgmt-users.properties',
+    true    => 'application-users.properties',
+    default => 'mgmt-users.properties',
   }
   
   $filepath = "${home}/${dir}/configuration/${file}"
