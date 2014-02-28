@@ -7,6 +7,8 @@ class jboss::package (
   $java_version     = $jboss::params::java_version,
   $java_package     = $jboss::params::java_package,
   $install_dir      = $jboss::params::install_dir,
+  # Prerequisites class, that can be overwritten
+  $prerequisites    = Class['jboss::prerequisites'],
 ) inherits jboss::params {
   include jboss
   
@@ -97,15 +99,13 @@ class jboss::package (
     require => File[$download_dir],
   }
   
-  if ! defined(Package['unzip']) {
-    package { "unzip": ensure => "latest" }
-  }
 
   exec { 'jboss::unzip-downloaded':
     command => "unzip -o -q ${download_dir}/${download_file} -d ${download_dir}",
     cwd     => $download_dir,
     creates => $jboss::home,
     require => [
+      $prerequisites, # Prerequisites class, that can be overwritten
       Jboss::Util::Download["${download_dir}/${download_file}"], 
       File[$download_dir], 
       Package['unzip'],

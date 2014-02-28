@@ -100,6 +100,7 @@ class jboss (
   $domain_xml       = undef,
   # Deprecated: use jboss::xml::host resource or other specific resources
   $host_xml         = undef,
+  $prerequisites    = Class['jboss::prerequisites'],
 ) inherits jboss::params {
   
   $home = "${install_dir}/jboss-${version}"
@@ -116,6 +117,7 @@ class jboss (
     java_version     => $java_version,
     java_package     => $java_package,
     install_dir      => $install_dir,
+    prerequisites    => $prerequisites,
     require          => Anchor['jboss::begin'],     
   }
   include jboss::package
