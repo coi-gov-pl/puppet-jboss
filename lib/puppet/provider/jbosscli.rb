@@ -209,7 +209,8 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   
   def self.compilecmd runasdomain, profile, cmd
     out = cmd.to_s
-    if runasdomain && out[0..9] == '/subsystem'
+    asdomain = runasdomain.to_bool
+    if asdomain && out[0..9] == '/subsystem'
       out = "/profile=#{profile}#{out}"
     end
     return out
