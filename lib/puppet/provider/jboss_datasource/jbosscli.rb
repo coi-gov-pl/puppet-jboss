@@ -305,6 +305,9 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
       value = @resource[getPuppetKey prop]
       out.push "#{prop.to_s}=#{value}" 
     end
+    if oracle?
+      out.push "DriverType=thin"
+    end
     out.join ','
   end
   
