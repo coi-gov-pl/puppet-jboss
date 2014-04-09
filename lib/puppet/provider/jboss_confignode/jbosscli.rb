@@ -44,7 +44,7 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
       end
     end
     
-    res = executeAndGet "#{compiledpath}:read-resource(include-runtime=true)"
+    res = executeAndGet "#{compiledpath}:read-resource(include-runtime=true, include-defaults=false)"
     if res[:result]
       @data = {}
       res[:data].each do |key, value|
