@@ -68,6 +68,18 @@ Puppet::Type.newtype(:jboss_datasource) do
     defaultto false
   end
   
+  newproperty(:samermoverride) do
+    desc "same-rm-override"
+    newvalues(true, false)
+    defaultto true
+  end
+  
+  newproperty(:wrapxaresource) do
+    desc "wrap-xa-resource"
+    newvalues(true, false)
+    defaultto true
+  end
+  
   newproperty(:enabled) do
     desc "Is datasource enabled?"
     newvalues(true, false)

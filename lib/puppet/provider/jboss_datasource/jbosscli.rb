@@ -19,6 +19,8 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     cmd.push "--background-validation=#{@resource[:backgroundvalidation]}"
     cmd.push "--share-prepared-statements=#{@resource[:sharepreparedstatements]}"
     if @resource[:xa]
+      cmd.push "--same-rm-override=#{@resource[:samermoverride]}"
+      cmd.push "--wrap-xa-resource=#{@resource[:wrapxaresource]}"
       cmd.push "--xa-datasource-properties=[#{createXaProperties}]"
     else
       cmd.push "--connection-url=#{connectionUrl}"
@@ -215,6 +217,22 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
 
   def sharepreparedstatements= value
     setattrib 'share-prepared-statements', value.to_s
+  end
+  
+  def samermoverride
+    getattrib('same-rm-override').to_s
+  end
+
+  def samermoverride= value
+    setattrib 'same-rm-override', value.to_s
+  end
+  
+  def wrapxaresource
+    getattrib('wrap-xa-resource').to_s
+  end
+
+  def wrapxaresource= value
+    setattrib 'wrap-xa-resource', value.to_s
   end
   
   def jta

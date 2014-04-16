@@ -22,6 +22,8 @@ define jboss::datasource (
   $validateonmatch         = hiera('jboss::datasource::validateonmatch', false),
   $backgroundvalidation    = hiera('jboss::datasource::backgroundvalidation', false),
   $sharepreparedstatements = hiera('jboss::datasource::sharepreparedstatements', false),
+  $samermoverride          = hiera('jboss::datasource::samermoverride', true),
+  $wrapxaresource          = hiera('jboss::datasource::wrapxaresource', true),
   $enabled                 = hiera('jboss::datasource::enabled', true),
   $runasdomain             = undef,
 ) {
@@ -81,6 +83,8 @@ define jboss::datasource (
     validateonmatch         => $validateonmatch,
     backgroundvalidation    => $backgroundvalidation,
     sharepreparedstatements => $sharepreparedstatements,
+    samermoverride          => $samermoverride,
+    wrapxaresource          => $wrapxaresource,
     require                 => [
       Anchor['jboss::service::end'],
       Jboss_jdbcdriver[$drivername],
