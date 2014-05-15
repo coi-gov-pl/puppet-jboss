@@ -9,6 +9,7 @@ summary 'JBoss - instalation and management module'
 dependency 'puppetlabs/java', '>= 1.0.1'
 dependency 'puppetlabs/stdlib', '>= 3.2.0'
 dependency 'puppetlabs/concat', '>= 1.0.0'
+dependency 'puppetlabs/apache', '>= 0.9.0'
 description 'COI / JBoss
 ===
 

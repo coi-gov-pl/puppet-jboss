@@ -38,4 +38,9 @@ class jboss::params inherits jboss::params::internal {
   #JBoss default domain controller
   $controller   = hiera('jboss::settings::controller','localhost:9999')
   
+  class mod_cluster {
+    # Version of mod_cluster
+    $version = hiera('jboss::params::mod_cluster::version', "1.2.6.Final")
+  }
+  
 }
