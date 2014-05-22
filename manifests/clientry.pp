@@ -7,8 +7,8 @@ define jboss::clientry (
   $path        = $name,
   $properties  = undef,
   $ensure      = 'present',
-  $profile     = $jboss::params::profile,
-  $controller  = $jboss::params::controller,
+  $profile     = undef,
+  $controller  = undef,
   $runasdomain = undef,
   $dorestart   = true,
 ) {
@@ -31,12 +31,26 @@ define jboss::clientry (
     default => $runasdomain,
   }
   
+  if $realrunasdomain {
+    $realprofile = $profile ? {
+      undef   => $jboss::profile,
+      default => $profile,
+    }
+    $realcontroller = $controller ? {
+      undef   => $jboss::controller,
+      default => $controller,
+    }
+  } else {
+    $realprofile    = undef
+    $realcontroller = undef
+  }
+  
   jboss_confignode { $name:
     ensure      => $ensure,
     path        => $path,
     properties  => $properties,
-    controller  => $controller,
-    profile     => $profile,
+    controller  => $realcontroller,
+    profile     => $realprofile,
     runasdomain => $realrunasdomain,
     require     => Anchor['jboss::service::end'],
   }
