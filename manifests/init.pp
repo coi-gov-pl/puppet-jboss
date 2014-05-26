@@ -84,6 +84,7 @@ define jboss::user(
 }
 
 class jboss (
+  $hostname         = $jboss::params::hostname,
   $jboss_user       = $jboss::params::jboss_user,
   $jboss_group      = $jboss::params::jboss_group,
   $download_url     = $jboss::params::download_url,

@@ -55,14 +55,14 @@ class jboss::internal::configuration {
     $managementPath = '/interface=management'
   }
 
-  jboss::clientry { 'jboss::configuration::management::inet-address':
+  jboss::configuration::node { 'jboss::configuration::management::inet-address':
     ensure     => 'present',
     path       => $managementPath,
     properties => {
       'inet-address' => $manageprops['inet-address'],
     },
   }
-  jboss::clientry { 'jboss::configuration::management::any-address':
+  jboss::configuration::node { 'jboss::configuration::management::any-address':
     ensure     => 'present',
     path       => $managementPath,
     properties => {

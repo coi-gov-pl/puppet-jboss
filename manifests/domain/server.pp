@@ -5,13 +5,19 @@ include jboss::params
 define jboss::domain::server (
   $group                      = false,
   $ensure                     = 'running',
-  $host                       = $name,
+  $host                       = undef,
   $autostart                  = true,
   $socket_binding_group       = undef,
   $socket_binding_port_offset = 0,
   $controller                 = $jboss::params::controller,
 ) {
   include jboss
+  
+  $host_is_null = $host == undef
+  $hostname = $host_is_null ? {
+    true    => $jboss::hostname,
+    default => $host,
+  }
   
   if ! $group and $ensure == 'running' {
     fail("Must pass group to Jboss::Domain::Server[${name}] while ensuring to be `${ensure}`")
@@ -41,7 +47,7 @@ define jboss::domain::server (
   
   jboss::clientry { "jboss::domain::server(${name})":
     ensure       => $ensure,
-    path         => "/host=${host}/server-config=${name}",
+    path         => "/host=${hostname}/server-config=${name}",
     controller   => $controller,
     runasdomain  => true,
     properties   => $props,

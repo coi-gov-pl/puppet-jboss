@@ -14,7 +14,7 @@ class jboss::internal::service {
     enable     => true,
     hasstatus  => true,
     hasrestart => true,
-    require    => [
+    subscribe  => [
       Anchor["jboss::package::end"],
       Anchor['jboss::service::begin'],
     ],
