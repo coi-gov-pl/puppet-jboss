@@ -1,3 +1,8 @@
+/**
+ * Deprecated!
+ * 
+ * DO NOT USE THIS RESOURCE, IT WILL BE REMOVED!
+ */
 define jboss::xml::domain (
   $ensure  = 'present',
   $path    = $name,

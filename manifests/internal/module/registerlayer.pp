@@ -1,4 +1,4 @@
-define jboss::module::registerlayer (
+define jboss::internal::module::registerlayer (
   $layer = name,
 ) {
   include jboss

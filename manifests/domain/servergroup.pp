@@ -22,7 +22,7 @@ define jboss::domain::servergroup (
     }
   }
   
-  jboss::configuration::node { "jboss::domain::servergroup(${name})":
+  jboss::clientry { "jboss::domain::servergroup(${name})":
     ensure      => $ensure,
     path        => "/server-group=${name}",
     controller  => $controller,
@@ -34,7 +34,7 @@ define jboss::domain::servergroup (
     }
   }
   
-  jboss::configuration::node { "jboss::domain::servergroup::jvm(${name})":
+  jboss::clientry { "jboss::domain::servergroup::jvm(${name})":
     ensure      => $ensure,
     path        => "/server-group=${name}/jvm=default",
     controller  => $controller,

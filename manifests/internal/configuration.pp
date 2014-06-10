@@ -1,18 +1,34 @@
-class jboss::configuration {
+class jboss::internal::configuration {
   include jboss
   include jboss::params
-  include jboss::params::internal
+  include jboss::internal::params
+  include jboss::internal::runtime
   
   $home          = $jboss::home
   $user          = $jboss::jboss_user
-  $logfile       = $jboss::params::internal::logfile
+  $logfile       = $jboss::internal::params::logfile
   $enableconsole = $jboss::enableconsole
   $runasdomain   = $jboss::runasdomain
   $controller    = $jboss::controller
   $profile       = $jboss::profile
+  $configfile    = $jboss::internal::runtime::configfile
   
-  anchor { "jboss::configuration::begin":
+  anchor { 'jboss::configuration::begin':
     require => Anchor['jboss::package::end'],
+  }
+  
+  if $runasdomain {
+    include jboss::internal::service
+    $hostfile = "${jboss::home}/domain/configuration/host.xml"
+    file_line { "jboss::configure::set_hostname(${jboss::hostname})":
+      ensure    => "present",
+      line      => "<host name=\"${jboss::hostname}\" xmlns=\"urn:jboss:domain:1.5\">",
+      match     => "\\<host[^\\>]+\\>",
+      path      => $hostfile,
+      notify    => Service[$jboss::internal::service::servicename],
+      before    => Anchor['jboss::configuration::begin'], 
+      require   => Anchor['jboss::package::end'],
+    }
   }
   
   concat { '/etc/jboss-as/jboss-as.conf':
@@ -34,19 +50,19 @@ class jboss::configuration {
   }
   
   if $runasdomain {
-    $managementPath = '/host=master/interface=management'
+    $managementPath = "/host=${jboss::hostname}/interface=management"
   } else {
     $managementPath = '/interface=management'
   }
 
-  jboss::configuration::node { 'jboss::configuration::management::inet-address':
+  jboss::clientry { 'jboss::configuration::management::inet-address':
     ensure     => 'present',
     path       => $managementPath,
     properties => {
       'inet-address' => $manageprops['inet-address'],
     },
   }
-  jboss::configuration::node { 'jboss::configuration::management::any-address':
+  jboss::clientry { 'jboss::configuration::management::any-address':
     ensure     => 'present',
     path       => $managementPath,
     properties => {

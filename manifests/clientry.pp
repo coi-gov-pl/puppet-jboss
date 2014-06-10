@@ -3,7 +3,7 @@ include jboss::params
 /**
  * Generic configuration tool
  */
-define jboss::configuration::node (
+define jboss::clientry (
   $path        = $name,
   $properties  = undef,
   $ensure      = 'present',

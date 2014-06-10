@@ -6,7 +6,7 @@
 #
 # None
 #
-class jboss::prerequisites {
+class jboss::internal::prerequisites {
   if ! defined(Package['unzip']) {
     package { "unzip": ensure => "latest" }
   }

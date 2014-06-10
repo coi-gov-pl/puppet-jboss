@@ -1,3 +1,8 @@
+/**
+ * Deprecated!
+ * 
+ * DO NOT USE THIS RESOURCE, IT WILL BE REMOVED!
+ */
 define jboss::xml::host (
   $ensure  = 'present',
   $path    = $name,

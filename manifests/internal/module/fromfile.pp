@@ -1,4 +1,4 @@
-define jboss::module::fromfile (
+define jboss::internal::module::fromfile (
   $layer, 
   $file,
   $jboss_home = undef, # Deprecated, it is not needed, will be removed
@@ -42,7 +42,7 @@ define jboss::module::fromfile (
     # onlyif      => "cd ${home}; tar -ztf ${file_tmp} | xargs ls",
   }
   
-  jboss::module::registerlayer { "jboss::module::fromfile::${name}($layer)":
+  jboss::internal::module::registerlayer { "jboss::module::fromfile::${name}($layer)":
     layer   => $layer,
     require => Exec["jboss::module::fromfile::untgz($file)"],
   }

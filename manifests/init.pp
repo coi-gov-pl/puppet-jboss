@@ -100,15 +100,15 @@ class jboss (
   $domain_xml       = undef,
   # Deprecated: use jboss::xml::host resource or other specific resources
   $host_xml         = undef,
-  $prerequisites    = Class['jboss::prerequisites'],
+  $prerequisites    = Class['jboss::internal::prerequisites'],
 ) inherits jboss::params {
   
   $home = "${install_dir}/jboss-${version}"
   
-  include jboss::configuration
-  include jboss::service
+  include jboss::internal::configuration
+  include jboss::internal::service
   
-  class { 'jboss::package':
+  class { 'jboss::internal::package':
     version          => $version,
     jboss_user       => $jboss_user,
     jboss_group      => $jboss_group,
@@ -120,7 +120,7 @@ class jboss (
     prerequisites    => $prerequisites,
     require          => Anchor['jboss::begin'],     
   }
-  include jboss::package
+  include jboss::internal::package
 
   anchor { "jboss::begin": }
   
@@ -138,9 +138,9 @@ class jboss (
 
   anchor { "jboss::end": 
     require => [
-      Class['jboss::package'],
-      Class['jboss::configuration'],
-      Class['jboss::service'],
+      Class['jboss::internal::package'],
+      Class['jboss::internal::configuration'],
+      Class['jboss::internal::service'],
       Anchor['jboss::begin'],
       Anchor["jboss::package::end"], 
       Anchor["jboss::service::end"], 

@@ -1,4 +1,4 @@
-define jboss::util::groupaccess (
+define jboss::internal::util::groupaccess (
   $user = undef, 
   $group, 
   $dir = undef,

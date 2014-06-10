@@ -13,13 +13,13 @@ define jboss::module (
   }
   
   if $file {
-    jboss::module::fromfile { $name:
+    jboss::internal::module::fromfile { $name:
       layer      => $layer,
       file       => $file,
       jboss_home => $jboss_home,
     }
   } else {
-    jboss::module::assemble { $name:
+    jboss::internal::module::assemble { $name:
       layer        => $layer,
       modulename   => $modulename,
       artifacts    => $artifacts,

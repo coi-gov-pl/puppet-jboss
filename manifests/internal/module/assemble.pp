@@ -1,4 +1,4 @@
-define jboss::module::assemble (
+define jboss::internal::module::assemble (
   $layer, 
   $modulename   = $name,
   $artifacts    = [],
@@ -42,24 +42,24 @@ define jboss::module::assemble (
     require => Anchor['jboss::package::end'],
   }
   
-  jboss::module::assemble::process_artifacts { $artifacts:
+  jboss::internal::module::assemble::process_artifacts { $artifacts:
     dir     => $dir,
     notify  => Service['jboss'],
     require => Anchor['jboss::package::end'],
   }
   
-  jboss::module::registerlayer { "jboss::module::assemble::${name}($layer)": 
+  jboss::internal::module::registerlayer { "jboss::module::assemble::${name}($layer)": 
     layer => $layer,
   }
   
 }
 
-define jboss::module::assemble::process_artifacts ($dir) {
+define jboss::internal::module::assemble::process_artifacts ($dir) {
   include jboss
   $base = jboss_basename($name)
   $target = "${jboss::home}/${dir}/${base}"
   if $name =~ /^(?:http|ftp)s?:/ {
-    jboss::util::download { $target:
+    jboss::internal::util::download { $target:
       uri     => $name,
       notify  => Service['jboss'],
       require => Anchor['jboss::package::end'],

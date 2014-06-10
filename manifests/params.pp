@@ -1,4 +1,4 @@
-class jboss::params inherits jboss::params::internal {
+class jboss::params inherits jboss::internal::params {
   # Version of JBoss Application Server
   $version          = hiera('jboss::params::version', "as-7.1.1.Final")
   

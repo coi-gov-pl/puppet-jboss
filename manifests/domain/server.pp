@@ -39,7 +39,7 @@ define jboss::domain::server (
     default   => 'present',
   }
   
-  jboss::configuration::node { "jboss::domain::server(${name})":
+  jboss::clientry { "jboss::domain::server(${name})":
     ensure       => $ensure,
     path         => "/host=${host}/server-config=${name}",
     controller   => $controller,
@@ -55,7 +55,7 @@ define jboss::domain::server (
       }
     }
     Jboss::Domain::Servergroup[$group] -> 
-    Jboss::Configuration::Node["jboss::domain::server(${name})"]
+    Jboss::Clientry["jboss::domain::server(${name})"]
   }
   
 }

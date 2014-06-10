@@ -8,7 +8,7 @@ define jboss::user (
 ) {
   
   include jboss
-  include jboss::service
+  include jboss::internal::service
   
   $home = $jboss_home ? { # Deprecated, it is not needed, will be removed
     undef   => $jboss::home,
@@ -47,7 +47,7 @@ define jboss::user (
         command     => "${home}/bin/add-user.sh --silent --user '${name}' --password '${password}' --realm '${realm}' --roles '${roles}' ${extraarg}",
         unless      => "/bin/egrep -e '^${name}=' ${filepath}",
         require     => Anchor['jboss::package::end'],
-        notify      => Service[$jboss::service::servicename],
+        notify      => Service[$jboss::internal::service::servicename],
         logoutput   => 'on_failure',
       }
       if $application_realm {
@@ -57,7 +57,7 @@ define jboss::user (
           line      => "${name}=${roles}",
           match     => "${name}=.*",
           require   => Exec["jboss::user::add(${realm}/${name})"],
-          notify      => Service[$jboss::service::servicename],
+          notify      => Service[$jboss::internal::service::servicename],
         }
       }
     }
@@ -67,7 +67,7 @@ define jboss::user (
         onlyif      => "/bin/egrep -e '^${name}=' ${filepath}",
         require     => Anchor['jboss::package::end'],
         logoutput   => 'on_failure',
-        notify      => Service[$jboss::service::servicename],
+        notify      => Service[$jboss::internal::service::servicename],
       }
       if $application_realm {
         exec { "jboss::user::roles::remove(${realm}/${name})":
@@ -75,7 +75,7 @@ define jboss::user (
           onlyif      => "/bin/egrep -e '^${name}=' ${filepath_roles}",
           require     => Anchor['jboss::package::end'],
           logoutput   => 'on_failure',
-          notify      => Service[$jboss::service::servicename],
+          notify      => Service[$jboss::internal::service::servicename],
         }
       }
     }

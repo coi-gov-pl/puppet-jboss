@@ -1,4 +1,4 @@
-define jboss::util::download (
+define jboss::internal::util::download (
   $uri, 
   $dest = $name, 
   $timeout = 300,

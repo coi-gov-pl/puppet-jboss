@@ -1,4 +1,4 @@
-class jboss::package (
+class jboss::internal::package (
   $jboss_user       = $jboss::params::jboss_user,
   $jboss_group      = $jboss::params::jboss_group,
   $download_url     = $jboss::params::download_url,
@@ -8,17 +8,19 @@ class jboss::package (
   $java_package     = $jboss::params::java_package,
   $install_dir      = $jboss::params::install_dir,
   # Prerequisites class, that can be overwritten
-  $prerequisites    = Class['jboss::prerequisites'],
+  $prerequisites    = Class['jboss::internal::prerequisites'],
 ) inherits jboss::params {
   include jboss
+  include jboss::internal::runtime
   
-  $download_rootdir = $jboss::params::internal::download_rootdir
-  $download_file = jboss_basename($download_url)
-  $download_dir  = "$download_rootdir/download-jboss-${version}"
-  $home = $jboss::home
+  $download_rootdir = $jboss::internal::params::download_rootdir
+  $download_file    = jboss_basename($download_url)
+  $download_dir     = "$download_rootdir/download-jboss-${version}"
+  $home             = $jboss::home
   
-  $logdir  = $jboss::params::internal::logdir
-  $logfile = $jboss::params::internal::logfile
+  $logdir     = $jboss::internal::params::logdir
+  $logfile    = $jboss::internal::params::logfile
+  $configfile = $jboss::internal::runtime::configfile
   
   case $version {
     /^(?:eap|as)-[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
@@ -94,7 +96,7 @@ class jboss::package (
     ensure => 'directory', 
   }
 
-  jboss::util::download { "${download_dir}/${download_file}":
+  jboss::internal::util::download { "${download_dir}/${download_file}":
     uri     => $download_url,
     require => File[$download_dir],
   }
@@ -125,7 +127,7 @@ class jboss::package (
     require => Exec['jboss::move-unzipped'],
   }
 
-  jboss::util::groupaccess { $jboss::home:
+  jboss::internal::util::groupaccess { $jboss::home:
     user    => $jboss_user,
     group   => $jboss_group,
     require => [
@@ -165,7 +167,7 @@ class jboss::package (
   file { 'jboss::configuration-link::standalone':
     ensure  => 'link',
     path    => '/etc/jboss-as/standalone.xml',
-    target  => "${jboss::home}/standalone/configuration/standalone.xml",
+    target  => "${jboss::home}/standalone/configuration/${configfile}",
     require => Jboss::Util::Groupaccess[$jboss::home],
   }
   
@@ -213,7 +215,7 @@ class jboss::package (
 
   anchor { "jboss::installed":
     require => [
-      Jboss::Util::Groupaccess[$jboss::home],
+      Jboss::Internal::Util::Groupaccess[$jboss::home],
       Exec['jboss::test-extraction'],
       File['jboss::confdir'],
       File['jboss::logfile'],
