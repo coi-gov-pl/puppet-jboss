@@ -1,4 +1,7 @@
+
 include jboss::params
+include jboss::internal::params::socketbinding
+
 /**
  * Creates JBoss domain server
  */
@@ -8,7 +11,7 @@ define jboss::domain::server (
   $host                       = undef,
   $autostart                  = true,
   $socket_binding_group       = undef,
-  $socket_binding_port_offset = 0,
+  $socket_binding_port_offset = $jboss::internal::params::socketbinding::port_offset,
   $controller                 = $jboss::params::controller,
 ) {
   include jboss

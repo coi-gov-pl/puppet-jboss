@@ -40,5 +40,11 @@ class jboss::params inherits jboss::internal::params {
   
   # JBoss default host name
   $hostname     = hiera('jboss::params::hostname', $::hostname)
+
+  class mod_cluster {
+    # Version of mod_cluster
+    $version = hiera('jboss::params::mod_cluster::version', "1.2.6.Final")
+  }
+  include mod_cluster
   
 }

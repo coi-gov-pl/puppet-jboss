@@ -71,11 +71,11 @@ class jboss::internal::configuration {
   }
   
   if $enableconsole {
-    Jboss::Configuration::Node['jboss::configuration::management::inet-address'] ->
-    Jboss::Configuration::Node['jboss::configuration::management::any-address']
+    Jboss::Clientry['jboss::configuration::management::inet-address'] ->
+    Jboss::Clientry['jboss::configuration::management::any-address']
   } else {
-    Jboss::Configuration::Node['jboss::configuration::management::any-address'] ->
-    Jboss::Configuration::Node['jboss::configuration::management::inet-address']
+    Jboss::Clientry['jboss::configuration::management::any-address'] ->
+    Jboss::Clientry['jboss::configuration::management::inet-address']
   }
   
   concat::fragment { 'jboss::jboss-as.conf::defaults':

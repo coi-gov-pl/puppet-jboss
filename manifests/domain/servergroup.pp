@@ -1,15 +1,19 @@
 include jboss::params
+include jboss::internal::params::memorydefaults
+include jboss::internal::params::socketbinding
+
 /**
  * Creates JBoss domain server group
  */
 define jboss::domain::servergroup (
   $ensure                     = 'present',
-  $maxpermgensize             = '256m',
-  $heapsize                   = '1303m',
-  $maxheapsize                = '1303m',
+  $permgensize                = $jboss::internal::params::memorydefaults::permgensize,
+  $maxpermgensize             = $jboss::internal::params::memorydefaults::maxpermgensize,
+  $heapsize                   = $jboss::internal::params::memorydefaults::heapsize,
+  $maxheapsize                = $jboss::internal::params::memorydefaults::maxheapsize,
   $profile                    = $jboss::params::profile,
-  $socket_binding_group       = 'full-sockets',
-  $socket_binding_port_offset = 0,
+  $socket_binding_group       = $jboss::internal::params::socketbinding::group,
+  $socket_binding_port_offset = $jboss::internal::params::socketbinding::port_offset,
   $controller                 = $jboss::params::controller,
 ) {
   include jboss
@@ -47,10 +51,10 @@ define jboss::domain::servergroup (
   }
   
   if $ensure == 'present' {
-    JBoss::Configuration::Node["jboss::domain::servergroup(${name})"] ->
-    JBoss::Configuration::Node["jboss::domain::servergroup::jvm(${name})"]
+    JBoss::Clientry["jboss::domain::servergroup(${name})"] ->
+    JBoss::Clientry["jboss::domain::servergroup::jvm(${name})"]
   } else {
-    JBoss::Configuration::Node["jboss::domain::servergroup::jvm(${name})"] ->
-    JBoss::Configuration::Node["jboss::domain::servergroup(${name})"]
+    JBoss::Clientry["jboss::domain::servergroup::jvm(${name})"] ->
+    JBoss::Clientry["jboss::domain::servergroup(${name})"]
   }
 }

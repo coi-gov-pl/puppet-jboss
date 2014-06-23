@@ -108,7 +108,7 @@ class jboss::internal::package (
     creates => $jboss::home,
     require => [
       $prerequisites, # Prerequisites class, that can be overwritten
-      Jboss::Util::Download["${download_dir}/${download_file}"], 
+      Jboss::Internal::Util::Download["${download_dir}/${download_file}"], 
       File[$download_dir], 
       Package['unzip'],
     ],
@@ -140,35 +140,35 @@ class jboss::internal::package (
     ensure  => 'link',
     path    => '/etc/init.d/jboss-domain',
     target  => "${jboss::home}/bin/init.d/jboss-as-domain.sh",
-    require => Jboss::Util::Groupaccess[$jboss::home],
+    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
   
   file { 'jboss::service-link::standalone':
     ensure  => 'link',
     path    => '/etc/init.d/jboss-standalone',
     target  => "${jboss::home}/bin/init.d/jboss-as-standalone.sh",
-    require => Jboss::Util::Groupaccess[$jboss::home],
+    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
   
   file { 'jboss::configuration-link::domain':
     ensure  => 'link',
     path    => '/etc/jboss-as/domain.xml',
     target  => "${jboss::home}/domain/configuration/domain.xml",
-    require => Jboss::Util::Groupaccess[$jboss::home],
+    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
   $hostfile = 'host.xml'
   file { 'jboss::configuration-link::host':
     ensure  => 'link',
     path    => "/etc/jboss-as/${hostfile}",
     target  => "${jboss::home}/domain/configuration/${hostfile}",
-    require => Jboss::Util::Groupaccess[$jboss::home],
+    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
   
   file { 'jboss::configuration-link::standalone':
     ensure  => 'link',
     path    => '/etc/jboss-as/standalone.xml',
     target  => "${jboss::home}/standalone/configuration/${configfile}",
-    require => Jboss::Util::Groupaccess[$jboss::home],
+    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
   
   file { 'jboss::service-link':
@@ -178,7 +178,7 @@ class jboss::internal::package (
       true    => '/etc/init.d/jboss-domain',
       default => '/etc/init.d/jboss-standalone',
     },
-    require => Jboss::Util::Groupaccess[$jboss::home],
+    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
     notify  => [
       Exec['jboss::kill-existing::domain'],
       Exec['jboss::kill-existing::standalone'],
@@ -203,7 +203,7 @@ class jboss::internal::package (
     content => template('jboss/jboss-cli.erb'),
     mode    => 755,
     path    => '/usr/bin/jboss-cli',
-    require => Jboss::Util::Groupaccess[$jboss::home],
+    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
   
   exec { 'jboss::package::check-for-java':

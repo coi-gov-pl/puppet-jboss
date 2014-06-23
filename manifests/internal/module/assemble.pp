@@ -68,7 +68,7 @@ define jboss::internal::module::assemble::process_artifacts ($dir) {
       mode    => '0640',
       owner   => $jboss::jboss_user,
       group   => $jboss::jboss_group,
-      require => Jboss::Util::Download[$target],
+      require => Jboss::Internal::Util::Download[$target],
       notify  => Service['jboss'],
     }  
   } else {
