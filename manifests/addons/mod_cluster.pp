@@ -5,7 +5,7 @@ class jboss::addons::mod_cluster (
   include apache
   include jboss::params::mod_cluster
   
-  $download_rootdir = $jboss::params::internal::download_rootdir
+  $download_rootdir = $jboss::internal::params::download_rootdir
   $ver = $jboss::params::mod_cluster::version
   $download_dir = "${$download_rootdir}/mod_cluster-${ver}"
   $download_file = "mod_cluster-${ver}-linux2-x64-so.tar.gz"
@@ -15,7 +15,7 @@ class jboss::addons::mod_cluster (
     ensure => 'directory',
   }
   
-  jboss::util::download { "${download_dir}/${download_file}":
+  jboss::internal::util::download { "${download_dir}/${download_file}":
     uri     => $download_url,
     require => File[$download_dir],
   }
