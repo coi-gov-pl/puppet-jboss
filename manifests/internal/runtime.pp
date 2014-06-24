@@ -22,4 +22,6 @@ class jboss::internal::runtime {
     true    => $domainconfigfile,
     default => $standaloneconfigfile,
   }
+  
+  include jboss::internal::runtime::dc
 }

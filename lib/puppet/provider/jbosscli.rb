@@ -68,6 +68,11 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     ret = self.read_config 'JBOSS_RUNASDOMAIN', 'false'
     return ret.to_bool
   end
+  
+  def self.runtime_as_controller
+    ret = Puppet::Parser::Functions.getvar('jboss::internal::runtime::dc::runs_as_controller')
+    return ret.to_bool
+  end
 
   def self.config_controller
     return self.read_config 'JBOSS_CONTROLLER', 'localhost:9999'
