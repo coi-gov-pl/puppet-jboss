@@ -1,4 +1,4 @@
-require 'puppet/provider/jbosscli'
+require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbosscli.rb'))
 
 Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
   

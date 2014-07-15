@@ -1,5 +1,6 @@
-require 'puppet/provider/jbosscli'
+require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbosscli.rb'))
 require 'uri'
+
 Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
   desc "JBoss CLI datasource provider"
   
