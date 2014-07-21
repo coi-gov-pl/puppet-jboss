@@ -3,6 +3,7 @@ class jboss::internal::configuration {
   include jboss::params
   include jboss::internal::params
   include jboss::internal::runtime
+  include jboss::internal::configure::interfaces
   
   $home          = $jboss::home
   $user          = $jboss::jboss_user
@@ -55,14 +56,14 @@ class jboss::internal::configuration {
     $managementPath = '/interface=management'
   }
 
-  jboss::configuration::node { 'jboss::configuration::management::inet-address':
+  jboss::clientry { 'jboss::configuration::management::inet-address':
     ensure     => 'present',
     path       => $managementPath,
     properties => {
       'inet-address' => $manageprops['inet-address'],
     },
   }
-  jboss::configuration::node { 'jboss::configuration::management::any-address':
+  jboss::clientry { 'jboss::configuration::management::any-address':
     ensure     => 'present',
     path       => $managementPath,
     properties => {

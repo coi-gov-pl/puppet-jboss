@@ -33,13 +33,19 @@ class jboss::params inherits jboss::internal::params {
   $enableconsole    = hiera('jboss::params::enableconsole', false)
   
   # JBoss default domain profile
-  $profile      = hiera('jboss::settings::profile', 'full')
+  $profile          = hiera('jboss::settings::profile', 'full')
   
   #JBoss default domain controller
-  $controller   = hiera('jboss::settings::controller','localhost:9999')
+  $controller       = hiera('jboss::settings::controller','localhost:9999')
+
+  # JBoss bind public interface to:
+  $bind_public      = hiera('jboss::params::bind_public', undef)
+
+  # JBoss bind management interface to:
+  $bind_mgmt        = hiera('jboss::params::bind_mgmt', undef)
   
   # JBoss default host name
-  $hostname     = hiera('jboss::params::hostname', $::hostname)
+  $hostname         = hiera('jboss::params::hostname', $::hostname)
 
   class mod_cluster {
     # Version of mod_cluster
