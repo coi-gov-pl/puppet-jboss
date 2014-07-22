@@ -21,6 +21,13 @@ Puppet::Type.newtype(:jboss_confignode) do
   newproperty(:properties) do 
     desc "Additional properties for node"
     defaultto {}
+
+    def is_to_s is
+      return is.inspect
+    end
+    def should_to_s should
+      return should.inspect
+    end
   end
   
   newparam(:profile) do
