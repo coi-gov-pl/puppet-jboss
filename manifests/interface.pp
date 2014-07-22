@@ -59,13 +59,13 @@ define jboss::interface (
   Augeas {
     require   => [
       Anchor['jboss::configuration::begin'], 
-      File["${::jboss::lenses::lenses_path}/jbxml.aug"],
+      File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
     ],
     before    => [
       Anchor['jboss::configuration::end'],
       Service['jboss'],
     ],
-    load_path => $::jboss::lenses::lenses_path,
+    load_path => $jboss::internal::lenses::lenses_path,
     lens      => 'jbxml.lns',
     context   => "/files${cfg_file}/",
     incl      => $cfg_file,
