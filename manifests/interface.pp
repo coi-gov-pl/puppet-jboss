@@ -24,7 +24,7 @@ define jboss::interface (
   $virtual = undef,#bool
   ){
 
-  require jboss::lenses
+  require jboss::internal::lenses
 
   $bind_variables = {
     'any'                => $any, #object
@@ -109,7 +109,7 @@ define jboss::interface_helper (
   $home = $::jboss::home,
 ) {
 
-  require jboss::lenses
+  require jboss::internal::lenses
 
   Augeas {
     require => Augeas["ensure present interface ${interface_name}"],

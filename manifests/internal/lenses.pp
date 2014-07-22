@@ -1,5 +1,7 @@
 # Installs lenses file for JBoss .xml files
-class jboss::lenses {
+class jboss::internal::lenses {
+  include jboss
+
   $lenses_path = "${::jboss::home}/lenses"
   file{$lenses_path:
     ensure  => directory,
