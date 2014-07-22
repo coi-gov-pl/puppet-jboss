@@ -8,6 +8,7 @@ class jboss::internal::runtime {
   $profile       = $jboss::profile
   
   $domainconfigfile = 'domain.xml'
+  $hostconfigfile = 'host.xml'
   
   $standaloneconfigfile = $profile ? {
     ''        => 'standalone.xml',
@@ -22,6 +23,10 @@ class jboss::internal::runtime {
     true    => $domainconfigfile,
     default => $standaloneconfigfile,
   }
+  
+  $standaloneconfigpath = "${jboss::home}/standalone/configuration/${standaloneconfigfile}"
+  $hostconfigpath = "${jboss::home}/domain/configuration/${hostconfigfile}"
+  $domainconfigpath = "${jboss::home}/domain/configuration/${domainconfigfile}"
   
   include jboss::internal::runtime::dc
 }

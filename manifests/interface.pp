@@ -22,6 +22,7 @@ define jboss::interface (
   $virtual            = undef, # bool
   ) {
   require jboss::internal::lenses
+  require jboss::internal::runtime
 
   $bind_variables = {
     'any-address'        => $any_address, 
@@ -46,13 +47,12 @@ define jboss::interface (
   # Lista wspieranych ustawien - wszystkie poza object chwilowo.
   $supported_bind_types = keys($bind_variables)
 
-  # FIXME: ustalic poprawna nazwe pliku konfiguracyjnego
   # Nie mozna brac z faktu bo moze go jeszcze nie byc...
   if $runasdomain {
-    $cfg_file = "${::jboss::home}/domain/configuration/host.xml"
+    $cfg_file = $jboss::internal::runtime::hostconfigpath
     $path = 'host/interfaces'
   } else {
-    $cfg_file = "${::jboss::home}/standalone/configuration/standalone.xml"
+    $cfg_file = $jboss::internal::runtime::standaloneconfigpath
     $path = 'server/interfaces'
   }
 
@@ -73,12 +73,11 @@ define jboss::interface (
 
   if ($ensure == 'present') {
     augeas { "ensure present interface ${interface_name}":
-      changes => "ins ${path}/interface[#attribute/name='${interface_name}'] before ${path}/interface[0]",
+      changes => "set ${path}/interface[last()+1]/#attribute/name ${interface_name}",
       onlyif  => "match ${path}/interface[#attribute/name='${interface_name}'] size == 0",
     }
     # W oczekiwaniu na puppet 3 trzeba tak (bo nie ma for'a normalnego w 2)
     $prefixed_bind_types = prefix($supported_bind_types, "${interface_name}:")
-
     jboss::internal::interface_helper { $prefixed_bind_types:
       cfg_file       => $cfg_file,
       path           => $path,
@@ -91,7 +90,6 @@ define jboss::interface (
       onlyif  => "match ${path}/interface[#attribute/name='${interface_name}'] size != 0",
     }
   }
-  
 }
 
 # Helper for creating interface children
@@ -111,7 +109,6 @@ define jboss::internal::interface_helper (
   $interface_bind_pair = split($name, ':')
   $bind_type = $interface_bind_pair[1]
   $bind_value = $bind_variables[$bind_type]
-
   if ($bind_value == undef or $ensure != 'present') {
     augeas { "interface ${interface_name} rm ${bind_type}":
       changes => "rm ${path}/interface[#attribute/name='${interface_name}']/${bind_type}",
