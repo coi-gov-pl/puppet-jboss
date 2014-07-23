@@ -45,13 +45,13 @@ define jboss::interface (
   }
 
   if($::jboss_running) {
-    Jboss::Configuration::Node {
+    Jboss::Clientry {
       ensure      => $ensure,
       controller  => $controller,
       runasdomain => $runasdomain,
       profile     => $profile,
     }
-    jboss::configuration::node {"/interface=${interface_name}":
+    jboss::clientry {"/interface=${interface_name}":
       properties => $bind_variables,
     }
   } else {
