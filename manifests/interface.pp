@@ -25,69 +25,79 @@ define jboss::interface (
   require jboss::internal::runtime
 
   $bind_variables = {
-    'any-address'        => $any_address, 
-    'any-ipv4-address'   => $any_ipv4_address, 
-    'any-ipv6-address'   => $any_ipv6_address, 
-    'inet-address'       => $inet_address, 
-    'link-local-address' => $link_local_address, 
-    'loopback'           => $loopback, 
-    'loopback-address'   => $loopback_address, 
-    'multicast'          => $multicast, 
+    'any-address'        => $any_address,       # undef, bool
+    'any-ipv4-address'   => $any_ipv4_address,  # undef, bool
+    'any-ipv6-address'   => $any_ipv6_address,  # undef, bool
+    'inet-address'       => $inet_address,      # '${jboss.bind.address:127.0.0.1}', string
+    'link-local-address' => $link_local_address,# undef, bool
+    'loopback'           => $loopback,          # undef, string
+    'loopback-address'   => $loopback_address,  # undef, bool
+    'multicast'          => $multicast,         # undef, bool
     'name'               => $interface_name,
-    'nic'                => $nic, 
-    'nic-match'          => $nic_match, 
-    'point-to-point'     => $point_to_point, 
-    'public-address'     => $public_address, 
-    'site-local-address' => $site_local_address, 
-    'subnet-match'       => $subnet_match, 
-    'up'                 => $up, 
-    'virtual'            => $virtual, # undef, bool
+    'nic'                => $nic,               # undef, string
+    'nic-match'          => $nic_match,         # undef, string
+    'point-to-point'     => $point_to_point,    # undef, bool
+    'public-address'     => $public_address,    # undef, bool
+    'site-local-address' => $site_local_address,# undef, bool
+    'subnet-match'       => $subnet_match,      # undef, string
+    'up'                 => $up,                # undef, bool
+    'virtual'            => $virtual,           # undef, bool
   }
 
-  # Lista wspieranych ustawien - wszystkie poza object chwilowo.
-  $supported_bind_types = keys($bind_variables)
-
-  # Nie mozna brac z faktu bo moze go jeszcze nie byc...
-  if $runasdomain {
-    $cfg_file = $jboss::internal::runtime::hostconfigpath
-    $path = 'host/interfaces'
-  } else {
-    $cfg_file = $jboss::internal::runtime::standaloneconfigpath
-    $path = 'server/interfaces'
-  }
-
-  Augeas {
-    require   => [
-      Anchor['jboss::configuration::begin'], 
-      File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
-    ],
-    before    => [
-      Anchor['jboss::configuration::end'],
-      Service['jboss'],
-    ],
-    load_path => $jboss::internal::lenses::lenses_path,
-    lens      => 'jbxml.lns',
-    context   => "/files${cfg_file}/",
-    incl      => $cfg_file,
-  }
-
-  if ($ensure == 'present') {
-    augeas { "ensure present interface ${interface_name}":
-      changes => "set ${path}/interface[last()+1]/#attribute/name ${interface_name}",
-      onlyif  => "match ${path}/interface[#attribute/name='${interface_name}'] size == 0",
+  if($::jboss_running) {
+    Jboss::Configuration::Node {
+      ensure      => $ensure,
+      controller  => $controller,
+      runasdomain => $runasdomain,
+      profile     => $profile,
     }
-    # W oczekiwaniu na puppet 3 trzeba tak (bo nie ma for'a normalnego w 2)
+    jboss::configuration::node {"/interface=${interface_name}":
+      properties => $bind_variables,
+    }
+  } else {
+    $supported_bind_types = keys($bind_variables)
     $prefixed_bind_types = prefix($supported_bind_types, "${interface_name}:")
-    jboss::internal::interface_helper { $prefixed_bind_types:
-      cfg_file       => $cfg_file,
-      path           => $path,
-      interface_name => $interface_name,
-      bind_variables => $bind_variables,
+
+    if $runasdomain {
+      $cfg_file = $jboss::internal::runtime::hostconfigpath
+      $path = 'host/interfaces'
+    } else {
+      $cfg_file = $jboss::internal::runtime::standaloneconfigpath
+      $path = 'server/interfaces'
     }
-  } else {
-    augeas { "ensure absent interface ${interface_name}":
-      changes => "rm ${path}/interface[#attribute/name='${interface_name}']",
-      onlyif  => "match ${path}/interface[#attribute/name='${interface_name}'] size != 0",
+
+    Augeas {
+      require   => [
+        Anchor['jboss::configuration::begin'], 
+        File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
+      ],
+      before    => [
+        Anchor['jboss::configuration::end'],
+        Service['jboss'],
+      ],
+      load_path => $jboss::internal::lenses::lenses_path,
+      lens      => 'jbxml.lns',
+      context   => "/files${cfg_file}/",
+      incl      => $cfg_file,
+    }
+
+    if ($ensure == 'present') {
+      augeas { "ensure present interface ${interface_name}":
+        changes => "set ${path}/interface[last()+1]/#attribute/name ${interface_name}",
+        onlyif  => "match ${path}/interface[#attribute/name='${interface_name}'] size == 0",
+      }
+      # W oczekiwaniu na puppet 3 trzeba tak (bo nie ma for'a normalnego w 2)
+      jboss::internal::interface_helper { $prefixed_bind_types:
+        cfg_file       => $cfg_file,
+        path           => $path,
+        interface_name => $interface_name,
+        bind_variables => $bind_variables,
+      }
+    } else {
+      augeas { "ensure absent interface ${interface_name}":
+        changes => "rm ${path}/interface[#attribute/name='${interface_name}']",
+        onlyif  => "match ${path}/interface[#attribute/name='${interface_name}'] size != 0",
+      }
     }
   }
 }
