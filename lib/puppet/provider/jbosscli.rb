@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'tempfile'
 
 class Object
@@ -114,10 +115,12 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
 
   def execute jbosscmd
     controller  = @resource[:controller]
-    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, controller
+    retry_count = @resource[:retry]
+    retry_timeout = @resource[:retry_timeout]
+    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, controller, retry_count, retry_timeout 
   end
   
-  def self.execute jbosscmd, runasdomain, controller
+  def self.execute jbosscmd, runasdomain, controller, retry_count, retry_timeout 
     file = Tempfile.new 'jbosscli'
     path = file.path
     file.close
@@ -126,14 +129,25 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     File.open(path, 'w') {|f| f.write(jbosscmd + "\n") }
 
     ENV['JBOSS_HOME'] = self.jbosshome
-    cmd = "#{self.jbossclibin} --connect --file=#{path}"
+    cmd = "#{self.jbossclibin} --timeout=50000 --connect --file=#{path}"
     if runasdomain
       cmd = "#{cmd} --controller=#{controller}"
     end
-
-    Puppet.debug "Komenda do JBoss-cli: " + jbosscmd
-    lines = `#{cmd}`
-    result = $?
+	
+    retries = 0
+    result = ''
+    lines = ''
+    begin
+      #notice("Powtarzam komendę cli #{retries} raz..")
+      if retries > 0 
+        notice("Powtarzam komendę cli #{retries}/#{retry_count} raz, poprzedni status: #{result.exitstatus.to_s}.. #{lines}")
+        sleep retry_timeout.to_i
+      end
+      Puppet.debug "Komenda do JBoss-cli: " + jbosscmd
+      lines = `#{cmd}`
+      result = $?
+      retries += 1
+    end while (result.exitstatus != 0 && retries <= retry_count)
     Puppet.debug "Output from JBoss-cli[%s]: %s" % [result.inspect, lines]
     # deletes the temp file
     File.unlink path
@@ -221,8 +235,8 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     return out
   end
 
-  def self.executeAndGet cmd, runasdomain, controller
-    ret = self.execute cmd, runasdomain, controller
+  def self.executeAndGet cmd, runasdomain, controller, retry_count, retry_timeout
+    ret = self.execute cmd, runasdomain, controller, retry_count, retry_timeout
     if not ret[:result]
         return {
           :result => false,
@@ -252,6 +266,8 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
 
   def executeAndGet jbosscmd
     controller  = @resource[:controller]
-    return Puppet::Provider::Jbosscli.executeAndGet jbosscmd, runasdomain?, controller
+    retry_count = @resource[:retry]
+    retry_timeout = @resource[:retry_timeout]
+    return Puppet::Provider::Jbosscli.executeAndGet jbosscmd, runasdomain?, controller, retry_count, retry_timeout
   end
 end

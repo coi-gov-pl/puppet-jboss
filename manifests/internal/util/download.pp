@@ -1,7 +1,7 @@
 define jboss::internal::util::download (
   $uri, 
   $dest = $name, 
-  $timeout = 300,
+  $timeout = 900,
 ) {
   anchor { "jboss::download::${name}::begin": }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Puppet Module coi-jboss</name>
+	<name>jboss</name>
 	<comment></comment>
 	<projects>
 		<project>Forge Module puppetlabs-java</project>

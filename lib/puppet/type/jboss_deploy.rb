@@ -38,4 +38,14 @@ Puppet::Type.newtype(:jboss_deploy) do
     end
   end
 
+  newparam :retry do
+    desc "Number of retries."
+    defaultto 3
+  end
+
+  newparam :retry_timeout do
+    desc "Retry timeout in seconds"
+    defaultto 1
+  end
+  
 end

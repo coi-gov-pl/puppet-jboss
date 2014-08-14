@@ -44,7 +44,7 @@ function procStop() {
 	fi
 	log_daemon_msg "Stoping $__NAME"
 	_isOk=0
-	sudo -u $USER ${JBOSSPATH}/jboss-cli.sh --connect command=:shutdown > /dev/null
+	sudo -u $USER ${JBOSSPATH}/jboss-cli.sh --timeout=50000 --connect command=:shutdown > /dev/null
 	if [[ $? -ne 0 ]]; then
 		_isOk=3
 	fi
