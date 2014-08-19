@@ -7,7 +7,7 @@ define jboss::interface (
   $any_address        = undef, # bool
   $any_ipv4_address   = undef, # bool
   $any_ipv6_address   = undef, # bool
-  $inet_address       = '${jboss.bind.address:127.0.0.1}', # string
+  $inet_address       = undef, # string
   $link_local_address = undef, # bool
   $loopback           = undef, # string
   $loopback_address   = undef, # bool
@@ -23,7 +23,8 @@ define jboss::interface (
   ) {
   require jboss::internal::lenses
   require jboss::internal::runtime
-
+  include jboss
+  
   $bind_variables = {
     'any-address'        => $any_address,       # undef, bool
     'any-ipv4-address'   => $any_ipv4_address,  # undef, bool
@@ -33,7 +34,6 @@ define jboss::interface (
     'loopback'           => $loopback,          # undef, string
     'loopback-address'   => $loopback_address,  # undef, bool
     'multicast'          => $multicast,         # undef, bool
-    'name'               => $interface_name,
     'nic'                => $nic,               # undef, string
     'nic-match'          => $nic_match,         # undef, string
     'point-to-point'     => $point_to_point,    # undef, bool
@@ -43,15 +43,19 @@ define jboss::interface (
     'up'                 => $up,                # undef, bool
     'virtual'            => $virtual,           # undef, bool
   }
-
-  if($::jboss_running) {
+  
+  if str2bool($::jboss_running) {
     Jboss::Clientry {
       ensure      => $ensure,
       controller  => $controller,
       runasdomain => $runasdomain,
       profile     => $profile,
     }
-    jboss::clientry {"/interface=${interface_name}":
+    $entrypath = $runasdomain ? {
+      true    => "/host=${jboss::hostname}/interface=${interface_name}",
+      default => "/interface=${interface_name}",
+    }
+    jboss::clientry { $entrypath:
       properties => $bind_variables,
     }
   } else {
@@ -71,7 +75,7 @@ define jboss::interface (
         Anchor['jboss::configuration::begin'], 
         File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
       ],
-      before    => [
+      notify    => [
         Anchor['jboss::configuration::end'],
         Service['jboss'],
       ],
@@ -129,7 +133,6 @@ define jboss::internal::interface_helper (
       changes => "set ${path}/interface[#attribute/name='${interface_name}']/${bind_type}/#attribute/value '${bind_value}'",
       onlyif  => "get ${path}/interface[#attribute/name='${interface_name}']/${bind_type}/#attribute/value != '${bind_value}'",
     }
-    # notify{"Set ${interface_name}/${bind_type} to ${bind_value}, file ${cfg_file}, path ${path}":}
   }
 }
 

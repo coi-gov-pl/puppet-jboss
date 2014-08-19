@@ -1,5 +1,3 @@
-include jboss::params
-
 /**
  * Creates JBoss datasources, standard and xa
  */
@@ -15,8 +13,8 @@ define jboss::datasource (
   $jndiname                = "java:jboss/datasources/${name}",
   $xa                      = hiera('jboss::datasource::xa', true),
   $jta                     = hiera('jboss::datasource::jta', true),
-  $profile                 = $jboss::params::profile,
-  $controller              = $jboss::params::controller,
+  $profile                 = $::jboss::profile,
+  $controller              = $::jboss::controller,
   $minpoolsize             = hiera('jboss::datasource::minpoolsize', 1),
   $maxpoolsize             = hiera('jboss::datasource::maxpoolsize', 50),
   $validateonmatch         = hiera('jboss::datasource::validateonmatch', false),
@@ -25,14 +23,9 @@ define jboss::datasource (
   $samermoverride          = hiera('jboss::datasource::samermoverride', true),
   $wrapxaresource          = hiera('jboss::datasource::wrapxaresource', true),
   $enabled                 = hiera('jboss::datasource::enabled', true),
-  $runasdomain             = undef,
+  $runasdomain             = $::jboss::runasdomain,
 ) {
   include jboss
-  
-  $realrunasdomain = $runasdomain ? {
-    undef   => $jboss::runasdomain,
-    default => $runasdomain,
-  }
   
   $drivername = $driver['name']
   
@@ -54,7 +47,7 @@ define jboss::datasource (
       modulename            => $driver['modulename'],
       datasourceclassname   => $datasourceclassname,
       xadatasourceclassname => $xadatasourceclassname,
-      runasdomain           => $realrunasdomain,
+      runasdomain           => $runasdomain,
       profile               => $profile,
       controller            => $controller,
       require               => Anchor['jboss::service::end'],
@@ -66,7 +59,7 @@ define jboss::datasource (
     ensure                  => $ensure,
     dbname                  => $dbname,
     enabled                 => $enabled,
-    runasdomain             => $realrunasdomain,
+    runasdomain             => $runasdomain,
     profile                 => $profile,
     controller              => $controller,
     jndiname                => $jndiname,

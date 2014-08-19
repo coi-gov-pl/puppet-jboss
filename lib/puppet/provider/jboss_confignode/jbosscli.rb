@@ -208,7 +208,7 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
     if status == :absent
       create
     end
-    ret = bringUp 'Configuration node START', "#{compiledpath}:start()"
+    ret = bringUp 'Configuration node START', "#{compiledpath}:start(blocking=true)"
     invalidate
     traceout 'doStart', ret
     return ret
@@ -220,7 +220,7 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
     if status == :absent
       create
     end
-    ret = bringDown 'Configuration node STOP', "#{compiledpath}:stop()"
+    ret = bringDown 'Configuration node STOP', "#{compiledpath}:stop(blocking=true)"
     invalidate
     return ret
   end

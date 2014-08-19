@@ -5,5 +5,4 @@ class jboss::domain::controller {
   class { 'jboss::internal::runtime::dc':
     runs_as_controller => true,
   }
-  include jboss
 }

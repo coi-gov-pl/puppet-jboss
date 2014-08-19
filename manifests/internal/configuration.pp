@@ -3,6 +3,7 @@ class jboss::internal::configuration {
   include jboss::params
   include jboss::internal::params
   include jboss::internal::runtime
+  include jboss::internal::lenses
   include jboss::internal::configure::interfaces
   
   $home          = $jboss::home
@@ -14,6 +15,7 @@ class jboss::internal::configuration {
   $profile       = $jboss::profile
   $configfile    = $jboss::internal::runtime::configfile
   
+  
   anchor { 'jboss::configuration::begin':
     require => Anchor['jboss::package::end'],
   }
@@ -21,14 +23,21 @@ class jboss::internal::configuration {
   if $runasdomain {
     include jboss::internal::service
     $hostfile = "${jboss::home}/domain/configuration/host.xml"
-    file_line { "jboss::configure::set_hostname(${jboss::hostname})":
-      ensure    => "present",
-      line      => "<host name=\"${jboss::hostname}\" xmlns=\"urn:jboss:domain:1.5\">",
-      match     => "\\<host[^\\>]+\\>",
-      path      => $hostfile,
-      notify    => Service[$jboss::internal::service::servicename],
-      before    => Anchor['jboss::configuration::begin'], 
-      require   => Anchor['jboss::package::end'],
+    augeas { "jboss::configure::set_hostname(${jboss::hostname})":
+      load_path => $jboss::internal::lenses::lenses_path,
+      lens      => 'jbxml.lns',
+      changes   => "set host/#attribute/name ${jboss::hostname}",
+      context   => "/files${hostfile}/",
+      incl      => $hostfile,
+      require   => [
+        Anchor['jboss::configuration::begin'],
+        Anchor['jboss::package::end'], 
+        File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
+      ],
+      notify    => [
+        Anchor['jboss::configuration::end'],
+        Service['jboss'],
+      ],
     }
   }
   

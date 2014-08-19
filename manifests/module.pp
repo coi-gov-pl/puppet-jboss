@@ -6,6 +6,7 @@ define jboss::module (
   $artifacts    = [],
   $dependencies = [],
 ) {
+  include jboss
   
   $home = $jboss_home ? { # Deprecated, it is not needed, will be removed
     undef   => $jboss::home,

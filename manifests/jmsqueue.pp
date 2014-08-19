@@ -1,5 +1,3 @@
-include jboss::params
-
 /**
  * Creates JBoss JMS Queue 
  */
@@ -7,22 +5,17 @@ define jboss::jmsqueue (
   $ensure       = 'present',
   $entries,
   $durable      = hiera('jboss::jmsqueue::durable', false),
-  $profile      = $jboss::params::profile,
-  $controller   = $jboss::params::controller,
-  $runasdomain  = undef,
+  $profile      = $::jboss::profile,
+  $controller   = $::jboss::controller,
+  $runasdomain  = $::jboss::runasdomain,
 ) {
   include jboss
-  
-  $realrunasdomain = $runasdomain ? {
-    undef   => $jboss::runasdomain,
-    default => $runasdomain,
-  }
   
   jboss_jmsqueue { $name:
     durable       => $durable,
     entries       => $entries,
     ensure        => $ensure,
-    runasdomain   => $realrunasdomain,
+    runasdomain   => $runasdomain,
     profile       => $profile,
     controller    => $controller,
     notify        => Exec['jboss::service::restart'],

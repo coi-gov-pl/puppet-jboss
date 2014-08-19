@@ -1,4 +1,3 @@
-include jboss::params
 /**
  * Creates JBoss resource adapter
  */
@@ -10,16 +9,11 @@ define jboss::resourceadapter (
   $classname,
   $security                = hiera('jboss::resourceadapter::security', 'application'),
   $backgroundvalidation    = hiera('jboss::resourceadapter::backgroundvalidation', false),
-  $profile                 = $jboss::params::profile,
-  $controller              = $jboss::params::controller,
-  $runasdomain             = undef,
+  $profile                 = $::jboss::profile,
+  $controller              = $::jboss::controller,
+  $runasdomain             = $::jboss::runasdomain,
 ) {
   include jboss
-  
-  $realrunasdomain = $runasdomain ? {
-    undef   => $jboss::runasdomain,
-    default => $runasdomain,
-  }
   
   jboss_resourceadapter { $name:
     ensure               => $ensure,
@@ -31,7 +25,7 @@ define jboss::resourceadapter (
     jndiname             => $jndiname,
     controller           => $controller,
     profile              => $profile,
-    runasdomain          => $realrunasdomain,
+    runasdomain          => $runasdomain,
     require              => Anchor['jboss::service::end'],
     notify               => Exec['jboss::service::restart'],
   }
