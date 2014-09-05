@@ -11,6 +11,7 @@ define jboss::securitydomain (
   $runasdomain             = $::jboss::runasdomain,
 ) {
   include jboss
+  include jboss::internal::service
   
   jboss_securitydomain { $name:
     code                    => $code,
@@ -20,9 +21,12 @@ define jboss::securitydomain (
     runasdomain             => $runasdomain,
     profile                 => $profile,
     controller              => $controller,
-    notify                  => Exec['jboss::service::restart'],
-    require                 => [
-      Anchor['jboss::service::end'],
-    ],
+    require                 => Anchor['jboss::package::end'],
+  }
+
+  if str2bool($::jboss_running) {
+    Jboss_securitydomain[$name] ~> Service[$jboss::internal::service::servicename]
+  } else {
+    Anchor['jboss::service::end'] -> Jboss_securitydomain[$name] ~> Exec['jboss::service::restart']
   }
 }

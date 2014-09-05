@@ -8,7 +8,7 @@ define jboss::domain::server (
   $autostart                  = true,
   $socket_binding_group       = undef,
   $socket_binding_port_offset = $::jboss::internal::params::socketbinding::port_offset,
-  $controller                 = undef,
+  $controller                 = $::jboss::controller,
 ) {
   include jboss
   
@@ -17,12 +17,6 @@ define jboss::domain::server (
     true    => $jboss::hostname,
     default => $host,
   }
-  
-  if $controller == undef {
-    $realcontroller = $::jboss::controller
-  } else {
-    $realcontroller = $controller
-  } 
   
   if ! $group and $ensure == 'running' {
     fail("Must pass group to Jboss::Domain::Server[${name}] while ensuring to be `${ensure}`")
@@ -50,23 +44,47 @@ define jboss::domain::server (
     default   => 'present',
   }
   
-  jboss::clientry { "jboss::domain::server(${name})":
-    ensure       => $ensure,
-    path         => "/host=${hostname}/server-config=${name}",
-    controller   => $realcontroller,
-    runasdomain  => true,
-    properties   => $props,
-  }
-  
-  if $ensurex == 'present' {
-    if ! defined(Jboss::Domain::Servergroup[$group]) {
-      jboss::domain::servergroup { $group:
-        controller => $realcontroller,
-        ensure     => $ensurex,
-      }
+  if ! str2bool($::jboss_running) and $ensurex == 'absent' {
+    include jboss::internal::lenses
+    $cfg_file = $jboss::internal::runtime::hostconfigpath
+    $path = 'host/servers'
+    Augeas {
+      require   => [
+        Anchor['jboss::configuration::begin'],
+        File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
+      ],
+      notify    => [
+        Anchor['jboss::configuration::end'],
+        Service['jboss'],
+      ],
+      load_path => $jboss::internal::lenses::lenses_path,
+      lens      => 'jbxml.lns',
+      context   => "/files${cfg_file}/",
+      incl      => $cfg_file,
     }
-    Jboss::Domain::Servergroup[$group] -> 
-    Jboss::Clientry["jboss::domain::server(${name})"]
+    augeas { "ensure absent server ${name}":
+      changes => "rm ${path}/server[#attribute/name='${name}']",
+      onlyif  => "match ${path}/server[#attribute/name='${name}'] size != 0",
+    }
+  } else {
+    jboss::clientry { "jboss::domain::server(${name})":
+      ensure       => $ensure,
+      path         => "/host=${hostname}/server-config=${name}",
+      controller   => $controller,
+      runasdomain  => true,
+      properties   => $props,
+    }
+
+    if $ensurex == 'present' {
+      if ! defined(Jboss::Domain::Servergroup[$group]) {
+        jboss::domain::servergroup { $group:
+          controller => $controller,
+          ensure     => $ensurex,
+        }
+      }
+      Jboss::Domain::Servergroup[$group] ->
+      Jboss::Clientry["jboss::domain::server(${name})"]
+    }
   }
   
 }

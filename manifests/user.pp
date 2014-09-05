@@ -8,6 +8,7 @@ define jboss::user (
 ) {
   
   include jboss
+  require jboss::internal::package
   include jboss::internal::service
   
   $home = $jboss_home ? { # Deprecated, it is not needed, will be removed
@@ -38,17 +39,27 @@ define jboss::user (
   
   $filepath = "${home}/${dir}/configuration/${file}"
   $filepath_roles = "${home}/${dir}/configuration/application-roles.properties"
+  $jbossuserfix = "2>&1 | awk 'BEGIN{a=0}{if (/Error/){a=1};print}END{if (a==1) exit 1}'"
   
   case $ensure {
     'present': {
+      $rolesstr = $roles ? {
+        undef   => '',
+        default => "--roles '${roles}'"
+      }
+      # By default the properties realm expects the entries to be in the format: -
+      # username=HEX( MD5( username ':' realm ':' password))
+      $mangledpasswd = md5("${name}:${realm}:${password}")
       exec { "jboss::user::add(${realm}/${name})":
-        alias       => "add jboss user ${name}/${realm}", # Deprecated, it is not needed, will be removed
-        environment => ["JBOSS_HOME=${home}",],
-        command     => "${home}/bin/add-user.sh --silent --user '${name}' --password '${password}' --realm '${realm}' --roles '${roles}' ${extraarg}",
-        unless      => "/bin/egrep -e '^${name}=' ${filepath}",
+        environment => [
+          "JBOSS_HOME=${home}",
+          "__PASSWD=${password}"
+        ],
+        command     => "${home}/bin/add-user.sh --silent --user '${name}' --password \"\$__PASSWD\" --realm '${realm}' ${rolesstr} ${extraarg} ${jbossuserfix}",
+        unless      => "/bin/egrep -e '^${name}=${mangledpasswd}' ${filepath}",
         require     => Anchor['jboss::package::end'],
         notify      => Service[$jboss::internal::service::servicename],
-        logoutput   => 'on_failure',
+        logoutput   => true,
       }
       if $application_realm {
         file_line { "jboss::user::roles::add(${realm}/${name})":

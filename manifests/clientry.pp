@@ -13,6 +13,7 @@ define jboss::clientry (
   $dorestart   = true,
 ) {
   include jboss
+  include jboss::internal::service
   
   case $ensure {
     'running':  {} 
@@ -33,7 +34,13 @@ define jboss::clientry (
     controller  => $controller,
     profile     => $profile,
     runasdomain => $runasdomain,
-    require     => Anchor['jboss::service::end'],
+    require     => Anchor['jboss::package::end'],
+  }
+
+  if str2bool($::jboss_running) {
+    Jboss_confignode[$name] ~> Service[$jboss::internal::service::servicename]
+  } else {
+    Anchor['jboss::service::end'] -> Jboss_confignode[$name]
   }
   
   if $dorestart {

@@ -30,7 +30,7 @@ Puppet::Type.type(:jboss_securitydomain).provide(:jbosscli, :parent => Puppet::P
   #
   def exists?
     cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:read-resource()"
-    res = execute cmd
+    res = executeWithoutRetry cmd
     if not res[:result]
       Puppet.debug "Security Domain does NOT exist"
       return false

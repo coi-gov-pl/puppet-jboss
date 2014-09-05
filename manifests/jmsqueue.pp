@@ -10,6 +10,7 @@ define jboss::jmsqueue (
   $runasdomain  = $::jboss::runasdomain,
 ) {
   include jboss
+  include jboss::internal::service
   
   jboss_jmsqueue { $name:
     durable       => $durable,
@@ -18,9 +19,12 @@ define jboss::jmsqueue (
     runasdomain   => $runasdomain,
     profile       => $profile,
     controller    => $controller,
-    notify        => Exec['jboss::service::restart'],
-    require       => [
-      Anchor['jboss::service::end'],
-    ],
+    require       => Anchor['jboss::package::end'],
+  }
+
+  if str2bool($::jboss_running) {
+    Jboss_jmsqueue[$name] ~> Service[$jboss::internal::service::servicename]
+  } else {
+    Anchor['jboss::service::end'] -> Jboss_jmsqueue[$name] ~> Exec['jboss::service::restart']
   }
 }

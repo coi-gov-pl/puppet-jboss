@@ -14,6 +14,7 @@ define jboss::resourceadapter (
   $runasdomain             = $::jboss::runasdomain,
 ) {
   include jboss
+  include jboss::internal::service
   
   jboss_resourceadapter { $name:
     ensure               => $ensure,
@@ -26,7 +27,12 @@ define jboss::resourceadapter (
     controller           => $controller,
     profile              => $profile,
     runasdomain          => $runasdomain,
-    require              => Anchor['jboss::service::end'],
-    notify               => Exec['jboss::service::restart'],
+    require              => Anchor['jboss::package::end'],
+  }
+
+  if str2bool($::jboss_running) {
+    Jboss_resourceadapter[$name] ~> Service[$jboss::internal::service::servicename]
+  } else {
+    Anchor['jboss::service::end'] -> Jboss_resourceadapter[$name] ~> Exec['jboss::service::restart']
   }
 } 

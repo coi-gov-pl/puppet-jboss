@@ -26,6 +26,7 @@ define jboss::datasource (
   $runasdomain             = $::jboss::runasdomain,
 ) {
   include jboss
+  include jboss::internal::service
   
   $drivername = $driver['name']
   
@@ -50,8 +51,12 @@ define jboss::datasource (
       runasdomain           => $runasdomain,
       profile               => $profile,
       controller            => $controller,
-      require               => Anchor['jboss::service::end'],
-      notify                => Exec['jboss::service::restart'],
+      require               => Anchor['jboss::package::end'],
+    }
+    if str2bool($::jboss_running) {
+      Jboss_jdbcdriver[$drivername] ~> Service[$jboss::internal::service::servicename]
+    } else {
+      Anchor['jboss::service::end'] -> Jboss_jdbcdriver[$drivername] ~> Exec['jboss::service::restart']
     }
   }
   
@@ -79,8 +84,14 @@ define jboss::datasource (
     samermoverride          => $samermoverride,
     wrapxaresource          => $wrapxaresource,
     require                 => [
-      Anchor['jboss::service::end'],
+      Anchor['jboss::package::end'],
       Jboss_jdbcdriver[$drivername],
     ],
+  }
+
+  if str2bool($::jboss_running) {
+    Jboss_datasource[$name] ~> Service[$jboss::internal::service::servicename]
+  } else {
+    Anchor['jboss::service::end'] -> Jboss_datasource[$name] ~> Exec['jboss::service::restart']
   }
 }

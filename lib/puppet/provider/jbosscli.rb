@@ -120,6 +120,11 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, controller, retry_count, retry_timeout 
   end
   
+  def executeWithoutRetry jbosscmd
+    controller  = @resource[:controller]
+    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, controller, 0, 0
+  end
+
   def self.execute jbosscmd, runasdomain, controller, retry_count, retry_timeout 
     file = Tempfile.new 'jbosscli'
     path = file.path
@@ -138,7 +143,6 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     result = ''
     lines = ''
     begin
-      #notice("Powtarzam komendę cli #{retries} raz..")
       if retries > 0 
         notice("Powtarzam komendę cli #{retries}/#{retry_count} raz, poprzedni status: #{result.exitstatus.to_s}.. #{lines}")
         sleep retry_timeout.to_i
@@ -266,8 +270,6 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
 
   def executeAndGet jbosscmd
     controller  = @resource[:controller]
-    retry_count = @resource[:retry]
-    retry_timeout = @resource[:retry_timeout]
-    return Puppet::Provider::Jbosscli.executeAndGet jbosscmd, runasdomain?, controller, retry_count, retry_timeout
+    return Puppet::Provider::Jbosscli.executeAndGet jbosscmd, runasdomain?, controller, 0, 0
   end
 end

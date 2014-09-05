@@ -50,6 +50,9 @@ Puppet::Type.newtype(:jboss_datasource) do
   newproperty(:password) do
     desc "The internal JBoss user asadmin uses. Default: admin"
     isrequired
+    def change_to_s from, to
+      "password has been changed."
+    end
   end
 
   newproperty(:validateonmatch) do
