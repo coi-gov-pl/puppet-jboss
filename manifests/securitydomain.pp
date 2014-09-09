@@ -12,16 +12,19 @@ define jboss::securitydomain (
 ) {
   include jboss
   include jboss::internal::service
-  
+  include jboss::internal::runtime::node
+
   jboss_securitydomain { $name:
-    code                    => $code,
-    codeflag                => $codeflag,
-    moduleoptions           => $moduleoptions,
-    ensure                  => $ensure,
-    runasdomain             => $runasdomain,
-    profile                 => $profile,
-    controller              => $controller,
-    require                 => Anchor['jboss::package::end'],
+    code            => $code,
+    codeflag        => $codeflag,
+    moduleoptions   => $moduleoptions,
+    ensure          => $ensure,
+    runasdomain     => $runasdomain,
+    profile         => $profile,
+    controller      => $controller,
+    ctrluser        => $jboss::internal::runtime::node::username,
+    ctrlpasswd      => $jboss::internal::runtime::node::password,
+    require         => Anchor['jboss::package::end'],
   }
 
   if str2bool($::jboss_running) {

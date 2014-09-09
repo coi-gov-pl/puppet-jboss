@@ -114,18 +114,32 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
 
   def execute jbosscmd
-    controller  = @resource[:controller]
     retry_count = @resource[:retry]
     retry_timeout = @resource[:retry_timeout]
-    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, controller, retry_count, retry_timeout 
-  end
-  
-  def executeWithoutRetry jbosscmd
-    controller  = @resource[:controller]
-    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, controller, 0, 0
+    ctrlcfg = Puppet::Provider::Jbosscli.controllerConfig @resource
+    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, ctrlcfg, retry_count, retry_timeout
   end
 
-  def self.execute jbosscmd, runasdomain, controller, retry_count, retry_timeout 
+  def executeWithoutRetry jbosscmd
+    ctrlcfg = Puppet::Provider::Jbosscli.controllerConfig @resource
+    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, ctrlcfg, 0, 0
+  end
+
+  def executeAndGet jbosscmd
+    ctrlcfg = Puppet::Provider::Jbosscli.controllerConfig @resource
+    return Puppet::Provider::Jbosscli.executeAndGet jbosscmd, runasdomain?, ctrlcfg, 0, 0
+  end
+
+  def self.controllerConfig resource
+      conf = {
+        :controller  => resource[:controller],
+        :ctrluser    => resource[:ctrluser],
+        :ctrlpasswd  => resource[:ctrlpasswd],
+      }
+      return conf
+  end
+
+  def self.execute jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout
     file = Tempfile.new 'jbosscli'
     path = file.path
     file.close
@@ -136,7 +150,14 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     ENV['JBOSS_HOME'] = self.jbosshome
     cmd = "#{self.jbossclibin} --timeout=50000 --connect --file=#{path}"
     if runasdomain
-      cmd = "#{cmd} --controller=#{controller}"
+      cmd = "#{cmd} --controller=#{ctrlcfg[:controller]}"
+    end
+    unless ctrlcfg[:ctrluser].nil?
+      cmd += " --user=#{ctrlcfg[:ctrluser]}"
+    end
+    unless ctrlcfg[:ctrlpasswd].nil?
+      ENV['__PASSWD'] = ctrlcfg[:ctrlpasswd]
+      cmd += " --password=$__PASSWD"
     end
 	
     retries = 0
@@ -240,8 +261,8 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     return out
   end
 
-  def self.executeAndGet cmd, runasdomain, controller, retry_count, retry_timeout
-    ret = self.execute cmd, runasdomain, controller, retry_count, retry_timeout
+  def self.executeAndGet cmd, runasdomain, ctrlcfg, retry_count, retry_timeout
+    ret = self.execute cmd, runasdomain, ctrlcfg, retry_count, retry_timeout
     if not ret[:result]
         return {
           :result => false,
@@ -269,8 +290,4 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     end
   end
 
-  def executeAndGet jbosscmd
-    controller  = @resource[:controller]
-    return Puppet::Provider::Jbosscli.executeAndGet jbosscmd, runasdomain?, controller, 0, 0
-  end
 end

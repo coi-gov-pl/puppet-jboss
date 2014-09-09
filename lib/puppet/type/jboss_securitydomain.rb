@@ -33,6 +33,14 @@ Puppet::Type.newtype(:jboss_securitydomain) do
     end
   end
   
+  newparam :ctrluser do
+    desc 'A user name to connect to controller'
+  end
+
+  newparam :ctrlpasswd do
+    desc 'A password to be used to connect to controller'
+  end
+
   newparam :retry do
     desc "Number of retries."
     defaultto 3

@@ -11,6 +11,7 @@ define jboss::jmsqueue (
 ) {
   include jboss
   include jboss::internal::service
+  include jboss::internal::runtime::node
   
   jboss_jmsqueue { $name:
     durable       => $durable,
@@ -19,6 +20,8 @@ define jboss::jmsqueue (
     runasdomain   => $runasdomain,
     profile       => $profile,
     controller    => $controller,
+    ctrluser      => $jboss::internal::runtime::node::username,
+    ctrlpasswd    => $jboss::internal::runtime::node::password,
     require       => Anchor['jboss::package::end'],
   }
 

@@ -27,6 +27,7 @@ define jboss::datasource (
 ) {
   include jboss
   include jboss::internal::service
+  include jboss::internal::runtime::node
   
   $drivername = $driver['name']
   
@@ -51,6 +52,8 @@ define jboss::datasource (
       runasdomain           => $runasdomain,
       profile               => $profile,
       controller            => $controller,
+      ctrluser              => $jboss::internal::runtime::node::username,
+      ctrlpasswd            => $jboss::internal::runtime::node::password,
       require               => Anchor['jboss::package::end'],
     }
     if str2bool($::jboss_running) {
@@ -67,6 +70,8 @@ define jboss::datasource (
     runasdomain             => $runasdomain,
     profile                 => $profile,
     controller              => $controller,
+    ctrluser                => $jboss::internal::runtime::node::username,
+    ctrlpasswd              => $jboss::internal::runtime::node::password,
     jndiname                => $jndiname,
     jta                     => $jta,
     xa                      => $xa,

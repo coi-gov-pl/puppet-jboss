@@ -15,6 +15,7 @@ define jboss::resourceadapter (
 ) {
   include jboss
   include jboss::internal::service
+  include jboss::internal::runtime::node
   
   jboss_resourceadapter { $name:
     ensure               => $ensure,
@@ -25,6 +26,8 @@ define jboss::resourceadapter (
     classname            => $classname,
     jndiname             => $jndiname,
     controller           => $controller,
+    ctrluser             => $jboss::internal::runtime::node::username,
+    ctrlpasswd           => $jboss::internal::runtime::node::password,
     profile              => $profile,
     runasdomain          => $runasdomain,
     require              => Anchor['jboss::package::end'],

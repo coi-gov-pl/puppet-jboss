@@ -14,6 +14,7 @@ define jboss::clientry (
 ) {
   include jboss
   include jboss::internal::service
+  include jboss::internal::runtime::node
   
   case $ensure {
     'running':  {} 
@@ -32,6 +33,8 @@ define jboss::clientry (
     path        => $path,
     properties  => $properties,
     controller  => $controller,
+    ctrluser    => $jboss::internal::runtime::node::username,
+    ctrlpasswd  => $jboss::internal::runtime::node::password,
     profile     => $profile,
     runasdomain => $runasdomain,
     require     => Anchor['jboss::package::end'],
