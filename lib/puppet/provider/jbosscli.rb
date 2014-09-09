@@ -203,11 +203,12 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
   
   def self.escape value
-    if value.respond_to? :empty?
-      str = '"%s"' % value.gsub(/([^\\])\"/, '\1\\"')
+    if value.respond_to? :to_str
+      str = value.gsub(/([^\\])\"/, '\1\\"')
     else
-      str = value.to_s
+      str = value
     end
+    return str.inspect
   end
   
   def escape value

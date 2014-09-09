@@ -14,7 +14,7 @@ class jboss::internal::configure::interfaces {
     ensure => 'present',
   }
 
-  if $enableconsole or $bind_mgmt != undef or $jboss::internal::runtime::dc::runs_as_controller {
+  if ($enableconsole or $bind_mgmt != undef) and $jboss::internal::runtime::dc::runs_as_controller {
     if $bind_mgmt != undef {
       jboss::interface { "management":
         inet_address => $bind_mgmt,

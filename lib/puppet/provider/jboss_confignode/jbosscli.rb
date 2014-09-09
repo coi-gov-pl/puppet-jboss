@@ -181,7 +181,11 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
         if v.nil? or !!v == v
           hash[k.to_s] = v
         else
-          hash[k.to_s] = v.to_s
+          if v.is_a? Hash or v.is_a? Array
+            hash[k.to_s] = v
+          else
+            hash[k.to_s] = v.to_s
+          end
         end
       end
       traceout 'properties()', hash  
