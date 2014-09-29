@@ -1,7 +1,7 @@
 class jboss::internal::package (
   $jboss_user       = $jboss::params::jboss_user,
   $jboss_group      = $jboss::params::jboss_group,
-  $download_url     = $jboss::params::download_url,
+  $package_name     = $jboss::params::package_name,
   $version          = $jboss::params::version,
   $java_autoinstall = $jboss::params::java_autoinstall,
   $java_version     = $jboss::params::java_version,
@@ -13,9 +13,7 @@ class jboss::internal::package (
   include jboss
   include jboss::internal::runtime
   
-  $download_rootdir = $jboss::internal::params::download_rootdir
-  $download_file    = jboss_basename($download_url)
-  $download_dir     = "$download_rootdir/download-jboss-${version}"
+  $dir              = '/usr/src/'
   $home             = $jboss::home
   
   $logdir     = $jboss::internal::params::logdir
@@ -92,34 +90,27 @@ class jboss::internal::package (
     Class['java'] -> Exec['jboss::package::check-for-java']
   }
 
-  file { $download_dir:
-    ensure => 'directory', 
+  package { "${package_name}":
+    ensure => 'present',
   }
-
-  jboss::internal::util::download { "${download_dir}/${download_file}":
-    uri     => $download_url,
-    require => File[$download_dir],
-  }
-  
 
   exec { 'jboss::unzip-downloaded':
-    command => "unzip -o -q ${download_dir}/${download_file} -d ${download_dir}",
+    command => "unzip -o -q ${dir}/${package_name} -d ${jboss::home}",
     cwd     => $download_dir,
     creates => $jboss::home,
     require => [
       $prerequisites, # Prerequisites class, that can be overwritten
-      Jboss::Internal::Util::Download["${download_dir}/${download_file}"], 
-      File[$download_dir], 
+      Package["${package_name}"],
       Package['unzip'],
     ],
   }
 
   exec { 'jboss::move-unzipped':
-    cwd     => $download_dir,
-    command => "mv $(unzip -l ${download_file} | head -n 4 | tail -n 1 | awk '{print \$4}') ${jboss::home}",
-    creates => $jboss::home,
+    command => "mv ${jboss::home}/*/* ${jboss::home}/",
+    creates => "${jboss::home}/bin",
     require => Exec['jboss::unzip-downloaded'],
   }
+
 
   exec { 'jboss::test-extraction':
     command => "echo '${jboss::home}/bin/init.d not found!' 1>&2 && exit 1",
