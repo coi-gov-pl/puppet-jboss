@@ -1,21 +1,23 @@
+/**
+ * Klasa konfigurująca apachea do wykorzystania mod_cluster
+ */
 class jboss::addons::mod_cluster (
-  $version          = $jboss::params::version,
+  $version          = $::jboss::params::mod_cluster::version,
 ) inherits jboss::params {
   
   include apache
-  include jboss::params::mod_cluster
-
-  # FIXME - tu jest ver, wyżej jest version - które lepsze?
-  $ver = $jboss::params::mod_cluster::version
 
   # Install RPM containing mod_cluster, then unpack it to the modules directory
-  $download_file = "mod_cluster-${ver}-linux2-x64-so.tar.gz"
-  package { "$download_file": }
+  $download_file = "mod_cluster-${version}-linux2-x64-so.tar.gz"
+  package { "$download_file":
+    ensure => 'installed',
+  }
 
   # TODO - probably there's a var for etc/httpd/modules
   exec { 'untar-mod_cluster':
     command => "/bin/tar -C /etc/httpd/modules -xvf /usr/src/${download_file}",
-    subscribe => Package["$download_file"]
+    subscribe => Package["$download_file"],
+    refreshonly => true,
   }
   
   # mod_cluster module config
