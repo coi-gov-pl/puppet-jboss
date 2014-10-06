@@ -96,7 +96,7 @@ class jboss::internal::package (
 
   exec { 'jboss::unzip-downloaded':
     command => "unzip -o -q ${dir}/${package_name} -d ${jboss::home}",
-    cwd     => $download_dir,
+    cwd     => $dir,
     creates => $jboss::home,
     require => [
       $prerequisites, # Prerequisites class, that can be overwritten
