@@ -55,6 +55,11 @@ Puppet::Type.newtype(:jboss_datasource) do
     end
   end
 
+  newproperty(:newconnectionsql) do
+    desc "new-connection-sql"
+    isrequired
+  end
+
   newproperty(:validateonmatch) do
     desc "validate-on-match"
     newvalues(true, false)

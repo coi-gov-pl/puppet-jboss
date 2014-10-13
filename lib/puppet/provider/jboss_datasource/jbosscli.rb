@@ -26,6 +26,11 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     else
       cmd.push "--connection-url=#{connectionUrl}"
     end
+
+    if @resource[:newconnectionsql]
+      cmd.push "--new-connection-sql='#{@resource[:newconnectionsql]}'"
+    end
+
     bringUp 'Datasource', cmd.join(' ')
     setenabled true
   end
@@ -182,6 +187,14 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
 
   def username
     getattrib('user-name')
+  end
+
+  def newconnectionsql
+    getattrib('new-connection-sql')
+  end
+
+  def newconnectionsql= value
+    setattrib 'new-connection-sql', value
   end
 
   def username= value
