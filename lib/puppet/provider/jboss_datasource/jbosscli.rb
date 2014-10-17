@@ -27,7 +27,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
       cmd.push "--connection-url=#{connectionUrl}"
     end
 
-    if @resource[:newconnectionsql]
+    unless @resource[:newconnectionsql].nil?
       cmd.push "--new-connection-sql='#{@resource[:newconnectionsql]}'"
     end
 
