@@ -9,19 +9,19 @@ define jboss::internal::util::groupaccess (
   }
   
   anchor {"jboss::util::groupaccess::${name}::begin": }
-   
-  exec { "rws $name":
-    command => "chmod -R g+rws ${target}",
-    unless  => "test $(stat -c '%a' ${target} | cut -c2) == '7'",
-    require => Anchor["jboss::util::groupaccess::${name}::begin"],
-    notify  => Exec["g+x $name"],
-  } 
 
-  exec { "g+x $name":
-    command     => "find ${target} -type d -exec chmod g+x {} +",
-    refreshonly => true,
-    require => Anchor["jboss::util::groupaccess::${name}::begin"],
+  exec { "g+s $name":
+    command     => "find ${target} -type d -exec chmod g+s {} +",
+    unless      => "test $(stat -c '%a' ${target} | cut -c2) == '7'",
+    notify      => Exec["rw $name"],
+    require     => Anchor["jboss::util::groupaccess::${name}::begin"],
   }
+   
+  exec { "rw $name":
+    command     => "chmod -R g+rw ${target}",
+    require     => Anchor["jboss::util::groupaccess::${name}::begin"],
+    refreshonly => true,
+  } 
   
   exec { "group $name":
     command => "chown -R $user:$group ${target}",
@@ -32,8 +32,8 @@ define jboss::internal::util::groupaccess (
   anchor {"jboss::util::groupaccess::${name}::end":
     require => [ 
       Anchor["jboss::util::groupaccess::${name}::begin"], 
-      Exec["rws $name"], 
-      Exec["g+x $name"],
+      Exec["rw $name"], 
+      Exec["g+s $name"],
       Exec["group $name"],
     ],
   }
