@@ -24,6 +24,7 @@ class jboss::addons::mod_cluster (
   apache::mod { 'slotmem': }
   apache::mod { 'manager': }
   apache::mod { 'proxy': }
+  apache::mod { 'proxy_ajp': }
   apache::mod { 'proxy_cluster': }
   apache::mod { 'advertise': }
 
@@ -83,8 +84,43 @@ Maxsessionid 100',
 
     KeepAliveTimeout 60
     MaxKeepAliveRequests 0
+    "
+  }
+  # vhost for mod_cluster data
+  apache::vhost { 'mod_cluster':
+    ip => $ipaddress_eth1, # internal interface!
+    priority => 30,
+    ip_based => true,
+    port    => 10001,
+    docroot => '/var/www/html',
+    custom_fragment => "
 
-    AdvertiseBindAddress ${ipaddress_eth2}:23364
+    <Directory />
+      Options +Indexes
+      Order deny,allow
+      Deny from all
+      Allow from 172.
+    </Directory>
+
+    # This directive allows you to view mod_cluster status at URL /mod_cluster-manager
+    <Location /mod_cluster-manager>
+      SetHandler mod_cluster-manager
+      Order deny,allow
+      Deny from all
+      Allow from 172.
+    </Location>
+
+    <Location /server-status>
+      SetHandler server-status
+      Order deny,allow
+      Deny from all
+      Allow from all
+    </Location>
+
+    KeepAliveTimeout 60
+    MaxKeepAliveRequests 0
+
+    AdvertiseBindAddress ${ipaddress_eth1}:23364
     EnableMCPMReceive On
 
     ManagerBalancerName web-group
