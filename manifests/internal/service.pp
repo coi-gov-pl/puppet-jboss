@@ -1,6 +1,4 @@
-class jboss::internal::service (
-  $restartcommand = 
-) {
+class jboss::internal::service {
 
   Exec {
     path      => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
