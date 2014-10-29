@@ -3,6 +3,8 @@
  */
 class jboss::addons::mod_cluster (
   $version          = $::jboss::params::mod_cluster::version,
+  $mgmt_ip,
+  $modcluster_ip,
 ) inherits jboss::params {
   
   include apache
@@ -53,7 +55,7 @@ Maxsessionid 100',
   
   # vhosts
   apache::vhost { 'mgmt-mod_cluster':
-    ip => $ipaddress_eth2, # Management interface!
+    ip => $mgmt_ip, # Management interface!
     priority => 30,
     ip_based => true,
     port    => 10001,
@@ -86,9 +88,10 @@ Maxsessionid 100',
     MaxKeepAliveRequests 0
     "
   }
+
   # vhost for mod_cluster data
   apache::vhost { 'mod_cluster':
-    ip => $ipaddress_eth1, # internal interface!
+    ip => $modcluster_ip, # internal interface!
     priority => 30,
     ip_based => true,
     port    => 10001,
@@ -120,7 +123,7 @@ Maxsessionid 100',
     KeepAliveTimeout 60
     MaxKeepAliveRequests 0
 
-    AdvertiseBindAddress ${ipaddress_eth1}:23364
+    AdvertiseBindAddress ${modcluster_ip}:23364
     EnableMCPMReceive On
 
     ManagerBalancerName web-group
