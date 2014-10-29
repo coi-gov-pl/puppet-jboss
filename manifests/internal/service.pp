@@ -1,4 +1,6 @@
-class jboss::internal::service {
+class jboss::internal::service (
+  $restartcommand = 
+) {
 
   Exec {
     path      => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
@@ -29,7 +31,7 @@ class jboss::internal::service {
   }
   
   exec { 'jboss::service::restart':
-    command     => 'service jboss restart',
+    command     => 'service jboss stop; pkill -9 -f jboss; service jboss start',
     refreshonly => true,
     require     => Exec['jboss::service::test-running'],
   }
