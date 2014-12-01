@@ -89,6 +89,7 @@ define jboss::datasource (
     backgroundvalidation        => $backgroundvalidation,
     preparedstatementscachesize => $preparedstatementscachesize,
     sharepreparedstatements     => $sharepreparedstatements,
+    useccm                      => false,
     samermoverride              => $samermoverride,
     wrapxaresource              => $wrapxaresource,
     require                     => [

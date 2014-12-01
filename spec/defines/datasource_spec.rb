@@ -29,6 +29,11 @@ describe 'jboss::datasource' do
 
   it do
     should contain_jboss_datasource('test-datasource').
+      with_useccm(false)
+  end
+
+  it do
+    should contain_jboss_datasource('test-datasource').
       with_preparedstatementscachesize(0)
   end
 

@@ -20,6 +20,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     cmd.push "--background-validation=#{@resource[:backgroundvalidation]}"
     cmd.push "--prepared-statement-cache-size=#{@resource[:preparedstatementscachesize]}"
     cmd.push "--share-prepared-statements=#{@resource[:sharepreparedstatements]}"
+    cmd.push "--use-ccm=#{@resource[:useccm]}"
     if @resource[:xa]
       cmd.push "--same-rm-override=#{@resource[:samermoverride]}"
       cmd.push "--wrap-xa-resource=#{@resource[:wrapxaresource]}"
@@ -240,6 +241,14 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
 
   def preparedstatementscachesize= value
     setattrib 'prepared-statements-cache-size', value.to_s
+  end
+
+  def useccm
+    getattrib('use-ccm').to_s
+  end
+
+  def useccm= value
+    setattrib 'use-ccm', value.to_s
   end
 
   def samermoverride

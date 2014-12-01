@@ -87,6 +87,12 @@ Puppet::Type.newtype(:jboss_datasource) do
     defaultto false
   end
   
+  newproperty :useccm do
+    desc "Whether data source should use Cached Connection Manager (provides a debugging capability for leaked database connections - Unless you are doing your own JDBC code, this is typically not needed)"
+    newvalues true, false
+    defaultto false
+  end
+
   newproperty(:samermoverride) do
     desc "same-rm-override"
     newvalues(true, false)
