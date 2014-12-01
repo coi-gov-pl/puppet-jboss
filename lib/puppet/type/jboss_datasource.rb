@@ -72,8 +72,8 @@ Puppet::Type.newtype(:jboss_datasource) do
   newproperty :preparedstatementscachesize do
     desc "Number of prepared statements per connection to be kept open and reused in subsequent requests. They are stored in a LRU cache."
     validate do |value|
-      unless value =~ /\d/
-        raise ArgumentError, "Non-numeric value of prepared statement cache size #{value}"
+      unless value.to_s =~ /(0|[1-9]\d*)/
+        raise ArgumentError, "Non-numeric value of prepared statement cache size (#{value})"
       else
         super
       end
