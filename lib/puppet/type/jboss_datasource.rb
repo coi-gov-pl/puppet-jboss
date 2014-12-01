@@ -69,9 +69,21 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "background-validation"
   end
 
-  newproperty(:sharepreparedstatements) do
-    desc "share-prepared-statements"
-    newvalues(true, false)
+  newproperty :preparedstatementscachesize do
+    desc "Number of prepared statements per connection to be kept open and reused in subsequent requests. They are stored in a LRU cache."
+    validate do |value|
+      unless value =~ /\d/
+        raise ArgumentError, "Non-numeric value of prepared statement cache size #{value}"
+      else
+        super
+      end
+    end
+    defaultto 0
+  end
+
+  newproperty :sharepreparedstatements do
+    desc "With prepared statement cache enabled whether two requests in the same transaction should return the same statement"
+    newvalues true, false
     defaultto false
   end
   
@@ -162,5 +174,10 @@ Puppet::Type.newtype(:jboss_datasource) do
     defaultto 1
   end
   
+  
+  newparam :sharepreparedstmtcache do
+    defaultto false
+  end
+
 end
 

@@ -18,6 +18,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     cmd.push "--password=#{@resource[:password]}"
     cmd.push "--validate-on-match=#{@resource[:validateonmatch]}"
     cmd.push "--background-validation=#{@resource[:backgroundvalidation]}"
+    cmd.push "--prepared-statement-cache-size=#{@resource[:preparedstatementscachesize]}"
     cmd.push "--share-prepared-statements=#{@resource[:sharepreparedstatements]}"
     if @resource[:xa]
       cmd.push "--same-rm-override=#{@resource[:samermoverride]}"
@@ -232,7 +233,15 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   def sharepreparedstatements= value
     setattrib 'share-prepared-statements', value.to_s
   end
-  
+
+  def preparedstatementscachesize
+    getattrib('prepared-statements-cache-size').to_s
+  end
+
+  def preparedstatementscachesize= value
+    setattrib 'prepared-statements-cache-size', value.to_s
+  end
+
   def samermoverride
     getattrib('same-rm-override').to_s
   end
