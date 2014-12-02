@@ -18,7 +18,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     cmd.push "--password=#{@resource[:password]}"
     cmd.push "--validate-on-match=#{@resource[:validateonmatch]}"
     cmd.push "--background-validation=#{@resource[:backgroundvalidation]}"
-    cmd.push "--prepared-statement-cache-size=#{@resource[:preparedstatementscachesize]}"
+    cmd.push "--prepared-statements-cache-size=#{@resource[:preparedstatementscachesize]}"
     cmd.push "--share-prepared-statements=#{@resource[:sharepreparedstatements]}"
     cmd.push "--use-ccm=#{@resource[:useccm]}"
     if @resource[:xa]
@@ -252,7 +252,11 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
 
   def samermoverride
-    getattrib('same-rm-override').to_s
+    if @resource[:xa]
+      getattrib('same-rm-override').to_s
+    else
+      @resource[:samermoverride]
+    end
   end
 
   def samermoverride= value
@@ -260,7 +264,11 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def wrapxaresource
-    getattrib('wrap-xa-resource').to_s
+    if @resource[:xa]
+      getattrib('wrap-xa-resource').to_s
+    else
+      @resource[:wrapxaresource]
+    end
   end
 
   def wrapxaresource= value
@@ -301,7 +309,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def port
-    connectionHash()[:PortNumber]
+    connectionHash()[:PortNumber].to_i
   end
   
   def port= value

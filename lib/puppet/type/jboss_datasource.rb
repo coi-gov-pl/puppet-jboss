@@ -9,8 +9,11 @@ Puppet::Type.newtype(:jboss_datasource) do
   
   newproperty(:xa) do
     desc "Is it XA Datasource?"
-    newvalues :true, :false
-    defaultto false
+    newvalues :true, :false   
+    defaultto :false    
+    munge do |value|
+      value == :true or value == true 
+    end 
   end
   
   newproperty(:dbname) do
@@ -132,6 +135,9 @@ Puppet::Type.newtype(:jboss_datasource) do
       else
         super
       end
+    end    
+    munge do |value|
+      Integer(value)      
     end
   end
   

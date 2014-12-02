@@ -1,6 +1,4 @@
-/**
- * Klasa konfigurująca apachea do wykorzystania mod_cluster
- */
+## Configure apache to use with mod_cluster.
 class jboss::addons::mod_cluster (
   $version          = $::jboss::params::mod_cluster::version,
   $mgmt_ip,
