@@ -57,7 +57,8 @@ define jboss::domain::servergroup (
     properties  => $jvmproperties
   }
 
-  $system_properties_keys = keys($system_properties)
+  #Prepend server group name to each system property. Result is 'group:property'  
+  $system_properties_keys = regsubst(keys($system_properties), '^(.*)$', "${name}~~~\1")
   jboss::domain::servergroup::properties::foreach { $system_properties_keys:
     ensure     => $ensure,
     map        => $system_properties,
@@ -83,11 +84,16 @@ define jboss::domain::servergroup::properties::foreach (
   $profile,
   $controller,
 ) {
-  $value = $map[$key]
+  
+  #Remove group prefix from system property name
+  $split = split($key, '~~~')
+  $property = $split[1]
+  
+  $value = $map[$property]
 
   jboss::clientry { "jboss::domain::servergroup::sysproperty(${key} => ${value})":
     ensure      => $ensure,
-    path        => "/server-group=${group}/system-property=${key}",
+    path        => "/server-group=${group}/system-property=${property}",
     profile     => $profile,
     controller  => $controller,
     runasdomain => true,
