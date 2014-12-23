@@ -14,16 +14,23 @@ describe 'jboss::logging::handlers::syslog' do
   it do should
     contain_jboss__clientry("/subsystem=logging/syslog-handler=#{title}").
       with_ensure('present').
-      with_params({
-        :properties => {
-          'port' => 514,
-          'app-name' => 'test_app',
-          'level' => 'ALL',
-          'enabled' => true,
-          'server-address' => 'localhost',
-          'syslog-format' => nil,
-          'name' => title,
-        },
+      with_properties({
+        'port' => 514,
+        'app-name' => 'test_app',
+        'level' => 'ALL',
+        'enabled' => true,
+        'server-address' => 'localhost',
+        'syslog-format' => nil,
+      })
+  end
+
+  it do should
+    contain_jboss__clientry("/subsystem=logging/logger=#{title}").
+      with_ensure('present').
+      with_properties({
+        'level' => "ALL",
+        'handlers' => [ title ],
+        'use-parent-handlers' => false,
       })
   end
 end

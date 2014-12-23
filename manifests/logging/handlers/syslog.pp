@@ -7,8 +7,9 @@ define jboss::logging::handlers::syslog (
   $ensure = "present",
   $serverhost = "localhost",
   $clienthostname = undef,
-  format = undef,
+  format = "RFC5424",
 ) {
+
   jboss::clientry { "/subsystem=logging/syslog-handler=${handler_name}":
     ensure => $ensure,
     properties => {
@@ -18,7 +19,14 @@ define jboss::logging::handlers::syslog (
       'enabled' => $enabled,
       'server-address' => $serverhost,
       'syslog-format' => $format,
-      'name' => $handler_name,
+    },
+  }
+  jboss::clientry { "/subsystem=logging/logger=${handler_name}":
+    ensure => $ensure,
+    properties => {
+      'level' => $level,
+      'handlers' => [ $handler_name ],
+      'use-parent-handlers' => false,
     },
   }
 }
