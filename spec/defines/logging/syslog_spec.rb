@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'jboss::logging::handlers::syslog' do
+describe 'jboss::logging::syslog' do
   let(:title) { 'test-handler' }
   let(:params) { { :app_name => 'test-app', } }
   let(:facts) { {

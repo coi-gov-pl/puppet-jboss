@@ -1,4 +1,4 @@
-define jboss::logging::handlers::syslog (
+define jboss::logging::syslog (
   $handler_name = $name,
   $app_name,
   $level = 'ALL',
