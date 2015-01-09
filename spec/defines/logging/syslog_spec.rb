@@ -23,15 +23,5 @@ describe 'jboss::logging::syslog' do
         'syslog-format' => nil,
       })
   end
-
-  it do should
-    contain_jboss__clientry("/subsystem=logging/logger=#{title}").
-      with_ensure('present').
-      with_properties({
-        'level' => "ALL",
-        'handlers' => [ title ],
-        'use-parent-handlers' => false,
-      })
-  end
 end
 
