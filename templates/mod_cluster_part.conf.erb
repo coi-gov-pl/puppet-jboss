@@ -1,0 +1,30 @@
+<Directory />
+  Options +Indexes
+  Order deny,allow
+  Deny from all
+  Allow from 172.
+</Directory>
+
+# This directive allows you to view mod_cluster status at URL /mod_cluster-manager
+<Location /mod_cluster-manager>
+  SetHandler mod_cluster-manager
+  Order deny,allow
+  Deny from all
+  Allow from 172.
+</Location>
+
+<Location /server-status>
+  SetHandler server-status
+  Order deny,allow
+  Deny from all
+  Allow from all
+</Location>
+
+KeepAliveTimeout 60
+MaxKeepAliveRequests 0
+
+AdvertiseBindAddress <%= @modcluster_ip %>:23364
+EnableMCPMReceive On
+
+ManagerBalancerName web-group
+AdvertiseFrequency 3
