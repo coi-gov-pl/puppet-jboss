@@ -38,7 +38,11 @@ Puppet::Type.newtype(:jboss_confignode) do
   newparam(:runasdomain, :boolean => true) do
     desc "Indicate that server is in domain mode"
     newvalues :true, :false
-    defaultto true
+    defaultto :true
+    
+    munge do |val|
+      val == :true or val == true
+    end
   end
   
   newparam(:controller) do

@@ -34,19 +34,18 @@ Puppet::Type.type(:jboss_deploy).provide(:jbosscli, :parent => Puppet::Provider:
   end
   
   def name_exists?
-    #groups = @resource[:servergroup].split(",")
-    res = execute("deployment-info --name=#{@resource[:name]}")# --server-group=#{@resource[:servergroup]}")
-    if(res[:result] == false)
+    res = executeWithoutRetry "deployment-info --name=#{@resource[:name]}"
+    if res[:result] == false
         return false
     end
     for line in res[:lines]
       line.strip!
       if line =~ /^#{@resource[:name]}[ ]+/
-        Puppet.debug("Deployment found: #{line}")
+        Puppet.debug "Deployment found: #{line}"
         return true
       end
     end
-    Puppet.debug("No deployment matching #{@resource[:name]} found.")
+    Puppet.debug "No deployment matching #{@resource[:name]} found."
     return false    
   end
   

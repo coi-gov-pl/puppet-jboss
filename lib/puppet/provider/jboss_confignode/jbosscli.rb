@@ -200,7 +200,8 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
   def properties= newprops
     trace 'properties=(%s)' % newprops.inspect
     
-    newprops.each do |key, value|
+    newprops.sort { |a,b| a[1] && b[1] ? a[1] <=> b[1] : a[1] ? 1 : -1 }. each do |arr|
+      key, value = arr
       if not @data.key? key or @data[key] != value
         writekey key, value
         Puppet.notice "JBoss::Property: Key `#{key}` with value `#{value.inspect}` for path `#{compiledpath}` has been set."
