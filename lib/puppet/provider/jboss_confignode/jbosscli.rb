@@ -200,7 +200,19 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
   def properties= newprops
     trace 'properties=(%s)' % newprops.inspect
     
-    newprops.sort { |a,b| a[1] && b[1] ? a[1] <=> b[1] : a[1] ? 1 : -1 }. each do |arr|
+    # Sorting by value to process `nil` values first
+    sorted = newprops.sort do |a, b|
+      if a[1] == b[1]
+        0
+      elsif a[1].nil? and not b[1].nil?
+        -1
+      elsif not a[1].nil? and b[1].nil?
+        1
+      else
+        0
+      end
+    end
+    sorted.each do |arr|
       key, value = arr
       if not @data.key? key or @data[key] != value
         writekey key, value
