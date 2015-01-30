@@ -47,7 +47,9 @@ define jboss::clientry (
   }
   
   if $dorestart {
-    Jboss_confignode[$name] ~> Exec['jboss::service::restart']
+    if !$::jboss::runasdomain {
+      Jboss_confignode[$name] ~> Exec['jboss::service::restart']
+    }
   }
   
 }
