@@ -38,9 +38,11 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
     if @resource[:path].nil?
       @resource[:path] = @resource[:name]
     end
-    @resource[:properties].each do |key, value|
-      if value == "undef"
-        @resource[:properties][key] = nil
+    if !@resource[:properties].nil?
+      @resource[:properties].each do |key, value|
+        if value == "undef"
+          @resource[:properties][key] = nil
+        end
       end
     end
     
@@ -177,14 +179,16 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
       return {}
     else
       hash = {}
-      @property_hash[:properties].each do |k, v| 
-        if v.nil? or !!v == v
-          hash[k.to_s] = v
-        else
-          if v.is_a? Hash or v.is_a? Array
+      if !@property_hash[:properties].nil?
+        @property_hash[:properties].each do |k, v| 
+          if v.nil? or !!v == v
             hash[k.to_s] = v
           else
-            hash[k.to_s] = v.to_s
+            if v.is_a? Hash or v.is_a? Array
+              hash[k.to_s] = v
+            else
+              hash[k.to_s] = v.to_s
+            end
           end
         end
       end
