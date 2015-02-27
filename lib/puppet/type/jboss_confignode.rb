@@ -20,7 +20,14 @@ Puppet::Type.newtype(:jboss_confignode) do
   
   newproperty(:properties) do 
     desc "Additional properties for node"
-    defaultto {}
+
+    munge do |value|
+      unless value.respond_to? :each
+        {}
+      else
+        value
+      end
+    end
 
     def is_to_s is
       return is.inspect
