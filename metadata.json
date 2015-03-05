@@ -1,173 +1,27 @@
 {
+  "author": "Center of Information Technology COI.gov.pl (MSW)",
+  "summary": "Instalation and management of JBoss Aplication Server (Wildfly, EAP)",
+  "license": "Apache-2.0",
   "name": "coi-jboss",
-  "version": "0.0.1",
-  "summary": "JBoss - instalation and management module",
-  "author": "Centralny Ośrodek Informatyki COI (MSW)",
-  "description": "COI / JBoss\n\u003d\u003d\u003d\n\nInstalation and management of JBoss Aplication Server.\n\nSupports:\n---\n\n* Installs JBoss AS ora JBoss EAP\n* Installs required JDK (defaults: JDK 7)\n* Manage instalation parametrers\n* Management of: \n    * datasources, \n    * deployments, \n    * jms queues, \n    * security domains",
-  "source": "http://git.prs.coi.local/coi-deploy.git",
-  "project_page": "",
-  "license": "Proprietary - Copyright © COI"
+  "project_page": "https://forge.puppetlabs.com/coi-gov-pl/jboss",
+  "source": "https://github.com/coi-gov-pl/puppet-jboss.git",
+  "version": "0.0.2",
   "dependencies": [
     {
       "name": "puppetlabs/java",
-      "version_requirement": "\u003e\u003d 0.4.0"
-    }
-  ],
-  "types": [
-    {
-      "parameters": [
-        {
-          "name": "name",
-          "doc": "The JDBC resource name."
-        },
-        {
-          "name": "source",
-          "doc": "Path to the EAR/WAR file."
-        }
-      ],
-      "providers": [
-        {
-          "name": "jbosscli"
-        }
-      ],
-      "name": "deploy",
-      "doc": "Deploys EAR/WAR file on JBOSS"
+      "version_requirement": ">= 1.0.1"
     },
     {
-      "parameters": [
-        {
-          "name": "name",
-          "doc": ""
-        },
-        {
-          "name": "profile",
-          "doc": "The JBoss datasource profile name"
-        },
-        {
-          "name": "jndiname",
-          "doc": "jndi-name"
-        },
-        {
-          "name": "drivername",
-          "doc": "driver-name"
-        },
-        {
-          "name": "minpoolsize",
-          "doc": "min-pool-size"
-        },
-        {
-          "name": "maxpoolsize",
-          "doc": "max-pool-size"
-        },
-        {
-          "name": "username",
-          "doc": "user-name"
-        },
-        {
-          "name": "password",
-          "doc": "The internal JBoss user asadmin uses. Default: admin"
-        },
-        {
-          "name": "validateonmatch",
-          "doc": "validate-on-match"
-        },
-        {
-          "name": "backgroundvalidation",
-          "doc": "background-validation"
-        },
-        {
-          "name": "sharepreparestatements",
-          "doc": "share-prepare-statements"
-        },
-        {
-          "name": "xadatasourceproperties",
-          "doc": "xa-datasource-properties list, separated by comma"
-        }
-      ],
-      "providers": [
-        {
-          "name": "jbosscli"
-        }
-      ],
-      "name": "datasource",
-      "doc": "Data source for JBoss domains"
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 3.2.0"
     },
     {
-      "parameters": [
-        {
-          "name": "name",
-          "doc": ""
-        },
-        {
-          "name": "profile",
-          "doc": "The JBoss profile name"
-        },
-        {
-          "name": "moduleoptions",
-          "doc": "module-options given as a table"
-        },
-        {
-          "name": "code",
-          "doc": "code for JBOSS security-domain"
-        },
-        {
-          "name": "codeflag",
-          "doc": "codeflag for JBOSS security-domain"
-        }
-      ],
-      "providers": [
-        {
-          "name": "jbosscli"
-        }
-      ],
-      "name": "securitydomain",
-      "doc": "Security-domain for jboss-cli"
+      "name": "puppetlabs/concat",
+      "version_requirement": ">= 1.0.0"
     },
     {
-      "parameters": [
-        {
-          "name": "name",
-          "doc": "The JDBC resource name."
-        },
-        {
-          "name": "source",
-          "doc": "Path to the EAR/WAR file."
-        }
-      ],
-      "providers": [
-        {
-          "name": "jbosscli"
-        }
-      ],
-      "name": "deploy",
-      "doc": "Deploys EAR/WAR file on JBOSS"
-    },
-    {
-      "parameters": [
-        {
-          "name": "name",
-          "doc": "name"
-        },
-        {
-          "name": "profile",
-          "doc": "The JBoss profile name"
-        },
-        {
-          "name": "entries",
-          "doc": "entries separeted with comma"
-        },
-        {
-          "name": "durable",
-          "doc": "durable true/false"
-        }
-      ],
-      "providers": [
-        {
-          "name": "jbosscli"
-        }
-      ],
-      "name": "jmsqueue",
-      "doc": "jms for jboss-cli"
+      "name": "puppetlabs/apache",
+      "version_requirement": ">= 0.9.0"
     }
   ]
 }
