@@ -58,54 +58,24 @@ Puppet::Type.newtype(:jboss_datasource) do
     end
   end
 
-  newproperty(:newconnectionsql) do
-    desc "new-connection-sql"
-  end
-
-  newproperty(:validateonmatch) do
-    desc "validate-on-match"
-    newvalues(true, false)
-    defaultto false
-  end
-
-  newproperty(:backgroundvalidation) do
-    desc "background-validation"
-  end
-
-  newproperty :preparedstatementscachesize do
-    desc "Number of prepared statements per connection to be kept open and reused in subsequent requests. They are stored in a LRU cache."
+  newproperty(:options) do
+    desc "Extra options for datasource or xa-datasource"
+    
     validate do |value|
-      unless value.to_s =~ /(0|[1-9]\d*)/
-        raise ArgumentError, "Non-numeric value of prepared statement cache size (#{value})"
-      else
-        super
+      unless value.respond_to? :[]
+        fail "You can pass only hash-like objects"
       end
     end
-    defaultto 0
-  end
-
-  newproperty :sharepreparedstatements do
-    desc "With prepared statement cache enabled whether two requests in the same transaction should return the same statement"
-    newvalues true, false
-    defaultto false
-  end
-  
-  newproperty :useccm do
-    desc "Whether data source should use Cached Connection Manager (provides a debugging capability for leaked database connections - Unless you are doing your own JDBC code, this is typically not needed)"
-    newvalues true, false
-    defaultto false
-  end
-
-  newproperty(:samermoverride) do
-    desc "same-rm-override"
-    newvalues(true, false)
-    defaultto true
-  end
-  
-  newproperty(:wrapxaresource) do
-    desc "wrap-xa-resource"
-    newvalues(true, false)
-    defaultto true
+    
+    def change_to_s(current, desire)
+      changes = []
+      desire.each do |key, desired_value|
+        current_value = current[key]
+        message = "option '#{key}' has changed from #{current_value.inspect} to #{desired_value.inspect}"
+        changes << message unless current_value == desired_value   
+      end
+      changes.join ', '
+    end
   end
   
   newproperty(:enabled) do
@@ -184,11 +154,6 @@ Puppet::Type.newtype(:jboss_datasource) do
   newparam :retry_timeout do
     desc "Retry timeout in seconds"
     defaultto 1
-  end
-  
-  
-  newparam :sharepreparedstmtcache do
-    defaultto false
   end
 
 end

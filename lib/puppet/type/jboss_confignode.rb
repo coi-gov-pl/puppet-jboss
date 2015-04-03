@@ -22,7 +22,7 @@ Puppet::Type.newtype(:jboss_confignode) do
     desc "Additional properties for node"
 
     munge do |value|
-      unless value.respond_to? :each
+      unless value.respond_to? :[]
         {}
       else
         value

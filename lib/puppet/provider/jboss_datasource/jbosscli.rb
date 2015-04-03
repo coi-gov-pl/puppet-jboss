@@ -16,21 +16,13 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     cmd.push "--max-pool-size=#{@resource[:maxpoolsize]}"
     cmd.push "--user-name=#{@resource[:username]}"
     cmd.push "--password=#{@resource[:password]}"
-    cmd.push "--validate-on-match=#{@resource[:validateonmatch]}"
-    cmd.push "--background-validation=#{@resource[:backgroundvalidation]}"
-    cmd.push "--prepared-statements-cache-size=#{@resource[:preparedstatementscachesize]}"
-    cmd.push "--share-prepared-statements=#{@resource[:sharepreparedstatements]}"
-    cmd.push "--use-ccm=#{@resource[:useccm]}"
     if @resource[:xa]
-      cmd.push "--same-rm-override=#{@resource[:samermoverride]}"
-      cmd.push "--wrap-xa-resource=#{@resource[:wrapxaresource]}"
       cmd.push "--xa-datasource-properties=[#{createXaProperties}]"
     else
       cmd.push "--connection-url=#{connectionUrl}"
     end
-
-    unless @resource[:newconnectionsql].nil?
-      cmd.push "--new-connection-sql=\"#{@resource[:newconnectionsql]}\""
+    @resource[:options].each do |attribute, value|
+      cmd.push "--#{attribute}=#{value}"
     end
 
     bringUp 'Datasource', cmd.join(' ')
@@ -191,14 +183,6 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     getattrib('user-name')
   end
 
-  def newconnectionsql
-    getattrib('new-connection-sql')
-  end
-
-  def newconnectionsql= value
-    setattrib 'new-connection-sql', value
-  end
-
   def username= value
     setattrib 'user-name', value
   end
@@ -210,70 +194,6 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   def password= value
     setattrib 'password', value
   end
-
-  def validateonmatch
-    getattrib('validate-on-match').to_s
-  end
-
-  def validateonmatch= value
-    setattrib 'validate-on-match', value.to_s
-  end
-
-  def backgroundvalidation
-    getattrib('background-validation').to_s
-  end
-
-  def backgroundvalidation= value
-    setattrib 'background-validation', value.to_s
-  end
-
-  def sharepreparedstatements
-    getattrib('share-prepared-statements').to_s
-  end
-
-  def sharepreparedstatements= value
-    setattrib 'share-prepared-statements', value.to_s
-  end
-
-  def preparedstatementscachesize
-    getattrib('prepared-statements-cache-size').to_s
-  end
-
-  def preparedstatementscachesize= value
-    setattrib 'prepared-statements-cache-size', value.to_s
-  end
-
-  def useccm
-    getattrib('use-ccm').to_s
-  end
-
-  def useccm= value
-    setattrib 'use-ccm', value.to_s
-  end
-
-  def samermoverride
-    if @resource[:xa]
-      getattrib('same-rm-override').to_s
-    else
-      @resource[:samermoverride]
-    end
-  end
-
-  def samermoverride= value
-    setattrib 'same-rm-override', value.to_s
-  end
-  
-  def wrapxaresource
-    if @resource[:xa]
-      getattrib('wrap-xa-resource').to_s
-    else
-      @resource[:wrapxaresource]
-    end
-  end
-
-  def wrapxaresource= value
-    setattrib 'wrap-xa-resource', value.to_s
-  end
   
   def jta
     getattrib('jta').to_s
@@ -281,6 +201,17 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
 
   def jta= value
     setattrib 'jta', value.to_s
+  end
+  
+  def options
+    managed_fetched_options
+  end
+  
+  def options= value
+    managed_fetched_options.each do |key, fetched_value|
+      expected_value = value[key]
+      setattrib(key, expected_value) if expected_value != fetched_value
+    end
   end
   
   def enabled
@@ -325,6 +256,14 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   private
+  
+  def managed_fetched_options
+    fetched = {}
+    @resource[:options].each do |k, v|
+      fetched[k] = getattrib(k)
+    end
+    fetched
+  end
   
   def self.create_rubyobject name, xa, runasdomain, profile, controller
     props = {
