@@ -9,11 +9,11 @@ Puppet::Type.newtype(:jboss_datasource) do
   
   newproperty(:xa) do
     desc "Is it XA Datasource?"
-    newvalues :true, :false   
-    defaultto :false    
+    newvalues :true, :false
+    defaultto :false
     munge do |value|
-      value == :true or value == true 
-    end 
+      value == :true or value == true
+    end
   end
   
   newproperty(:dbname) do
@@ -26,8 +26,11 @@ Puppet::Type.newtype(:jboss_datasource) do
   
   newproperty(:jta) do
     desc "jta"
-    newvalues(true, false)
-    defaultto true
+    newvalues :true, :false
+    defaultto :true
+    munge do |value|
+      value == :true or value == true
+    end
   end
 
   newproperty(:drivername) do
@@ -37,12 +40,16 @@ Puppet::Type.newtype(:jboss_datasource) do
 
   newproperty(:minpoolsize) do
     desc "min-pool-size"
-    defaultto 1
+    munge do |value|
+      value.to_i if Float value rescue 1
+    end
   end
 
   newproperty(:maxpoolsize) do
     desc "max-pool-size"
-    defaultto 50
+    munge do |value|
+      value.to_i if Float value rescue 50
+    end
   end
 
   newproperty(:username) do
@@ -80,8 +87,11 @@ Puppet::Type.newtype(:jboss_datasource) do
   
   newproperty(:enabled) do
     desc "Is datasource enabled?"
-    newvalues(true, false)
-    defaultto true
+    newvalues :true, :false
+    defaultto :true
+    munge do |value|
+      value == :true or value == true
+    end
   end
 
   newproperty(:host) do

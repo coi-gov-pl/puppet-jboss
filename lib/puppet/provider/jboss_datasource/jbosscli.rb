@@ -8,21 +8,21 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   @readed = false
 
   def create
-    cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ] 
-    cmd.push "--jta=#{@resource[:jta]}"
-    cmd.push "--jndi-name=#{@resource[:jndiname]}"
-    cmd.push "--driver-name=#{@resource[:drivername]}"
-    cmd.push "--min-pool-size=#{@resource[:minpoolsize]}"
-    cmd.push "--max-pool-size=#{@resource[:maxpoolsize]}"
-    cmd.push "--user-name=#{@resource[:username]}"
-    cmd.push "--password=#{@resource[:password]}"
+    cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ]
+    cmd.push "--jta=#{@resource[:jta].inspect}"
+    cmd.push "--jndi-name=#{@resource[:jndiname].inspect}"
+    cmd.push "--driver-name=#{@resource[:drivername].inspect}"
+    cmd.push "--min-pool-size=#{@resource[:minpoolsize].inspect}"
+    cmd.push "--max-pool-size=#{@resource[:maxpoolsize].inspect}"
+    cmd.push "--user-name=#{@resource[:username].inspect}"
+    cmd.push "--password=#{@resource[:password].inspect}"
     if @resource[:xa]
       cmd.push "--xa-datasource-properties=[#{createXaProperties}]"
     else
       cmd.push "--connection-url=#{connectionUrl}"
     end
     @resource[:options].each do |attribute, value|
-      cmd.push "--#{attribute}=#{value}"
+      cmd.push "--#{attribute}=#{value.inspect}"
     end
 
     bringUp 'Datasource', cmd.join(' ')
@@ -30,7 +30,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
 
   def destroy
-    cmd = "#{create_delete_cmd} remove --name=#{@resource[:name]}"
+    cmd = "#{create_delete_cmd} remove --name=#{@resource[:name].inspect}"
     bringDown 'Datasource', cmd
   end
   
