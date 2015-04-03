@@ -30,7 +30,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
 
   def destroy
-    cmd = "#{create_delete_cmd} remove --name=#{@resource[:name].inspect}"
+    cmd = "#{create_delete_cmd} remove --name=#{@resource[:name]}"
     bringDown 'Datasource', cmd
   end
   
