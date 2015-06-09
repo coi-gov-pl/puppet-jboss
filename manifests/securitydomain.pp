@@ -1,6 +1,4 @@
-/**
- * Creates JBoss security domain
- */
+# Creates JBoss security domain
 define jboss::securitydomain (
   $code                    = undef,
   $codeflag                = undef,
@@ -15,10 +13,10 @@ define jboss::securitydomain (
   include jboss::internal::runtime::node
 
   jboss_securitydomain { $name:
+    ensure          => $ensure,
     code            => $code,
     codeflag        => $codeflag,
     moduleoptions   => $moduleoptions,
-    ensure          => $ensure,
     runasdomain     => $runasdomain,
     profile         => $profile,
     controller      => $controller,

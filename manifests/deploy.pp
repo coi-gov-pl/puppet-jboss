@@ -1,10 +1,8 @@
-/**
- * Deployuje artefact na serwer 
- */
+# Deploys artifact to JBoss server
 define jboss::deploy (
+  $path,
   $ensure       = 'present',
   $jndi         = $name,
-  $path,
   $redeploy     = false,
   $servergroups = hiera('jboss::deploy::servergroups', undef),
   $controller   = $::jboss::controller,
@@ -12,7 +10,7 @@ define jboss::deploy (
 ) {
   include jboss
   include jboss::internal::runtime::node
-  
+
   jboss_deploy { $jndi:
     ensure       => $ensure,
     source       => $path,
@@ -27,5 +25,5 @@ define jboss::deploy (
       Exec['jboss::service::restart'],
     ],
   }
-  
+
 }

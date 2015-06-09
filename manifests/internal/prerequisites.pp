@@ -8,6 +8,6 @@
 #
 class jboss::internal::prerequisites {
   if ! defined(Package['unzip']) {
-    package { "unzip": ensure => "latest" }
+    ensure_packages('unzip')
   }
 }

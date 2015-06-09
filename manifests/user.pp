@@ -1,26 +1,23 @@
+# Creates JBoss user
 define jboss::user (
-  $user       = $name,
-  $ensure     = 'present',
-  $realm      = 'ManagementRealm', 
   $password,
+  $ensure     = 'present',
+  $user       = $name,
+  $realm      = 'ManagementRealm',
   $roles      = undef,
-  $jboss_home = undef, # Deprecated, it is not needed, will be removed
 ) {
-  
+
   include jboss
   require jboss::internal::package
   include jboss::internal::service
-  
-  $home = $jboss_home ? { # Deprecated, it is not needed, will be removed
-    undef   => $jboss::home,
-    default => $jboss_home,
-  }
-  
+
+  $home = $jboss::home
+
   $dir = $jboss::runasdomain ? {
     true    => 'domain',
     default => 'standalone',
   }
-  
+
   # application realm or normal
   $application_realm = $realm ? {
     'ApplicationRealm' => true,
@@ -31,16 +28,16 @@ define jboss::user (
   if ($application_realm) {
     $extraarg = '-a'
   }
-  
+
   $file = $application_realm ? {
     true    => 'application-users.properties',
     default => 'mgmt-users.properties',
   }
-  
+
   $filepath = "${home}/${dir}/configuration/${file}"
   $filepath_roles = "${home}/${dir}/configuration/application-roles.properties"
-  $jbossuserfix = "2>&1 | awk 'BEGIN{a=0}{if (/Error/){a=1};print}END{if (a==1) exit 1}'"
-  
+  $jbossuserfix = '2>&1 | awk \'BEGIN{a=0}{if (/Error/){a=1};print}END{if (a==1) exit 1}\''
+
   case $ensure {
     'present': {
       $rolesstr = $roles ? {
@@ -94,5 +91,5 @@ define jboss::user (
       fail("Ensure must be eiter present or absent, provided: `${ensure}`!")
     }
   }
-  
+
 }

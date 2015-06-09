@@ -1,3 +1,4 @@
+# Class ensure that JBoss runs as a domain node
 class jboss::domain::node (
   $ctrluser,
   $ctrlpassword,

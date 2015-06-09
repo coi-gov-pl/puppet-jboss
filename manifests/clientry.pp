@@ -1,12 +1,8 @@
-include jboss::params
-
-/**
- * Generic configuration tool
- */
+# Generic configuration tool
 define jboss::clientry (
+  $ensure      = 'present',
   $path        = $name,
   $properties  = undef,
-  $ensure      = 'present',
   $profile     = $::jboss::profile,
   $controller  = $::jboss::controller,
   $runasdomain = $::jboss::runasdomain,
@@ -15,9 +11,9 @@ define jboss::clientry (
   include jboss
   include jboss::internal::service
   include jboss::internal::runtime::node
-  
+
   case $ensure {
-    'running':  {} 
+    'running':  {}
     'stopped':  {}
     'absent':   {}
     'present':  {}
@@ -27,7 +23,7 @@ define jboss::clientry (
       fail("Invalid value for ensure: `${ensure}`. Supported values are: `present`, `absent`, `running`, `stopped`, `enabled`, `disabled`")
     }
   }
-  
+
   jboss_confignode { $name:
     ensure      => $ensure,
     path        => $path,
@@ -45,11 +41,11 @@ define jboss::clientry (
   } else {
     Anchor['jboss::service::end'] -> Jboss_confignode[$name]
   }
-  
+
   if $dorestart {
     if !$::jboss::runasdomain {
       Jboss_confignode[$name] ~> Exec['jboss::service::restart']
     }
   }
-  
+
 }

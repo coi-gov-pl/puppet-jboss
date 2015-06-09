@@ -1,6 +1,4 @@
-/**
- * Creates JBoss domain server group
- */
+# Creates JBoss domain server group
 define jboss::domain::servergroup (
   $ensure                     = 'present',
   $permgensize                = $::jboss::internal::params::memorydefaults::permgensize,
@@ -15,7 +13,7 @@ define jboss::domain::servergroup (
   $jvmopts                    = undef,
 ) {
   include jboss
-  
+
   case $ensure {
     'absent':  {}
     'present': {}
@@ -23,7 +21,7 @@ define jboss::domain::servergroup (
       fail("Invalid value for ensure: `${ensure}`. Supported values are: `present`, `absent`")
     }
   }
-  
+
   jboss::clientry { "jboss::domain::servergroup(${name})":
     ensure      => $ensure,
     path        => "/server-group=${name}",
@@ -35,7 +33,7 @@ define jboss::domain::servergroup (
       'socket-binding-port-offset' => $socket_binding_port_offset,
     }
   }
-  
+
   $jvmopts_set = $jvmopts != undef
   $jvmopts_str = $jvmopts_set ? {
     true    => $jvmopts,
@@ -57,8 +55,8 @@ define jboss::domain::servergroup (
     properties  => $jvmproperties
   }
 
-  #Prepend server group name to each system property. Result is 'group:property'  
-  $system_properties_keys = regsubst(keys($system_properties), '^(.*)$', "${name}~~~\1")
+  #Prepend server group name to each system property. Result is 'group:property'
+  $system_properties_keys = regsubst(keys($system_properties), '^(.*)$', "${name}~~~\\1")
   jboss::domain::servergroup::properties::foreach { $system_properties_keys:
     ensure     => $ensure,
     map        => $system_properties,
@@ -66,7 +64,7 @@ define jboss::domain::servergroup (
     profile    => $profile,
     controller => $controller,
   }
-  
+
   if $ensure == 'present' {
     JBoss::Clientry["jboss::domain::servergroup(${name})"] ->
     JBoss::Clientry["jboss::domain::servergroup::jvm(${name})"]
@@ -84,11 +82,11 @@ define jboss::domain::servergroup::properties::foreach (
   $profile,
   $controller,
 ) {
-  
+
   #Remove group prefix from system property name
   $split = split($key, '~~~')
   $property = $split[1]
-  
+
   $value = $map[$property]
 
   jboss::clientry { "jboss::domain::servergroup::sysproperty(${key} => ${value})":

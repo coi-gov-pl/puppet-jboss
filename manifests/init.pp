@@ -97,18 +97,14 @@ class jboss (
   $enableconsole    = $jboss::params::enableconsole,
   $controller       = $jboss::params::controller,
   $profile          = $jboss::params::profile,
-  # Deprecated: use jboss::xml::domain resource or other specific resources
-  $domain_xml       = undef,
-  # Deprecated: use jboss::xml::host resource or other specific resources
-  $host_xml         = undef,
   $prerequisites    = Class['jboss::internal::prerequisites'],
 ) inherits jboss::params {
-  
+
   $home = "${install_dir}/jboss-${version}"
-  
+
   include jboss::internal::configuration
   include jboss::internal::service
-  
+
   class { 'jboss::internal::package':
     version          => $version,
     jboss_user       => $jboss_user,
@@ -119,33 +115,21 @@ class jboss (
     java_package     => $java_package,
     install_dir      => $install_dir,
     prerequisites    => $prerequisites,
-    require          => Anchor['jboss::begin'],     
+    require          => Anchor['jboss::begin'],
   }
   include jboss::internal::package
 
-  anchor { "jboss::begin": }
-  
-  if $domain_xml {
-    jboss::xml::domain { $domain_xml: 
-      ensure  => 'present',
-    }
-  }
-  
-  if $host_xml {
-    jboss::xml::host { $host_xml: 
-      ensure  => 'present',
-    }
-  }
+  anchor { 'jboss::begin': }
 
-  anchor { "jboss::end": 
+  anchor { 'jboss::end':
     require => [
       Class['jboss::internal::package'],
       Class['jboss::internal::configuration'],
       Class['jboss::internal::service'],
       Anchor['jboss::begin'],
-      Anchor["jboss::package::end"], 
-      Anchor["jboss::service::end"], 
-    ], 
+      Anchor['jboss::package::end'],
+      Anchor['jboss::service::end'],
+    ],
   }
 }
 

@@ -5,9 +5,9 @@ define jboss::logging::syslog (
   $level          = 'INFO',
   $app_name       = 'java-app',
   $port           = 514,
-  $serverhost     = "localhost",
+  $serverhost     = 'localhost',
   $clienthostname = undef,
-  $format         = "RFC5424",
+  $format         = 'RFC5424',
 ) {
 
   jboss::clientry { "/subsystem=logging/syslog-handler=${logger_name}":

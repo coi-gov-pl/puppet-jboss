@@ -1,12 +1,10 @@
-/**
- * Creates JBoss resource adapter
- */
+# Creates JBoss resource adapter
 define jboss::resourceadapter (
-  $ensure                  = 'present',
   $jndiname,
   $archive,
   $transactionsupport,
   $classname,
+  $ensure                  = 'present',
   $security                = hiera('jboss::resourceadapter::security', 'application'),
   $backgroundvalidation    = hiera('jboss::resourceadapter::backgroundvalidation', false),
   $profile                 = $::jboss::profile,
@@ -16,7 +14,7 @@ define jboss::resourceadapter (
   include jboss
   include jboss::internal::service
   include jboss::internal::runtime::node
-  
+
   jboss_resourceadapter { $name:
     ensure               => $ensure,
     archive              => $archive,
@@ -38,4 +36,4 @@ define jboss::resourceadapter (
   } else {
     Anchor['jboss::service::end'] -> Jboss_resourceadapter[$name] ~> Exec['jboss::service::restart']
   }
-} 
+}

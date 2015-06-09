@@ -1,6 +1,4 @@
-/**
- * Creates JBoss domain server
- */
+# Creates JBoss domain server
 define jboss::domain::server (
   $group                      = false,
   $ensure                     = 'running',
@@ -11,20 +9,20 @@ define jboss::domain::server (
   $controller                 = $::jboss::controller,
 ) {
   include jboss
-  
+
   $host_is_null = $host == undef
   $hostname = $host_is_null ? {
     true    => $jboss::hostname,
     default => $host,
   }
-  
+
   if ! $group and $ensure == 'running' {
     fail("Must pass group to Jboss::Domain::Server[${name}] while ensuring to be `${ensure}`")
   }
-  
+
   $props = {
     'group'                      => $group,
-    'auto-start'                 => $autostart, 
+    'auto-start'                 => $autostart,
     'socket-binding-port-offset' => $socket_binding_port_offset,
   }
   if $socket_binding_group {
@@ -43,7 +41,7 @@ define jboss::domain::server (
     'absent'  => 'absent',
     default   => 'present',
   }
-  
+
   if ! str2bool($::jboss_running) and $ensurex == 'absent' {
     include jboss::internal::lenses
     $cfg_file = $jboss::internal::runtime::hostconfigpath
@@ -78,13 +76,13 @@ define jboss::domain::server (
     if $ensurex == 'present' {
       if ! defined(Jboss::Domain::Servergroup[$group]) {
         jboss::domain::servergroup { $group:
-          controller => $controller,
           ensure     => $ensurex,
+          controller => $controller,
         }
       }
       Jboss::Domain::Servergroup[$group] ->
       Jboss::Clientry["jboss::domain::server(${name})"]
     }
   }
-  
+
 }

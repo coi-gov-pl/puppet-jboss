@@ -1,9 +1,7 @@
-/**
- * Creates JBoss JMS Queue 
- */
+# Creates JBoss JMS Queue
 define jboss::jmsqueue (
-  $ensure       = 'present',
   $entries,
+  $ensure       = 'present',
   $durable      = hiera('jboss::jmsqueue::durable', false),
   $profile      = $::jboss::profile,
   $controller   = $::jboss::controller,
@@ -12,11 +10,11 @@ define jboss::jmsqueue (
   include jboss
   include jboss::internal::service
   include jboss::internal::runtime::node
-  
+
   jboss_jmsqueue { $name:
+    ensure        => $ensure,
     durable       => $durable,
     entries       => $entries,
-    ensure        => $ensure,
     runasdomain   => $runasdomain,
     profile       => $profile,
     controller    => $controller,
