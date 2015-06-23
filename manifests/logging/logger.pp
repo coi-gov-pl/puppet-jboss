@@ -1,7 +1,8 @@
+# Default logger configuration for JBoss
 define jboss::logging::logger (
-  $logger_name = $name,
-  $ensure = 'present',
-  $level = 'INFO',
+  $logger_name         = $name,
+  $ensure              = 'present',
+  $level               = 'INFO',
   $use_parent_handlers = true,
 ) {
 
@@ -9,8 +10,8 @@ define jboss::logging::logger (
     ensure     => $ensure,
     dorestart  => false,
     properties => {
-      'level'                => $level,
-      'use-parent-handlers'  => $use_parent_handlers,
+      'level'               => $level,
+      'use-parent-handlers' => $use_parent_handlers,
     },
   }
 }

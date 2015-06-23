@@ -60,30 +60,30 @@ define jboss::user (
       }
       if $application_realm {
         file_line { "jboss::user::roles::add(${realm}/${name})":
-          ensure    => present,
-          path      => $filepath_roles,
-          line      => "${name}=${roles}",
-          match     => "${name}=.*",
-          require   => Exec["jboss::user::add(${realm}/${name})"],
-          notify      => Service[$jboss::internal::service::servicename],
+          ensure  => present,
+          path    => $filepath_roles,
+          line    => "${name}=${roles}",
+          match   => "${name}=.*",
+          require => Exec["jboss::user::add(${realm}/${name})"],
+          notify  => Service[$jboss::internal::service::servicename],
         }
       }
     }
     'absent':{
       exec { "jboss::user::remove(${realm}/${name})":
-        command     => "/bin/sed -iE 's/^${name}=.*$//g' ${filepath}",
-        onlyif      => "/bin/egrep -e '^${name}=' ${filepath}",
-        require     => Anchor['jboss::package::end'],
-        logoutput   => 'on_failure',
-        notify      => Service[$jboss::internal::service::servicename],
+        command   => "/bin/sed -iE 's/^${name}=.*$//g' ${filepath}",
+        onlyif    => "/bin/egrep -e '^${name}=' ${filepath}",
+        require   => Anchor['jboss::package::end'],
+        logoutput => 'on_failure',
+        notify    => Service[$jboss::internal::service::servicename],
       }
       if $application_realm {
         exec { "jboss::user::roles::remove(${realm}/${name})":
-          command     => "/bin/sed -iE 's/^${name}=.*$//g' ${filepath_roles}",
-          onlyif      => "/bin/egrep -e '^${name}=' ${filepath_roles}",
-          require     => Anchor['jboss::package::end'],
-          logoutput   => 'on_failure',
-          notify      => Service[$jboss::internal::service::servicename],
+          command   => "/bin/sed -iE 's/^${name}=.*$//g' ${filepath_roles}",
+          onlyif    => "/bin/egrep -e '^${name}=' ${filepath_roles}",
+          require   => Anchor['jboss::package::end'],
+          logoutput => 'on_failure',
+          notify    => Service[$jboss::internal::service::servicename],
         }
       }
     }

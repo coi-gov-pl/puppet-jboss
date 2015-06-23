@@ -1,0 +1,12 @@
+pkg/
+Gemfile.lock
+.vendor
+spec/fixtures/
+.vagrant/
+.bundle/
+coverage/
+doc/
+.tmp/
+Puppetfile.lock
+.librarian/
+log

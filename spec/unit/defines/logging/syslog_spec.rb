@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'jboss::logging::syslog' do
+describe 'jboss::logging::syslog', :type => :define do
   let(:title) { 'test-handler' }
   let(:params) { { :app_name => 'test-app', } }
   let(:facts) { {
@@ -11,16 +11,15 @@ describe 'jboss::logging::syslog' do
     :concat_basedir => "/tmp/"
   } }
 
-  it do should
-    contain_jboss__clientry("/subsystem=logging/syslog-handler=#{title}").
+  it do 
+    is_expected.to contain_jboss__clientry("/subsystem=logging/syslog-handler=#{title}").
       with_ensure('present').
       with_properties({
-        'port' => 514,
-        'app-name' => 'test_app',
-        'level' => 'ALL',
-        'enabled' => true,
+        'port'           => 514,
+        'app-name'       => 'test-app',
+        'level'          => 'INFO',
         'server-address' => 'localhost',
-        'syslog-format' => nil,
+        'syslog-format'  => 'RFC5424',
       })
   end
 end

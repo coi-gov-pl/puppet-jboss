@@ -1,20 +1,24 @@
 # Internal class that installs JBoss
 class jboss::internal::package (
+  $download_url,
+  $prerequisites,
   $jboss_user       = $jboss::params::jboss_user,
   $jboss_group      = $jboss::params::jboss_group,
-  $package_name     = $jboss::params::package_name,
+  $product          = $jboss::params::product,
   $version          = $jboss::params::version,
   $java_autoinstall = $jboss::params::java_autoinstall,
   $java_version     = $jboss::params::java_version,
   $java_package     = $jboss::params::java_package,
   $install_dir      = $jboss::params::install_dir,
   # Prerequisites class, that can be overwritten
-  $prerequisites    = Class['jboss::internal::prerequisites'],
 ) inherits jboss::params {
   include jboss
   include jboss::internal::runtime
 
-  $dir              = '/usr/src/'
+  $download_rootdir = $jboss::internal::params::download_rootdir
+  $download_file    = jboss_basename($download_url)
+  $download_dir     = "${download_rootdir}/download-${product}-${version}"
+
   $home             = $jboss::home
 
   $logdir     = $jboss::internal::params::logdir
@@ -22,11 +26,11 @@ class jboss::internal::package (
   $configfile = $jboss::internal::runtime::configfile
 
   case $version {
-    /^(?:eap|as)-[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
+    /^(?:(?:eap|as)-)?[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
       debug("Running in version: ${1} -> ${version}")
     }
     default: {
-      fail("Invalid Jboss version passed: `${version}`! Pass valid version for ex.: `eap-6.1.0.GA`")
+      fail("Invalid Jboss version passed: `${version}`! Pass valid version for ex.: `6.2.0.GA`")
     }
   }
 
@@ -57,12 +61,14 @@ class jboss::internal::package (
     }
   }
 
-  file { '/etc/jboss-as':
+  $confdir = "/etc/${product}"
+
+  file { $confdir:
     ensure => 'directory',
     alias  => 'jboss::confdir',
     owner  => 'root',
     group  => 'root',
-    mode   => '755',
+    mode   => '0755',
   }
 
   file { $logdir:
@@ -86,22 +92,32 @@ class jboss::internal::package (
       distribution => 'jdk',
       version      => $java_version,
       package      => $java_package,
-      notify       => Service['jboss'],
+      notify       => Service[$jboss::product],
     }
     Class['java'] -> Exec['jboss::package::check-for-java']
   }
 
-  package { $package_name:
-    ensure => 'present',
+  file { $download_dir:
+    ensure => 'directory',
+  }
+
+  jboss::internal::util::fetch::file { $download_file:
+    address   => $download_url,
+    fetch_dir => $download_dir,
+    require   => File[$download_dir],
+  }
+
+  if $prerequisites == Class['jboss::internal::prerequisites'] {
+    include jboss::internal::prerequisites
   }
 
   exec { 'jboss::unzip-downloaded':
-    command => "unzip -o -q ${dir}/${package_name} -d ${jboss::home}",
-    cwd     => $dir,
+    command => "unzip -o -q ${download_dir}/${download_file} -d ${jboss::home}",
+    cwd     => $download_dir,
     creates => $jboss::home,
     require => [
       $prerequisites, # Prerequisites class, that can be overwritten
-      Package[$package_name],
+      Jboss::Internal::Util::Fetch::File[$download_file],
       Package['unzip'],
     ],
   }
@@ -141,34 +157,36 @@ class jboss::internal::package (
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
 
-  file { '/etc/jboss-as/domain.xml':
+  file { "${confdir}/domain.xml":
     ensure  => 'link',
     alias   => 'jboss::configuration-link::domain',
     target  => "${jboss::home}/domain/configuration/domain.xml",
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
   $hostfile = 'host.xml'
-  file { "/etc/jboss-as/${hostfile}":
+  file { "${confdir}/${hostfile}":
     ensure  => 'link',
     alias   => 'jboss::configuration-link::host',
     target  => "${jboss::home}/domain/configuration/${hostfile}",
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
 
-  file { '/etc/jboss-as/standalone.xml':
+  file { "${confdir}/standalone.xml":
     ensure  => 'link',
     alias   => 'jboss::configuration-link::standalone',
     target  => "${jboss::home}/standalone/configuration/${configfile}",
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
 
-  file { '/etc/init.d/jboss':
+  $target = $jboss::runasdomain ? {
+    true    => '/etc/init.d/jboss-domain',
+    default => '/etc/init.d/jboss-standalone',
+  }
+
+  file { "/etc/init.d/${product}":
     ensure  => 'link',
     alias   => 'jboss::service-link',
-    target  => $jboss::runasdomain ? {
-      true    => '/etc/init.d/jboss-domain',
-      default => '/etc/init.d/jboss-standalone',
-    },
+    target  => $target,
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
     notify  => [
       Exec['jboss::kill-existing::domain'],
@@ -180,14 +198,14 @@ class jboss::internal::package (
     command     => '/etc/init.d/jboss-domain stop',
     refreshonly => true,
     onlyif      => '/etc/init.d/jboss-domain status',
-    before      => Service['jboss'],
+    before      => Service[$product],
   }
 
   exec { 'jboss::kill-existing::standalone':
     command     => '/etc/init.d/jboss-standalone stop',
     refreshonly => true,
     onlyif      => '/etc/init.d/jboss-standalone status',
-    before      => Service['jboss'],
+    before      => Service[$product],
   }
 
   file { '/usr/bin/jboss-cli':

@@ -1,6 +1,8 @@
 # Internal class - manage JBoss service
 class jboss::internal::service {
 
+  include jboss::params
+
   Exec {
     path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
     logoutput => 'on_failure',
@@ -8,7 +10,7 @@ class jboss::internal::service {
 
   anchor { 'jboss::service::begin': }
 
-  $servicename = 'jboss'
+  $servicename = $::jboss::product
 
   service { $servicename:
     ensure     => running,
@@ -22,15 +24,15 @@ class jboss::internal::service {
   }
 
   exec { 'jboss::service::test-running':
-    loglevel    => 'emerg',
-    command     => 'tail -n 50 /var/log/jboss-as/console.log && exit 1',
-    unless      => "ps aux | grep ${servicename} | grep -vq grep",
-    logoutput   => true,
-    subscribe   => Service[$servicename],
+    loglevel  => 'emerg',
+    command   => "tail -n 50 ${jboss::params::logfile} && exit 1",
+    unless    => "ps aux | grep ${servicename} | grep -vq grep",
+    logoutput => true,
+    subscribe => Service[$servicename],
   }
 
   exec { 'jboss::service::restart':
-    command     => 'service jboss stop ; pkill -9 -f "^java.*jboss"  ; service jboss start ',
+    command     => "service ${servicename} stop ; pkill -9 -f \"^java.*jboss\"  ; service ${servicename} start",
     refreshonly => true,
     require     => Exec['jboss::service::test-running'],
   }

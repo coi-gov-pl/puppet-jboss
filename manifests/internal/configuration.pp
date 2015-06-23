@@ -14,7 +14,7 @@ class jboss::internal::configuration {
   $controller    = $jboss::controller
   $profile       = $jboss::profile
   $configfile    = $jboss::internal::runtime::configfile
-
+  $etcconfdir    = "/etc/${jboss::product}"
 
   anchor { 'jboss::configuration::begin':
     require => Anchor['jboss::package::end'],
@@ -36,21 +36,21 @@ class jboss::internal::configuration {
       ],
       notify    => [
         Anchor['jboss::configuration::end'],
-        Service['jboss'],
+        Service[$jboss::product],
       ],
     }
   }
 
-  concat { '/etc/jboss-as/jboss-as.conf':
+  concat { "${etcconfdir}/jboss-as.conf":
     alias   => 'jboss::jboss-as.conf',
     mode    => 644,
-    notify  => Service['jboss'],
+    notify  => Service[$jboss::product],
     require => Anchor['jboss::configuration::begin'],
   }
 
 
   concat::fragment { 'jboss::jboss-as.conf::defaults':
-    target  => '/etc/jboss-as/jboss-as.conf',
+    target  => "${etcconfdir}/jboss-as.conf",
     order   => '000',
     content => template('jboss/jboss-as.conf.erb'),
   }

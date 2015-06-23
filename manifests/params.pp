@@ -1,10 +1,11 @@
 # JBoss parameters
 class jboss::params inherits jboss::internal::params {
-  # Version of JBoss Application Server
-  $version          = hiera('jboss::params::version', 'as-7.1.1.Final')
 
-  # Short version number
-  $version_short    = hiera('jboss::params::version_short', jboss_short_version($version))
+  # JBoss product name
+  $product          = hiera('jboss::params::product', 'wildfly')
+
+  # Version of JBoss Application Server
+  $version          = hiera('jboss::params::version', '8.2.0.Final')
 
   # Should java be installed by this module automatically?
   $java_autoinstall = hiera('jboss::params::java_install', true)
@@ -22,7 +23,7 @@ class jboss::params inherits jboss::internal::params {
   $jboss_group      = hiera('jboss::params::jboss_group', 'jboss')
 
   # Download URL for Jboss Application Server installation package
-  $package_name     = hiera('jboss::params::package_name', "jboss-${version}.zip")
+  $download_urlbase = hiera('jboss::params::download_urlbase', 'http://download.jboss.org')
 
   # Target installation directory root
   $install_dir      = hiera('jboss::params::install_dir', '/usr/lib')
@@ -47,6 +48,9 @@ class jboss::params inherits jboss::internal::params {
 
   # JBoss default host name
   $hostname         = hiera('jboss::params::hostname', $::hostname)
+
+  # Tool used by this module to fetch JBoss installation files from network
+  $fetch_tool       = hiera('jboss::params::fetch_tool', 'jboss::internal::util::download')
 
   include jboss::params::mod_cluster
 

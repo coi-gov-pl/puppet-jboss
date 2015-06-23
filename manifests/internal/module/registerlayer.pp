@@ -15,13 +15,13 @@ define jboss::internal::module::registerlayer (
       command => "/bin/awk -F'=' 'BEGIN {ins = 0} /^layers=/ { ins = ins + 1; print \$1=${layer},\$2 } END {if(ins == 0) print \"layers=${layer},base\"}' > ${jboss::home}/modules/layers.conf",
       unless  => "/bin/egrep -e '^layers=.*${layer}.*' ${jboss::home}/modules/layers.conf",
       require => Anchor['jboss::installed'],
-      notify  => Service['jboss'],
+      notify  => Service[$jboss::product],
     }
     file { "${jboss::home}/modules/system/layers/${layer}":
       ensure  => 'directory',
       alias   => "jboss::module::layer::${layer}",
       require => Anchor['jboss::installed'],
-      notify  => Service['jboss'],
+      notify  => Service[$jboss::product],
     }
   }
 }

@@ -1,11 +1,12 @@
 {
+  "name": "coi/jboss",
+  "version": "1.0.0",
   "author": "Center of Information Technology COI.gov.pl (MSW)",
-  "summary": "Instalation and management of JBoss Aplication Server (Wildfly, EAP)",
+  "summary": "Installs and manages resources of JBoss EAP and Wildfly application servers",
   "license": "Apache-2.0",
-  "name": "coi-jboss",
-  "project_page": "https://forge.puppetlabs.com/coi-gov-pl/jboss",
-  "source": "https://github.com/coi-gov-pl/puppet-jboss.git",
-  "version": "0.0.2",
+  "source": "git://github.com/coi-gov-pl/puppet-jboss.git",
+  "project_page": "https://github.com/coi-gov-pl/puppet-jboss",
+  "issues_url": "https://github.com/coi-gov-pl/puppet-jboss/issues",
   "dependencies": [
     {
       "name": "puppetlabs/java",
@@ -25,3 +26,4 @@
     }
   ]
 }
+

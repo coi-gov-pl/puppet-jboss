@@ -14,11 +14,11 @@ define jboss::logging::syslog (
     ensure     => $ensure,
     dorestart  => false,
     properties => {
-      'level'           => $level,
-      'app-name'        => $app_name,
-      'port'            => $port,
-      'server-address'  => $serverhost,
-      'syslog-format'   => $format,
+      'level'          => $level,
+      'app-name'       => $app_name,
+      'port'           => $port,
+      'server-address' => $serverhost,
+      'syslog-format'  => $format,
     },
   }
 }

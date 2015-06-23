@@ -1,28 +1,28 @@
 # Creates JBoss security domain
 define jboss::securitydomain (
-  $code                    = undef,
-  $codeflag                = undef,
-  $moduleoptions           = undef,
-  $ensure                  = 'present',
-  $profile                 = $::jboss::profile,
-  $controller              = $::jboss::controller,
-  $runasdomain             = $::jboss::runasdomain,
+  $code          = undef,
+  $codeflag      = undef,
+  $moduleoptions = undef,
+  $ensure        = 'present',
+  $profile       = $::jboss::profile,
+  $controller    = $::jboss::controller,
+  $runasdomain   = $::jboss::runasdomain,
 ) {
   include jboss
   include jboss::internal::service
   include jboss::internal::runtime::node
 
   jboss_securitydomain { $name:
-    ensure          => $ensure,
-    code            => $code,
-    codeflag        => $codeflag,
-    moduleoptions   => $moduleoptions,
-    runasdomain     => $runasdomain,
-    profile         => $profile,
-    controller      => $controller,
-    ctrluser        => $jboss::internal::runtime::node::username,
-    ctrlpasswd      => $jboss::internal::runtime::node::password,
-    require         => Anchor['jboss::package::end'],
+    ensure        => $ensure,
+    code          => $code,
+    codeflag      => $codeflag,
+    moduleoptions => $moduleoptions,
+    runasdomain   => $runasdomain,
+    profile       => $profile,
+    controller    => $controller,
+    ctrluser      => $jboss::internal::runtime::node::username,
+    ctrlpasswd    => $jboss::internal::runtime::node::password,
+    require       => Anchor['jboss::package::end'],
   }
 
   if str2bool($::jboss_running) {

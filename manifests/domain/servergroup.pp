@@ -57,7 +57,7 @@ define jboss::domain::servergroup (
 
   #Prepend server group name to each system property. Result is 'group:property'
   $system_properties_keys = regsubst(keys($system_properties), '^(.*)$', "${name}~~~\\1")
-  jboss::domain::servergroup::properties::foreach { $system_properties_keys:
+  jboss::internal::domain::servergroup::foreach { $system_properties_keys:
     ensure     => $ensure,
     map        => $system_properties,
     group      => $name,
@@ -74,37 +74,4 @@ define jboss::domain::servergroup (
   }
 }
 
-define jboss::domain::servergroup::properties::foreach (
-  $ensure     = 'present',
-  $key        = $name,
-  $map        = {},
-  $group,
-  $profile,
-  $controller,
-) {
 
-  #Remove group prefix from system property name
-  $split = split($key, '~~~')
-  $property = $split[1]
-
-  $value = $map[$property]
-
-  jboss::clientry { "jboss::domain::servergroup::sysproperty(${key} => ${value})":
-    ensure      => $ensure,
-    path        => "/server-group=${group}/system-property=${property}",
-    profile     => $profile,
-    controller  => $controller,
-    runasdomain => true,
-    properties  => {
-      value => $value,
-    }
-  }
-
-  if $ensure == 'present' {
-    JBoss::Clientry["jboss::domain::servergroup(${group})"] ->
-    JBoss::Clientry["jboss::domain::servergroup::sysproperty(${key} => ${value})"]
-  } else {
-    JBoss::Clientry["jboss::domain::servergroup::sysproperty(${key} => ${value})"] ->
-    JBoss::Clientry["jboss::domain::servergroup(${group})"]
-  }
-}

@@ -3,17 +3,32 @@ class jboss::addons::mod_cluster (
   $version          = $::jboss::params::mod_cluster::version,
   $mgmt_ip,
   $modcluster_ip,
-) inherits jboss::params {
+) {
+
+  include jboss::params
+  include jboss::params::mod_cluster
 
   # Install RPM containing mod_cluster, then unpack it to the modules directory
-  $download_file = "mod_cluster-${version}-linux2-x64-so.tar.gz"
-  package { $download_file:
-    ensure => 'installed',
+
+  $download_rootdir = $jboss::params::download_rootdir
+  $ver              = $jboss::params::mod_cluster::version
+  $download_dir     = "${$download_rootdir}/mod_cluster-${ver}"
+  $download_file    = "mod_cluster-${ver}-linux2-x64-so.tar.gz"
+  $download_url     = "http://downloads.jboss.org/mod_cluster//${ver}/linux-x86_64/${download_file}"
+
+  file { $download_dir:
+    ensure => 'directory',
+  }
+
+  jboss::internal::util::fetch::file { $download_file:
+    fetch_dir => $download_dir,
+    address   => $download_url,
+    require   => File[$download_dir],
   }
 
   # TODO - probably there's a var for etc/httpd/modules
   exec { 'untar-mod_cluster':
-    command     => "/bin/tar -C /etc/httpd/modules -xvf /usr/src/${download_file}",
+    command     => "/bin/tar -C /etc/httpd/modules -xvf ${download_dir}/${download_file}",
     subscribe   => Package[$download_file],
     refreshonly => true,
   }

@@ -1,40 +1,58 @@
 # Internal define. Default download method.
 define jboss::internal::util::download (
-  $uri,
-  $dest    = $name,
-  $timeout = 900,
+  $fetch_dir,
+  $mode,
+  $owner,
+  $group,
+  $uri          = $name,
+  $timeout      = 900,
+  $filename     = undef,
+  $install_wget = true,
 ) {
-  anchor { "jboss::download::${name}::begin": }
+  anchor { "jboss::internal::util::fetch::begin(${name})": }
+
+  if $filename == undef {
+    $base = jboss_basename($uri)
+    $dest = "${fetch_dir}/${base}"
+  } else {
+    $dest = "${fetch_dir}/${filename}"
+  }
+
+  validate_string($dest)
+  validate_re($dest, '^.+$')
 
   case $uri {
-    /^(?:http|ftp)s?:/ : {
-      if ! defined(Package['wget']) {
-        ensure_packages('wget')
+    /^(?:http|https|ftp|sftp|ftps):/ : {
+      if ! defined(Package['wget']) and $install_wget {
+        ensure_packages(['wget'])
       }
 
-      exec { "download ${name}":
-        command => "wget -q '${uri}' -O '${dest}'",
+      exec { "wget -q '${uri}' -O '${dest}' && chmod ${mode} '${dest}' && chown ${owner}:${group} '${dest}'":
+        alias   => "download ${name}",
         path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
         creates => $dest,
         timeout => $timeout,
         require => [
-          Package['wget'], 
-          Anchor["jboss::download::${name}::begin"],
+          Package['wget'],
+          Anchor["jboss::internal::util::fetch::begin(${name})"],
         ],
-        before  => Anchor["jboss::download::${name}::end"], 
+        before  => Anchor["jboss::internal::util::fetch::end(${name})"],
       }
     }
     default : {
-      file { "download ${name}":
-        path    => $dest,
+      file { $dest:
+        alias   => "download ${name}",
+        mode    => $mode,
+        owner   => $owner,
+        group   => $group,
         source  => $uri,
-        require => Anchor["jboss::download::${name}::begin"],
-        before  => Anchor["jboss::download::${name}::end"],
+        require => Anchor["jboss::internal::util::fetch::begin(${name})"],
+        before  => Anchor["jboss::internal::util::fetch::end(${name})"],
       }
     }
   }
 
-  anchor { "jboss::download::${name}::end": 
-    require => Anchor["jboss::download::${name}::begin"], 
+  anchor { "jboss::internal::util::fetch::end(${name})":
+    require => Anchor["jboss::internal::util::fetch::begin(${name})"],
   }
 }

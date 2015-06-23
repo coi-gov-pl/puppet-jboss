@@ -12,10 +12,10 @@ define jboss::internal::util::groupaccess (
   anchor {"jboss::util::groupaccess::${name}::begin": }
 
   exec { "g+s ${name}":
-    command     => "find ${target} -type d -exec chmod g+s {} +",
-    unless      => "test $(stat -c '%a' ${target} | cut -c2) == '7'",
-    notify      => Exec["rw ${name}"],
-    require     => Anchor["jboss::util::groupaccess::${name}::begin"],
+    command => "find ${target} -type d -exec chmod g+s {} +",
+    unless  => "test $(stat -c '%a' ${target} | cut -c2) == '7'",
+    notify  => Exec["rw ${name}"],
+    require => Anchor["jboss::util::groupaccess::${name}::begin"],
   }
 
   exec { "rw ${name}":

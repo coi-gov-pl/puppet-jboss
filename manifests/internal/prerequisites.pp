@@ -8,6 +8,6 @@
 #
 class jboss::internal::prerequisites {
   if ! defined(Package['unzip']) {
-    ensure_packages('unzip')
+    ensure_packages(['unzip'])
   }
 }

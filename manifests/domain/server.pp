@@ -26,7 +26,7 @@ define jboss::domain::server (
     'socket-binding-port-offset' => $socket_binding_port_offset,
   }
   if $socket_binding_group {
-    $props['socket-binding-group'] = $socket_binding_group
+    jboss_hash_setvalue($props, 'socket-binding-group', $socket_binding_group)
   }
   case $ensure {
     'running': {}
@@ -53,7 +53,7 @@ define jboss::domain::server (
       ],
       notify    => [
         Anchor['jboss::configuration::end'],
-        Service['jboss'],
+        Service[$jboss::product],
       ],
       load_path => $jboss::internal::lenses::lenses_path,
       lens      => 'jbxml.lns',
@@ -66,11 +66,11 @@ define jboss::domain::server (
     }
   } else {
     jboss::clientry { "jboss::domain::server(${name})":
-      ensure       => $ensure,
-      path         => "/host=${hostname}/server-config=${name}",
-      controller   => $controller,
-      runasdomain  => true,
-      properties   => $props,
+      ensure      => $ensure,
+      path        => "/host=${hostname}/server-config=${name}",
+      controller  => $controller,
+      runasdomain => true,
+      properties  => $props,
     }
 
     if $ensurex == 'present' {
