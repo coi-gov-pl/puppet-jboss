@@ -11,6 +11,7 @@ describe 'jboss::logging::syslog', :type => :define do
     :concat_basedir => "/tmp/"
   } }
 
+  it { is_expected.to compile }
   it do 
     is_expected.to contain_jboss__clientry("/subsystem=logging/syslog-handler=#{title}").
       with_ensure('present').

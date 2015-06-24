@@ -9,7 +9,6 @@ define jboss::internal::util::download (
   $filename     = undef,
   $install_wget = true,
 ) {
-  anchor { "jboss::internal::util::fetch::begin(${name})": }
 
   if $filename == undef {
     $base = jboss_basename($uri)
@@ -32,27 +31,18 @@ define jboss::internal::util::download (
         path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
         creates => $dest,
         timeout => $timeout,
-        require => [
-          Package['wget'],
-          Anchor["jboss::internal::util::fetch::begin(${name})"],
-        ],
-        before  => Anchor["jboss::internal::util::fetch::end(${name})"],
+        require => Package['wget'],
       }
     }
     default : {
       file { $dest:
-        alias   => "download ${name}",
-        mode    => $mode,
-        owner   => $owner,
-        group   => $group,
-        source  => $uri,
-        require => Anchor["jboss::internal::util::fetch::begin(${name})"],
-        before  => Anchor["jboss::internal::util::fetch::end(${name})"],
+        alias  => "download ${name}",
+        mode   => $mode,
+        owner  => $owner,
+        group  => $group,
+        source => $uri,
       }
     }
   }
 
-  anchor { "jboss::internal::util::fetch::end(${name})":
-    require => Anchor["jboss::internal::util::fetch::begin(${name})"],
-  }
 }

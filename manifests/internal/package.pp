@@ -54,11 +54,14 @@ class jboss::internal::package (
   }
 
   if (!defined(User[$jboss_user])) {
-    user { $jboss_user:
-      ensure     => 'present',
-      managehome => true,
-      gid        => $jboss_group,
-    }
+    $empty = ''
+    create_resources('user', {
+      "${jboss_user}${empty}" => {
+        ensure     => 'present',
+        managehome => true,
+        gid        => $jboss_group,
+      }
+    })
   }
 
   $confdir = "/etc/${product}"

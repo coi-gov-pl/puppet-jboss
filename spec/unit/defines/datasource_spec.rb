@@ -3,7 +3,6 @@ require 'spec_helper'
 describe 'jboss::datasource', :type => :define do
   def merge_params(hash = {})
     hash.merge({
-      :name       => title,
       :username   => 'test-username',
       :password   => 'test-password',
       :jdbcscheme => 'test-scheme',
@@ -27,8 +26,9 @@ describe 'jboss::datasource', :type => :define do
     :concat_basedir      => "/tmp/"
   } }
 
-  it { is_expected.to compile }
+  it { is_expected.to compile.with_all_deps }
   it { is_expected.to contain_jboss_datasource('test-datasource') }
+  it { is_expected.to contain_jboss__datasource('test-datasource') }
 
   it do
     is_expected.to contain_jboss_datasource('test-datasource').

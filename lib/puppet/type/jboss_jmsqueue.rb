@@ -33,8 +33,6 @@ Puppet::Type.newtype(:jboss_jmsqueue) do
     validate do |value|
       if value == nil and @resource[:runasdomain]
         raise ArgumentError, "Domain controller must be provided"
-      else
-        super
       end
     end
   end

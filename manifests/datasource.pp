@@ -19,6 +19,7 @@ define jboss::datasource (
   $options                     = {},
   $runasdomain                 = $::jboss::runasdomain,
 ) {
+  include jboss
   include jboss::internal::service
   include jboss::internal::runtime::node
 

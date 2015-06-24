@@ -1,6 +1,7 @@
 # Internal class - manage JBoss service
 class jboss::internal::service {
 
+  include jboss
   include jboss::params
 
   Exec {
@@ -10,7 +11,7 @@ class jboss::internal::service {
 
   anchor { 'jboss::service::begin': }
 
-  $servicename = $::jboss::product
+  $servicename = $jboss::product
 
   service { $servicename:
     ensure     => running,

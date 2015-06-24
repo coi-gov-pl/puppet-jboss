@@ -100,8 +100,6 @@ Puppet::Type.newtype(:jboss_datasource) do
     validate do |value|
       unless value =~ /\w/
         raise ArgumentError, "Datasource host is invalid"
-      else
-        super
       end
     end
   end
@@ -112,8 +110,6 @@ Puppet::Type.newtype(:jboss_datasource) do
     validate do |value|
       unless value =~ /\d/
         raise ArgumentError, "Datasource port is invalid"
-      else
-        super
       end
     end    
     munge do |value|
@@ -142,8 +138,6 @@ Puppet::Type.newtype(:jboss_datasource) do
     validate do |value|
       if value == nil and @resource[:runasdomain]
         raise ArgumentError, "Domain controller must be provided"
-      else
-        super
       end
     end
   end
