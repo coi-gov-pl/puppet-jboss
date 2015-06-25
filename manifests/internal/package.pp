@@ -15,15 +15,12 @@ class jboss::internal::package (
   include jboss
   include jboss::internal::runtime
 
-  $download_rootdir = $jboss::internal::params::download_rootdir
-  $download_file    = jboss_basename($download_url)
-  $download_dir     = "${download_rootdir}/download-${product}-${version}"
-
-  $home             = $jboss::home
-
-  $logdir     = $jboss::internal::params::logdir
-  $logfile    = $jboss::internal::params::logfile
-  $configfile = $jboss::internal::runtime::configfile
+  $download_rootdir     = $jboss::internal::params::download_rootdir
+  $download_file        = jboss_basename($download_url)
+  $download_dir         = "${download_rootdir}/download-${product}-${version}"
+  $home                 = $jboss::home
+  $configfile           = $jboss::internal::runtime::configfile
+  $standaloneconfigfile = $jboss::internal::runtime::standaloneconfigfile
 
   case $version {
     /^(?:(?:eap|as)-)?[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
@@ -72,22 +69,6 @@ class jboss::internal::package (
     owner  => 'root',
     group  => 'root',
     mode   => '0755',
-  }
-
-  file { $logdir:
-    ensure => 'directory',
-    alias  => 'jboss::logdir',
-    owner  => 'root',
-    group  => $jboss_group,
-    mode   => '2770',
-  }
-
-  file { $logfile:
-    ensure => 'file',
-    alias  => 'jboss::logfile',
-    owner  => 'root',
-    group  => $jboss_group,
-    mode   => '0660',
   }
 
   if $java_autoinstall {
@@ -146,20 +127,6 @@ class jboss::internal::package (
     ],
   }
 
-  file { '/etc/init.d/jboss-domain':
-    ensure  => 'link',
-    alias   => 'jboss::service-link::domain',
-    target  => "${jboss::home}/bin/init.d/jboss-as-domain.sh",
-    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
-  }
-
-  file { '/etc/init.d/jboss-standalone':
-    ensure  => 'link',
-    alias   => 'jboss::service-link::standalone',
-    target  => "${jboss::home}/bin/init.d/jboss-as-standalone.sh",
-    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
-  }
-
   file { "${confdir}/domain.xml":
     ensure  => 'link',
     alias   => 'jboss::configuration-link::domain',
@@ -177,13 +144,13 @@ class jboss::internal::package (
   file { "${confdir}/standalone.xml":
     ensure  => 'link',
     alias   => 'jboss::configuration-link::standalone',
-    target  => "${jboss::home}/standalone/configuration/${configfile}",
+    target  => "${jboss::home}/standalone/configuration/${standaloneconfigfile}",
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
 
   $target = $jboss::runasdomain ? {
-    true    => '/etc/init.d/jboss-domain',
-    default => '/etc/init.d/jboss-standalone',
+    true    => "${jboss::home}/bin/init.d/jboss-as-domain.sh",
+    default => "${jboss::home}/bin/init.d/jboss-as-standalone.sh",
   }
 
   file { "/etc/init.d/${product}":
@@ -191,24 +158,6 @@ class jboss::internal::package (
     alias   => 'jboss::service-link',
     target  => $target,
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
-    notify  => [
-      Exec['jboss::kill-existing::domain'],
-      Exec['jboss::kill-existing::standalone'],
-    ],
-  }
-
-  exec { 'jboss::kill-existing::domain':
-    command     => '/etc/init.d/jboss-domain stop',
-    refreshonly => true,
-    onlyif      => '/etc/init.d/jboss-domain status',
-    before      => Service[$product],
-  }
-
-  exec { 'jboss::kill-existing::standalone':
-    command     => '/etc/init.d/jboss-standalone stop',
-    refreshonly => true,
-    onlyif      => '/etc/init.d/jboss-standalone status',
-    before      => Service[$product],
   }
 
   file { '/usr/bin/jboss-cli':

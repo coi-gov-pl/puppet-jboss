@@ -8,13 +8,15 @@ class jboss::internal::configuration {
 
   $home          = $jboss::home
   $user          = $jboss::jboss_user
-  $logfile       = $jboss::internal::params::logfile
   $enableconsole = $jboss::enableconsole
   $runasdomain   = $jboss::runasdomain
   $controller    = $jboss::controller
   $profile       = $jboss::profile
   $configfile    = $jboss::internal::runtime::configfile
   $etcconfdir    = "/etc/${jboss::product}"
+  $conffile      = "${etcconfdir}/${jboss::product}.conf"
+  $logdir        = "${jboss::internal::params::logbasedir}/${jboss::product}"
+  $logfile       = "${logdir}/console.log"
 
   anchor { 'jboss::configuration::begin':
     require => Anchor['jboss::package::end'],
@@ -41,16 +43,54 @@ class jboss::internal::configuration {
     }
   }
 
-  concat { "${etcconfdir}/jboss-as.conf":
-    alias   => 'jboss::jboss-as.conf',
-    mode    => 644,
-    notify  => Service[$jboss::product],
-    require => Anchor['jboss::configuration::begin'],
+  file { '/etc/profile.d/jboss.sh':
+    ensure  => 'file',
+    mode    => '0644',
+    content => "export JBOSS_CONF='${conffile}'",
+    before  => Concat[$conffile],
   }
 
+  file { $logdir:
+    ensure => 'directory',
+    alias  => 'jboss::logdir',
+    mode   => '2770',
+    owner  => $user,
+    group  => $jboss::jboss_group,
+  }
+
+  file { $logfile:
+    ensure => 'file',
+    alias  => 'jboss::logfile',
+    owner  => 'root',
+    group  => $jboss::jboss_group,
+    mode   => '0660',
+  }
+
+  file { '/etc/jboss-as':
+    ensure => 'directory',
+    owner  => $user,
+    group  => $jboss::jboss_group,
+    mode   => '2770',
+  }
+
+  file { '/etc/jboss-as/jboss-as.conf':
+    ensure => 'link',
+    target => $conffile,
+    before => Anchor['jboss::configuration::end'],
+  }
+
+  concat { $conffile:
+    alias   => 'jboss::jboss-as.conf',
+    mode    => '0644',
+    notify  => Service[$jboss::product],
+    require => [
+      Anchor['jboss::configuration::begin'],
+      File[$logdir],
+    ],
+  }
 
   concat::fragment { 'jboss::jboss-as.conf::defaults':
-    target  => "${etcconfdir}/jboss-as.conf",
+    target  => $conffile,
     order   => '000',
     content => template('jboss/jboss-as.conf.erb'),
   }

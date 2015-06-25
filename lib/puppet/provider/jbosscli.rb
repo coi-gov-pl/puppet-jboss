@@ -69,11 +69,6 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     ret = self.read_config 'JBOSS_RUNASDOMAIN', 'false'
     return ret.to_bool
   end
-  
-  def self.runtime_as_controller
-    ret = Puppet::Parser::Functions.getvar('jboss::internal::runtime::dc::runs_as_controller')
-    return ret.to_bool
-  end
 
   def self.config_controller
     return self.read_config 'JBOSS_CONTROLLER', 'localhost:9999'
@@ -86,7 +81,11 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   def self.read_config variable, defaults=nil
     begin
       if @@contents.nil?
-        @@contents = File.read '/etc/jboss-as/jboss-as.conf'
+        profile = File.read('/etc/profile.d/jboss.sh')
+        re = Regexp.new "^\s*(?:export )?JBOSS_CONF='(.+)'\s*$"
+        match = re.match(profile)
+        conffile = match[1].strip unless match.nil?
+        @@contents = File.read(conffile)
       end
       re = Regexp.new "^\s*#{variable}=(.+)\s*$"
       match = re.match @@contents

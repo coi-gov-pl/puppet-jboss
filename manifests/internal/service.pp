@@ -3,6 +3,7 @@ class jboss::internal::service {
 
   include jboss
   include jboss::params
+  include jboss::internal::configuration
 
   Exec {
     path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
@@ -26,7 +27,7 @@ class jboss::internal::service {
 
   exec { 'jboss::service::test-running':
     loglevel  => 'emerg',
-    command   => "tail -n 50 ${jboss::params::logfile} && exit 1",
+    command   => "tail -n 50 ${jboss::internal::configuration::logfile} && exit 1",
     unless    => "ps aux | grep ${servicename} | grep -vq grep",
     logoutput => true,
     subscribe => Service[$servicename],
