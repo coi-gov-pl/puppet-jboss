@@ -34,17 +34,19 @@ class jboss::addons::mod_cluster (
   }
 
   # mod_cluster module config
-  apache::mod { 'slotmem': }
-  apache::mod { 'manager': }
-  apache::mod { 'proxy': }
-  apache::mod { 'proxy_ajp': }
-  apache::mod { 'proxy_cluster': }
-  apache::mod { 'advertise': }
+  create_resources('apache::mod', {
+    'slotmem'       => {},
+    'manager'       => {},
+    'proxy'         => {},
+    'proxy_ajp'     => {},
+    'proxy_cluster' => {},
+    'advertise'     => {},
+  })
 
   # Listening
-  #apache::listen { '80': }
-  #apache::listen { '81': }
-  #apache::listen { '10001': }
+  create_resources('apache::listen', {
+    '10001' => {}
+  })
 
   # X-Forwarded-For
   #$log_formats = { vhost_common => '%v %h %l %u %t \"%r\" %>s %b' }
@@ -57,23 +59,23 @@ Maxsessionid 100',
   }
 
   # vhosts
-  apache::vhost { 'mgmt-mod_cluster':
-    ip              => $mgmt_ip, # Management interface!
-    priority        => 30,
-    ip_based        => true,
-    port            => 10001,
-    docroot         => '/var/www/html',
-    custom_fragment => template('jboss/mod_cluster_mgmt.conf.erb')
-  }
-
-  # vhost for mod_cluster data
-  apache::vhost { 'mod_cluster':
-    ip              => $modcluster_ip, # internal interface!
-    priority        => 30,
-    ip_based        => true,
-    port            => 10001,
-    docroot         => '/var/www/html',
-    custom_fragment => template('jboss/mod_cluster_part.conf.erb')
-  }
-
+  create_resources('apache::vhost', {
+    'mgmt-mod_cluster' => {
+      ip              => $mgmt_ip, # Management interface!
+      priority        => 30,
+      ip_based        => true,
+      port            => 10001,
+      docroot         => '/var/www/html',
+      custom_fragment => template('jboss/mod_cluster_mgmt.conf.erb')
+    },
+    # vhost for mod_cluster data
+    'mod_cluster'      => {
+      ip              => $modcluster_ip, # internal interface!
+      priority        => 30,
+      ip_based        => true,
+      port            => 10001,
+      docroot         => '/var/www/html',
+      custom_fragment => template('jboss/mod_cluster_part.conf.erb')
+    }
+  })
 }

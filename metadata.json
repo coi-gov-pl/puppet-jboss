@@ -1,29 +1,28 @@
 {
-  "name": "coi/jboss",
-  "version": "1.0.0",
-  "author": "Center of Information Technology COI.gov.pl (MSW)",
-  "summary": "Installs and manages resources of JBoss EAP and Wildfly application servers",
-  "license": "Apache-2.0",
-  "source": "git://github.com/coi-gov-pl/puppet-jboss.git",
+  "name":         "coi/jboss",
+  "version":      "1.0.0",
+  "author":       "Center of Information Technology COI.gov.pl (MSW)",
+  "summary":      "Installs and manages resources of JBoss EAP and Wildfly application servers",
+  "license":      "Apache-2.0",
+  "source":       "git://github.com/coi-gov-pl/puppet-jboss.git",
   "project_page": "https://github.com/coi-gov-pl/puppet-jboss",
-  "issues_url": "https://github.com/coi-gov-pl/puppet-jboss/issues",
+  "issues_url":   "https://github.com/coi-gov-pl/puppet-jboss/issues",
   "dependencies": [
-    {
-      "name": "puppetlabs/java",
-      "version_requirement": ">= 1.0.1"
-    },
-    {
-      "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 3.2.0"
-    },
-    {
-      "name": "puppetlabs/concat",
-      "version_requirement": ">= 1.0.0"
-    },
-    {
-      "name": "puppetlabs/apache",
-      "version_requirement": ">= 0.9.0"
-    }
+    { "name": "puppetlabs/java",   "version_requirement": ">= 1.0.1" },
+    { "name": "puppetlabs/stdlib", "version_requirement": ">= 3.2.0" },
+    { "name": "puppetlabs/concat", "version_requirement": ">= 1.0.0" }
+  ],
+  "operatingsystem_support": [
+    { "operatingsystem": "RedHat",      "operatingsystemrelease": [ "5", "6" ] },
+    { "operatingsystem": "CentOS",      "operatingsystemrelease": [ "5", "6" ] },
+    { "operatingsystem": "OracleLinux", "operatingsystemrelease": [ "5", "6" ] },
+    { "operatingsystem": "Scientific",  "operatingsystemrelease": [ "5", "6" ] },
+    { "operatingsystem": "Debian",      "operatingsystemrelease": [ "6", "7" ] },
+    { "operatingsystem": "Ubuntu",      "operatingsystemrelease": [ "10.04", "12.04", "14.04" ] }
+  ],
+  "requirements": [
+    { "name": "pe",     "version_requirement": ">=2.8.0 <4.0.0" },
+    { "name": "puppet", "version_requirement": ">=2.7.0 <4.0.0" }
   ]
 }
 
