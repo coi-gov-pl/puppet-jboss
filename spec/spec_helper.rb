@@ -34,6 +34,7 @@ end
 require 'rspec-puppet'
 
 RSpec.configure do |c|
+  c.tty = true unless ENV['JENKINS_URL'].nil?
   c.mock_with :rspec do |mock|
     mock.syntax = [:expect, :should]
   end
