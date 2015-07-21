@@ -25,10 +25,11 @@ class jboss (
   $fetch_tool       = $jboss::params::fetch_tool,
 ) inherits jboss::params {
 
+  $home        = "${install_dir}/${product}-${version}"
+
   include jboss::internal::configuration
   include jboss::internal::service
 
-  $home        = "${install_dir}/${product}-${version}"
   $servicename = $jboss::internal::service::servicename
 
   class { 'jboss::internal::package':

@@ -22,6 +22,8 @@ class jboss::internal::runtime {
     default => $standaloneconfigfile,
   }
 
+  validate_absolute_path($jboss::home)
+
   $standaloneconfigpath = "${jboss::home}/standalone/configuration/${standaloneconfigfile}"
   $hostconfigpath = "${jboss::home}/domain/configuration/${hostconfigfile}"
   $domainconfigpath = "${jboss::home}/domain/configuration/${domainconfigfile}"

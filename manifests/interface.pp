@@ -21,9 +21,9 @@ define jboss::interface (
   $up                 = undef, # bool
   $virtual            = undef, # bool
   ) {
-  require jboss::internal::lenses
-  require jboss::internal::runtime
   include jboss
+  include jboss::internal::lenses
+  include jboss::internal::runtime
 
   $bind_variables = {
     'any-address'        => $any_address,       # undef, bool
@@ -70,7 +70,9 @@ define jboss::interface (
       $path = 'server/interfaces'
     }
 
-    Augeas {
+    validate_absolute_path($cfg_file)
+
+    $augeas_defaults = {
       require   => [
         Anchor['jboss::configuration::begin'],
         File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
@@ -86,22 +88,25 @@ define jboss::interface (
     }
 
     if ($ensure == 'present') {
-      augeas { "ensure present interface ${interface_name}":
+      $augeas_params = merge($augeas_defaults, {
         changes => "set ${path}/interface[last()+1]/#attribute/name ${interface_name}",
         onlyif  => "match ${path}/interface[#attribute/name='${interface_name}'] size == 0",
-      }
+      })
+      ensure_resource('augeas', "ensure present interface ${interface_name}", $augeas_params)
       # For compatibility with puppet 2.x - foreach
       jboss::internal::interface::foreach { $prefixed_bind_types:
-        cfg_file       => $cfg_file,
-        path           => $path,
-        interface_name => $interface_name,
-        bind_variables => $bind_variables,
+        cfg_file        => $cfg_file,
+        path            => $path,
+        interface_name  => $interface_name,
+        bind_variables  => $bind_variables,
+        augeas_defaults => $augeas_defaults,
       }
     } else {
-      augeas { "ensure absent interface ${interface_name}":
+      $augeas_params = merge($augeas_defaults, {
         changes => "rm ${path}/interface[#attribute/name='${interface_name}']",
         onlyif  => "match ${path}/interface[#attribute/name='${interface_name}'] size != 0",
-      }
+      })
+      ensure_resource('augeas', "ensure absent interface ${interface_name}", $augeas_params)
     }
   }
 }
