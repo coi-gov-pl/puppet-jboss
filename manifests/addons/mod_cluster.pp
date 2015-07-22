@@ -1,9 +1,10 @@
 ## Configure apache to use with mod_cluster.
 class jboss::addons::mod_cluster (
-  $version          = $::jboss::params::mod_cluster::version,
   $mgmt_ip,
   $modcluster_ip,
-) {
+  $version          = $::jboss::params::mod_cluster::version,
+  $fetch_tool       = undef,
+) inherits jboss::params {
 
   include jboss::params
   include jboss::params::mod_cluster
@@ -20,17 +21,27 @@ class jboss::addons::mod_cluster (
     ensure => 'directory',
   }
 
+  $apache_service  = getvar('apache::apache_name')
+  $apache_dir      = getvar('apache::httpd_dir')
+  $apache_lib_path = getvar('apache::lib_path')
+
+  validate_absolute_path($apache_dir)
+  $apache_full_lib_path = "${apache_dir}/${apache_lib_path}"
+  validate_absolute_path($apache_full_lib_path)
+
   jboss::internal::util::fetch::file { $download_file:
-    fetch_dir => $download_dir,
-    address   => $download_url,
-    require   => File[$download_dir],
+    fetch_tool => $fetch_tool,
+    fetch_dir  => $download_dir,
+    address    => $download_url,
+    require    => File[$download_dir],
   }
 
-  # TODO - probably there's a var for etc/httpd/modules
   exec { 'untar-mod_cluster':
-    command     => "/bin/tar -C /etc/httpd/modules -xvf ${download_dir}/${download_file}",
-    subscribe   => Package[$download_file],
-    refreshonly => true,
+    path      => $::path,
+    command   => "/bin/tar -C ${apache_full_lib_path} -xvf ${download_dir}/${download_file}",
+    onlyif    => "[ ! -f ${apache_full_lib_path}/mod_proxy_cluster.so ] || [ \"${download_dir}/${download_file}\" -nt \"${apache_full_lib_path}/mod_proxy_cluster.so\" ]",
+    subscribe => Jboss::Internal::Util::Fetch::File[$download_file],
+    notify    => Service[$apache_service],
   }
 
   # mod_cluster module config
@@ -44,19 +55,27 @@ class jboss::addons::mod_cluster (
   })
 
   # Listening
-  create_resources('apache::listen', {
-    '10001' => {}
-  })
+#  create_resources('apache::listen', {
+#    '80'    => {},
+#    '81'    => {},
+#    '10001' => {},
+#  })
 
   # X-Forwarded-For
   #$log_formats = { vhost_common => '%v %h %l %u %t \"%r\" %>s %b' }
 
+
   file { 'mod_cluster_conf':
     path    => '/etc/httpd/conf.d/00-mod_cluster.conf',
+    notify  => Service[$apache_service],
     content => '
 MemManagerFile /var/cache/httpd
 Maxsessionid 100',
   }
+
+  $ipaddress_re = '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$'
+  validate_re($mgmt_ip, $ipaddress_re)
+  validate_re($modcluster_ip, $ipaddress_re)
 
   # vhosts
   create_resources('apache::vhost', {

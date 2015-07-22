@@ -50,7 +50,7 @@ class jboss::params inherits jboss::internal::params {
   $hostname         = hiera('jboss::params::hostname', $::hostname)
 
   # Tool used by this module to fetch JBoss installation files from network
-  $fetch_tool       = hiera('jboss::params::fetch_tool', 'jboss::internal::util::download')
+  $fetch_tool = hiera('jboss::params::fetch_tool', 'jboss::internal::util::download')
 
   include jboss::params::mod_cluster
 

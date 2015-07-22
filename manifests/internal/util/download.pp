@@ -26,12 +26,30 @@ define jboss::internal::util::download (
         ensure_packages(['wget'])
       }
 
+      if ! defined(Group[$group]) {
+        ensure_resource('group', $group, {
+          ensure => 'present',
+        })
+      }
+
+      if ! defined(User[$owner]) {
+        ensure_resource('user', $owner, {
+          ensure => 'present',
+          gid    => $group,
+        })
+      }
+
       exec { "wget -q '${uri}' -O '${dest}' && chmod ${mode} '${dest}' && chown ${owner}:${group} '${dest}'":
-        alias   => "download ${name}",
-        path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-        creates => $dest,
-        timeout => $timeout,
-        require => Package['wget'],
+        alias     => "download ${name}",
+        logoutput => 'on_failure',
+        path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        creates   => $dest,
+        timeout   => $timeout,
+        require   => [
+          Package['wget'],
+          Group[$group],
+          User[$owner],
+        ],
       }
     }
     default : {
