@@ -178,6 +178,7 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
       return {}
     else
       hash = {}
+      @property_hash[:properties] = {} if @property_hash[:properties].nil?
       @property_hash[:properties].each do |k, v| 
         if v.nil? or !!v == v
           hash[k.to_s] = v
