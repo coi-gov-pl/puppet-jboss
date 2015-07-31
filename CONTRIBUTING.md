@@ -1,4 +1,4 @@
-This module has grown over time based on a range of contributions from
+﻿This module has grown over time based on a range of contributions from
 people using it. If you follow these contributing guidelines your patch
 will likely make it into a release a little quicker.
 
@@ -34,7 +34,7 @@ you must set an environment variable such as:
 
     export PUPPET_VERSION="~> 3.2.0"
 
-Install the dependencies like so...
+Install the dependencies like so... (you can also ass `--path /fs/path/for/deps` to fetch dependencies to other directory)
 
     bundle install
 
@@ -79,10 +79,10 @@ with:
 
     bundle exec rake acceptance
 
-This will run the tests on an Ubuntu 12.04 virtual machine. You can also
+This will run the tests on an Ubuntu 14.04 virtual machine. You can also
 run the integration tests against Centos 6.5 with.
 
-    RS_SET=centos-64-x64 bundle exec rake acceptance
+    RS_SET=centos-65-x64-docker bundle exec rake acceptance
 
 If you don't want to have to recreate the virtual machine every time you
 can use `BEAKER_DESTROY=no` and `BEAKER_PROVISION=no`. On the first run you will

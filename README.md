@@ -1,17 +1,17 @@
-# Puppet Module for JBoss EAP and Wildfly application servers
+﻿# Puppet Module for JBoss EAP and Wildfly application servers
 
 #### Table of Contents
 
 1. [Overview](#overview)
 2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with jboss](#setup)
-    * [What jboss affects](#what-jboss-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with jboss](#beginning-with-jboss)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+3. [Setup - The basics of getting started with JBoss](#setup)
+    * [What JBoss module affects](#what-jboss-module-affects)
+    * [Beginning with JBoss module](#beginning-with-jboss-module)
+4. [Class usage - Configuration options and additional functionality](#class-usage)
+5. [Defined Types Reference - Description for custom types given by this module](#defined-types-reference)
+6. [JBoss module standard metaparameters - description of metaparameters being used in most of the types](#jboss-module-standard-metaparameters)
+6. [Limitations - OS compatibility, etc.](#limitations)
+7. [Development - Guide for contributing to the module](#development)
 
 ## Overview
 
@@ -37,49 +37,277 @@ In addition to the above list ready, convenient instructions, you can configure 
 
 ## Setup
 
-### What jboss affects
+### What JBoss module affects
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
+* This module installs JBoss Application Servers from zip files distributed by Red Hat. Those files are being extracted to target directory, by default: `/usr/lib/<product>-<version>/` for ex.: `/usr/lib/wildfly-8.2.0.Final`.
+* Module will also add service with name of `$jboss::product` for ex.: `/etc/init.d/wildfly`
+* By default module will install default Java JDK using `puppetlabs/java` module. This can be turned off by using `$jboss::java_autoinstall` variable or hiera key: `jboss::params::java_autoinstall`
+* By default module will install and use `wget` package to download zip files
 
-### Setup Requirements **OPTIONAL**
+### Beginning with JBoss module
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
+To install JBoss Application Server you can use just, it will install Wildfly 8.2.0.Final by default:
 
-### Beginning with jboss
+```puppet
+include jboss
+```
 
-The very basic steps needed for a user to get the module up and running.
+To install JBoss EAP or older JBoss AS use:
 
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+```puppet
+class { 'jboss':
+  product => 'jboss-eap',
+  version => '6.4.0.GA',
+}
+```
 
-## Usage
+or use hiera:
 
-Put the classes, types, and resources for customizing, configuring, and doing
-the fancy stuff with your module here.
+```yaml
+jboss::params::product: 'jboss-as'
+jboss::params::version: '7.1.1.Final'
+```
 
-## Reference
 
-Here, list the classes, types, providers, facts, etc contained in your module.
-This section should include all of the under-the-hood workings of your module so
-people know what the module is touching on their system but don't need to mess
-with things. (We are working on automating this section!)
+## Class usage
+
+### `jboss` class
+
+The `jboss` main class is used to install the application server itself. It can install it on default parameters but you can use then to customize installation procedure.
+
+Example:
+
+```puppet
+include jboss
+```
+
+**Parameters for `jboss` class:**
+
+#### `hostname`
+
+It is used to name jboss main `host.xml` key to distinguish from other hosts in distributed environment. By default is equals to `$::hostname` fact.
+
+Applicable Hiera key: `jboss::params::hostname`
+
+#### `product`
+
+Name of the JBoss product. Can be one of: `jboss-eap`, `jboss-as` or `wildfly`. By default this is equals to `wildfly`.
+
+Applicable Hiera key: `jboss::params::product`
+
+#### `jboss_user`
+
+The name of the user to be used as owner of JBoss files in filesystem. It will be also used to run JBoss processes. Be default it is equal to `jboss` for `jboss-eap` and `jboss-as` server and `wildfly` for `wildfly` server.
+
+Applicable Hiera key: `jboss::params::jboss_user`
+
+#### `jboss_group`
+
+The filesystem group to be used as a owner of JBoss files. By default it is equal to the same value as `$jboss::jboss_user`.
+
+#### `download_url`
+
+The download URL from which JBoss zip file will be downloaded. Be default it is equal to `http://download.jboss.org/<product>/<version>/<product>-<version>.zip`
+
+#### `java_autoinstall`
+
+This parameter is by default equal to `true` and if so it will install default Java JDK using `puppetlabs/java`
+
+Applicable Hiera key: `jboss::params::java_autoinstall`
+
+#### `java_version`
+
+This parameter is by default equals to `latest` and it is passed to `puppetlabs/java` module. You can give other values. For details look in [Puppetlabs/Java dodumentation](https://github.com/puppetlabs/puppetlabs-java)
+
+Applicable Hiera key: `jboss::params::java_version`
+
+#### `java_package`
+
+The name of Java JDK package to use. Be default it is used to `undef` and it is passed to `puppetlabs/java`. Possible values are: `jdk`, `jre`. For details look in [Puppetlabs/Java dodumentation](https://github.com/puppetlabs/puppetlabs-java)
+
+Applicable Hiera key: `jboss::params::java_package`
+
+#### `install_dir`
+
+The directory to use as installation home for JBoss Application Server. By default it is equal to `/usr/lib/<product>-<version>`
+
+Applicable Hiera key: `jboss::params::install_dir`
+
+#### `runasdomain`
+
+This parameter is used to configure JBoss server to run in domain or standalone mode. By default is equal to `false`, so JBoss runs in standalone mode. Set it to `true` to setup domain mode.
+
+Applicable Hiera key: `jboss::params::runasdomain`
+
+#### `enableconsole`
+
+This parameter is used to enable or disable access to JBoss management web console. It is equal to `false` by default, so the console is turned off.
+
+Applicable Hiera key: `jboss::params::enableconsole`
+
+#### `profile`
+
+JBoss profile to use. By default it is equal to `full`, which is the default profile in JBoss server. You can use any other default profile to start with: `full`, `ha`, `full-ha`.
+
+Applicable Hiera key: `jboss::params::profile`
+
+#### `prerequisites`
+
+The class to use as a JBoss prerequisites which will be processed before installation. By default is equal to `Class['jboss::internal::prerequisites']`. The default class is used to install `wget` package. If you would like to install `wget` in diffrent way, please write your class that does that and pass reference to it as this parameter
+
+#### `fetch_tool`
+
+This parameter is by default equal to `jboss::internal::util::download`. This is a default implementation for fetching files (mostly JBoss zip files) with `wget`. If you would like to use your own implementation, please write your custom define with the same interface as `jboss::internal::util::download` and pass it's name to this parameter.
+
+Applicable Hiera key: `jboss::params::fetch_tool`
+
+### `jboss::domain::controller` class
+
+This class will setup JBoss server to run as controller of the domain. It has no parameters.
+
+```puppet
+include jboss::domain::controller
+```
+### `jboss::domain::node` class
+
+This class will setup JBoss server to run as node of the domain. It takes two parameters: `ctrluser` and `ctrlpassword`. User name and password must be setup to JBoss controller. Easiest way to add jboss management user with `jboss::user` type.
+
+```puppet
+# same on both
+$user = 'jb-user'
+$passwd = 'SeC3eT!1'
+
+# on controller
+jboss::user { $user:
+  ensure   => 'present',
+  password => $passwd,
+}
+
+# on node
+class { 'jboss::domain::node':
+  ctrluser     => $user,
+  ctrlpassword => $passwd,
+}
+```
+
+## Defined Types Reference
+
+### `jboss::datasource` define
+
+This define can add and remove JBoss datasources. Both XA and Non-XA ones. 
+
+### `jboss::user` define
+
+Use this define to add and remove JBoss management and application users, manage their passwords and roles.
+
+```puppet
+jboss::user { 'admin':
+  ensure   => 'present',
+  realm    => 'ManagementRealm',
+  password => 'seCret1!',
+}
+```
+
+**Parameters of `jboss::user`:**
+
+#### `password` parameter
+
+**Required parameter.** This is password that will be used for user.
+
+#### `ensure` parameter
+
+Standard ensure parameter. Can be either `present` or `absent`.
+
+#### `user` parameter
+
+This is the namevar. Name of user to manage.
+
+#### `realm` parameter
+
+This is by default equal to `ManagementRealm`. It can be equal also to `ApplicationRealm`.
+
+#### `roles` parameter
+
+This is by default equal to `undef`. You can pass a list of roles in form of string delimited by `,` sign.
+
+### `jboss::clientry` define
+
+This define is very versitale. It can be used to add or remove any JBoss CLI entry. You can pass any number of properties for given CLI path and each one will be manage, other parameters will not be changed.
+
+```puppet
+jboss::clientry { '/subsystem=messaging/hornetq-server=default':
+  ensure     => 'present',
+  properties => {
+    'security-enabled' => false,
+  }
+}
+```
+
+**Parameters of `jboss::clientry`**:
+
+This type uses [JBoss module standard metaparameters](#jboss-module-standard-metaparameters)
+
+#### `ensure` parameter
+
+Standard ensure parameter. Can be either `present` or `absent`.
+
+#### `path` parameter
+
+This is the namevar. Path of the CLI entry. This is path accepted by JBoss CLI. The path must be passed without `/profile=<profile-name>` in domain mode as well (for that `profile` parameter must be used).
+
+#### `properties` parameter
+
+This is optional properties hash. You can pass any valid JBoss properties for given `path`. For valid ones head to the JBoss Application Server documentation. Must be hash object or `undef` value.
+
+#### `dorestart` parameter
+
+This parameter forces to execute command `:restart()` on this CLI entry.
+
+## JBoss module standard metaparameters
+
+
+### `runasdomain` parameter
+
+Describe that this define should be evaluated as domain or standalone. Default value is taken from `jboss` class. If you override `runasdomain` parameter there you do not need to set it with this parameter explicitly.
+
+### `profile` parameter
+
+On with JBoss profile do apply. Default value is taken from `jboss` class. If you override `profile` parameter there you do not need to set it with this parameter explicitly.
+
+### `controller` parameter
+
+To with controller connect to. By default it is equals to `127.0.0.1:9999` on jboss servers and `127.0.0.1:9990` on wildfly server. Default value is taken from `jboss` class. If you override `controller` parameter there you do not need to set it with this parameter explicitly.
+
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
+This module is explicitly tested on:
+
+* Oracle Linux 6.x
+* Ubuntu Server LTS 14.04
+
+Compatible with:
+
+* Red Hat Enterprise Linux: 5.x, 6.x
+* CentOS: 5.x, 6.x
+* Scientific: 5.x, 6.x
+* Oracle Linux: 5.x
+* Debian: 6.x, 7.x
+* Ubuntu  Server LTS 12.04, 10.04
+
+Supported Puppet versions:
+
+* Puppet OSS: 2.7.x, 3.x
+* Puppet Enterprise: 2.8.x, 3.x
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
+To contribute to this module please read carefully the [CONTRIBUTING.md](https://github.com/coi-gov-pl/puppet-jboss/blob/develop/CONTRIBUTING.md)
 
-## Release Notes/Contributors/Etc **Optional**
+## Release Notes
 
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You may also add any additional sections you feel are
-necessary or important to include here. Please use the `## ` header.
+* `1.0.0`
+ * First publicly available version
+ * Support for JBoss EAP, JBoss AS and Wildfly
+ * Support for JPA datasource management, Security Domain JBoss, JMS queues, resource adapters and messages logging
+ * Supoort for deploying artifacts
