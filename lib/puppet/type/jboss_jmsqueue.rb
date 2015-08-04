@@ -9,6 +9,13 @@ Puppet::Type.newtype(:jboss_jmsqueue) do
 
   newproperty(:entries, :array_matching => :all) do
     desc "entries passed as array"
+    
+    def is_to_s is
+      return is.inspect
+    end
+    def should_to_s should
+      return should.inspect
+    end
   end
 
   newproperty(:durable, :boolean => true) do
@@ -29,9 +36,8 @@ Puppet::Type.newtype(:jboss_jmsqueue) do
   
   newparam(:controller) do
     desc "Domain controller host:port address"
-    defaultto "localhost:9999"
     validate do |value|
-      if value == nil and @resource[:runasdomain]
+      if value == nil or value.to_s == 'undef'
         raise ArgumentError, "Domain controller must be provided"
       end
     end

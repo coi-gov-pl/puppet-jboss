@@ -28,6 +28,9 @@ JBOSS_CONSOLE_LOG=<%= @logfile %>
 # Runs JBoss in domain mode?
 JBOSS_RUNASDOMAIN=<%= @runasdomain.inspect %>
 
+# JBoss running mode: domain or standalone
+JBOSS_MODE=<%= @runasdomain ? 'domain' : 'standalone' %>
+
 # Default JBoss domain controller
 JBOSS_CONTROLLER=<%= @controller %>
 

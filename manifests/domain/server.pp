@@ -42,28 +42,21 @@ define jboss::domain::server (
     default   => 'present',
   }
 
-  if ! str2bool($::jboss_running) and $ensurex == 'absent' {
-    include jboss::internal::lenses
+  if ! jboss_to_bool($::jboss_running) and $ensurex == 'absent' {
+    include jboss::internal::augeas
     $cfg_file = $jboss::internal::runtime::hostconfigpath
     $path = 'host/servers'
-    Augeas {
-      require   => [
-        Anchor['jboss::configuration::begin'],
-        File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
-      ],
-      notify    => [
-        Anchor['jboss::configuration::end'],
-        Service[$jboss::product],
-      ],
-      load_path => $jboss::internal::lenses::lenses_path,
-      lens      => 'jbxml.lns',
+    $augeas_defaults = merge($jboss::internal::augeas::defaults, {
       context   => "/files${cfg_file}/",
       incl      => $cfg_file,
+    })
+    $augeas = {
+      "ensure absent server ${name}" => merge($augeas_defaults, {
+        changes => "rm ${path}/server[#attribute/name='${name}']",
+        onlyif  => "match ${path}/server[#attribute/name='${name}'] size != 0",
+      })
     }
-    augeas { "ensure absent server ${name}":
-      changes => "rm ${path}/server[#attribute/name='${name}']",
-      onlyif  => "match ${path}/server[#attribute/name='${name}'] size != 0",
-    }
+    create_resources('augeas', $augeas)
   } else {
     jboss::clientry { "jboss::domain::server(${name})":
       ensure      => $ensure,

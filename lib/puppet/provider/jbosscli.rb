@@ -71,7 +71,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
 
   def self.config_controller
-    return self.read_config 'JBOSS_CONTROLLER', 'localhost:9999'
+    return self.read_config 'JBOSS_CONTROLLER', '127.0.0.1:9990'
   end
 
   def self.config_profile
@@ -137,6 +137,10 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
       }
       return conf
   end
+  
+  def self.last_execute_status
+    $?
+  end
 
   def self.execute jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout
     file = Tempfile.new 'jbosscli'
@@ -147,10 +151,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     File.open(path, 'w') {|f| f.write(jbosscmd + "\n") }
 
     ENV['JBOSS_HOME'] = self.jbosshome
-    cmd = "#{self.jbossclibin} --timeout=50000 --connect --file=#{path}"
-    if runasdomain
-      cmd = "#{cmd} --controller=#{ctrlcfg[:controller]}"
-    end
+    cmd = "#{self.jbossclibin} --timeout=50000 --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
     unless ctrlcfg[:ctrluser].nil?
       cmd += " --user=#{ctrlcfg[:ctrluser]}"
     end
@@ -164,15 +165,17 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     lines = ''
     begin
       if retries > 0 
-        notice("Powtarzam komendę cli #{retries}/#{retry_count} raz, poprzedni status: #{result.exitstatus.to_s}.. #{lines}")
+        notice("JBoss CLI command failed, try #{retries}/#{retry_count}, last status: #{result.exitstatus.to_s}, message: #{lines}")
         sleep retry_timeout.to_i
       end
-      Puppet.debug "Komenda do JBoss-cli: " + jbosscmd
-      lines = `#{cmd}`
-      result = $?
+      Puppet.debug "Command send to JBoss CLI: " + jbosscmd
+      lines = Puppet::Util::Execution.execute(cmd, options = {
+        :failonfail => false
+      })
+      result = self.last_execute_status
       retries += 1
     end while (result.exitstatus != 0 && retries <= retry_count)
-    Puppet.debug "Output from JBoss-cli[%s]: %s" % [result.inspect, lines]
+    Puppet.debug "Output from JBoss CLI [%s]: %s" % [result.inspect, lines]
     # deletes the temp file
     File.unlink path
     return {

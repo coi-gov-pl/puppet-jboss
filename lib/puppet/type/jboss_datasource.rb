@@ -98,8 +98,8 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "host to connect"
     isrequired
     validate do |value|
-      unless value =~ /\w/
-        raise ArgumentError, "Datasource host is invalid"
+      unless value =~ /\w/ or value == ''
+        raise ArgumentError, "Datasource host is invalid, given #{value.inspect}"
       end
     end
   end
@@ -108,12 +108,12 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "port to connect"
     isrequired
     validate do |value|
-      unless value =~ /\d/
-        raise ArgumentError, "Datasource port is invalid"
+      unless value =~ /\d/ or value == ''
+        raise ArgumentError, "Datasource port is invalid, given #{value.inspect}"
       end
     end    
     munge do |value|
-      Integer(value)      
+      if value == '' then 0 else Integer(value) end      
     end
   end
   
@@ -134,9 +134,10 @@ Puppet::Type.newtype(:jboss_datasource) do
   
   newparam(:controller) do
     desc "Domain controller host:port address"
-    defaultto "localhost:9999"
+    # Default is set to support listing of datasources without parameters (for easy use)
+    defaultto "127.0.0.1:9990"
     validate do |value|
-      if value == nil and @resource[:runasdomain]
+      if value == nil or value.to_s == 'undef'
         raise ArgumentError, "Domain controller must be provided"
       end
     end

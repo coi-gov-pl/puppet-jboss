@@ -31,7 +31,7 @@ group :test do
       gem 'augeas',                     :require => false
     end
   else
-    gem 'puppet',                       :require => false
+    gem 'puppet', '~> 3.0',             :require => false
   end
 end
 

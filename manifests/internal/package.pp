@@ -2,8 +2,8 @@
 class jboss::internal::package (
   $download_url,
   $prerequisites,
-  $jboss_user       = $jboss::params::jboss_user,
-  $jboss_group      = $jboss::params::jboss_group,
+  $jboss_user,
+  $jboss_group,
   $product          = $jboss::params::product,
   $version          = $jboss::params::version,
   $java_autoinstall = $jboss::params::java_autoinstall,
@@ -14,6 +14,7 @@ class jboss::internal::package (
 ) inherits jboss::params {
   include jboss
   include jboss::internal::runtime
+  include jboss::internal::compatibility
 
   $download_rootdir     = $jboss::internal::params::download_rootdir
   $download_file        = jboss_basename($download_url)
@@ -23,7 +24,7 @@ class jboss::internal::package (
   $standaloneconfigfile = $jboss::internal::runtime::standaloneconfigfile
 
   case $version {
-    /^(?:(?:eap|as)-)?[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
+    /^[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
       debug("Running in version: ${1} -> ${version}")
     }
     default: {
@@ -148,19 +149,14 @@ class jboss::internal::package (
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
 
-  $target = $jboss::runasdomain ? {
-    true    => "${jboss::home}/bin/init.d/jboss-as-domain.sh",
-    default => "${jboss::home}/bin/init.d/jboss-as-standalone.sh",
-  }
-
   file { "/etc/init.d/${product}":
     ensure  => 'link',
     alias   => 'jboss::service-link',
-    target  => $target,
+    target  => $jboss::internal::compatibility::initd_file,
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
 
-  file { '/usr/bin/jboss-cli':
+  file { "/usr/bin/${jboss::internal::compatibility::product_short}-cli":
     ensure  => 'file',
     alias   => 'jboss::jbosscli',
     content => template('jboss/jboss-cli.erb'),

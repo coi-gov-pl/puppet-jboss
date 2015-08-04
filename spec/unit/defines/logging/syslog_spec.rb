@@ -19,7 +19,7 @@ describe 'jboss::logging::syslog', :type => :define do
         'port'           => 514,
         'app-name'       => 'test-app',
         'level'          => 'INFO',
-        'server-address' => 'localhost',
+        'server-address' => '127.0.0.1',
         'syslog-format'  => 'RFC5424',
       })
   end

@@ -1,4 +1,4 @@
-# Internal define - Sets group access recorsivily
+# Internal define - Sets group access recursively
 define jboss::internal::util::groupaccess (
   $group,
   $user  = undef,
@@ -10,18 +10,17 @@ define jboss::internal::util::groupaccess (
   }
 
   exec { "g+s ${name}":
-    command => "find ${target} -type d -exec chmod g+s {} +",
-    unless  => "test $(stat -c '%a' ${target} | cut -c2) == '7'",
-    notify  => Exec["rw ${name}"],
+    command => "find ${target} -type d -exec chmod g+s,a+x {} +",
+    unless  => "/usr/bin/test -g ${target} -a -x ${target}",
   }
 
   exec { "rw ${name}":
-    command     => "chmod -R g+rw ${target}",
-    refreshonly => true,
+    command => "chmod -R g+rw ${target}",
+    unless  => "/usr/bin/test $(stat -c %A ${target} | cut -c 5-6) = rw",
   }
 
   exec { "group ${name}":
     command => "chown -R ${user}:${group} ${target}",
-    unless  => "test $(stat -c '%U:%G' ${target}) == '${user}:${group}'",
+    unless  => "/usr/bin/test $(stat -c '%U:%G' ${target}) = '${user}:${group}'",
   }
 }

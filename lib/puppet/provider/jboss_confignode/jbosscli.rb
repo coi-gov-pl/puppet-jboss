@@ -40,7 +40,7 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
     end
     @resource[:properties] = {} if @resource[:properties].nil?
     @resource[:properties].each do |key, value|
-      if value == "undef"
+      if value == "undef" or value == :undef
         @resource[:properties][key] = nil
       end
     end

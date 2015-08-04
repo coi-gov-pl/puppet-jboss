@@ -23,9 +23,8 @@ Puppet::Type.newtype(:jboss_securitydomain) do
   
   newparam(:controller) do
     desc "Domain controller host:port address"
-    defaultto "localhost:9999"
     validate do |value|
-      if value == nil and @resource[:runasdomain]
+      if value == nil or value.to_s == 'undef'
         raise ArgumentError, "Domain controller must be provided"
       end
     end

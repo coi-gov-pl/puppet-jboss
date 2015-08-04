@@ -3,7 +3,7 @@ class jboss::internal::configuration {
   include jboss::params
   include jboss::internal::params
   include jboss::internal::runtime
-  include jboss::internal::lenses
+  include jboss::internal::augeas
   include jboss::internal::configure::interfaces
 
   $home          = $jboss::home
@@ -25,22 +25,12 @@ class jboss::internal::configuration {
   if $runasdomain {
     include jboss::internal::service
     $hostfile = "${jboss::home}/domain/configuration/host.xml"
-    augeas { "jboss::configure::set_hostname(${jboss::hostname})":
-      load_path => $jboss::internal::lenses::lenses_path,
-      lens      => 'jbxml.lns',
+    $augeas = merge($jboss::internal::augeas::defaults, {
       changes   => "set host/#attribute/name ${jboss::hostname}",
       context   => "/files${hostfile}/",
       incl      => $hostfile,
-      require   => [
-        Anchor['jboss::configuration::begin'],
-        Anchor['jboss::package::end'],
-        File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
-      ],
-      notify    => [
-        Anchor['jboss::configuration::end'],
-        Service[$jboss::product],
-      ],
-    }
+    })
+    create_resources('augeas', { "jboss::configure::set_hostname(${jboss::hostname})" => $augeas })
   }
 
   file { '/etc/profile.d/jboss.sh':
@@ -74,6 +64,24 @@ class jboss::internal::configuration {
   }
 
   file { '/etc/jboss-as/jboss-as.conf':
+    ensure => 'link',
+    target => $conffile,
+    before => Anchor['jboss::configuration::end'],
+  }
+  $defaults_file = $::osfamily ? {
+    'Debian' => "/etc/default/${jboss::product}",
+    'RedHat' => "/etc/sysconfig/${jboss::product}.conf",
+    default  => undef
+  }
+  if $defaults_file == undef {
+    fail("Unsupported OS Family: ${::osfamily}")
+  }
+
+  file { '/etc/default':
+    ensure => 'directory',
+  }
+
+  file { [$defaults_file, "/etc/default/${jboss::product}.conf"]:
     ensure => 'link',
     target => $conffile,
     before => Anchor['jboss::configuration::end'],

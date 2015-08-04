@@ -37,7 +37,7 @@ describe 'jboss::datasource', :type => :define do
   
   it do
     is_expected.to contain_jboss_datasource('test-datasource').
-      with_xa(true)
+      with_xa(false)
   end
 
   context 'with option prepared-statements-cache-size set to 46' do
@@ -47,7 +47,7 @@ describe 'jboss::datasource', :type => :define do
     end
     context 'in XA mode' do
       let(:params) do
-        merge_params({ :options => options })
+        merge_params({ :options => options, :xa => true })
       end
   
       it { is_expected.to contain_jboss_datasource('test-datasource').with_xa(true) }

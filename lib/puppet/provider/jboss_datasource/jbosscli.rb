@@ -6,6 +6,8 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   
   @data = nil
   @readed = false
+  
+  DEFAULT_PROFILE = 'full'
 
   def create
     cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ]
@@ -38,9 +40,10 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     runasdomain = self.config_runasdomain
     profile = self.config_profile
     controller = self.config_controller
+    ctrlconfig = self.controllerConfig({ :controller  => controller })
     list = []
     cmd = self.compilecmd runasdomain, profile, "/subsystem=datasources:read-children-names(child-type=#{self.datasource_type true})"
-    res = self.executeAndGet cmd, runasdomain, controller
+    res = self.executeAndGet cmd, runasdomain, ctrlconfig, 0, 0
     if res[:result]
       res[:data].each do |name|
         inst = self.create_rubyobject name, true, runasdomain, profile, controller
@@ -48,7 +51,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
       end
     end
     cmd = self.compilecmd runasdomain, profile, "/subsystem=datasources:read-children-names(child-type=#{self.datasource_type false})"
-    res = self.executeAndGet cmd, runasdomain, controller
+    res = self.executeAndGet cmd, runasdomain, ctrlconfig, 0, 0
     if res[:result]
       res[:data].each do |name|
         inst = self.create_rubyobject name, false, runasdomain, profile, controller
@@ -87,7 +90,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     if @resource[:runasdomain].nil?
       @resource[:runasdomain] = runasdomain
     end
-    if @resource[:profile].nil? or @resource[:profile] == 'full'
+    if @resource[:profile].nil?
       @resource[:profile] = profile
     end
     if @resource[:xa].nil?
@@ -141,7 +144,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     getproperty :controller
   end
   def profile
-    getproperty :profile
+    getproperty :profile, DEFAULT_PROFILE
   end
   def runasdomain
     getproperty :runasdomain
@@ -232,7 +235,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def host
-    connectionHash()[:ServerName]
+    connectionHash()[:ServerName].to_s
   end
   
   def host= value
@@ -296,16 +299,20 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end 
   
   def createXaProperties
-    out = []
-    props = [:ServerName, :PortNumber, :DatabaseName]
-    props.each do |prop|
-      value = @resource[getPuppetKey prop]
-      out.push "#{prop.to_s}=#{value}" 
+    if @resource[:drivername] == 'h2'
+      "URL=#{connectionUrl}"
+    else
+      out = []
+      props = [:ServerName, :PortNumber, :DatabaseName]
+      props.each do |prop|
+        value = @resource[getPuppetKey prop]
+        out.push "#{prop.to_s}=#{value}" 
+      end
+      if oracle?
+        out.push "DriverType=thin"
+      end
+      out.join ','
     end
-    if oracle?
-      out.push "DriverType=thin"
-    end
-    out.join ','
   end
   
   def writeConnection property, value
@@ -389,30 +396,17 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def connectionHash
-    if xa?
-      begin
-        return connectionHashFromXa
-      rescue Exception => e
-        Puppet.debug e
-        return {
-          :Scheme       => nil,
-          :ServerName   => nil,
-          :PortNumber   => nil,
-          :DatabaseName => nil,
-        }
-      end
-    else
-      begin
-        return connectionHashFromStd
-      rescue Exception => e
-        Puppet.debug e
-        return {
-          :Scheme       => nil,
-          :ServerName   => nil,
-          :PortNumber   => nil,
-          :DatabaseName => nil,
-        }
-      end
+    empty = {
+      :Scheme       => nil,
+      :ServerName   => nil,
+      :PortNumber   => nil,
+      :DatabaseName => nil,
+    }
+    begin
+      if xa? then connectionHashFromXa else connectionHashFromStd end
+    rescue ArgumentError => e
+      Puppet.debug e
+      return empty
     end
   end
   
@@ -427,6 +421,11 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   def oracle?
     scheme = @resource[:jdbcscheme]
     scheme[0, 6] == 'oracle'
+  end
+  
+  def h2?
+    scheme = @resource[:jdbcscheme]
+    scheme[0, 2] == 'h2'
   end
   
   def create_delete_cmd
@@ -460,29 +459,46 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     "/subsystem=datasources/#{datasource_type}=#{@resource[:name]}"
   end
   
+  def parseOracleConnectionUrl(url)
+    splited = url.split '@'
+    scheme = splited[0].sub 'jdbc:', ''
+    host, port, dbname = splited[1].split ':'
+    return {
+      :Scheme       => scheme,
+      :ServerName   => host,
+      :PortNumber   => port.to_i,
+      :DatabaseName => dbname,
+    }
+  end
+  
+  def parseH2ConnectionUrl(url)
+    repl = url.sub('h2:', 'h2-')
+    parsed = parseOtherDbConnectionUrl(repl)
+    parsed[:Scheme] = parsed[:Scheme].sub('h2-', 'h2:')
+    parsed
+  end
+  
+  def parseOtherDbConnectionUrl(url)
+    uri = URI(url.sub('jdbc:', ''))
+    return {
+      :Scheme       => uri.scheme,
+      :ServerName   => uri.host,
+      :PortNumber   => uri.port,
+      :DatabaseName => uri.path[1..-1],
+    }
+  end
+  
   def parseConnectionUrl url
     begin
       if oracle?
-        splited = url.split '@'
-        scheme = splited[0].sub 'jdbc:', ''
-        host, port, dbname = splited[1].split ':'
-        return {
-          :Scheme       => scheme,
-          :ServerName   => host,
-          :PortNumber   => port.to_i,
-          :DatabaseName => dbname,
-        }
+        parseOracleConnectionUrl(url)
+      elsif h2?
+        parseH2ConnectionUrl(url)
       else
-        uri = URI(url.sub('jdbc:', ''))
-        return {
-          :Scheme       => uri.scheme,
-          :ServerName   => uri.host,
-          :PortNumber   => uri.port,
-          :DatabaseName => uri.path[1..-1],
-        }
+        parseOtherDbConnectionUrl(url)
       end
-    rescue
-      raise "Invalid connection url: #{url}"
+    rescue NoMethodError, ArgumentError, RuntimeError => e
+      raise ArgumentError, "Invalid connection url: #{url}: #{e}"
     end
   end
   
@@ -492,9 +508,11 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     port = @resource[:port]
     dbname = @resource[:dbname]
     if oracle?
+      port = 1521 if port <= 0
       url = "#{scheme}@#{host}:#{port}:#{dbname}"
     else
-      url = "#{scheme}://#{host}:#{port}/#{dbname}"
+      port_with_colon = if port > 0 then ":#{port}" else '' end
+      url = "#{scheme}://#{host}#{port_with_colon}/#{dbname}"
     end
     return "jdbc:#{url}"
   end

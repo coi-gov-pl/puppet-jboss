@@ -22,7 +22,7 @@ define jboss::interface (
   $virtual            = undef, # bool
   ) {
   include jboss
-  include jboss::internal::lenses
+  include jboss::internal::augeas
   include jboss::internal::runtime
 
   $bind_variables = {
@@ -44,7 +44,7 @@ define jboss::interface (
     'virtual'            => $virtual,           # undef, bool
   }
 
-  if str2bool($::jboss_running) {
+  if jboss_to_bool($::jboss_running) {
     Jboss::Clientry {
       ensure      => $ensure,
       controller  => $controller,
@@ -72,27 +72,17 @@ define jboss::interface (
 
     validate_absolute_path($cfg_file)
 
-    $augeas_defaults = {
-      require   => [
-        Anchor['jboss::configuration::begin'],
-        File["${jboss::internal::lenses::lenses_path}/jbxml.aug"],
-      ],
-      notify    => [
-        Anchor['jboss::configuration::end'],
-        Service[$jboss::product],
-      ],
-      load_path => $jboss::internal::lenses::lenses_path,
-      lens      => 'jbxml.lns',
+    $augeas_defaults = merge($jboss::internal::augeas::defaults, {
       context   => "/files${cfg_file}/",
       incl      => $cfg_file,
-    }
+    })
 
     if ($ensure == 'present') {
       $augeas_params = merge($augeas_defaults, {
         changes => "set ${path}/interface[last()+1]/#attribute/name ${interface_name}",
         onlyif  => "match ${path}/interface[#attribute/name='${interface_name}'] size == 0",
       })
-      ensure_resource('augeas', "ensure present interface ${interface_name}", $augeas_params)
+      create_resources('augeas', { "ensure present interface ${interface_name}" => $augeas_params })
       # For compatibility with puppet 2.x - foreach
       jboss::internal::interface::foreach { $prefixed_bind_types:
         cfg_file        => $cfg_file,

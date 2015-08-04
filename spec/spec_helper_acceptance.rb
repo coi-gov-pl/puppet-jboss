@@ -34,7 +34,7 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     # Install module and dependencies
-    install_dev_puppet_module(:source => proj_root, :module_name => 'xtreemfs')
+    install_dev_puppet_module(:source => proj_root, :module_name => 'jboss')
 
     hosts.each do |host|
       on host, "/bin/touch #{default['puppetpath']}/hiera.yaml"
@@ -45,8 +45,9 @@ RSpec.configure do |c|
         on host, '/usr/sbin/update-locale'
       end
 
-      on host, puppet('module','install','puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
-      on host, puppet('module','install','puppetlabs-apt'), { :acceptable_exit_codes => [0,1] }
+      on host, puppet('module','install','puppetlabs-stdlib', '--version', '3.2.0'), { :acceptable_exit_codes => [0,1] }
+      on host, puppet('module','install','puppetlabs-java', '--version', '1.3.0'), { :acceptable_exit_codes => [0,1] }
+      on host, puppet('module','install','puppetlabs-concat', '--version', '1.0.0'), { :acceptable_exit_codes => [0,1] }
     end
 
   end

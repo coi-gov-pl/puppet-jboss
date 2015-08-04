@@ -25,7 +25,7 @@ define jboss::securitydomain (
     require       => Anchor['jboss::package::end'],
   }
 
-  if str2bool($::jboss_running) {
+  if jboss_to_bool($::jboss_running) {
     Jboss_securitydomain[$name] ~> Service[$jboss::internal::service::servicename]
   } else {
     Anchor['jboss::service::end'] -> Jboss_securitydomain[$name] ~> Exec['jboss::service::restart']

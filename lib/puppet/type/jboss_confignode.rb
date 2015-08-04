@@ -28,12 +28,15 @@ Puppet::Type.newtype(:jboss_confignode) do
         value
       end
     end
-
-    def is_to_s is
-      return is.inspect
-    end
-    def should_to_s should
-      return should.inspect
+    
+    def change_to_s(current, desire)
+      changes = []
+      desire.each do |key, desired_value|
+        current_value = current[key]
+        message = "property '#{key}' has been changed from #{current_value.inspect} to #{desired_value.inspect}"
+        changes << message unless current_value == desired_value   
+      end
+      changes.join ', '
     end
   end
   
@@ -54,9 +57,8 @@ Puppet::Type.newtype(:jboss_confignode) do
   
   newparam(:controller) do
     desc "Domain controller host:port address"
-    defaultto "localhost:9999"
     validate do |value|
-      if value == nil and @resource[:runasdomain]
+      if value == nil or value.to_s == 'undef'
         raise ArgumentError, "Domain controller must be provided"
       end
     end

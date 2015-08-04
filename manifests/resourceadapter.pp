@@ -6,7 +6,7 @@ define jboss::resourceadapter (
   $classname,
   $ensure                  = 'present',
   $security                = hiera('jboss::resourceadapter::security', 'application'),
-  $backgroundvalidation    = hiera('jboss::resourceadapter::backgroundvalidation', false),
+  $backgroundvalidation    = jboss_to_bool(hiera('jboss::resourceadapter::backgroundvalidation', false)),
   $profile                 = $::jboss::profile,
   $controller              = $::jboss::controller,
   $runasdomain             = $::jboss::runasdomain,
@@ -31,7 +31,7 @@ define jboss::resourceadapter (
     require              => Anchor['jboss::package::end'],
   }
 
-  if str2bool($::jboss_running) {
+  if jboss_to_bool($::jboss_running) {
     Jboss_resourceadapter[$name] ~> Service[$jboss::internal::service::servicename]
   } else {
     Anchor['jboss::service::end'] -> Jboss_resourceadapter[$name] ~> Exec['jboss::service::restart']

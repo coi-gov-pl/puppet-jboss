@@ -5,7 +5,7 @@ define jboss::logging::syslog (
   $level          = 'INFO',
   $app_name       = 'java-app',
   $port           = 514,
-  $serverhost     = 'localhost',
+  $serverhost     = '127.0.0.1',
   $clienthostname = undef,
   $format         = 'RFC5424',
 ) {

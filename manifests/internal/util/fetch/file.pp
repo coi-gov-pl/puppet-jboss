@@ -31,7 +31,7 @@ define jboss::internal::util::fetch::file (
       default => $owner
     }
     $actualGroup = $group ? {
-      undef   => $jboss::params::jboss_group,
+      undef   => $actualOwner,
       default => $group
     }
     $actual_fetch_tool = $fetch_tool ? {

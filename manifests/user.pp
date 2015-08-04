@@ -1,4 +1,20 @@
-# Creates JBoss user
+# == Define: jboss::user
+#
+# This define to add and remove JBoss management and application users, manage their passwords and roles.
+#
+# === Parameters:
+#
+# [*password*]
+#     **Required parameter.** This is password that will be used for user.
+# [*ensure*]
+#     Standard ensure parameter. Can be either `present` or `absent`.
+# [*user*]
+#     (namevar) Name of user to manage.
+# [*realm*]
+#     This is by default equal to `ManagementRealm`. It can be equal also to `ApplicationRealm`.
+# [*roles*]
+#     This is by default equal to `undef`. You can pass a list of roles in form of string delimited by `,` sign.
+#
 define jboss::user (
   $password,
   $ensure     = 'present',

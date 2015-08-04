@@ -4,5 +4,5 @@ class jboss::internal::params::socketbinding {
   $group       = hiera('jboss::internal::params::socketbinding::group', 'full-sockets')
 
   # Default offset for server ports to be used, if not passed to `jboss::domain::server` or `jboss::domain::servergroup`
-  $port_offset = hiera('jboss::internal::params::socketbinding::port_offset', 0)
+  $port_offset = jboss_to_i(hiera('jboss::internal::params::socketbinding::port_offset', 0))
 }
