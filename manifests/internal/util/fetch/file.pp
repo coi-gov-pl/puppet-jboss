@@ -13,11 +13,11 @@ define jboss::internal::util::fetch::file (
   if defined(Class['jboss']) {
     include jboss
     $actualOwner = $owner ? {
-      undef   => $jboss::jboss_user,
+      undef   => $jboss::jboss_user_actual,
       default => $owner
     }
     $actualGroup = $group ? {
-      undef   => $jboss::jboss_group,
+      undef   => $jboss::jboss_group_actual,
       default => $group
     }
     $actual_fetch_tool = $fetch_tool ? {

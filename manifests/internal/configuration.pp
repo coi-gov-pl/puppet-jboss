@@ -9,7 +9,7 @@ class jboss::internal::configuration {
   include jboss::internal::quirks::etc_initd_functions
 
   $home          = $jboss::home
-  $user          = $jboss::jboss_user
+  $user          = $jboss::jboss_user_actual
   $enableconsole = $jboss::enableconsole
   $runasdomain   = $jboss::runasdomain
   $controller    = $jboss::controller
@@ -49,14 +49,14 @@ class jboss::internal::configuration {
     alias  => 'jboss::logdir',
     mode   => '2770',
     owner  => $user,
-    group  => $jboss::jboss_group,
+    group  => $jboss::jboss_group_actual,
   }
 
   file { $logfile:
     ensure => 'file',
     alias  => 'jboss::logfile',
     owner  => 'root',
-    group  => $jboss::jboss_group,
+    group  => $jboss::jboss_group_actual,
     mode   => '0660',
   }
 
@@ -64,7 +64,7 @@ class jboss::internal::configuration {
     file { '/etc/jboss-as':
       ensure => 'directory',
       owner  => $user,
-      group  => $jboss::jboss_group,
+      group  => $jboss::jboss_group_actual,
       mode   => '2770',
     }
     file { '/etc/jboss-as/jboss-as.conf':

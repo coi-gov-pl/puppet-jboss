@@ -17,8 +17,8 @@ define jboss::internal::module::assemble::process_artifacts (
     file { "${target_dir}/${base}":
       source => $uri,
       mode   => '0640',
-      owner  => $jboss::jboss_user,
-      group  => $jboss::jboss_group,
+      owner  => $jboss::jboss_user_actual,
+      group  => $jboss::jboss_group_actual,
       notify => Service[$jboss::product],
     }
   }

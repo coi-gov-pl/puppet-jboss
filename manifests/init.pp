@@ -65,12 +65,8 @@
 class jboss (
   $hostname         = $jboss::params::hostname,
   $product          = $jboss::params::product,
-  $jboss_user       = $jboss::product ? {
-    /jboss-as|jboss-eap/ => 'jboss',
-    'wildfly'            => 'wildfly',
-    default              => undef,
-  },
-  $jboss_group      = $::jboss::jboss_user,
+  $jboss_user       = undef,
+  $jboss_group      = undef,
   $version          = $jboss::params::version,
   $download_url     = "${jboss::params::download_urlbase}/${product}/${version}/${product}-${version}.zip",
   $java_autoinstall = $jboss::params::java_autoinstall,
@@ -84,7 +80,19 @@ class jboss (
   $fetch_tool       = $jboss::params::fetch_tool,
 ) inherits jboss::params {
 
-  $home        = "${install_dir}/${product}-${version}"
+  $home              = "${install_dir}/${product}-${version}"
+  $jboss_user_actual = $jboss_user ? {
+    undef   => $product ? {
+      /jboss-as|jboss-eap/ => 'jboss',
+      'wildfly'            => 'wildfly',
+      default              => undef,
+    },
+    default => $jboss_user,
+  }
+  $jboss_group_actual = $jboss_group ? {
+    undef   => $jboss_user_actual,
+    default => $jboss_group,
+  }
 
   include jboss::internal::compatibility
 
@@ -98,8 +106,8 @@ class jboss (
   class { 'jboss::internal::package':
     version          => $version,
     product          => $product,
-    jboss_user       => $jboss_user,
-    jboss_group      => $jboss_group,
+    jboss_user       => $jboss_user_actual,
+    jboss_group      => $jboss_group_actual,
     download_url     => $download_url,
     java_autoinstall => $java_autoinstall,
     java_version     => $java_version,

@@ -1,13 +1,9 @@
 # Internal define - Sets group access recursively
 define jboss::internal::util::groupaccess (
   $group,
-  $user  = undef,
-  $dir   = undef,
+  $user,
+  $target = $name,
 ) {
-  $target = $dir ? {
-    undef   => $name,
-    default => $dir,
-  }
 
   exec { "g+s ${name}":
     command => "find ${target} -type d -exec chmod g+s,a+x {} +",
