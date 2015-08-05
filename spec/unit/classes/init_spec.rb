@@ -6,7 +6,7 @@ describe 'jboss', :type => :class do
       :osfamily        => 'RedHat', 
       :ipaddress       => '192.168.0.1',
       :concat_basedir  => '/root/concat',
-      :puppetversion   => Puppet.version,
+      :puppetversion   => Puppet.version
     }
   end
   context 'with defaults for all parameters' do

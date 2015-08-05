@@ -16,9 +16,6 @@ class jboss::params inherits jboss::internal::params {
   # Java package version, undef, jdk, jre
   $java_package     = hiera('jboss::params::java_package', undef)
 
-  # User for Jboss Application Server
-  $jboss_user       = hiera('jboss::params::jboss_user', $product)
-
   # Download URL for Jboss Application Server installation package
   $download_urlbase = hiera('jboss::params::download_urlbase', 'http://download.jboss.org')
 

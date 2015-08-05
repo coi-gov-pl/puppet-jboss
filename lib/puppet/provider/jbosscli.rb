@@ -141,6 +141,14 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   def self.last_execute_status
     $?
   end
+  
+  def self.jbossas?
+    Facter.value(:jboss_product) == 'jboss-as'
+  end
+  
+  def self.timeout_cli
+    '--timeout=50000' unless jbossas?
+  end
 
   def self.execute jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout
     file = Tempfile.new 'jbosscli'
@@ -151,7 +159,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     File.open(path, 'w') {|f| f.write(jbosscmd + "\n") }
 
     ENV['JBOSS_HOME'] = self.jbosshome
-    cmd = "#{self.jbossclibin} --timeout=50000 --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
+    cmd = "#{self.jbossclibin} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
     unless ctrlcfg[:ctrluser].nil?
       cmd += " --user=#{ctrlcfg[:ctrluser]}"
     end
@@ -165,12 +173,13 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     lines = ''
     begin
       if retries > 0 
-        notice("JBoss CLI command failed, try #{retries}/#{retry_count}, last status: #{result.exitstatus.to_s}, message: #{lines}")
+        Puppet.warning "JBoss CLI command failed, try #{retries}/#{retry_count}, last status: #{result.exitstatus.to_s}, message: #{lines}"
         sleep retry_timeout.to_i
       end
       Puppet.debug "Command send to JBoss CLI: " + jbosscmd
       lines = Puppet::Util::Execution.execute(cmd, options = {
-        :failonfail => false
+        :failonfail => false,
+        :combine    => true,
       })
       result = self.last_execute_status
       retries += 1

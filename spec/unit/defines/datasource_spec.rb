@@ -18,13 +18,17 @@ describe 'jboss::datasource', :type => :define do
 
   let(:title) { 'test-datasource' }
   let(:params) { merge_params }
-  let(:facts) { {
-    :osfamily            => "RedHat",
-    :operatingsystem     => "RedHat",
-    :'jboss::profile'    => "domain",
-    :'jboss::controller' => "controller.example.com",
-    :concat_basedir      => "/tmp/"
-  } }
+  let(:facts) do
+    {
+      :osfamily            => "RedHat",
+      :operatingsystem     => "RedHat",
+      :'jboss::profile'    => "domain",
+      :'jboss::controller' => "controller.example.com",
+      :concat_basedir      => "/tmp/",
+      :jboss_product       => 'wildfly',
+      :jboss_version       => '8.2.0.Final',
+    }
+  end
 
   it { is_expected.to compile.with_all_deps }
   it { is_expected.to contain_jboss_datasource('test-datasource') }

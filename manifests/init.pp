@@ -66,11 +66,11 @@ class jboss (
   $hostname         = $jboss::params::hostname,
   $product          = $jboss::params::product,
   $jboss_user       = $jboss::product ? {
-    /jboss-as|jboss-eap/ => $jboss::params::jboss_user,
+    /jboss-as|jboss-eap/ => 'jboss',
     'wildfly'            => 'wildfly',
     default              => undef,
   },
-  $jboss_group      = $jboss::jboss_user,
+  $jboss_group      = $::jboss::jboss_user,
   $version          = $jboss::params::version,
   $download_url     = "${jboss::params::download_urlbase}/${product}/${version}/${product}-${version}.zip",
   $java_autoinstall = $jboss::params::java_autoinstall,

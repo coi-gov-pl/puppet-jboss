@@ -7,11 +7,14 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   @data = nil
   @readed = false
   
-  DEFAULT_PROFILE = 'full'
-
+  confine :true => begin
+    Facter.value(:jboss_product) == 'jboss-as' or 
+    (Facter.value(:jboss_product) == 'jboss-eap' and Facter.value(:jboss_version) < '6.3.0.GA')
+  end
+  
   def create
     cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ]
-    cmd.push "--jta=#{@resource[:jta].inspect}"
+    jta_opt(cmd)
     cmd.push "--jndi-name=#{@resource[:jndiname].inspect}"
     cmd.push "--driver-name=#{@resource[:drivername].inspect}"
     cmd.push "--min-pool-size=#{@resource[:minpoolsize].inspect}"
@@ -19,9 +22,10 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     cmd.push "--user-name=#{@resource[:username].inspect}"
     cmd.push "--password=#{@resource[:password].inspect}"
     if @resource[:xa]
-      cmd.push "--xa-datasource-properties=[#{createXaProperties}]"
+      xa_properties = xa_datasource_properties_wrapper(createXaProperties)
+      cmd.push "--xa-datasource-properties=#{xa_properties}"
     else
-      cmd.push "--connection-url=#{connectionUrl}"
+      cmd.push "--connection-url=#{connectionUrl.inspect}"
     end
     @resource[:options].each do |attribute, value|
       cmd.push "--#{attribute}=#{value.inspect}"
@@ -144,7 +148,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     getproperty :controller
   end
   def profile
-    getproperty :profile, DEFAULT_PROFILE
+    getproperty :profile, default_profile
   end
   def runasdomain
     getproperty :runasdomain
@@ -258,6 +262,31 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     writeConnection :DatabaseName, value
   end
   
+  protected
+  
+  def xa_datasource_properties_wrapper(parameters)
+    "[#{parameters}]"
+  end
+  
+  def default_profile
+    'full'
+  end
+  
+  def jta_opt(cmd)
+    cmd.push "--jta=#{@resource[:jta].inspect}"
+  end
+  
+  def getattrib name, default=nil
+    if not @readed
+      exists?
+      @readed = true
+    end
+    if not @data.nil? and @data.key? name
+      return @data[name]
+    end
+    return default
+  end
+  
   private
   
   def managed_fetched_options
@@ -282,17 +311,6 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     return obj
   end
   
-  def getattrib name, default=nil
-    if not @readed
-      exists?
-      @readed = true
-    end
-    if not @data.nil? and @data.key? name
-      return @data[name]
-    end
-    return default
-  end
-  
   def setattrib name, value
     setattribute datasource_path, name, value
     @data[name] = value
@@ -300,13 +318,13 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   
   def createXaProperties
     if @resource[:drivername] == 'h2'
-      "URL=#{connectionUrl}"
+      "URL=#{connectionUrl.inspect}"
     else
       out = []
       props = [:ServerName, :PortNumber, :DatabaseName]
       props.each do |prop|
         value = @resource[getPuppetKey prop]
-        out.push "#{prop.to_s}=#{value}" 
+        out.push "#{prop.to_s}=#{value.inspect}" 
       end
       if oracle?
         out.push "DriverType=thin"
@@ -317,7 +335,11 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   
   def writeConnection property, value
     if xa?
-      writeXaProperty property, value
+      if h2?
+        writeXaProperty 'URL', connectionUrl
+      else
+        writeXaProperty property, value
+      end
     else
       readed = getattrib('connection-url')
       url = connectionUrl
@@ -382,13 +404,17 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def connectionHashFromXa
-    props = [:Scheme, :ServerName, :PortNumber, :DatabaseName]
-    out = {}
-    props.each do |sym|
-      property = readXaProperty sym
-      out[sym] = property
+    if h2?
+      parseConnectionUrl(readXaProperty 'URL')
+    else 
+      props = [:Scheme, :ServerName, :PortNumber, :DatabaseName]
+      out = {}
+      props.each do |sym|
+        property = readXaProperty sym
+        out[sym] = property
+      end
+      out
     end
-    return out
   end
   
   def connectionHashFromStd

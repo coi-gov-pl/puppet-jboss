@@ -6,6 +6,8 @@ class jboss::internal::configuration {
   include jboss::internal::augeas
   include jboss::internal::configure::interfaces
 
+  include jboss::internal::quirks::etc_initd_functions
+
   $home          = $jboss::home
   $user          = $jboss::jboss_user
   $enableconsole = $jboss::enableconsole
@@ -13,6 +15,8 @@ class jboss::internal::configuration {
   $controller    = $jboss::controller
   $profile       = $jboss::profile
   $configfile    = $jboss::internal::runtime::configfile
+  $product       = $jboss::product
+  $version       = $jboss::version
   $etcconfdir    = "/etc/${jboss::product}"
   $conffile      = "${etcconfdir}/${jboss::product}.conf"
   $logdir        = "${jboss::internal::params::logbasedir}/${jboss::product}"
@@ -56,18 +60,20 @@ class jboss::internal::configuration {
     mode   => '0660',
   }
 
-  file { '/etc/jboss-as':
-    ensure => 'directory',
-    owner  => $user,
-    group  => $jboss::jboss_group,
-    mode   => '2770',
+  if $jboss::product != 'jboss-as' {
+    file { '/etc/jboss-as':
+      ensure => 'directory',
+      owner  => $user,
+      group  => $jboss::jboss_group,
+      mode   => '2770',
+    }
+    file { '/etc/jboss-as/jboss-as.conf':
+      ensure => 'link',
+      target => $conffile,
+      before => Anchor['jboss::configuration::end'],
+    }
   }
 
-  file { '/etc/jboss-as/jboss-as.conf':
-    ensure => 'link',
-    target => $conffile,
-    before => Anchor['jboss::configuration::end'],
-  }
   $defaults_file = $::osfamily ? {
     'Debian' => "/etc/default/${jboss::product}",
     'RedHat' => "/etc/sysconfig/${jboss::product}.conf",

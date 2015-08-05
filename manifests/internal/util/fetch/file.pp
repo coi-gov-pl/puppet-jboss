@@ -27,7 +27,7 @@ define jboss::internal::util::fetch::file (
   } else {
     include jboss::params
     $actualOwner = $owner ? {
-      undef   => $jboss::params::jboss_user,
+      undef   => $jboss::params::product,
       default => $owner
     }
     $actualGroup = $group ? {
