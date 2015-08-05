@@ -58,46 +58,26 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
 
   def self.jbosshome
-    return self.read_config 'JBOSS_HOME'
+    Facter.value :jboss_home
   end
   
   def self.jbosslog
-    return self.read_config 'JBOSS_CONSOLE_LOG'
+    Facter.value :jboss_console_log
   end
   
   def self.config_runasdomain
-    ret = self.read_config 'JBOSS_RUNASDOMAIN', 'false'
-    return ret.to_bool
+    ret = Facter.value :jboss_runasdomain
+    ret.to_bool
   end
 
   def self.config_controller
-    return self.read_config 'JBOSS_CONTROLLER', '127.0.0.1:9990'
+    Facter.value :jboss_controller
   end
 
   def self.config_profile
-    return self.read_config 'JBOSS_PROFILE', 'full'
+    Facter.value :jboss_profile
   end
   
-  def self.read_config variable, defaults=nil
-    begin
-      if @@contents.nil?
-        profile = File.read('/etc/profile.d/jboss.sh')
-        re = Regexp.new "^\s*(?:export )?JBOSS_CONF='(.+)'\s*$"
-        match = re.match(profile)
-        conffile = match[1].strip unless match.nil?
-        @@contents = File.read(conffile)
-      end
-      re = Regexp.new "^\s*#{variable}=(.+)\s*$"
-      match = re.match @@contents
-      if match.nil?
-        return nil?
-      end
-      return match[1].strip
-    rescue
-      return defaults
-    end
-  end
-
   # commands :jbosscli => Puppet::Provider::Jbosscli.jbossclibin
   
   def runasdomain?

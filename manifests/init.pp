@@ -74,6 +74,7 @@ class jboss (
   $java_package     = $jboss::params::java_package,
   $install_dir      = $jboss::params::install_dir,
   $runasdomain      = $jboss::params::runasdomain,
+  $controller_host  = $jboss::params::controller_host,
   $enableconsole    = $jboss::params::enableconsole,
   $profile          = $jboss::params::profile,
   $prerequisites    = Class['jboss::internal::prerequisites'],
@@ -96,7 +97,7 @@ class jboss (
 
   include jboss::internal::compatibility
 
-  $controller       = "${jboss::params::controller_host}:${jboss::internal::compatibility::controller_port}"
+  $controller       = "${controller_host}:${jboss::internal::compatibility::controller_port}"
 
   include jboss::internal::configuration
   include jboss::internal::service
