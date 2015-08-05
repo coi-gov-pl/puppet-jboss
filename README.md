@@ -192,13 +192,147 @@ class { 'jboss::domain::node':
 
 ## Defined Types Reference
 
-### `jboss::datasource` define
+### `jboss::datasource` defined type
 
-This define can add and remove JBoss datasources. Both XA and Non-XA ones. 
+This defined type can be used to add and remove JBoss data sources. It support both XA and Non-XA data sources. It can setup data sources and manage required drivers. 
 
-### `jboss::user` define
+```puppet
+# Non-XA data source
+jboss::datasource { 'test-datasource':
+  ensure     => 'present',
+  username   => 'test-username',
+  password   => 'test-password',
+  jdbcscheme => 'h2:mem',
+  dbname     => 'testing;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE',
+  host       => '',
+  port       => '',
+  driver     => {
+    'name'       => 'h2',
+  }
+}
+# XA data source
+jboss::datasource { 'test-xa-datasource':
+  ensure     => 'present',
+  xa         => true,
+  username   => 'test-username',
+  password   => 'test-password',
+  jdbcscheme => 'h2:mem',
+  dbname     => 'testing-xa;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE',
+  host       => '',
+  port       => '',
+  driver     => {
+    'name'                            => 'h2',
+    'driver-xa-datasource-class-name' => 'org.h2.jdbcx.JdbcDataSource'
+  }
+}
+```
 
-Use this define to add and remove JBoss management and application users, manage their passwords and roles.
+**Parameters for `jboss::datasource`:**
+
+This type uses [JBoss module standard metaparameters](#jboss-module-standard-metaparameters)
+
+#### `jdbcscheme` parameter
+
+**Required parameter.** This is the JDBC scheme for ex.: `postgresql`, `oracle`, `mysql`, `mssql` or `h2:mem`. All accepted by JBoss JDBC shemes are valid.
+
+#### `host` parameter
+
+**Required parameter.** This is the name of the database host or it's IP address. Pass empty string `''` if host isn't needed.
+
+#### `port` parameter
+
+**Required parameter.** This is the port of the database. Pass empty string `''` if port isn't needed.
+
+#### `username` parameter
+
+**Required parameter.** This is the user name that will be used to connect to database.
+
+#### `password` parameter
+
+**Required parameter.** This is the password that will be used to connect to database.
+
+#### `dbname` parameter
+
+**This is the namevar.** Name of the database to be used.
+
+#### `ensure` parameter
+
+Standard ensure parameter. Can be either `present` or `absent`.
+
+#### `jndiname` parameter
+
+Java JNDI name of the datasource. Be default it is equals to `java:jboss/datasources/<name>`
+
+#### `xa` parameter
+
+This parameters indicate that given data source should XA or Non-XA type. Be default this is equal to `false`
+
+#### `jta` parameter
+
+This parameters indicate that given data source should support Java JTA transactions. Be default this is equal to `true`
+
+#### `minpoolsize` parameter
+
+Minimum connections in connection pool. By default it is equal to `1`.
+
+#### `maxpoolsize` parameter
+
+Maximum connections in connection pool. By default it is equal to `50`.
+
+#### `enabled` parameter
+
+This parameter control whether given data source should be enabled or not. By default it is equal to `true`.
+
+#### `options` parameter
+
+This is an extra options hash. You can give any additional options that will be passed directly to JBoss data source. Any supported by JBoss values will be accepted and enforced. Values that are not mentioned are not processed.
+
+Default options added to every data source (they can be overwritten):
+
+ - `validate-on-match` => `false`
+ - `background-validation` => `false`
+ - `share-prepared-statements` => `false`
+ - `prepared-statements-cache-size` => `0`
+
+Default options added to every XA data source (they can be overwritten):
+
+ - `same-rm-override` => `true`
+ - `wrap-xa-resource` => `true`
+
+### `jboss::jmsqueue` defined type
+
+Use this defined type to add and remove JBoss JMS Queues.
+
+```puppet
+jboss::jmsqueue { 'app-mails':
+  ensure  => 'present',
+  durable => true,
+  entries => [
+    'queue/app-mails',
+    'java:jboss/exported/jms/queue/app-mails',
+  ],
+}
+```
+
+**Parameters for `jboss::jmsqueue`:**
+
+This type uses [JBoss module standard metaparameters](#jboss-module-standard-metaparameters)
+
+#### `entries` parameter
+
+A list of JNDI entries for JBoss JMS Queue. You can specify any number of entries from which your queue will be visible inside your application.
+
+#### `ensure` parameter
+
+Standard ensure parameter. Can be either `present` or `absent`.
+
+#### `durable` parameter
+
+This parameter indicate that given JMS queue should be durable or not. By default this is equal to `false`.
+
+### `jboss::user` defined type
+
+Use this defined type to add and remove JBoss management and application users, manage their passwords and roles.
 
 ```puppet
 jboss::user { 'admin':
@@ -230,7 +364,7 @@ This is by default equal to `ManagementRealm`. It can be equal also to `Applicat
 
 This is by default equal to `undef`. You can pass a list of roles in form of string delimited by `,` sign.
 
-### `jboss::clientry` define
+### `jboss::clientry` defined type
 
 This define is very versitale. It can be used to add or remove any JBoss CLI entry. You can pass any number of properties for given CLI path and each one will be manage, other parameters will not be changed.
 
