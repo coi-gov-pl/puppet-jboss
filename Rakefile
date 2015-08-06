@@ -23,9 +23,16 @@ task :validate do
   end
 end
 
-desc "Run acceptance tests"
-RSpec::Core::RakeTask.new(:acceptance) do |t|
-  t.pattern = 'spec/acceptance'
+begin
+  require 'beaker'
+  desc "Run acceptance tests"
+  RSpec::Core::RakeTask.new(:acceptance) do |t|
+    t.pattern = 'spec/acceptance'
+  end
+rescue LoadError
+  task :acceptance do
+    $stderr.puts 'Beaker is not avialable, skipping acceptance tests'
+  end
 end
 
 desc "Clean fixtures"

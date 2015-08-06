@@ -65,13 +65,12 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         eos
       end
       let(:status) { double(:exitstatus => 0) }
-      let(:exec_options) { { :failonfail=>false, :combine=>true } }
       before :each do
         re = /.*bin\/jboss-cli.sh --timeout=50000 --connect --file=\/tmp\/jbosscli.* --controller=127.0.0.1:9999/
         expect(Puppet::Provider::Jbosscli).to receive(:last_execute_status).
           at_least(:once).and_return(status)
-        expect(Puppet::Util::Execution).to receive(:execute).
-          at_least(:once).with(re, exec_options).and_return(xa_result, nonxa_result)
+        expect(Puppet::Provider::Jbosscli).to receive(:execshell).
+          at_least(:once).with(re).and_return(xa_result, nonxa_result)
       end
       it { expect(provider.class.instances).not_to be_empty }
       context 'its size' do

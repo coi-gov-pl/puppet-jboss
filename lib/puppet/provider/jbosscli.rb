@@ -112,6 +112,10 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     $?
   end
   
+  def self.execshell(cmd)
+    `#{cmd}`
+  end
+  
   def self.jbossas?
     Facter.value(:jboss_product) == 'jboss-as'
   end
@@ -147,10 +151,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
         sleep retry_timeout.to_i
       end
       Puppet.debug "Command send to JBoss CLI: " + jbosscmd
-      lines = Puppet::Util::Execution.execute(cmd, options = {
-        :failonfail => false,
-        :combine    => true,
-      })
+      lines = self.execshell(cmd)
       result = self.last_execute_status
       retries += 1
     end while (result.exitstatus != 0 && retries <= retry_count)
