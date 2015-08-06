@@ -1,11 +1,15 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'jbosscli.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/configuration'))
 
 Puppet::Type.type(:jboss_datasource).provide(:wildflycli, :parent => Puppet::Type.type(:jboss_datasource).provider(:jbosscli)) do
   desc "WildFly CLI datasource provider"
   
   confine :false => begin
-    Facter.value(:jboss_product) == 'jboss-as' or 
-    (Facter.value(:jboss_product) == 'jboss-eap' and Facter.value(:jboss_version) < '6.3.0.GA')
+    Puppet_X::Coi::Jboss::Configuration::config_value(:product) == 'jboss-as' or 
+    (
+      Puppet_X::Coi::Jboss::Configuration::config_value(:product) == 'jboss-eap' and
+      Puppet_X::Coi::Jboss::Configuration::config_value(:version) < '6.3.0.GA'
+    )
   end
   
   def xa_datasource_properties_wrapper(parameters)

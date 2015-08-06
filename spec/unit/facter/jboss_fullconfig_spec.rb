@@ -2,7 +2,12 @@ require 'spec_helper'
 
 describe 'Fact jboss_fullconfig', :type => :fact do
   subject { Facter.value(:jboss_fullconfig) }
-  let(:sample_config) { Dir::Tmpname.make_tmpname "/tmp/rspec-jboss-fullconfig", nil }
+  let(:sample_config) do
+    t = Tempfile.new('rspec-jboss-fullconfig')
+    path = t.path
+    t.unlink
+    path
+  end
   let(:sample_content) do
     <<-eos
     # The Jboss home directory.
@@ -64,10 +69,13 @@ describe 'Fact jboss_fullconfig', :type => :fact do
       'profile'     => 'full',
     }
   end
+  before :all do
+    Facter.clear
+  end
   before :each do
     configfile_fct = Facter.fact :jboss_configfile
     configfile_fct.instance_variable_set(:@value, sample_config)
-    File.write(sample_config, sample_content)
+    File.open(sample_config, 'w') {|f| f.write(sample_content) }
   end
   after :each do
     fct = Facter.fact :jboss_fullconfig

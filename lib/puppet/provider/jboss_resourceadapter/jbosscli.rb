@@ -1,3 +1,4 @@
+require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/functions/jboss_to_bool'))
 require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbosscli.rb'))
 
 Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
@@ -96,13 +97,13 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
   end
   
   def security
-    if Coi::Puppet::Functions.to_bool(getconnectionattr 'security-application')
+    if Puppet_X::Coi::Jboss::Functions.jboss_to_bool(getconnectionattr 'security-application')
       return 'application'
     end
-    if Coi::Puppet::Functions.to_bool(getconnectionattr 'security-domain-and-application')
+    if Puppet_X::Coi::Jboss::Functions.jboss_to_bool(getconnectionattr 'security-domain-and-application')
       return 'domain-and-application'
     end
-    if Coi::Puppet::Functions.to_bool(getconnectionattr 'security-domain')
+    if Puppet_X::Coi::Jboss::Functions.jboss_to_bool(getconnectionattr 'security-domain')
       return 'domain'
     end
     return nil

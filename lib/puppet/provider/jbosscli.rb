@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+require File.expand_path(File.join(File.dirname(__FILE__), '../../puppet_x/coi/jboss/configuration'))
 require 'tempfile'
 
 class Object
@@ -32,50 +33,39 @@ class Hash
     result
   end
 end
-module Coi
-  module Puppet
-    module Functions
-      def self.to_bool input
-        input.to_bool
-      end
-      
-      def self.basename file
-        File.basename file
-      end 
-    end
-  end
-end
 
 class Puppet::Provider::Jbosscli < Puppet::Provider
 
   @@bin = "bin/jboss-cli.sh"
   @@contents = nil
 
-  def self.jbossclibin
-    home = self.jbosshome
-    path = "#{home}/#{@@bin}"
-    return path
-  end
-
-  def self.jbosshome
-    Facter.value :jboss_home
-  end
+  class << self
+    def jbossclibin
+      home = self.jbosshome
+      path = "#{home}/#{@@bin}"
+      return path
+    end
   
-  def self.jbosslog
-    Facter.value :jboss_console_log
-  end
+    def jbosshome
+      Puppet_X::Coi::Jboss::Configuration::config_value :home
+    end
+    
+    def jbosslog
+      Puppet_X::Coi::Jboss::Configuration::config_value :console_log
+    end
+    
+    def config_runasdomain
+      Puppet_X::Coi::Jboss::Configuration::config_value :runasdomain
+    end
   
-  def self.config_runasdomain
-    ret = Facter.value :jboss_runasdomain
-    ret.to_bool
-  end
-
-  def self.config_controller
-    Facter.value :jboss_controller
-  end
-
-  def self.config_profile
-    Facter.value :jboss_profile
+    def config_controller
+      Puppet_X::Coi::Jboss::Configuration::config_value :controller
+    end
+  
+    def config_profile
+      Puppet_X::Coi::Jboss::Configuration::config_value :profile
+    end
+    
   end
   
   # commands :jbosscli => Puppet::Provider::Jbosscli.jbossclibin
@@ -280,5 +270,6 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
       }
     end
   end
+  
 
 end

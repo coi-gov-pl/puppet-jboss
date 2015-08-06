@@ -1,4 +1,10 @@
-include jboss
+class { 'jboss':
+  enableconsole => true,
+}
+
+jboss::user { 'admin':
+  password => 'seCret1!',
+}
 
 # Non-XA data source
 jboss::datasource { 'test-datasource':

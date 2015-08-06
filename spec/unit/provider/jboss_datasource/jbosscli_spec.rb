@@ -1,18 +1,22 @@
 require 'spec_helper'
+require 'puppet_x/coi/jboss/configuration'
 
 context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version => '6.4.0.GA'" do
   
-  Facter.clear
-  Facter.add(:jboss_product)     { setcode { 'jboss-eap' } }
-  Facter.add(:jboss_version)     { setcode { '6.4.0.GA' } }
-  Facter.add(:jboss_home)        { setcode { '/usr/lib/jboss-eap-6.4.0.GA' } }
-  Facter.add(:jboss_runasdomain) { setcode { false } }
-  Facter.add(:jboss_profile)     { setcode { 'full' } }
-  Facter.add(:jboss_console_log) { setcode { '/var/log/jboss-eap/console.log' } }
-  Facter.add(:jboss_controller)  { setcode { '127.0.0.1:9999' } }
+  mock_values = {
+    :product    => 'jboss-eap',
+    :version    => '6.4.0.GA',
+    :controller => '127.0.0.1:9999',
+  }
   
-  after :all do
-    Facter.clear
+  Puppet_X::Coi::Jboss::Configuration.reset_config(mock_values)
+  
+  before :each do
+    Puppet_X::Coi::Jboss::Configuration.reset_config(mock_values)
+  end
+  
+  after :each do
+    Puppet_X::Coi::Jboss::Configuration.reset_config
   end
 
   describe Puppet::Type.type(:jboss_datasource).provider(:jbosscli) do

@@ -1,4 +1,5 @@
 require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbosscli.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/configuration'))
 require 'uri'
 
 Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
@@ -8,8 +9,11 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   @readed = false
   
   confine :true => begin
-    Facter.value(:jboss_product) == 'jboss-as' or 
-    (Facter.value(:jboss_product) == 'jboss-eap' and Facter.value(:jboss_version) < '6.3.0.GA')
+    Puppet_X::Coi::Jboss::Configuration::config_value(:product) == 'jboss-as' or 
+    (
+      Puppet_X::Coi::Jboss::Configuration::config_value(:product) == 'jboss-eap' and
+      Puppet_X::Coi::Jboss::Configuration::config_value(:version) < '6.3.0.GA'
+    )
   end
   
   def create

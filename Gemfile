@@ -23,16 +23,17 @@ group :test do
   else
     gem 'facter',                       :require => false
   end
-  if puppetver = ENV['PUPPET_VERSION']
+  puppetver = if RUBY_VERSION < '1.9.0' then '~> 2.7.0' else ENV['PUPPET_VERSION'] end
+  if puppetver
     gem 'puppet', puppetver,            :require => false
     if Gem::Requirement.new(puppetver) =~ Gem::Version.new('2.7.0')
       gem 'hiera-puppet',               :require => false
-      gem 'ruby-augeas',                :require => false
-      gem 'augeas',                     :require => false
     end
   else
     gem 'puppet', '~> 3.0',             :require => false
   end
+  gem 'ruby-augeas',                    :require => false
+  gem 'augeas',                         :require => false
 end
 
 group :development do
