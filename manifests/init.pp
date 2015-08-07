@@ -45,6 +45,8 @@
 # [*install_dir*]
 #     The directory to use as installation home for JBoss Application Server. By default it is equal to
 #     `/usr/lib/<product>-<version>`. Applicable Hiera key: `jboss::params::install_dir`
+# [*controller_host*]
+#     To with controller connect to. By default it is equals to `127.0.0.1`.
 # [*enableconsole*]
 #     This parameter is used to enable or disable access to JBoss management web console. It is equal to `false` by default, so the
 #     console is turned off. Applicable Hiera key: `jboss::params::enableconsole`
@@ -65,8 +67,8 @@
 class jboss (
   $hostname         = $jboss::params::hostname,
   $product          = $jboss::params::product,
-  $jboss_user       = undef,
-  $jboss_group      = undef,
+  $jboss_user       = $jboss::params::jboss_user,
+  $jboss_group      = $jboss::params::jboss_group,
   $version          = $jboss::params::version,
   $download_url     = "${jboss::params::download_urlbase}/${product}/${version}/${product}-${version}.zip",
   $java_autoinstall = $jboss::params::java_autoinstall,
@@ -82,18 +84,6 @@ class jboss (
 ) inherits jboss::params {
 
   $home              = "${install_dir}/${product}-${version}"
-  $jboss_user_actual = $jboss_user ? {
-    undef   => $product ? {
-      /jboss-as|jboss-eap/ => 'jboss',
-      'wildfly'            => 'wildfly',
-      default              => undef,
-    },
-    default => $jboss_user,
-  }
-  $jboss_group_actual = $jboss_group ? {
-    undef   => $jboss_user_actual,
-    default => $jboss_group,
-  }
 
   include jboss::internal::compatibility
 
@@ -107,8 +97,8 @@ class jboss (
   class { 'jboss::internal::package':
     version          => $version,
     product          => $product,
-    jboss_user       => $jboss_user_actual,
-    jboss_group      => $jboss_group_actual,
+    jboss_user       => $jboss_user,
+    jboss_group      => $jboss_group,
     download_url     => $download_url,
     java_autoinstall => $java_autoinstall,
     java_version     => $java_version,

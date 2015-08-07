@@ -6,8 +6,8 @@ define jboss::internal::module::registerlayer (
 
   File {
     mode   => '0640',
-    owner  => $jboss::jboss_user_actual,
-    group  => $jboss::jboss_group_actual,
+    owner  => $jboss::jboss_user,
+    group  => $jboss::jboss_group,
   }
 
   if (!defined(Exec["jboss::module::layer::${layer}"])) {

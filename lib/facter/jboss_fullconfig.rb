@@ -9,6 +9,13 @@ unless config.nil?
     end
   end
   Facter.add(:jboss_fullconfig) do
-    setcode { if RUBY_VERSION < '1.9.0' then config.inspect else config end }
+    setcode do
+      if RUBY_VERSION < '1.9.0'
+        class << config
+          define_method(:to_s, proc { self.inspect })
+        end
+      end
+      config
+    end
   end
 end

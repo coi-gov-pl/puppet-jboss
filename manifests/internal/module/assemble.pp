@@ -12,8 +12,8 @@ define jboss::internal::module::assemble (
 
   File {
     mode   => '0640',
-    owner  => $jboss::jboss_user_actual,
-    group  => $jboss::jboss_group_actual,
+    owner  => $jboss::jboss_user,
+    group  => $jboss::jboss_group,
   }
 
   exec { "jboss::module::assemble::${name}(dir=${dir})":

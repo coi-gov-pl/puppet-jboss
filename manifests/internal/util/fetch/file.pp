@@ -13,11 +13,11 @@ define jboss::internal::util::fetch::file (
   if defined(Class['jboss']) {
     include jboss
     $actualOwner = $owner ? {
-      undef   => $jboss::jboss_user_actual,
+      undef   => $jboss::jboss_user,
       default => $owner
     }
     $actualGroup = $group ? {
-      undef   => $jboss::jboss_group_actual,
+      undef   => $jboss::jboss_group,
       default => $group
     }
     $actual_fetch_tool = $fetch_tool ? {
@@ -27,11 +27,11 @@ define jboss::internal::util::fetch::file (
   } else {
     include jboss::params
     $actualOwner = $owner ? {
-      undef   => $jboss::params::product,
+      undef   => $jboss::params::jboss_user,
       default => $owner
     }
     $actualGroup = $group ? {
-      undef   => $actualOwner,
+      undef   => $jboss::params::jboss_group,
       default => $group
     }
     $actual_fetch_tool = $fetch_tool ? {
