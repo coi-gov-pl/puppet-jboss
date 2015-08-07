@@ -27,9 +27,9 @@ matrix:
   - rvm: 2.1.0
     env: PUPPET_VERSION="~> 3.0"
   - rvm: 2.1.0
-    env: PUPPET_VERSION="3.8.2" RS_SET="centos-65-x64-docker"    
+    env: PUPPET_VERSION="3.8.2" RS_SET="centos-65-x64-docker" 
   - rvm: 2.1.0
-    env: RS_SET="centos-65-x64-pe288-docker"
+    env: PUPPET_VERSION="3.8.2" RS_SET="ubuntu-server-1404-x64-docker"    
   - rvm: 2.1.0
     env: RS_SET="centos-65-x64-pe288-docker"
   - rvm: 2.1.0
