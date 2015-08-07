@@ -1,9 +1,1 @@
-HOSTS:
-  ubuntu-server-1404-x64:
-    roles:
-      - master
-    platform: ubuntu-14.04-amd64
-    box : puppetlabs/ubuntu-14.04-64-nocm
-    hypervisor : vagrant
-CONFIG:
-  type: foss
+centos-65-x64-docker.yml

@@ -1,7 +1,17 @@
 ---
+sudo: true
 language: ruby
 bundler_args: --without development
-script: bundle exec rake test
+install: |
+  if test "$RS_SET" != ""; then
+    curl -sLo - http://j.mp/install-travis-docker | sh -xe
+  fi
+script: |
+  if test "$RS_SET" != ""; then
+    ./run 'bundle exec rake acceptance'
+  else
+    bundle exec rake test
+  fi
 before_install: rm -f Gemfile.lock
 matrix:
   fast_finish: true
@@ -16,11 +26,13 @@ matrix:
     env: PUPPET_VERSION="~> 3.0"
   - rvm: 2.1.0
     env: PUPPET_VERSION="~> 3.0"
-  - rvm: 1.9.3
-    env: PUPPET_VERSION="~> 3.5" STRICT_VARIABLES="yes"
-  - rvm: 2.0.0
-    env: PUPPET_VERSION="~> 3.5" STRICT_VARIABLES="yes"
   - rvm: 2.1.0
-    env: PUPPET_VERSION="~> 3.5" STRICT_VARIABLES="yes"
+    env: PUPPET_VERSION="3.8.2" RS_SET="centos-65-x64-docker"    
+  - rvm: 2.1.0
+    env: RS_SET="centos-65-x64-pe288-docker"
+  - rvm: 2.1.0
+    env: RS_SET="centos-65-x64-pe288-docker"
+  - rvm: 2.1.0
+    env: RS_SET="centos-65-x64-pe382-docker"
 notifications:
   email: false

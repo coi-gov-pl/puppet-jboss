@@ -5,6 +5,6 @@ HOSTS:
     platform: ubuntu-14.04-amd64
     image: ubuntu:14.04
     hypervisor: docker
-    docker_cmd: '/usr/sbin/sshd -D -o "PermitRootLogin yes" -o "PasswordAuthentication yes"'
 CONFIG:
   type: foss
+  log_level: verbose

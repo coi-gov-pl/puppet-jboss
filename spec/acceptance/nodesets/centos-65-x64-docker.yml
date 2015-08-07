@@ -7,3 +7,4 @@ HOSTS:
     hypervisor: docker
 CONFIG:
   type: foss
+  log_level: verbose
