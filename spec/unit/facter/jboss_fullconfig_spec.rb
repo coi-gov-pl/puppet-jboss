@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'puppet_x/coi/jboss/configuration'
 
 describe 'Fact jboss_fullconfig', :type => :fact do
   subject { Facter.value(:jboss_fullconfig) }
@@ -55,6 +56,7 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     JBOSS_PROFILE=full
     eos
   end
+  let(:profile_d_content) { "export JBOSS_CONF=\'#{sample_config}\'" }
   let(:expected_hash) do
     {
       'home'        => '/usr/lib/wildfly-12.2.0.Final',
@@ -73,8 +75,9 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     Facter.clear
   end
   before :each do
-    configfile_fct = Facter.fact :jboss_configfile
-    configfile_fct.instance_variable_set(:@value, sample_config)
+    Facter.clear
+    expect(Puppet_X::Coi::Jboss::Configuration).to receive(:read_raw_profile_d).
+      at_least(:once).and_return(profile_d_content)
     File.open(sample_config, 'w') {|f| f.write(sample_content) }
   end
   after :each do

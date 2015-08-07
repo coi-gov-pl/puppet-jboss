@@ -1,21 +1,16 @@
 require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbosscli.rb'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/configuration'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/provider/datasource/pre_wildfly_provider'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/provider/datasource/post_wildfly_provider'))
 require 'uri'
 
 Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
   desc "JBoss CLI datasource provider"
-  
+
   @data = nil
   @readed = false
-  
-  confine :true => begin
-    Puppet_X::Coi::Jboss::Configuration::config_value(:product) == 'jboss-as' or 
-    (
-      Puppet_X::Coi::Jboss::Configuration::config_value(:product) == 'jboss-eap' and
-      Puppet_X::Coi::Jboss::Configuration::config_value(:version) < '6.3.0.GA'
-    )
-  end
-  
+  @impl = nil
+
   def create
     cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ]
     jta_opt(cmd)
@@ -206,14 +201,6 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     setattrib 'password', value
   end
   
-  def jta
-    getattrib('jta').to_s
-  end
-
-  def jta= value
-    setattrib 'jta', value.to_s
-  end
-  
   def options
     managed_fetched_options
   end
@@ -265,21 +252,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   def dbname= value
     writeConnection :DatabaseName, value
   end
-  
-  protected
-  
-  def xa_datasource_properties_wrapper(parameters)
-    "[#{parameters}]"
-  end
-  
-  def default_profile
-    'full'
-  end
-  
-  def jta_opt(cmd)
-    cmd.push "--jta=#{@resource[:jta].inspect}"
-  end
-  
+
   def getattrib name, default=nil
     if not @readed
       exists?
@@ -290,9 +263,55 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     end
     return default
   end
-  
+
+  def setattrib name, value
+    setattribute datasource_path, name, value
+    @data[name] = value
+  end
+
+  def jta
+    provider_impl.jta
+  end
+
+  def jta= value
+    provider_impl.jta = value
+  end
+
+  def xa?
+    if not @resource[:xa].nil?
+      return @resource[:xa]
+    else
+      return false
+    end
+  end
+
+  def xa_datasource_properties_wrapper(parameters)
+    provider_impl.xa_datasource_properties_wrapper(parameters)
+  end
+
+  def jta_opt(cmd)
+    provider_impl.jta_opt(cmd)
+  end
+
+  protected
+
+  def default_profile
+    'full'
+  end
+
   private
-  
+
+  def provider_impl
+    if @impl.nil?
+      if Puppet_X::Coi::Jboss::Configuration::is_pre_wildfly?
+        @impl = Puppet_X::Coi::Jboss::Provider::Datasource::PreWildFlyProvider.new(self)
+      else
+        @impl = Puppet_X::Coi::Jboss::Provider::Datasource::PostWildFlyProvider.new(self)
+      end
+    end
+    @impl
+  end
+
   def managed_fetched_options
     fetched = {}
     @resource[:options].each do |k, v|
@@ -314,12 +333,7 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
     obj = new(props)
     return obj
   end
-  
-  def setattrib name, value
-    setattribute datasource_path, name, value
-    @data[name] = value
-  end 
-  
+
   def createXaProperties
     if @resource[:drivername] == 'h2'
       "URL=#{connectionUrl.inspect}"
@@ -328,10 +342,10 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
       props = [:ServerName, :PortNumber, :DatabaseName]
       props.each do |prop|
         value = @resource[getPuppetKey prop]
-        out.push "#{prop.to_s}=#{value.inspect}" 
+        out.push "#{prop.to_s}=#{value.inspect}"
       end
       if oracle?
-        out.push "DriverType=thin"
+        out.push 'DriverType="thin"'
       end
       out.join ','
     end
@@ -438,14 +452,6 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
       Puppet.debug e
       return empty
     end
-  end
-  
-  def xa?
-    if not @resource[:xa].nil?
-      return @resource[:xa]
-    else
-      return false
-    end 
   end
   
   def oracle?

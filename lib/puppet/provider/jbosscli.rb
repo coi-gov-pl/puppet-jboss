@@ -65,11 +65,12 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     def config_profile
       Puppet_X::Coi::Jboss::Configuration::config_value :profile
     end
-    
+
   end
-  
+
+  # TODO: Defered confinment in Puppet >= 3.0
   # commands :jbosscli => Puppet::Provider::Jbosscli.jbossclibin
-  
+
   def runasdomain?
     @resource[:runasdomain]
   end

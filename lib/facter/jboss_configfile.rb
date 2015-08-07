@@ -1,13 +1,5 @@
+require File.expand_path(File.join(File.dirname(__FILE__), '../puppet_x/coi/jboss/configuration'))
+
 Facter.add(:jboss_configfile) do
-  setcode do
-    begin
-      path = '/etc/profile.d/jboss.sh'
-      content = File.read(path).chomp
-      re = /export JBOSS_CONF=\'([^\']+)\'/
-      m = re.match(content)
-      m[1]
-    rescue
-      ENV['JBOSS_CONF']
-    end
-  end
+  setcode { Puppet_X::Coi::Jboss::Configuration::configfile }
 end

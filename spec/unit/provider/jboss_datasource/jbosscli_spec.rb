@@ -2,15 +2,15 @@ require 'spec_helper'
 require 'puppet_x/coi/jboss/configuration'
 
 context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version => '6.4.0.GA'" do
-  
-  mock_values = {
-    :product    => 'jboss-eap',
-    :version    => '6.4.0.GA',
-    :controller => '127.0.0.1:9999',
-  }
-  
-  Puppet_X::Coi::Jboss::Configuration.reset_config(mock_values)
-  
+
+  let(:mock_values) do
+    {
+      :product    => 'jboss-eap',
+      :version    => '6.4.0.GA',
+      :controller => '127.0.0.1:9999',
+    }
+  end
+
   before :each do
     Puppet_X::Coi::Jboss::Configuration.reset_config(mock_values)
   end
@@ -194,6 +194,71 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         it { expect(subject).not_to be_nil }
         it { expect(subject).not_to be_empty }
         it { expect(subject).to eq('h2:mem') }
+      end
+    end
+
+    describe 'For XA Datasource' do
+      let(:sample_repl) do
+        {
+          :name        => 'testing',
+          :xa          => true,
+          :runasdomain => false,
+          :jdbcscheme  => 'h2:mem',
+        }
+      end
+      before :each do
+        cli = '/subsystem=datasources/xa-data-source=testing:read-resource(recursive=true)'
+        expect(provider).to receive(:executeAndGet).with(cli).at_least(:once).and_return({
+          :result => true,
+          :data   => {
+            'jta' => false
+          }
+        })
+        provider.exists?
+      end
+      context 'while using JBoss EAP 6.4.0.GA' do
+        describe 'jta()' do
+          subject { provider.jta }
+          it { expect(subject).not_to be_nil }
+          it { expect(subject).to eq('true') }
+        end
+        describe 'jta_opt(cmd)' do
+          before :each do
+            provider.jta = true
+          end
+          let(:cmd) { [] }
+          subject { provider.jta_opt(cmd) }
+          it { expect(subject).to be_nil }
+          it { expect(cmd).to be_empty }
+        end
+      end
+      context 'while using JBoss EAP 6.2.0.GA' do
+        let(:mock_values) do
+          {
+            :product    => 'jboss-eap',
+            :version    => '6.2.0.GA',
+            :controller => '127.0.0.1:9999',
+          }
+        end
+        describe 'jta()' do
+          subject { provider.jta }
+          it { expect(subject).not_to be_nil }
+          it { expect(subject).to eq('false') }
+        end
+        describe 'jta_opt(cmd)' do
+          before :each do
+            cli2 = '/subsystem=datasources/xa-data-source=testing:write-attribute(name="jta", value="true")'
+            expect(provider).to receive(:executeAndGet).with(cli2).and_return({
+              :result => true,
+              :data   => {}
+            })
+            provider.jta = true
+          end
+          let(:cmd) { [] }
+          subject { provider.jta_opt(cmd) }
+          it { expect(subject).not_to be_nil }
+          it { expect(cmd).to be_empty }
+        end
       end
     end
   end

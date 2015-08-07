@@ -14,23 +14,33 @@ class Configuration
     def initialize
       @config = nil
     end
-  
+
+    # Gets the main config file
+    def configfile
+      content = self.read_raw_profile_d.chomp
+      re = /export JBOSS_CONF=\'([^\']+)\'/
+      m = re.match(content)
+      m[1]
+    rescue
+      ENV['JBOSS_CONF']
+    end
+
     # Read the configuration with augeas
     #
     # @return [Hash] configuration in a hash object or nil if not avialable
     def read
       require 'augeas'
-      
+
       map = nil
-      configfile = Facter.value(:jboss_configfile)
-      unless configfile.nil?
+      cfgfile = self.configfile
+      unless cfgfile.nil?
         aug = Augeas::open('/', nil, Augeas::NO_MODL_AUTOLOAD)
-        aug.transform(:lens => 'Shellvars.lns', :incl => configfile, :name => 'jboss-as.conf')
+        aug.transform(:lens => 'Shellvars.lns', :incl => cfgfile, :name => 'jboss-as.conf')
         aug.load
         is_bool = lambda { |value| !/^(true|false)$/.match(value).nil? }
-        to_bool = lambda { |value| if !/^true$/.match(value).nil? then true else false end }                                   
+        to_bool = lambda { |value| if !/^true$/.match(value).nil? then true else false end }
         map = {}
-        aug.match("/files#{configfile}/*").each do |key|
+        aug.match("/files#{cfgfile}/*").each do |key|
             m = key[/(JBOSS_.+)$/]
             if m
                 v = aug.get(key)
@@ -42,7 +52,16 @@ class Configuration
       end
       map
     end
-    
+
+    # Checks is this execution is taking place on pre wildfly server
+    #
+    # @return [Boolean] true if execution is taking place on pre wildfly server
+    def is_pre_wildfly?
+      product = self.config_value(:product)
+      version = self.config_value(:version)
+      product == 'jboss-as' or ( product == 'jboss-eap' and version < '6.3.0.GA' )
+    end
+
     # Resets configuration
     #
     # @param value [Hash] optional value to reset to
@@ -66,7 +85,11 @@ class Configuration
       end
       ret
     end
-  
+
+    def read_raw_profile_d
+      File.read('/etc/profile.d/jboss.sh')
+    end
+
   end
 end
 

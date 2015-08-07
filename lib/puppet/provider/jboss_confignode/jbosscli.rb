@@ -180,14 +180,10 @@ Puppet::Type.type(:jboss_confignode).provide(:jbosscli, :parent => Puppet::Provi
       hash = {}
       @property_hash[:properties] = {} if @property_hash[:properties].nil?
       @property_hash[:properties].each do |k, v| 
-        if v.nil? or !!v == v
+        if v.nil? or !!v == v or v.is_a? Numeric or v.is_a? Hash or v.is_a? Array
           hash[k.to_s] = v
         else
-          if v.is_a? Hash or v.is_a? Array
-            hash[k.to_s] = v
-          else
-            hash[k.to_s] = v.to_s
-          end
+          hash[k.to_s] = v.to_s
         end
       end
       traceout 'properties()', hash  
