@@ -68,7 +68,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
 
   end
 
-  # TODO: Defered confinment in Puppet >= 3.0
+  # TODO: Uncomment for defered provider confinment after droping support for Puppet < 3.0
   # commands :jbosscli => Puppet::Provider::Jbosscli.jbossclibin
 
   def runasdomain?
@@ -252,9 +252,9 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
           :data => ret[:lines]
         }
     end
-    # Wskazanie typu dla undefined
+    # Giving JBoss `undefine` value in Ruby
     undefined = nil
-    # Obsługa expression z JBossa
+    # JBoss expression and Long value handling
     ret[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
     ret[:lines].gsub!(/=> (\d+)L/, '=> \1')
     begin
