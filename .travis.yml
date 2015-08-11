@@ -2,7 +2,9 @@
 sudo: true
 language: ruby
 install:
-  - sudo apt-get install -y libaugeas-dev
+  - sudo add-apt-repository -y ppa:raphink/augeas
+  - sudo apt-get update
+  - sudo apt-get install -y libaugeas-dev libxml2-dev
   - bundle install --without development
   - if test "$RS_SET" != ""; then curl -sLo - http://j.mp/install-travis-docker | sh -xe; fi
 script: |
