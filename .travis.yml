@@ -1,11 +1,9 @@
 ---
 sudo: true
 language: ruby
-bundler_args: --without development
-install: |
-  if test "$RS_SET" != ""; then
-    curl -sLo - http://j.mp/install-travis-docker | sh -xe
-  fi
+install:
+  - bundle install --without development
+  - if test "$RS_SET" != ""; then curl -sLo - http://j.mp/install-travis-docker | sh -xe; fi
 script: |
   if test "$RS_SET" != ""; then
     ./run 'bundle exec rake acceptance'
