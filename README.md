@@ -1,4 +1,6 @@
-﻿# Puppet Module for JBoss EAP and Wildfly application servers
+# Puppet Module for JBoss EAP and Wildfly application servers
+
+[![Build Status](https://travis-ci.org/coi-gov-pl/puppet-jboss.svg)](https://travis-ci.org/coi-gov-pl/puppet-jboss)
 
 #### Table of Contents
 
@@ -417,7 +419,7 @@ To with controller connect to. By default it is equals to `127.0.0.1:9999` on jb
 
 This module is explicitly tested on:
 
-* Oracle Linux 6.x
+* Oracle Linux 6.x, CentOS 6.x
 * Ubuntu Server LTS 14.04
 
 Compatible with:
