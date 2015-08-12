@@ -7,12 +7,10 @@ install:
   - sudo apt-get install -y libaugeas-dev libxml2-dev
   - bundle install --without development
   - if test "$RS_SET" != ""; then curl -sLo - http://j.mp/install-travis-docker | sh -xe; fi
-script: |
-  if test "$RS_SET" != ""; then
-    ./run 'bundle exec rake acceptance'
-  else
-    bundle exec rake test
-  fi
+script:
+  - df -h
+  - if test "$RS_SET" != ""; then ./run 'bundle exec rake acceptance'; else bundle exec rake test; fi
+  - df -h
 before_install: rm -f Gemfile.lock
 matrix:
   fast_finish: true
@@ -31,9 +29,10 @@ matrix:
     env: PUPPET_VERSION="3.8.2" RS_SET="centos-65-x64-docker" 
   - rvm: 2.1.0
     env: PUPPET_VERSION="3.8.2" RS_SET="ubuntu-server-1404-x64-docker"    
-  - rvm: 2.1.0
-    env: RS_SET="centos-65-x64-pe288-docker"
-  - rvm: 2.1.0
-    env: RS_SET="centos-65-x64-pe382-docker"
+# Travis: Out of hdd space
+#  - rvm: 2.1.0
+#    env: RS_SET="centos-65-x64-pe288-docker"
+#  - rvm: 2.1.0
+#    env: RS_SET="centos-65-x64-pe382-docker"
 notifications:
   email: false
