@@ -10,6 +10,8 @@ unless $executing_puppet
       add_filter "/.vendor/"
       add_filter "/vendor/"
       add_filter "/gems/"
+      minimum_coverage 66
+      refuse_coverage_drop
     end
   rescue Gem::LoadError
     # do nothing
