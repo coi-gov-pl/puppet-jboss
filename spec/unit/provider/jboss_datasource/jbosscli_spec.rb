@@ -19,8 +19,11 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
     Puppet_X::Coi::Jboss::Configuration.reset_config
   end
 
-  describe Puppet::Type.type(:jboss_datasource).provider(:jbosscli) do
-  
+  describe 'Puppet::Type::Jboss_datasource::ProviderJbosscli' do
+
+    let(:described_class) do
+      Puppet::Type.type(:jboss_datasource).provider(:jbosscli)
+    end
     let(:sample_repl) do
       {
         :name        => 'testing',

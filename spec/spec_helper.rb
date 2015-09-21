@@ -1,27 +1,29 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec/its'
 
-begin
-  gem 'simplecov'
-  require 'simplecov'
-  SimpleCov.start do
-    add_filter "/spec/"
-    add_filter "/.vendor/"
-    add_filter "/vendor/"
-    add_filter "/gems/"
+unless $executing_puppet
+  begin
+    gem 'simplecov'
+    require 'simplecov'
+    SimpleCov.start do
+      add_filter "/spec/"
+      add_filter "/.vendor/"
+      add_filter "/vendor/"
+      add_filter "/gems/"
+    end
+  rescue Gem::LoadError
+    # do nothing
   end
-rescue Gem::LoadError
-  # do nothing
-end
 
-begin
-  gem 'coveralls'
-  require 'coveralls'  
-  if ENV['TRAVIS']
-    Coveralls.wear!
+  begin
+    gem 'coveralls'
+    require 'coveralls'  
+    if ENV['TRAVIS']
+      Coveralls.wear!
+    end
+  rescue Gem::LoadError
+    # do nothing
   end
-rescue Gem::LoadError
-  # do nothing
 end
 
 begin
@@ -53,10 +55,4 @@ RSpec.configure do |c|
   c.after :each do
     PuppetlabsSpec::Files.cleanup
   end
-end
-
-# Convenience helper for returning parameters for a type from the
-# catalogue.
-def param(type, title, param)
-  param_value(catalogue, type, title, param)
 end
