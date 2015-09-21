@@ -32,9 +32,8 @@ describe 'jboss::datasource', :type => :define do
 
   it { is_expected.to compile.with_all_deps }
   it do
-    is_expected.to contain_jboss_jdbcdriver('test-driver')
-      .with_classname('com.example.TestDriver')
-      .with_modulename('test-driver')
+    is_expected.to contain_jboss_jdbcdriver('test-driver').
+      with_classname('com.example.TestDriver').with_modulename('test-driver')
   end
   it { is_expected.to contain_jboss_datasource('test-datasource') }
   it { is_expected.to contain_jboss__datasource('test-datasource') }

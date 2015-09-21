@@ -16,7 +16,8 @@ describe 'jboss_jdbcdriver', :type => :type do
     subject { described_class.new(params) }
 
     it do
-      expect { subject }.to raise_error(Puppet::ResourceError, 
+      ex_class = if Puppet.version > '3.0.0' then Puppet::ResourceError else Puppet::Error end
+      expect { subject }.to raise_error(ex_class, 
         'Parameter controller failed on Jboss_jdbcdriver[test-driver]: Domain controller must be provided')
     end
   end
