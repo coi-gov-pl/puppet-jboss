@@ -16,6 +16,7 @@ group :test do
     gem 'beaker',                       :require => false
     gem 'beaker-rspec',                 :require => false
     gem 'coveralls',                    :require => false
+    gem 'codeclimate-test-reporter',    :require => false
     gem 'simplecov',                    :require => false
   end
   if facterver = ENV['FACTER_VERSION']
