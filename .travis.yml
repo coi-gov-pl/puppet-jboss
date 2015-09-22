@@ -1,15 +1,23 @@
 ---
-sudo: required
 language: ruby
-services:
-  - docker
+# # This could work if 'ppa:raphink/augeas' repo is permitted to work
+# sudo: false
+# addons:
+#   apt:
+#     sources:
+#     - ppa:raphink/augeas
+#     packages:
+#     - libaugeas-dev
+#     - libxml2-dev
+# bundler_args: --without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
+# cache: bundler
+sudo: required
 install:
-  - docker version
   - sudo add-apt-repository -y ppa:raphink/augeas
   - sudo apt-get update
   - sudo apt-get install -y libaugeas-dev libxml2-dev
-  - bundle install --without development
-script: spec/scripts/run.sh
+  - bundle install --without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
+script: bundle exec rake test
 before_install: rm -f Gemfile.lock
 matrix:
   fast_finish: true
@@ -26,14 +34,31 @@ matrix:
     env: PUPPET_VERSION="~> 3.0"
   - rvm: '2.1'
     env: PUPPET_VERSION="~> 3.0" STRICT_VARIABLES=yes
-  - rvm: '2.1'
-    env: PUPPET_VERSION="3.8.2" RS_SET="centos-65-x64-docker" 
-  - rvm: '2.1'
-    env: PUPPET_VERSION="3.8.2" RS_SET="ubuntu-server-1404-x64-docker"    
+  - rvm: default
+    sudo: required
+    services: docker
+    env: PUPPET_VERSION="3.8.3" RS_SET="centos-6-x86_64-docker"
+    script: bundle exec rake acceptance
+  - rvm: default
+    sudo: required
+    services: docker
+    env: PUPPET_VERSION="3.8.3" RS_SET="debian-7-x86_64-docker"
+    script: bundle exec rake acceptance
+  - rvm: default
+    sudo: required
+    services: docker
+    env: PUPPET_VERSION="3.8.3" RS_SET="ubuntu-14.04-x86_64-docker"
+    script: bundle exec rake acceptance
 # Travis: Out of hdd space
-#  - rvm: '2.1'
-#    env: RS_SET="centos-65-x64-pe288-docker"
-#  - rvm: '2.1'
-#    env: RS_SET="centos-65-x64-pe382-docker"
+#  - rvm: default
+#    sudo: required
+#    services: docker
+#    env: RS_SET="centos-6-x86_64-pe288-docker"
+#    script: bundle exec rake acceptance
+#  - rvm: default
+#    sudo: required
+#    services: docker
+#    env: RS_SET="centos-6-x86_64-pe382-docker"
+#    script: bundle exec rake acceptance
 notifications:
   email: false

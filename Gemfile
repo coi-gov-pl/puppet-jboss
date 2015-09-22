@@ -15,6 +15,7 @@ group :test do
   if RUBY_VERSION >= '1.9.0'
     gem 'beaker',                       :require => false
     gem 'beaker-rspec',                 :require => false
+    gem 'docker-api',                   :require => false
     gem 'coveralls',                    :require => false
     gem 'codeclimate-test-reporter',    :require => false
     gem 'simplecov',                    :require => false

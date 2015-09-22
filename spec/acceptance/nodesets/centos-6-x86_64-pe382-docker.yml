@@ -1,5 +1,5 @@
 HOSTS:
-  centos-65-x64-pe382-docker:
+  centos-6-x86_64-pe382-docker:
     roles:
       - master
       - agent
