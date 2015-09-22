@@ -1,6 +1,6 @@
 # Puppet Module for JBoss EAP and Wildfly application servers
 
-[![Build Status](https://travis-ci.org/coi-gov-pl/puppet-jboss.svg)](https://travis-ci.org/coi-gov-pl/puppet-jboss) [![Code Climate](https://codeclimate.com/github/coi-gov-pl/puppet-jboss/badges/gpa.svg)](https://codeclimate.com/github/coi-gov-pl/puppet-jboss) [![Dependency Status](https://gemnasium.com/coi-gov-pl/puppet-jboss.svg)](https://gemnasium.com/coi-gov-pl/puppet-jboss) [![Coverage Status](https://coveralls.io/repos/coi-gov-pl/puppet-jboss/badge.svg?branch=develop&service=github)](https://coveralls.io/github/coi-gov-pl/puppet-jboss?branch=develop) [![Inline docs](http://inch-ci.org/github/coi-gov-pl/puppet-jboss.svg?branch=develop)](http://inch-ci.org/github/coi-gov-pl/puppet-jboss)
+[![Build Status](https://travis-ci.org/coi-gov-pl/puppet-jboss.svg?branch=develop)](https://travis-ci.org/coi-gov-pl/puppet-jboss) [![Code Climate](https://codeclimate.com/github/coi-gov-pl/puppet-jboss/badges/gpa.svg)](https://codeclimate.com/github/coi-gov-pl/puppet-jboss) [![Dependency Status](https://gemnasium.com/coi-gov-pl/puppet-jboss.svg)](https://gemnasium.com/coi-gov-pl/puppet-jboss) [![Coverage Status](https://coveralls.io/repos/coi-gov-pl/puppet-jboss/badge.svg?branch=develop&service=github)](https://coveralls.io/github/coi-gov-pl/puppet-jboss?branch=develop) [![Inline docs](http://inch-ci.org/github/coi-gov-pl/puppet-jboss.svg?branch=develop)](http://inch-ci.org/github/coi-gov-pl/puppet-jboss)
 
 #### Table of Contents
 
