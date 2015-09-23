@@ -7,10 +7,6 @@ group :test do
   gem 'puppet-lint',                    :require => false
   gem 'metadata-json-lint',             :require => false
   gem 'json',                           :require => false
-  if RUBY_VERSION < '1.9.0'
-    gem 'rspec-its',                    :require => false
-    gem 'rspec', '~> 3.1.0',            :require => false
-  end
 
   if RUBY_VERSION >= '1.9.0'
     gem 'beaker',                       :require => false
@@ -50,8 +46,9 @@ group :development do
     else
       gem 'pry-debugger',               :require => false
     end
-  else
-    gem 'pry', '~> 0.9.12.0',           :require => false
   end
 end
+
+eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.ruby18')), binding) if RUBY_VERSION < '1.9.0'
+
 # vim:ft=ruby
