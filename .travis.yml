@@ -1,16 +1,6 @@
 ---
 language: ruby
-# # This could work if 'ppa:raphink/augeas' repo is permitted to work
-# sudo: false
-# addons:
-#   apt:
-#     sources:
-#     - ppa:raphink/augeas
-#     packages:
-#     - libaugeas-dev
-#     - libxml2-dev
-# bundler_args: --without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
-# cache: bundler
+# TODO: GH Issue #4 - Try to execute standard Ruby builds on Travis CI on container infrastructure
 sudo: required
 install:
   - sudo add-apt-repository -y ppa:raphink/augeas
@@ -34,31 +24,7 @@ matrix:
     env: PUPPET_VERSION="~> 3.0"
   - rvm: '2.1'
     env: PUPPET_VERSION="~> 3.0" STRICT_VARIABLES=yes
-  - rvm: default
-    sudo: required
-    services: docker
-    env: PUPPET_VERSION="3.8.3" RS_SET="centos-6-x86_64-docker"
-    script: bundle exec rake acceptance
-  - rvm: default
-    sudo: required
-    services: docker
-    env: PUPPET_VERSION="3.8.3" RS_SET="debian-7-x86_64-docker"
-    script: bundle exec rake acceptance
-  - rvm: default
-    sudo: required
-    services: docker
-    env: PUPPET_VERSION="3.8.3" RS_SET="ubuntu-14.04-x86_64-docker"
-    script: bundle exec rake acceptance
-# Travis: Out of hdd space
-#  - rvm: default
-#    sudo: required
-#    services: docker
-#    env: RS_SET="centos-6-x86_64-pe288-docker"
-#    script: bundle exec rake acceptance
-#  - rvm: default
-#    sudo: required
-#    services: docker
-#    env: RS_SET="centos-6-x86_64-pe382-docker"
-#    script: bundle exec rake acceptance
+  # FIXME: GH Issue #2 - Activate acceptance tests for centos-6, debian-7 and ubuntu-14.04 on Travis CI's Docker
+  # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
   email: false

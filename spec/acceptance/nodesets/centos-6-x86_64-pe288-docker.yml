@@ -1,5 +1,5 @@
 HOSTS:
-  centos-6-x86_64-pe288-docker:
+  centos-6-x64-pe288:
     roles:
       - master
       - agent
