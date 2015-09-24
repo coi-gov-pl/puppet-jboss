@@ -1,11 +1,7 @@
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
+require File.expand_path(File.join(File.dirname(__FILE__), '../jboss'))
+
 # A class for JBoss configuration
-class Configuration
+class Puppet_X::Coi::Jboss::Configuration
   class << self
   
     @config = nil
@@ -86,8 +82,4 @@ class Configuration
     end
 
   end
-end
-
-end
-end
 end

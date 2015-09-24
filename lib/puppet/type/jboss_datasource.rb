@@ -1,3 +1,8 @@
+require File.expand_path(File.join(File.dirname(__FILE__), '../../puppet_x/coi/jboss'))
+
+Puppet_X::Coi::Jboss.requirex 'type/domain-controller-configurator'
+Puppet_X::Coi::Jboss.requirex 'type/retry-configurator'
+
 Puppet::Type.newtype(:jboss_datasource) do
   @doc = "Data sources configuration for JBoss Application Sever"
   ensurable
@@ -69,19 +74,25 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "Extra options for datasource or xa-datasource"
     
     validate do |value|
-      unless value.respond_to? :[]
+      unless value.respond_to? :[] and not value.respond_to? :upcase
         fail "You can pass only hash-like objects"
       end
     end
     
     def change_to_s(current, desire)
       changes = []
-      desire.each do |key, desired_value|
-        current_value = current[key]
-        message = "option '#{key}' has changed from #{current_value.inspect} to #{desired_value.inspect}"
-        changes << message unless current_value == desired_value   
+      if desire.respond_to? :[] and desire.respond_to? :keys
+        keys = desire.keys.sort
+        keys.each do |key|
+          desired_value = desire[key]
+          current_value = if current.respond_to? :[] then current[key] else nil end
+          message = "option '#{key}' has changed from #{current_value.inspect} to #{desired_value.inspect}"
+          changes << message unless current_value == desired_value   
+        end
+        changes.join ', '
+      else
+        "options has been set to #{desire.inspect}"
       end
-      changes.join ', '
     end
   end
   
@@ -98,7 +109,7 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "host to connect"
     isrequired
     validate do |value|
-      unless value =~ /\w/ or value == ''
+      unless not value =~ /\s/ or value == ''
         raise ArgumentError, "Datasource host is invalid, given #{value.inspect}"
       end
     end
@@ -108,7 +119,7 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "port to connect"
     isrequired
     validate do |value|
-      unless value =~ /\d/ or value == ''
+      unless value =~ /^\d+$/ or value == ''
         raise ArgumentError, "Datasource port is invalid, given #{value.inspect}"
       end
     end    
@@ -122,44 +133,7 @@ Puppet::Type.newtype(:jboss_datasource) do
     isrequired
   end
 
-  newparam(:profile) do
-    desc "The JBoss profile name"
-    defaultto "full"
-  end
-
-  newparam(:runasdomain, :boolean => true) do
-    desc "Indicate that server is in domain mode"
-    defaultto true
-  end
-  
-  newparam(:controller) do
-    desc "Domain controller host:port address"
-    # Default is set to support listing of datasources without parameters (for easy use)
-    defaultto "127.0.0.1:9990"
-    validate do |value|
-      if value == nil or value.to_s == 'undef'
-        raise ArgumentError, "Domain controller must be provided"
-      end
-    end
-  end
-  
-  newparam :ctrluser do
-    desc 'A user name to connect to controller'
-  end
-
-  newparam :ctrlpasswd do
-    desc 'A password to be used to connect to controller'
-  end
-
-  newparam :retry do
-    desc "Number of retries."
-    defaultto 3
-  end
-
-  newparam :retry_timeout do
-    desc "Retry timeout in seconds"
-    defaultto 1
-  end
-
+  Puppet_X::Coi::Jboss::Type::DomainControllerConfigurator.new(self).configure
+  Puppet_X::Coi::Jboss::Type::RetryConfigurator.new(self).configure
 end
 

@@ -1,3 +1,8 @@
+require File.expand_path(File.join(File.dirname(__FILE__), '../../puppet_x/coi/jboss'))
+
+Puppet_X::Coi::Jboss.requirex 'type/domain-controller-configurator'
+Puppet_X::Coi::Jboss.requirex 'type/retry-configurator'
+
 Puppet::Type.newtype(:jboss_securitydomain) do
   @doc = "Security-domain configuration for JBoss Application Sever"
   ensurable
@@ -10,43 +15,6 @@ Puppet::Type.newtype(:jboss_securitydomain) do
   newparam(:moduleoptions) do
     desc "module-options given as a table"
   end
-
-  newparam(:profile) do
-    desc "The JBoss profile name"
-    defaultto "full"
-  end
-  
-  newparam(:runasdomain) do
-    desc "Run server in domain mode"
-    defaultto true
-  end
-  
-  newparam(:controller) do
-    desc "Domain controller host:port address"
-    validate do |value|
-      if value == nil or value.to_s == 'undef'
-        raise ArgumentError, "Domain controller must be provided"
-      end
-    end
-  end
-  
-  newparam :ctrluser do
-    desc 'A user name to connect to controller'
-  end
-
-  newparam :ctrlpasswd do
-    desc 'A password to be used to connect to controller'
-  end
-
-  newparam :retry do
-    desc "Number of retries."
-    defaultto 3
-  end
-
-  newparam :retry_timeout do
-    desc "Retry timeout in seconds"
-    defaultto 1
-  end
   
   newparam(:code) do
     desc "code for JBOSS security-domain"
@@ -55,5 +23,8 @@ Puppet::Type.newtype(:jboss_securitydomain) do
   newparam(:codeflag) do
     desc "codeflag for JBOSS security-domain"
   end
+
+  Puppet_X::Coi::Jboss::Type::DomainControllerConfigurator.new(self).configure
+  Puppet_X::Coi::Jboss::Type::RetryConfigurator.new(self).configure
 
 end
