@@ -23,6 +23,24 @@ task :validate do
   end
 end
 
+Rake::Task[:spec_standalone].clear
+desc "Run spec tests on an existing fixtures directory (for Puppet code)"
+RSpec::Core::RakeTask.new(:spec_standalone_puppet) do |t|
+  t.rspec_opts = ['--color --order rand']
+  t.pattern = 'spec/{classes,defines}/**/*_spec.rb'
+end
+desc "Run spec tests on an existing fixtures directory (for Ruby code)"
+RSpec::Core::RakeTask.new(:spec_standalone_ruby) do |t|
+  t.rspec_opts = ['--color --order rand']
+  t.verbose = true
+  t.pattern = 'spec/{unit,functions,hosts,integration,types}/**/*_spec.rb'
+end
+desc 'Run spec tests on an existing fixtures directory'
+task :spec_standalone => [
+  :spec_standalone_puppet,
+  :spec_standalone_ruby
+]
+
 begin
   require 'beaker'
   desc "Run acceptance tests"

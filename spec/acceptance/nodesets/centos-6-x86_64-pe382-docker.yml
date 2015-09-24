@@ -1,5 +1,5 @@
 HOSTS:
-  centos-65-x64-pe288-docker:
+  centos-6-x64-pe382:
     roles:
       - master
       - agent
@@ -13,8 +13,8 @@ HOSTS:
       - 'yum install -y tar vim'
 CONFIG:
   type: pe
-  pe_ver: 2.8.8
-  pe_dir: https://s3.amazonaws.com/pe-builds/released/2.8.8
+  pe_ver: 3.8.2
+  pe_dir: https://s3.amazonaws.com/pe-builds/released/3.8.2
   log_level: verbose
 ssh:
   password: root

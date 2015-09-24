@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe 'jboss::logging::syslog', :type => :define do
   let(:title) { 'test-handler' }

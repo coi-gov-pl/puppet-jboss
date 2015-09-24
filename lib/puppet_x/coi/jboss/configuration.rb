@@ -8,12 +8,7 @@ module Jboss
 class Configuration
   class << self
   
-    # Initialize configuration
-    #
-    # @return nil
-    def initialize
-      @config = nil
-    end
+    @config = nil
 
     # Gets the main config file
     def configfile

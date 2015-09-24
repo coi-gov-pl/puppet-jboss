@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe 'jboss::datasource', :type => :define do
   def merge_params(hash = {})
@@ -21,7 +21,7 @@ describe 'jboss::datasource', :type => :define do
   let(:facts) do
     {
       :osfamily            => "RedHat",
-      :operatingsystem     => "RedHat",
+      :operatingsystem     => "OracleLinux",
       :'jboss::profile'    => "domain",
       :'jboss::controller' => "controller.example.com",
       :concat_basedir      => "/tmp/",
@@ -31,6 +31,10 @@ describe 'jboss::datasource', :type => :define do
   end
 
   it { is_expected.to compile.with_all_deps }
+  it do
+    is_expected.to contain_jboss_jdbcdriver('test-driver').
+      with_classname('com.example.TestDriver').with_modulename('test-driver')
+  end
   it { is_expected.to contain_jboss_datasource('test-datasource') }
   it { is_expected.to contain_jboss__datasource('test-datasource') }
 

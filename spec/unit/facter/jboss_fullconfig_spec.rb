@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'puppet_x/coi/jboss/configuration'
 
 describe 'Fact jboss_fullconfig', :type => :fact do
-  subject { Facter.value(:jboss_fullconfig) }
   let(:sample_config) do
     t = Tempfile.new('rspec-jboss-fullconfig')
     path = t.path
@@ -73,6 +72,8 @@ describe 'Fact jboss_fullconfig', :type => :fact do
   end
   before :all do
     Facter.clear
+    configfile_fct = Facter.fact :jboss_configfile
+    configfile_fct.instance_variable_set(:@value, nil)
   end
   before :each do
     Facter.clear
@@ -87,7 +88,8 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     configfile_fct.instance_variable_set(:@value, nil)
     File.unlink(sample_config)
   end
-  context "with sample config file for WildFly 8.2" do
+  subject { Facter.value(:jboss_fullconfig) }
+  context 'with sample config file for WildFly 8.2' do
     context 'return value' do
       it { expect(subject).not_to be_nil }
       it { expect(subject).not_to be_empty }
