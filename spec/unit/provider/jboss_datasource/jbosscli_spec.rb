@@ -207,6 +207,8 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
           :xa          => true,
           :runasdomain => false,
           :jdbcscheme  => 'h2:mem',
+          :options     => {},
+          :jndiname    => 'jboss:/datasources/testing'
         }
       end
       before :each do
@@ -240,7 +242,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
           {
             :product    => 'jboss-eap',
             :version    => '6.2.0.GA',
-            :controller => '127.0.0.1:9999',
+            :controller => '127.0.0.1:9999'
           }
         end
         describe 'jta()' do
@@ -262,7 +264,42 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
           it { expect(subject).not_to be_nil }
           it { expect(cmd).to be_empty }
         end
+
+        describe 'create()' do
+          before :each do
+            cmd = 'xa-data-source add --name=testing --jta=true --jndi-name="jboss:/datasources/testing" ' +
+            '--driver-name=nil --min-pool-size=nil --max-pool-size=nil' +
+            ' --user-name=nil --password=nil --xa-datasource-properties=' +
+            '[ServerName=nil,PortNumber=nil,DatabaseName="testing"]'
+            expect(provider).to receive(:executeWithFail).with('Datasource', cmd, 'to create')
+            cli = '/subsystem=datasources/xa-data-source=testing:read-attribute(name=enabled)'
+            expect(provider).to receive(:executeAndGet).with(cli).and_return({
+              :result => true,
+              :data   => true
+            })
+          end
+          subject { provider.create }
+          it { expect { subject }.not_to raise_error }
+        end
+
+        describe 'destroy()' do
+          before :each do
+            cmd = 'xa-data-source remove --name=testing'
+            expect(provider).to receive(:executeWithFail).with('Datasource', cmd, 'to remove')
+          end
+          subject { provider.destroy }
+          it { expect { subject }.not_to raise_error }
+        end
       end
     end
+
+    describe 'prepare_resource()' do
+      before :each do
+        provider.instance_variable_set(:@resource, nil)
+      end
+      subject { provider.prepare_resource }
+      it { expect { subject }.not_to raise_error }
+    end
+
   end
 end
