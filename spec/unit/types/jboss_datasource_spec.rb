@@ -154,6 +154,10 @@ describe 'jboss_datasource', :type => :type do
       let(:options) { {} }
       subject { type.property(:options).change_to_s(from, to) }
       context 'from :absent and to hash', :from => :absent, :to => { 'alice' => 'five', 'bob' => 'seven' } do
+        before do
+          msg = 'FIXME: Handle :symbols as parameters in change_to_s, ref: coi-gov-pl/puppet-jboss#9'
+          skip(msg) if RUBY_VERSION < '1.9.0'
+        end
         let(:from) { |expl| expl.metadata[:from] }
         let(:to) { |expl| expl.metadata[:to] }
         it { expect(subject).to eq("option 'alice' has changed from nil to \"five\", option 'bob' has changed from nil to \"seven\"") }
