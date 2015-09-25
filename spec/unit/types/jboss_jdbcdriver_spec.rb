@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe 'jboss_jdbcdriver', :type => :type do
-  it { expect('').to be_empty }
   let(:described_class) { Puppet::Type.type(:jboss_jdbcdriver) }
   subject { described_class }
   it { expect(subject).not_to be_nil }
