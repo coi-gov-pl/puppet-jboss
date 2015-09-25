@@ -1,0 +1,39 @@
+# Creates JBoss resource adapter
+define jboss::resourceadapter (
+  $jndiname,
+  $archive,
+  $transactionsupport,
+  $classname,
+  $ensure                  = 'present',
+  $security                = hiera('jboss::resourceadapter::security', 'application'),
+  $backgroundvalidation    = jboss_to_bool(hiera('jboss::resourceadapter::backgroundvalidation', false)),
+  $profile                 = $::jboss::profile,
+  $controller              = $::jboss::controller,
+  $runasdomain             = $::jboss::runasdomain,
+) {
+  include jboss
+  include jboss::internal::service
+  include jboss::internal::runtime::node
+
+  jboss_resourceadapter { $name:
+    ensure               => $ensure,
+    archive              => $archive,
+    transactionsupport   => $transactionsupport,
+    backgroundvalidation => $backgroundvalidation,
+    security             => $security,
+    classname            => $classname,
+    jndiname             => $jndiname,
+    controller           => $controller,
+    ctrluser             => $jboss::internal::runtime::node::username,
+    ctrlpasswd           => $jboss::internal::runtime::node::password,
+    profile              => $profile,
+    runasdomain          => $runasdomain,
+    require              => Anchor['jboss::package::end'],
+  }
+
+  if jboss_to_bool($::jboss_running) {
+    Jboss_resourceadapter[$name] ~> Service[$jboss::internal::service::servicename]
+  } else {
+    Anchor['jboss::service::end'] -> Jboss_resourceadapter[$name] ~> Exec['jboss::service::restart']
+  }
+}

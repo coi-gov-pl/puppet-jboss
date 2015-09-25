@@ -1,11 +1,46 @@
+# General configuration for the init.d scripts,
+# not necessarily for JBoss AS itself.
 
+# The Jboss home directory.
+#
+JBOSS_HOME=<%= @home %>
 
-JAVA_HOME=/etc/alternatives/java_sdk
-JBOSS_HOME=<%= scope.lookupvar('jboss_path') %>
-JBOSS_USER=<%= scope.lookupvar('jboss::params::jboss_user') %>
+# The JBoss product name.
+#
+JBOSS_PRODUCT=<%= @product %>
 
+# The JBoss version.
+#
+JBOSS_VERSION=<%= @version %>
 
-export JAVA_HOME
-export JBOSS_HOME
-export JBOSS_USER
+# The JBoss configuration file
+#
+JBOSS_CONFIG=<%= @configfile %>
 
+# The username who should own the process.
+#
+JBOSS_USER=<%= @user %>
+
+# The amount of time to wait for startup
+#
+# STARTUP_WAIT=30
+
+# The amount of time to wait for shutdown
+#
+# SHUTDOWN_WAIT=30
+
+# Location to keep the console log
+#
+JBOSS_CONSOLE_LOG=<%= @logfile %>
+
+# Runs JBoss in domain mode?
+JBOSS_RUNASDOMAIN=<%= @runasdomain.inspect %>
+
+# JBoss running mode: domain or standalone
+JBOSS_MODE=<%= @runasdomain ? 'domain' : 'standalone' %>
+
+# Default JBoss domain controller
+JBOSS_CONTROLLER=<%= @controller %>
+
+# Default JBoss domain profile
+JBOSS_PROFILE=<%= @profile %>

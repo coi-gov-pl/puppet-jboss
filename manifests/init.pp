@@ -1,149 +1,124 @@
-class jboss inherits jboss::params {
-  include jboss::download
-  $download_dir = '/opt/download'
-  $download_file = "jboss-$version.zip"
-  $jboss_parent_dir = '/usr/local/lib'
-  $jboss_dir = "jboss-$version"
-  $jboss_download_site = "http://public.prs.jakby.co/Virtualki"
-  $jboss_path = "$jboss_parent_dir/$jboss_dir"
+# == Class: jboss
+#
+# The `jboss` main class is used to install the application server itself. It can install it on default parameters but you can use
+# then to customize installation procedure.
+#
+# === Standard metaparameters
+#
+# [*runasdomain*]
+#     This parameter is used to configure JBoss server to run in domain or standalone mode. By default is equal to `false`, so
+#     JBoss runs in standalone mode. Set it to `true` to setup domain mode.
+# [*profile*]
+#     JBoss profile to use. By default it is equal to `full`, which is the default profile in JBoss server. You can use any other
+#     default profile to start with: `full`, `ha`, `full-ha`.
+# [*controller*]
+#     To with controller connect to. By default it is equals to `127.0.0.1:9999` on jboss servers and `127.0.0.1:9990` on wildfly
+#     server.
+#
+# === Parameters
+#
+# [*hostname*]
+#     It is used to name jboss main `host.xml` key to distinguish from other hosts in distributed environment. By default is
+#     equals to `$::hostname` fact. Applicable Hiera key: `jboss::params::hostname`
+# [*product*]
+#     Name of the JBoss product. Can be one of: `jboss-eap`, `jboss-as` or `wildfly`. By default this is equals to `wildfly`.
+#     Applicable Hiera key: `jboss::params::product`
+# [*jboss_user*]
+#     The name of the user to be used as owner of JBoss files in filesystem. It will be also used to run JBoss processes. Be default
+#     it is equal to `jboss` for `jboss-eap` and `jboss-as` server and `wildfly` for `wildfly` server. Applicable Hiera key:
+#     `jboss::params::jboss_user`
+# [*jboss_group*]
+#     The filesystem group to be used as a owner of JBoss files. By default it is equal to the same value as `$jboss::jboss_user`.
+# [*download_url*]
+#     The download URL from which JBoss zip file will be downloaded. Be default it is equal to
+#     `http://download.jboss.org/<product>/<version>/<product>-<version>.zip`
+# [*java_autoinstall*]
+#     This parameter is by default equal to `true` and if so it will install default Java JDK using `puppetlabs/java`. Applicable
+#     Hiera key: `jboss::params::java_autoinstall`
+# [*java_version*]
+#     This parameter is by default equals to `latest` and it is passed to `puppetlabs/java` module. You can give other values. For
+#     details look in Puppetlabs/Java module dodumentation. Applicable Hiera key: `jboss::params::java_version`
+# [*java_package*]
+#     The name of Java JDK package to use. Be default it is used to `undef` and it is passed to `puppetlabs/java`. Possible values
+#     are: `jdk`, `jre`. For details look in Puppetlabs/Java module dodumentation. Applicable Hiera key:
+#     `jboss::params::java_package`
+# [*install_dir*]
+#     The directory to use as installation home for JBoss Application Server. By default it is equal to
+#     `/usr/lib/<product>-<version>`. Applicable Hiera key: `jboss::params::install_dir`
+# [*controller_host*]
+#     To with controller connect to. By default it is equals to `127.0.0.1`.
+# [*enableconsole*]
+#     This parameter is used to enable or disable access to JBoss management web console. It is equal to `false` by default, so the
+#     console is turned off. Applicable Hiera key: `jboss::params::enableconsole`
+# [*prerequisites*]
+#     The class to use as a JBoss prerequisites which will be processed before installation. By default is equal to
+#     `Class['jboss::internal::prerequisites']`. The default class is used to install `wget` package. If you would like to install
+#     `wget` in diffrent way, please write your class that does that and pass reference to it as this parameter
+# [*fetch_tool*]
+#     This parameter is by default equal to `jboss::internal::util::download`. This is a default implementation for fetching files
+#     (mostly JBoss zip files) with `wget`. If you would like to use your own implementation, please write your custom define with
+#     the same interface as `jboss::internal::util::download` and pass it's name to this parameter. Applicable Hiera key:
+#     `jboss::params::fetch_tool`
+#
+# === Copyright
+#
+# Copyright (R) 2015 COI
+#
+class jboss (
+  $hostname         = $jboss::params::hostname,
+  $product          = $jboss::params::product,
+  $jboss_user       = $jboss::params::jboss_user,
+  $jboss_group      = $jboss::params::jboss_group,
+  $version          = $jboss::params::version,
+  $download_url     = "${jboss::params::download_urlbase}/${product}/${version}/${product}-${version}.zip",
+  $java_autoinstall = $jboss::params::java_autoinstall,
+  $java_version     = $jboss::params::java_version,
+  $java_package     = $jboss::params::java_package,
+  $install_dir      = $jboss::params::install_dir,
+  $runasdomain      = $jboss::params::runasdomain,
+  $controller_host  = $jboss::params::controller_host,
+  $enableconsole    = $jboss::params::enableconsole,
+  $profile          = $jboss::params::profile,
+  $prerequisites    = Class['jboss::internal::prerequisites'],
+  $fetch_tool       = $jboss::params::fetch_tool,
+) inherits jboss::params {
 
-  user { $jboss::params::jboss_user:
-    ensure     => "present",
-    managehome => true
+  $home              = "${install_dir}/${product}-${version}"
+
+  include jboss::internal::compatibility
+
+  $controller       = "${controller_host}:${jboss::internal::compatibility::controller_port}"
+
+  include jboss::internal::configuration
+  include jboss::internal::service
+
+  $servicename = $jboss::internal::service::servicename
+
+  class { 'jboss::internal::package':
+    version          => $version,
+    product          => $product,
+    jboss_user       => $jboss_user,
+    jboss_group      => $jboss_group,
+    download_url     => $download_url,
+    java_autoinstall => $java_autoinstall,
+    java_version     => $java_version,
+    java_package     => $java_package,
+    install_dir      => $install_dir,
+    prerequisites    => $prerequisites,
+    require          => Anchor['jboss::begin'],
   }
+  include jboss::internal::package
 
-  group { $jboss::params::jboss_group:
-    ensure  => "present",
-    require => User[$jboss::params::jboss_user],
-    members => User[$jboss::params::jboss_user],
+  anchor { 'jboss::begin': }
+
+  anchor { 'jboss::end':
+    require => [
+      Class['jboss::internal::package'],
+      Class['jboss::internal::configuration'],
+      Class['jboss::internal::service'],
+      Anchor['jboss::begin'],
+      Anchor['jboss::package::end'],
+      Anchor['jboss::service::end'],
+    ],
   }
-
-  file { $jboss_path:
-    group => $jboss::params::jboss_group,
-    owner => $jboss::params::jboss_user,
-    mode  => 2775
-  }
-  
-  file { jboss-as:
-    path => "/etc/jboss-as",
-    ensure => directory,
-    group => $jboss::params::jboss_group,
-    owner => $jboss::params::jboss_user,
-    mode  => 2775
-  }
-  
-   
-
-  file { $jboss_parent_dir:
-    ensure => 'directory',
-  }
-
-  Exec {
-    path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-  }
-
-  file { $download_dir:
-    ensure => 'directory',
-  }
-
-  jboss::download::download { "$download_dir/$zip_name":
-    uri     => "$jboss_download_site/$zip_name",
-    require => [File[$jboss_path], File[$jboss_parent_dir], File[$download_dir],]
-  }
-
-  package { unzip:
-    ensure => "installed"
-  }
-  
-   package { "java-1.6.0-openjdk-devel.x86_64":
-    ensure => "installed"
-  }
-
-  file { "$download_dir/$jboss_dir":
-  }
-
-  file { "$download_dir/$download_file":
-  }
-
-  exec { 'unzip-downloaded':
-    command => "unzip $zip_name",
-    cwd     => $download_dir,
-    creates => $jboss_path,
-    require => [File["$download_dir/$download_file"], Package[unzip]]
-  }
-
-  define setgroupaccess ($user, $group, $dir, $glpath) {
-    exec { "rwX $name":
-      command => "chmod -R g+rwX $dir",
-      creates => $glpath,
-    }
-
-    exec { "find $name":
-      command => "find $dir -type d -exec chmod g+s {} +",
-      creates => $glpath,
-    }
-
-    exec { "group $name":
-      command => "chown -R $user:$group $dir",
-      creates => $glpath,
-    }
-  }
-
-  setgroupaccess { 'set-perm':
-    user    => $jboss::params::jboss_user,
-    group   => $jboss::params::jboss_group,
-    require => Group[$jboss::params::jboss_group],
-    dir     => "$download_dir/$jboss_dir",
-    glpath  => $jboss_path,
-  }
-
-  exec { 'move-downloaded':
-    command => "mv $download_dir/$jboss_dir $jboss_path",
-    cwd     => $download_dir,
-    creates => $jboss_path,
-  }
-
-  exec { 'jboss-service-link':
-    command => "ln -s $jboss_path/bin/init.d/jboss-as-domain.sh /etc/init.d/jboss",
-    unless  => "test -f /etc/init.d/jboss",
-  }
-
-  #  file { servicefile:
-  #    path    => "/etc/init.d/jboss",
-  #    mode    => 755,
-  #    #content => template('jboss/jboss2.erb'),
-  #    content => template('jboss/jboss-init.erb'),
-  #    notify  => Service["jboss"]
-  #  }
-
-  file { jboss-as-conf:
-    path    => "/etc/jboss-as/jboss-as.conf",
-    mode    => 755,
-    content => template('jboss/jboss-as.conf.erb'),
-    notify  => Service["jboss"]
-  }
-
-  file { jbosscli:
-    content => template('jboss/jboss-cli.erb'),
-    mode    => 755,
-    path    => '/usr/bin/jboss-cli',
-    notify  => Service["jboss"]
-  }
-
-  service { "jboss":
-    ensure     => running,
-    enable     => true,
-    hasstatus  => true,
-    hasrestart => true,
-  #    require    => [File[$jboss_path], File[servicefile],
-  #      #Class[java7],
-  #    ]
-  }
-
-  Jboss::Download::Download["$download_dir/$zip_name"] -> Exec['unzip-downloaded'] -> Setgroupaccess['set-perm'] -> Exec[
-    'move-downloaded'] -> Exec['jboss-service-link'] -> File[jboss-as] -> File[jboss-as-conf] -> File[jbosscli]
-
-  # File[servicefile] -> Service['jboss']
-  File[jboss-as-conf] -> Service['jboss']
 }
-

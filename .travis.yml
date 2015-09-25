@@ -1,0 +1,30 @@
+---
+language: ruby
+# TODO: GH Issue #4 - Try to execute standard Ruby builds on Travis CI on container infrastructure
+sudo: required
+install:
+  - sudo add-apt-repository -y ppa:raphink/augeas
+  - sudo apt-get update
+  - sudo apt-get install -y libaugeas-dev libxml2-dev
+  - bundle install --without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
+script: bundle exec rake test
+before_install: rm -f Gemfile.lock
+matrix:
+  fast_finish: true
+  include:
+  - rvm: '1.8'
+    env: PUPPET_VERSION="~> 2.7.0" FACTER_VERSION="~> 1.6.0"
+  - rvm: '1.8'
+    env: PUPPET_VERSION="~> 2.7.0" FACTER_VERSION="~> 1.7.0"
+  - rvm: '1.9'
+    env: PUPPET_VERSION="~> 3.0"
+  - rvm: '2.0'
+    env: PUPPET_VERSION="~> 3.0"
+  - rvm: '2.1'
+    env: PUPPET_VERSION="~> 3.0"
+  - rvm: '2.1'
+    env: PUPPET_VERSION="~> 3.0" STRICT_VARIABLES=yes
+  # FIXME: GH Issue #2 - Activate acceptance tests for centos-6, debian-7 and ubuntu-14.04 on Travis CI's Docker
+  # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
+notifications:
+  email: false

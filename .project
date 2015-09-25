@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Puppet Module coi-jboss</name>
+	<name>jboss</name>
 	<comment></comment>
 	<projects>
+		<project>Forge Module puppetlabs-java</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>org.cloudsmith.geppetto.pp.dsl.ui.modulefileBuilder</name>
+			<name>com.aptana.ide.core.unifiedBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>com.puppetlabs.geppetto.pp.dsl.ui.modulefileBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -17,7 +23,8 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.cloudsmith.geppetto.pp.dsl.ui.puppetNature</nature>
+		<nature>com.puppetlabs.geppetto.pp.dsl.ui.puppetNature</nature>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
+		<nature>com.aptana.ruby.core.rubynature</nature>
 	</natures>
 </projectDescription>

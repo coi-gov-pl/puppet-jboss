@@ -1,1 +1,1 @@
-include jboss
+class { 'jboss': }

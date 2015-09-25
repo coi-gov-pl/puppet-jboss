@@ -1,11 +1,19 @@
 #! /bin/bash
 
-JBOSSPATH=<%= scope.lookupvar('jboss_path') %>
+# Source jboss config (JBOSS_HOME)
+if [ -f /etc/jboss-as/jboss-as.conf ]; then
+    . /etc/jboss-as/jboss-as.conf
+fi
+
+if [ ! -z "$JBOSS_HOME" ]; then
+    JBOSS_HOME=<%= @home %>
+fi
+JBOSSPATH=$JBOSS_HOME
 JBOSSCLI='./bin/jboss-cli.sh'
 
 CWD=`pwd`
 cd $JBOSSPATH
-$JBOSSCLI $@
+$JBOSSCLI "$@"
 RET=$?
 cd $CWD
 exit $RET
