@@ -1,7 +1,7 @@
 include jboss
 
 jboss::deploy { 'jca-filestore.rar':
-  jndi => 'jca-filestore.rar',
+  path => '/usr/src/jca-filestore.rar',
 }
 
 jboss::resourceadapter { 'jca-filestore.rar':
