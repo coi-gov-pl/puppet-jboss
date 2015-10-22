@@ -1,41 +1,48 @@
-# Puppet Module for JBoss EAP and Wildfly application servers
+# Puppet Module for JBoss EAP and Wildfly application servers 
+
+### ...with configuration management of resources and deployment in domain and stand-alone modes
 
 [![Build Status](https://travis-ci.org/coi-gov-pl/puppet-jboss.svg?branch=develop)](https://travis-ci.org/coi-gov-pl/puppet-jboss) [![Puppet Forge](https://img.shields.io/puppetforge/v/coi/jboss.svg)](https://forge.puppetlabs.com/coi/jboss) [![Code Climate](https://codeclimate.com/github/coi-gov-pl/puppet-jboss/badges/gpa.svg)](https://codeclimate.com/github/coi-gov-pl/puppet-jboss) [![Dependency Status](https://gemnasium.com/coi-gov-pl/puppet-jboss.svg)](https://gemnasium.com/coi-gov-pl/puppet-jboss) [![Coverage Status](https://coveralls.io/repos/coi-gov-pl/puppet-jboss/badge.svg?branch=develop&service=github)](https://coveralls.io/github/coi-gov-pl/puppet-jboss?branch=develop) [![Inline docs](http://inch-ci.org/github/coi-gov-pl/puppet-jboss.svg?branch=develop)](http://inch-ci.org/github/coi-gov-pl/puppet-jboss)
 
 #### Table of Contents
 
 1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with JBoss](#setup)
-    * [What JBoss module affects](#what-jboss-module-affects)
-    * [Beginning with JBoss module](#beginning-with-jboss-module)
-4. [Class usage - Configuration options and additional functionality](#class-usage)
-5. [Defined Types Reference - Description for custom types given by this module](#defined-types-reference)
-6. [JBoss module standard metaparameters - description of metaparameters being used in most of the types](#jboss-module-standard-metaparameters)
-6. [Limitations - OS compatibility, etc.](#limitations)
-7. [Development - Guide for contributing to the module](#development)
+1. [Module Description - What the module does and why it is useful](#module-description)
+1. [Setup - The basics of getting started with JBoss](#setup)
+    3.1. [What JBoss module affects](#what-jboss-module-affects)
+    3.1. [Beginning with JBoss module](#beginning-with-jboss-module)
+1. [Install classes reference](#install-classes-reference)
+1. [Configuration classes reference](#configuration-classes-reference)
+1. [Application defined types reference](#application-defined-types-reference)
+1. [Technical defined types reference](#technical-defined-types-reference)
+1. [Logging configuration defined types](#logging-configuration-defined-types)
+1. [JBoss module standard metaparameters](#jboss-module-standard-metaparameters)
+1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Development - Guide for contributing to the module](#development)
 
 ## Overview
 
-Installs and manages resources of JBoss EAP and Wildfly application servers. Supports resources like datasources, security domains, JMS queues, deployments and any other custom CLI based attributes and path.
+This module can install JBoss Enterprise Application Platform and WildFly application servers. It can also manage their resources and applications in either a domain or a stand-alone mode. It supports resources like datasource, security domain, JMS queues and any other custom CLI reachable attributes and path. It can also deploy your applications.
 
 ## Module Description
 
-The Center for Information Technology in Poland manage the JBoss application server farm. We were looking for a simple tool to support and automate the management of these servers in the spirit of DevOps. It should also be powerful enough to satisfy all, even future requirements. Nothing was able to meet our requirements, so we have designed and wrote the corresponding Puppet module.
+The Center for Information Technology in Poland manage the JBoss application server farm. We were looking for a simple tool to support and automate the management of these servers in the spirit of DevOps methodology. The tool should also be powerful enough to satisfy all, even future requirements. Nothing was able to meet our requirements, so we have designed and wrote the corresponding Puppet module.
 
-The module allows user to perform all necessary operations for JBoss such as:
-
- * install and update application servers in several modes,
+The module allows user to perform all necessary operations for JBoss servers. Here are couple of features:
+ 
+ * Installation and upgrading of application servers in domain and standalone modes,
  * support for JBoss AS, EAP, and WildFly,
- * support for the family of operating systems: Red Hat and Debian,
- * installation of internal JBoss modules and their generation of a set of libraries,
- * a domain configuration mode (including the creation of virtual servers and groups of servers) and in standalone mode,
+ * support for the Red Hat and Debian operating systems families,
+ * installation of internal JBoss modules and their generation from a set of libraries,
+ * configuration in a domain configuration mode (including the creation of virtual servers and groups of servers) and also standalone mode,
  * JBoss user management,
  * management of JBoss network interfaces,
- * JPA datasource management, Security Domain JBoss, JMS queues, resource adapters and messages logging
+ * JPA datasource management, security domains, JMS queues, resource adapters and system logging
  * deployment and removing of artifacts
-
-In addition to the above list ready, convenient instructions, you can configure any JBoss CLI paths, along with the entire set of parameters. This allows you to configure any parameter supported by JBoss.
+ 
+In addition to the above list, you can also configure any JBoss CLI reachable configuration, with the entire set of parameters. This allows you to configure any parameter supported by JBoss.
+ 
+Take a look. We will be happy to receive your feedback.
 
 ## Setup
 
@@ -71,9 +78,11 @@ jboss::params::version: '7.1.1.Final'
 ```
 
 
-## Class usage
+## Install classes reference
 
-### `jboss` class
+Those classes are main module classes, that handles most of the typical workflow. Use them to install the main porduct - JBoss or Wildfly.
+
+### The `jboss` install class
 
 The `jboss` main class is used to install the application server itself. It can install it on default parameters but you can use then to customize installation procedure.
 
@@ -83,118 +92,65 @@ Example:
 include jboss
 ```
 
-**Parameters for `jboss` class:**
-
-#### `hostname`
-
-It is used to name jboss main `host.xml` key to distinguish from other hosts in distributed environment. By default is equals to `$::hostname` fact.
-
-Applicable Hiera key: `jboss::params::hostname`
-
-#### `product`
-
-Name of the JBoss product. Can be one of: `jboss-eap`, `jboss-as` or `wildfly`. By default this is equals to `wildfly`.
-
-Applicable Hiera key: `jboss::params::product`
-
-#### `jboss_user`
-
-The name of the user to be used as owner of JBoss files in filesystem. It will be also used to run JBoss processes. Be default it is equal to `jboss` for `jboss-eap` and `jboss-as` server and `wildfly` for `wildfly` server.
-
-Applicable Hiera key: `jboss::params::jboss_user`
-
-#### `jboss_group`
-
-The filesystem group to be used as a owner of JBoss files. By default it is equal to the same value as `$jboss::jboss_user`.
-
-#### `download_url`
-
-The download URL from which JBoss zip file will be downloaded. Be default it is equal to `http://download.jboss.org/<product>/<version>/<product>-<version>.zip`
-
-#### `java_autoinstall`
-
-This parameter is by default equal to `true` and if so it will install default Java JDK using `puppetlabs/java`
-
-Applicable Hiera key: `jboss::params::java_autoinstall`
-
-#### `java_version`
-
-This parameter is by default equals to `latest` and it is passed to `puppetlabs/java` module. You can give other values. For details look in [Puppetlabs/Java dodumentation](https://github.com/puppetlabs/puppetlabs-java)
-
-Applicable Hiera key: `jboss::params::java_version`
-
-#### `java_package`
-
-The name of Java JDK package to use. Be default it is used to `undef` and it is passed to `puppetlabs/java`. Possible values are: `jdk`, `jre`. For details look in [Puppetlabs/Java dodumentation](https://github.com/puppetlabs/puppetlabs-java)
-
-Applicable Hiera key: `jboss::params::java_package`
-
-#### `install_dir`
-
-The directory to use as installation home for JBoss Application Server. By default it is equal to `/usr/lib/<product>-<version>`
-
-Applicable Hiera key: `jboss::params::install_dir`
-
-#### `runasdomain`
-
-This parameter is used to configure JBoss server to run in domain or standalone mode. By default is equal to `false`, so JBoss runs in standalone mode. Set it to `true` to setup domain mode.
-
-Applicable Hiera key: `jboss::params::runasdomain`
-
-#### `enableconsole`
-
-This parameter is used to enable or disable access to JBoss management web console. It is equal to `false` by default, so the console is turned off.
-
-Applicable Hiera key: `jboss::params::enableconsole`
-
-#### `profile`
-
-JBoss profile to use. By default it is equal to `full`, which is the default profile in JBoss server. You can use any other default profile to start with: `full`, `ha`, `full-ha`.
-
-Applicable Hiera key: `jboss::params::profile`
-
-#### `prerequisites`
-
-The class to use as a JBoss prerequisites which will be processed before installation. By default is equal to `Class['jboss::internal::prerequisites']`. The default class is used to install `wget` package. If you would like to install `wget` in diffrent way, please write your class that does that and pass reference to it as this parameter
-
-#### `fetch_tool`
-
-This parameter is by default equal to `jboss::internal::util::download`. This is a default implementation for fetching files (mostly JBoss zip files) with `wget`. If you would like to use your own implementation, please write your custom define with the same interface as `jboss::internal::util::download` and pass it's name to this parameter.
-
-Applicable Hiera key: `jboss::params::fetch_tool`
-
-### `jboss::domain::controller` class
-
-This class will setup JBoss server to run as controller of the domain. It has no parameters.
+or with parameters:
 
 ```puppet
-include jboss::domain::controller
+class { 'jboss':
+  enableconsole => true,
+}
 ```
-### `jboss::domain::node` class
 
-This class will setup JBoss server to run as node of the domain. It takes two parameters: `ctrluser` and `ctrlpassword`. User name and password must be setup to JBoss controller. Easiest way to add jboss management user with `jboss::user` type.
+More about [`jboss`  class](https://github.com/coi-gov-pl/puppet-jboss/wiki/class-jboss) on Wiki.
+
+## Configure classes reference
+
+Those classes are here to configure your JBoss/Wildfly instance.
+
+### The `jboss::domain::controller` configure class
+
+This class will setup parameters for JBoss server to run as controller of the domain. It has no parameters. This class must be used before main JBoss class for ex.:
 
 ```puppet
-# same on both
+# This include must be defined before JBoss main class
+include jboss::domain::controller
+
+class { 'jboss':
+  enableconsole => true,
+}
+```
+
+### The `jboss::domain::node` configure class
+
+This class will setup JBoss server to run as node of the domain. 
+
+It takes two parameters: `ctrluser` and `ctrlpassword`. User name and password must be setup to JBoss controller. Easiest way to add jboss management user with `jboss::user` type.
+
+```puppet
 $user = 'jb-user'
 $passwd = 'SeC3eT!1'
 
-# on controller
-jboss::user { $user:
-  ensure   => 'present',
-  password => $passwd,
+node 'controller' {
+  include jboss::domain::controller
+  include jboss
+  jboss::user { $user:
+    ensure   => 'present',
+    password => $passwd,
+  }
 }
 
-# on node
-class { 'jboss::domain::node':
-  ctrluser     => $user,
-  ctrlpassword => $passwd,
+node 'node' {
+  class { 'jboss::domain::node':
+    ctrluser     => $user,
+    ctrlpassword => $passwd,
+  }
 }
 ```
 
-## Defined Types Reference
+## Application defined types reference
 
-### `jboss::datasource` defined type
+Application defined types are here to be directly expected by applications running on your application server. Most likely to written by application developers.
+
+### The `jboss::datasource` defined type
 
 This defined type can be used to add and remove JBoss data sources. It support both XA and Non-XA data sources. It can setup data sources and manage required drivers. 
 
@@ -229,79 +185,9 @@ jboss::datasource { 'test-xa-datasource':
 }
 ```
 
-**Parameters for `jboss::datasource`:**
+More on parameters for [`jboss::datasource` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::datasource) on Wiki.
 
-This type uses [JBoss module standard metaparameters](#jboss-module-standard-metaparameters)
-
-#### `jdbcscheme` parameter
-
-**Required parameter.** This is the JDBC scheme for ex.: `postgresql`, `oracle`, `mysql`, `mssql` or `h2:mem`. All accepted by JBoss JDBC shemes are valid.
-
-#### `host` parameter
-
-**Required parameter.** This is the name of the database host or it's IP address. Pass empty string `''` if host isn't needed.
-
-#### `port` parameter
-
-**Required parameter.** This is the port of the database. Pass empty string `''` if port isn't needed.
-
-#### `username` parameter
-
-**Required parameter.** This is the user name that will be used to connect to database.
-
-#### `password` parameter
-
-**Required parameter.** This is the password that will be used to connect to database.
-
-#### `dbname` parameter
-
-**This is the namevar.** Name of the database to be used.
-
-#### `ensure` parameter
-
-Standard ensure parameter. Can be either `present` or `absent`.
-
-#### `jndiname` parameter
-
-Java JNDI name of the datasource. Be default it is equals to `java:jboss/datasources/<name>`
-
-#### `xa` parameter
-
-This parameters indicate that given data source should XA or Non-XA type. Be default this is equal to `false`
-
-#### `jta` parameter
-
-This parameters indicate that given data source should support Java JTA transactions. Be default this is equal to `true`
-
-#### `minpoolsize` parameter
-
-Minimum connections in connection pool. By default it is equal to `1`.
-
-#### `maxpoolsize` parameter
-
-Maximum connections in connection pool. By default it is equal to `50`.
-
-#### `enabled` parameter
-
-This parameter control whether given data source should be enabled or not. By default it is equal to `true`.
-
-#### `options` parameter
-
-This is an extra options hash. You can give any additional options that will be passed directly to JBoss data source. Any supported by JBoss values will be accepted and enforced. Values that are not mentioned are not processed.
-
-Default options added to every data source (they can be overwritten):
-
- - `validate-on-match` => `false`
- - `background-validation` => `false`
- - `share-prepared-statements` => `false`
- - `prepared-statements-cache-size` => `0`
-
-Default options added to every XA data source (they can be overwritten):
-
- - `same-rm-override` => `true`
- - `wrap-xa-resource` => `true`
-
-### `jboss::jmsqueue` defined type
+### The `jboss::jmsqueue` defined type
 
 Use this defined type to add and remove JBoss JMS Queues.
 
@@ -316,23 +202,121 @@ jboss::jmsqueue { 'app-mails':
 }
 ```
 
-**Parameters for `jboss::jmsqueue`:**
+More on parameters for [`jboss::jmsqueue` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::jmsqueue) on Wiki.
 
-This type uses [JBoss module standard metaparameters](#jboss-module-standard-metaparameters)
+### The `jboss::resourceadapter` defined type
 
-#### `entries` parameter
+This defined type can be used to add and remove JBoss resource adapters. A resource adapter 
+is a deployable Java EE component that provides communication between a Java EE application
+and an Enterprise Information System (EIS) using the Java Connector Architecture (JCA) 
+specification
 
-A list of JNDI entries for JBoss JMS Queue. You can specify any number of entries from which your queue will be visible inside your application.
+See more info here: https://docs.oracle.com/javaee/6/tutorial/doc/bncjh.html
 
-#### `ensure` parameter
+```puppet
+jboss::deploy { 'jca-filestore.rar':
+  jndi => 'jca-filestore.rar',
+}
 
-Standard ensure parameter. Can be either `present` or `absent`.
+jboss::resourceadapter { 'jca-filestore.rar':
+  archive            => 'jca-filestore.rar',
+  transactionsupport => 'LocalTransaction',
+  classname          => 'org.example.jca.FileSystemConnectionFactory',
+  jndiname           => 'java:/jboss/jca/photos',
+  require            => JBoss::Deploy['jca-filestore.rar'],
+}
+```
 
-#### `durable` parameter
+More on parameters for [`jboss::resourceadapter` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::resourceadapter) on Wiki.
 
-This parameter indicate that given JMS queue should be durable or not. By default this is equal to `false`.
+### The `jboss::securitydomain` defined type
 
-### `jboss::user` defined type
+This defined type can be used to add and remove JBoss security domains. A security domain 
+consists of configurations for authentication, authorization, security mapping, and auditing. 
+It implements Java Authentication and Authorization Service (JAAS) declarative security.
+
+See here: https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Security_Guide/sect-Security_Domains.html
+
+```puppet
+jboss::securitydomain { 'db-auth-default':
+  ensure        => 'present',
+  code          => 'Database',
+  codeflag      => 'required',
+  moduleoptions => {
+    'dsJndiName'        => 'java:jboss/datasources/default-db',
+    'principalsQuery'   => 'select \'password\' from users u where u.login = ?',
+    'hashUserPassword'  => false,
+    'hashStorePassword' => false,
+    'rolesQuery'        => 'select r.name, \'Roles\' from users u
+join user_roles ur on ur.user_id = u.id
+join roles r on r.id = ur.role_id
+where u.login = ?',
+  },
+}
+```
+
+More on parameters for [`jboss::securitydomain` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::securitydomain) on Wiki.
+
+### The `jboss::module` defined type
+
+This defined type can add and remove JBoss static modules. Static modules are predefined in 
+the `JBOSS_HOME/modules/` directory of the application server. Each sub-directory represents 
+one module and contains one or more JAR files and a configuration file - `module.xml`.
+
+More info on modules here: https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6/html/Development_Guide/chap-Class_Loading_and_Modules.html
+
+```puppet
+jboss::module { 'postgresql-jdbc':
+  layer        => 'jdbc',
+  artifacts    => [
+    'https://jdbc.postgresql.org/download/postgresql-9.4-1204.jdbc41.jar',
+  ],
+  dependencies => [
+    'javax.transaction.api',
+    'javax.api',
+  ],
+}
+```
+
+After processing of this module JBoss server will be automatically restarted, but only when changes occur.
+
+More on parameters for [`jboss::module` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::module) on Wiki.
+
+### The `jboss::clientry` defined type
+
+This define is very versatile. It can be used to add or remove any JBoss CLI entry. You can pass any number of properties for given CLI path and each one will be manage, other parameters will not be changed.
+
+```puppet
+jboss::clientry { '/subsystem=messaging/hornetq-server=default':
+  ensure     => 'present',
+  properties => {
+    'security-enabled' => false,
+  }
+}
+```
+
+More on parameters for [`jboss::clientry` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::clientry) on Wiki.
+
+
+## Technical defined types reference
+
+Technical defined types will be most likely used by system administrators to configure JBoss application servers to theirs needs.
+
+### The `jboss::deploy` defined type
+
+This defined type can be used to deploy and undeploy standard Java artifacts to JBoss server
+
+```puppet
+jboss::deploy { 'foobar-app':
+  ensure      => 'present',
+  servergroup => 'foobar-group',
+  path        => '/usr/src/foobar-app-1.0.0.war',
+}
+```
+
+More on parameters for [`jboss::deploy` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::deploy) on Wiki.
+
+### The `jboss::user` defined type
 
 Use this defined type to add and remove JBoss management and application users, manage their passwords and roles.
 
@@ -344,76 +328,86 @@ jboss::user { 'admin':
 }
 ```
 
-**Parameters of `jboss::user`:**
+More on parameters for [`jboss::user` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::user) on Wiki.
 
-#### `password` parameter
+### The `jboss::interface` defined type
 
-**Required parameter.** This is password that will be used for user.
+This defined type can be used to setup JBoss interfaces. It can add, remove or change
+existing interfaces.
 
-#### `ensure` parameter
-
-Standard ensure parameter. Can be either `present` or `absent`.
-
-#### `user` parameter
-
-This is the namevar. Name of user to manage.
-
-#### `realm` parameter
-
-This is by default equal to `ManagementRealm`. It can be equal also to `ApplicationRealm`.
-
-#### `roles` parameter
-
-This is by default equal to `undef`. You can pass a list of roles in form of string delimited by `,` sign.
-
-### `jboss::clientry` defined type
-
-This define is very versitale. It can be used to add or remove any JBoss CLI entry. You can pass any number of properties for given CLI path and each one will be manage, other parameters will not be changed.
+More info about interfaces may be found here: https://docs.jboss.org/author/display/WFLY8/Interfaces+and+ports
 
 ```puppet
-jboss::clientry { '/subsystem=messaging/hornetq-server=default':
-  ensure     => 'present',
-  properties => {
-    'security-enabled' => false,
+jboss::interface { 'public':
+  ensure       => 'present',
+  inet_address => '192.168.5.33',
+}
+```
+
+More on parameters for [`jboss::interface` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::interface) on Wiki.
+
+### The `jboss::domain::server` defined type
+
+This defined type simplifies creation and removal and updating JBoss domain virtual server (server instance) running on a host server (host controller) in domain mode.
+
+```puppet
+include jboss
+
+jboss::domain::servergroup { 'appsrv-group':
+  ensure            => 'present',
+  profile           => 'full-ha',
+  heapsize          => '2048m',
+  maxheapsize       => '2048m',
+  jvmopts           => '-XX:+UseG1GC -XX:MaxGCPauseMillis=200',
+  system_properties => {
+    'java.security.egd' => 'file:/dev/urandom',
+  }
+}
+
+jboss::domain::server { 'appsrv-01':
+  ensure => 'present',
+  group  => 'appsrv-group',
+}
+```
+
+More on parameters for [`jboss::domain::server` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::domain::server) on Wiki.
+
+### The `jboss::domain::servergroup` defined type
+
+This defined type simplifies creation and removal and updating JBoss domain server group that can enforce same configuration (profile, deployments and JVM settings) across multiple servers on multiple host controllers. This is only possible in domain mode.
+
+```puppet
+include jboss
+
+jboss::domain::servergroup { 'app-group':
+  ensure            => 'present',
+  profile           => 'full-ha',
+  heapsize          => '2048m',
+  maxheapsize       => '2048m',
+  jvmopts           => '-XX:+UseG1GC -XX:MaxGCPauseMillis=200',
+  system_properties => {
+    'java.security.egd' => 'file:/dev/urandom',
   }
 }
 ```
 
-**Parameters of `jboss::clientry`**:
+More on parameters for [`jboss::domain::servergroup` defined type](https://github.com/coi-gov-pl/puppet-jboss/wiki/Defined-type-jboss::domain::servergroup) on Wiki.
 
-This type uses [JBoss module standard metaparameters](#jboss-module-standard-metaparameters)
+## Logging configuration defined types
 
-#### `ensure` parameter
+Logging configuration defined types are wrappers for `jboss::clientry` type, being written for ease of use for system administrators.
 
-Standard ensure parameter. Can be either `present` or `absent`.
+* [`jboss::logging::root`](https://github.com/coi-gov-pl/puppet-jboss/wiki/defined-type-jboss::logging::root) - This defined type can be used to manage JBoss root logger easily.
+* [`jboss::logging::logger`](https://github.com/coi-gov-pl/puppet-jboss/wiki/defined-type-jboss::logging::logger) - This defined type can be used to manage  named loggers.
+* [`jboss::logging::console`](https://github.com/coi-gov-pl/puppet-jboss/wiki/defined-type-jboss::logging::console) - This defined type can be used to manage console handlers for logging.
+* [`jboss::logging::file`](https://github.com/coi-gov-pl/puppet-jboss/wiki/defined-type-jboss::logging::file) - This defined type can be used to manage periodic  rotating file handlers.
+* [`jboss::logging::async`](https://github.com/coi-gov-pl/puppet-jboss/wiki/defined-type-jboss::logging::async) - This defined type can be used to manage asynchronous file handlers.
+* [`jboss::logging::syslog`](https://github.com/coi-gov-pl/puppet-jboss/wiki/defined-type-jboss::logging::syslog) - This defined type can be used to manage syslog handlers.
 
-#### `path` parameter
-
-This is the namevar. Path of the CLI entry. This is path accepted by JBoss CLI. The path must be passed without `/profile=<profile-name>` in domain mode as well (for that `profile` parameter must be used).
-
-#### `properties` parameter
-
-This is optional properties hash. You can pass any valid JBoss properties for given `path`. For valid ones head to the JBoss Application Server documentation. Must be hash object or `undef` value.
-
-#### `dorestart` parameter
-
-This parameter forces to execute command `:restart()` on this CLI entry.
 
 ## JBoss module standard metaparameters
 
-
-### `runasdomain` parameter
-
-Describe that this define should be evaluated as domain or standalone. Default value is taken from `jboss` class. If you override `runasdomain` parameter there you do not need to set it with this parameter explicitly.
-
-### `profile` parameter
-
-On with JBoss profile do apply. Default value is taken from `jboss` class. If you override `profile` parameter there you do not need to set it with this parameter explicitly.
-
-### `controller` parameter
-
-To with controller connect to. By default it is equals to `127.0.0.1:9999` on jboss servers and `127.0.0.1:9990` on wildfly server. Default value is taken from `jboss` class. If you override `controller` parameter there you do not need to set it with this parameter explicitly.
-
+Most of the defined types uses [JBoss Puppet module standard metaparameters](https://github.com/coi-gov-pl/puppet-jboss/wiki/JBoss-module-standard-metaparameters). Their description can be found on Wiki page.
 
 ## Limitations
 
@@ -422,7 +416,13 @@ This module is explicitly tested on:
 * Oracle Linux 6.x, CentOS 6.x
 * Ubuntu Server LTS 14.04
 
-Compatible with:
+With servers:
+
+ * JBoss AS 7.1
+ * JBoss EAP 6.1 - 6.4,
+ * WildFly 8.x
+
+Should be fully compatible with those operating systems:
 
 * Red Hat Enterprise Linux: 5.x, 6.x
 * CentOS: 5.x, 6.x
@@ -446,4 +446,4 @@ To contribute to this module please read carefully the [CONTRIBUTING.md](https:/
  * First publicly available version
  * Support for JBoss EAP, JBoss AS and Wildfly
  * Support for JPA datasource management, Security Domain JBoss, JMS queues, resource adapters and messages logging
- * Supoort for deploying artifacts
+ * Support for deploying artifacts
