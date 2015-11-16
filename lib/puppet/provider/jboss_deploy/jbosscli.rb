@@ -3,36 +3,18 @@ require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbossc
 Puppet::Type.type(:jboss_deploy).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
   def create
-    cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}"
-    if @resource[:runasdomain]
-      servergroups = @resource[:servergroups]
-      if servergroups.nil? or servergroups.empty? or servergroups == [''] 
-        cmd = "#{cmd} --all-server-groups"
-      else
-        cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
-      end
-    end
-    if @resource[:redeploy]
-      cmd = "#{cmd} --force"
-    end
-    isprintinglog = 100
-    bringUp 'Deployment', cmd
+    deploy
   end
 
   def destroy
-    cmd = "undeploy #{@resource[:name]}"
-    if @resource[:runasdomain]
-      servergroups = @resource[:servergroups]
-      if servergroups.nil? or servergroups.empty? or servergroups == [''] 
-        cmd = "#{cmd} --all-relevant-server-groups"
-      else
-        cmd = "#{cmd} --server-groups=#{@resource[:servergroup]}"
-      end
-    end
-    isprintinglog = 0
-    bringDown 'Deployment', cmd
+    undeploy
   end
-  
+
+  def refresh
+    undeploy unless @resource[:redeploy]
+    deploy
+  end
+
   def name_exists?
     res = executeWithoutRetry "deployment-info --name=#{@resource[:name]}"
     if res[:result] == false
@@ -46,9 +28,9 @@ Puppet::Type.type(:jboss_deploy).provide(:jbosscli, :parent => Puppet::Provider:
       end
     end
     Puppet.debug "No deployment matching #{@resource[:name]} found."
-    return false    
+    return false
   end
-  
+
   def is_exact_deployment?
     true
   end
@@ -65,7 +47,7 @@ Puppet::Type.type(:jboss_deploy).provide(:jbosscli, :parent => Puppet::Provider:
     if not @resource[:runasdomain]
       return @resource[:servergroups]
     end
-    servergroups = @resource[:servergroups] 
+    servergroups = @resource[:servergroups]
     res = execute("deployment-info --name=#{@resource[:name]}")
     if not res[:result]
       return []
@@ -84,6 +66,15 @@ Puppet::Type.type(:jboss_deploy).provide(:jbosscli, :parent => Puppet::Provider:
     return groups
   end
 
+  def runtime_name_param
+    if @resource[:runtime_name].nil?
+      return ''
+    else
+      return "--runtime-name=#{@resource[:runtime_name]}"
+    end
+  end
+
+
   def servergroups=(value)
     if not @resource[:runasdomain]
       return nil
@@ -93,7 +84,39 @@ Puppet::Type.type(:jboss_deploy).provide(:jbosscli, :parent => Puppet::Provider:
     Puppet.debug(value.inspect())
 
     toset = value - current
-    cmd = "deploy --name=#{@resource[:name]} --server-groups=#{toset.join(',')}"
+    cmd = "deploy --name=#{@resource[:name]} --server-groups=#{toset.join(',')} #{runtime_name_param}"
     res = bringUp('Deployment', cmd)
   end
+
+  def deploy
+    cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]} #{runtime_name_param}"
+    if @resource[:runasdomain]
+      servergroups = @resource[:servergroups]
+      if servergroups.nil? or servergroups.empty? or servergroups == ['']
+        cmd = "#{cmd} --all-server-groups"
+      else
+        cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
+      end
+    end
+    if @resource[:redeploy]
+      cmd = "#{cmd} --force"
+    end
+    isprintinglog = 100
+    bringUp 'Deployment', cmd
+  end
+
+  def undeploy
+    cmd = "undeploy #{@resource[:name]}"
+    if @resource[:runasdomain]
+      servergroups = @resource[:servergroups]
+      if servergroups.nil? or servergroups.empty? or servergroups == ['']
+        cmd = "#{cmd} --all-relevant-server-groups"
+      else
+        cmd = "#{cmd} --server-groups=#{@resource[:servergroup]}"
+      end
+    end
+    isprintinglog = 0
+    bringDown 'Deployment', cmd
+  end
+
 end
