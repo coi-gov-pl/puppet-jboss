@@ -59,6 +59,10 @@
 #     (mostly JBoss zip files) with `wget`. If you would like to use your own implementation, please write your custom define with
 #     the same interface as `jboss::internal::util::download` and pass it's name to this parameter. Applicable Hiera key:
 #     `jboss::params::fetch_tool`
+# [*server_opts*]
+#     Additional command line parameters passed to java.
+# [*java_opts*]
+#     Additional command line parameters passed to java. Be sure to include JBoss's default JVM settings
 #
 # === Copyright
 #
@@ -81,6 +85,8 @@ class jboss (
   $profile          = $jboss::params::profile,
   $prerequisites    = Class['jboss::internal::prerequisites'],
   $fetch_tool       = $jboss::params::fetch_tool,
+  $server_opts      = $jboss::params::server_opts,
+  $java_opts        = $jboss::params::java_opts,
 ) inherits jboss::params {
 
   $home              = "${install_dir}/${product}-${version}"

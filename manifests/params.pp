@@ -52,4 +52,9 @@ class jboss::params inherits jboss::internal::params {
   # Tool used by this module to fetch JBoss installation files from network
   $fetch_tool       = hiera('jboss::params::fetch_tool', 'jboss::internal::util::download')
 
+  # Additional commandline parameters passed to java
+  $server_opts      = hiera('jboss::params::server_opts', undef)
+
+  # Additional commandline parameters passed as java arguments
+  $java_opts        = hiera('jboss::params::java_opts', undef)
 }

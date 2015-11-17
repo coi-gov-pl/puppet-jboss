@@ -21,6 +21,8 @@ class jboss::internal::configuration {
   $conffile      = "${etcconfdir}/${jboss::product}.conf"
   $logdir        = "${jboss::internal::params::logbasedir}/${jboss::product}"
   $logfile       = "${logdir}/console.log"
+  $server_opts   = $jboss::server_opts
+  $java_opts     = $jboss::java_opts
 
   anchor { 'jboss::configuration::begin':
     require => Anchor['jboss::package::end'],
@@ -107,6 +109,18 @@ class jboss::internal::configuration {
     target  => $conffile,
     order   => '000',
     content => template('jboss/jboss-as.conf.erb'),
+  }
+
+  jboss::internal::configure::conf_entry { 'JAVA_OPTS':
+    value   => $java_opts,
+    require => Anchor['jboss::configuration::begin'],
+    notify  => Service[$jboss::product],
+  }
+
+  jboss::internal::configure::conf_entry { 'SERVER_OPTS':
+    value   => $server_opts,
+    require => Anchor['jboss::configuration::begin'],
+    notify  => Service[$jboss::product],
   }
 
   anchor { 'jboss::configuration::end':
