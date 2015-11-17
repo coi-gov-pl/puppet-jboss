@@ -116,9 +116,23 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   def self.execshell(cmd)
     `#{cmd}`
   end
-  
+
+  def self.reload_facter
+    Facter.clear
+    Facter.loadfacts
+  end
+
+  def self.jboss_product
+    Facter.value(:jboss_product)
+  end
+
   def self.jbossas?
-    Facter.value(:jboss_product) == 'jboss-as'
+    # jboss_product fact is not set on first run, so that
+    # calls to jboss-cli can fail (if jboss-as is installed)
+    if jboss_product.nil?
+      reload_facter
+    end
+    jboss_product == 'jboss-as'
   end
   
   def self.timeout_cli
