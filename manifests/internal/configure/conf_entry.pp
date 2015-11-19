@@ -24,7 +24,6 @@ define jboss::internal::configure::conf_entry(
     path    => $configfile,
     line    => "${variable}=\"${value}\" ${marker}",
     match   => "\\s*${variable}=.*${marker}",
-    replace => true,
   }
 
 }
