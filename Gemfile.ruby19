@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+# This is extra Gemfile for dependencies in old Ruby 1.9.x
+
+group :test do
+  gem 'tins', '~> 1.6.0',  require: false if RUBY_VERSION < '2.0.0' and RUBY_VERSION >= '1.9.0'
+end

@@ -49,6 +49,7 @@ group :development do
   end
 end
 
+eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.ruby19')), binding) if RUBY_VERSION < '2.0.0' and RUBY_VERSION >= '1.9.0'
 eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.ruby18')), binding) if RUBY_VERSION < '1.9.0'
 
 # vim:ft=ruby

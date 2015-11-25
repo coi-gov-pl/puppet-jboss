@@ -4,6 +4,8 @@
 group :test do
   gem 'rspec-its',          :require => false
   gem 'rspec', '~> 3.1.0',  :require => false
+
+  gem 'tins', '~> 1.6.0',  :require => false if RUBY_VERSION < '1.9.0' and RUBY_VERSION >= '1.8.0'
 end
 
 group :development do
