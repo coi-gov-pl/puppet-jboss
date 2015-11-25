@@ -18,6 +18,12 @@ unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
   end
 
   hosts.each do |host|
+    if fact('osfamily') == 'Debian'
+      install_package host, 'locales'
+      on host, 'echo "en_US.UTF-8 UTF-8" > /etc/locale.gen'
+      on host, '/usr/sbin/locale-gen'
+      on host, '/usr/sbin/update-locale'
+    end
     shell("mkdir -p #{host['distmoduledir']}")
     if ! host.is_pe?
       # Augeas is only used in one place, for Redhat.
@@ -43,12 +49,6 @@ RSpec.configure do |c|
     hosts.each do |host|
       on host, "/bin/touch #{default['puppetpath']}/hiera.yaml"
       on host, 'chmod 755 /root'
-      if fact('osfamily') == 'Debian'
-        on host, "echo \"en_US ISO-8859-1\nen_US.UTF-8 UTF-8\n\" > /etc/locale.gen"
-        on host, '/usr/sbin/locale-gen'
-        on host, '/usr/sbin/update-locale'
-      end
-
       on host, puppet('module','install','puppetlabs-stdlib', '--version', '3.2.0'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module','install','puppetlabs-java', '--version', '1.3.0'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module','install','puppetlabs-concat', '--version', '1.0.0'), { :acceptable_exit_codes => [0,1] }
