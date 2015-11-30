@@ -9,8 +9,8 @@
 1. [Overview](#overview)
 1. [Module Description - What the module does and why it is useful](#module-description)
 1. [Setup - The basics of getting started with JBoss](#setup)
-    3.1. [What JBoss module affects](#what-jboss-module-affects)
-    3.1. [Beginning with JBoss module](#beginning-with-jboss-module)
+  1. [What JBoss module affects](#what-jboss-module-affects)
+  1. [Beginning with JBoss module](#beginning-with-jboss-module)
 1. [Install classes reference](#install-classes-reference)
 1. [Configuration classes reference](#configuration-classes-reference)
 1. [Application defined types reference](#application-defined-types-reference)
@@ -442,8 +442,11 @@ To contribute to this module please read carefully the [CONTRIBUTING.md](https:/
 
 ## Release Notes
 
-* `1.0.0`
- * First publicly available version
- * Support for JBoss EAP, JBoss AS and Wildfly
- * Support for JPA datasource management, Security Domain JBoss, JMS queues, resource adapters and messages logging
- * Support for deploying artifacts
+* `1.0.2` - MintyFrost
+  * Enhancement: move documentation to the Wiki and document all public manifests
+  * Bug: make acceptance tests work on Travis
+* `1.0.0` - First public release
+  * First publicly available version
+  * Support for JBoss EAP, JBoss AS and Wildfly
+  * Support for JPA datasource management, Security Domain JBoss, JMS queues, resource adapters and messages logging
+  * Support for deploying artifacts
