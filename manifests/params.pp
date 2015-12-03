@@ -10,9 +10,10 @@ class jboss::params inherits jboss::internal::params {
   # Deprcated, will deleted in next major version
   include jboss::internal::quirks::autoinstall
 
-  # Should java be installed by this module automatically?
+  # Should java be installed by this module automatically?,
+  # Default value is set to true
   $java_autoinstall = jboss_to_bool(hiera('jboss::params::java_autoinstall',
-    $jboss::internal::quirks::autoinstall::deprecated_java_install))
+  $jboss::internal::quirks::autoinstall::deprecated_java_install))
 
   # The version of Java to be installed, default: latest
   $java_version     = hiera('jboss::params::java_version', 'latest')
