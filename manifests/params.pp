@@ -27,8 +27,11 @@ class jboss::params inherits jboss::internal::params {
   # Group for Jboss Application Server
   $jboss_group      = hiera('jboss::params::jboss_group', 'jboss')
 
-  # Download URL for Jboss Application Server installation package
+  # Base URL for downloading Jboss Application Server installation package
   $download_urlbase = hiera('jboss::params::download_urlbase', 'http://download.jboss.org')
+
+  # Full URL for downloading JBoss Application Server installation package
+  $download_url     = hiera('jboss::params::download_url', "${download_urlbase}/${product}/${version}/${product}-${version}.zip")
 
   # Target installation directory root
   $install_dir      = hiera('jboss::params::install_dir', '/usr/lib')
