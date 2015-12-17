@@ -7,8 +7,13 @@ class jboss::params inherits jboss::internal::params {
   # Version of JBoss Application Server
   $version          = hiera('jboss::params::version', '8.2.0.Final')
 
-  # Should java be installed by this module automatically?
-  $java_autoinstall = jboss_to_bool(hiera('jboss::params::java_install', true))
+  # Deprcated, will deleted in next major version
+  include jboss::internal::quirks::autoinstall
+
+  # Should java be installed by this module automatically?,
+  # Default value is set to true
+  $java_autoinstall = jboss_to_bool(hiera('jboss::params::java_autoinstall',
+  $jboss::internal::quirks::autoinstall::deprecated_java_install))
 
   # The version of Java to be installed, default: latest
   $java_version     = hiera('jboss::params::java_version', 'latest')
@@ -22,8 +27,11 @@ class jboss::params inherits jboss::internal::params {
   # Group for Jboss Application Server
   $jboss_group      = hiera('jboss::params::jboss_group', 'jboss')
 
-  # Download URL for Jboss Application Server installation package
+  # Base URL for downloading Jboss Application Server installation package
   $download_urlbase = hiera('jboss::params::download_urlbase', 'http://download.jboss.org')
+
+  # Full URL for downloading JBoss Application Server installation package
+  $download_url     = hiera('jboss::params::download_url', "${download_urlbase}/${product}/${version}/${product}-${version}.zip")
 
   # Target installation directory root
   $install_dir      = hiera('jboss::params::install_dir', '/usr/lib')
