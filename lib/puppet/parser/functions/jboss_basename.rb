@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/functions/jboss_basename')
+
 # Jboss AS private basename function
 #
 # jboss_basename(string) : string
@@ -8,11 +10,6 @@
 # local file system.
 module Puppet::Parser::Functions
   newfunction(:jboss_basename, :type => :rvalue) do |args|
-    input = args[0]
-    if input.is_a?(Array)
-      input.collect do |a| File.basename(a) end
-    else
-      File.basename(input)
-    end
+    Puppet_X::Coi::Jboss::Functions.jboss_basename args
   end
 end
