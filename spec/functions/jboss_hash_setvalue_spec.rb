@@ -34,4 +34,5 @@ describe 'jboss_hash_setvalue', :type => :puppet_function do
         expect(input).to include('john' => 'cena')
         expect(input.size).to eq(2)
       end
+  end
 end
