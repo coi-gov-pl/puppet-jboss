@@ -8,10 +8,11 @@
 # local file system.
 module Puppet::Parser::Functions
   newfunction(:jboss_basename, :type => :rvalue) do |args|
-    if args[0].is_a?(Array)
-      args.collect do |a| File.basename(a) end
+    input = args[0]
+    if input.is_a?(Array)
+      input.collect do |a| File.basename(a) end
     else
-      File.basename(args[0])
+      File.basename(input)
     end
   end
 end
