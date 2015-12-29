@@ -21,30 +21,8 @@ describe 'jboss::interface', :type => :define do
   let(:facts) do
     generic_facts.merge(runtime_facts)
   end
-  let(:basic_bind_variables) do
-    {
-      "any-address"        => :undef,
-      "inet-address"       => :undef,
-      "link-local-address" => :undef,
-      "loopback"           => :undef,
-      "loopback-address"   => :undef,
-      "multicast"          => :undef,
-      "nic"                => :undef,
-      "nic-match"          => :undef,
-      "point-to-point"     => :undef,
-      "public-address"     => :undef,
-      "site-local-address" => :undef,
-      "subnet-match"       => :undef,
-      "up"                 => :undef,
-      "virtual"            => :undef
-    }
-  end
-  let(:legacy_bind_variables) do
-    {
-      "any-ipv4-address" => :undef,
-      "any-ipv6-address" => :undef,
-    }
-  end
+  let(:basic_bind_variables) { Hash[basic_bind_variables_list.map {|x| [x, :undef]}] }
+  let(:legacy_bind_variables) { Hash[legacy_bind_variables_list.map {|x| [x, :undef]}] }
 
   context 'with jboss_running => true and runasdomain => false parameters set' do
     let(:runtime_facts) do
