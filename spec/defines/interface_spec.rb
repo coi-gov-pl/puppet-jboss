@@ -51,6 +51,20 @@ describe 'jboss::interface', :type => :define do
         basic_bind_variables.merge(legacy_bind_variables)
         )}
     end
+    context 'with product => jboss-eap and version => 7.0.0.Beta parameters set' do
+      let(:product) {'jboss-eap'}
+      let(:version) {'7.0.0.Beta'}
+
+      it { is_expected.to compile }
+      it { is_expected.to contain_jboss__interface('test-interface') }
+      it { is_expected.to contain_jboss__clientry('/interface=test-interface').with_properties(basic_bind_variables) }
+    end
+    context 'with product => wildfly and version => 15.0.0.Final parameters set' do
+      let(:product) {'wildfly'}
+      let(:version) {'15.0.0.Final'}
+
+      it { is_expected.to raise_error(Puppet::Error, /Unsupported version wildfly 15.0.0.Final/) }
+    end
   end
 
   context 'with jboss_running => false and runasdomain => false parameters set' do
