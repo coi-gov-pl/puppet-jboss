@@ -91,6 +91,17 @@ describe 'jboss::interface', :type => :define do
           )}
       end
     end
+    context 'with product => jboss-eap and version => 7.0.0.Beta parameters set' do
+      let(:product) {'jboss-eap'}
+      let(:version) {'7.0.0.Beta'}
+
+      it { is_expected.to compile }
+      it { is_expected.to contain_jboss__interface('test-interface') }
+      basic_bind_variables_list.each do |var|
+        it { is_expected.to contain_augeas("interface test-interface rm #{var}") }
+        it { is_expected.to contain_jboss__internal__interface__foreach("test-interface:#{var}").with_bind_variables(basic_bind_variables) }
+      end
+    end
   end
 
 end

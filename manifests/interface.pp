@@ -140,6 +140,9 @@ define jboss::interface (
   if $jboss::product == 'wildfly' and versioncmp($jboss::version, '9.0.0') >= 0 {
     $bind_variables = $basic_bind_variables
   }
+  elsif $jboss::product == 'jboss-eap' and versioncmp($jboss::version, '7.0.0') >= 0 {
+    $bind_variables = $basic_bind_variables
+  }
   else {
     $bind_variables = merge($basic_bind_variables, $legacy_bind_variables)
   }
