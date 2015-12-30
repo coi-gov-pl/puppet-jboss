@@ -137,11 +137,15 @@ define jboss::interface (
     'any-ipv6-address'   => $any_ipv6_address,  # undef, bool
   }
 
-  if $jboss::product == 'wildfly' and versioncmp($jboss::version, '9.0.0') >= 0 {
+  if ($jboss::product == 'wildfly' and versioncmp($jboss::version, '9.0.0') >= 0)
+    or ($jboss::product == 'jboss-eap' and versioncmp($jboss::version, '7.0.0') >= 0) {
     $bind_variables = $basic_bind_variables
-  }
-  elsif $jboss::product == 'jboss-eap' and versioncmp($jboss::version, '7.0.0') >= 0 {
-    $bind_variables = $basic_bind_variables
+    if $any_ipv4_address {
+      warning("Interface configuration parameter any_ipv4_address is deprecated for ${jboss::product} server version ${jboss::version}. Ignored.")
+    }
+    if $any_ipv6_address {
+      warning("Interface configuration parameter any_ipv6_address is deprecated for ${jboss::product} server version ${jboss::version}. Ignored.")
+    }
   }
   else {
     $bind_variables = merge($basic_bind_variables, $legacy_bind_variables)
