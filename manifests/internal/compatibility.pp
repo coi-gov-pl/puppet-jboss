@@ -9,8 +9,8 @@ class jboss::internal::compatibility {
       }
     }
     'jboss-eap': {
-      if versioncmp($jboss::version, '6.0.0') < 0 or versioncmp($jboss::version, '7.0.0') >= 0 {
-        fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: JBoss EAP 6.x series")
+      if versioncmp($jboss::version, '6.0.0') < 0 or versioncmp($jboss::version, '8.0.0') >= 0 {
+        fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: JBoss EAP 6.x and 7.x series")
       }
     }
     'jboss-as': {
