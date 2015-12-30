@@ -23,10 +23,12 @@
 #     Bassicly its the same as passing `0.0.0.0` as inet address.
 # [*any_ipv4_address*]
 #     This is boolean parameter. If set to `true` JBoss will bind network to any ipv4 network ip.
-#     It is similar as passing `0.0.0.0` as inet address
+#     It is similar as passing `0.0.0.0` as inet address.
+#     This parameter is deprecated for JBoss EAP 7.x and WildFly 9.x and later.
 # [*any_ipv6_address*]
 #     This is boolean parameter. If set to `true` JBoss will bind network to any ipv6 network ip.
-#     It's should be the same as passing `::`
+#     It's should be the same as passing `::`.
+#     This parameter is deprecated for JBoss EAP 7.x and WildFly 9.x and later.
 # [*inet_address*]
 #     Attribute indicating that part of the selection criteria for choosing an IP address for this
 #     interface should be whether or not the address matches the given value. Value is either a IP
