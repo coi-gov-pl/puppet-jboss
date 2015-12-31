@@ -23,4 +23,23 @@ describe 'jboss_jmsqueue', :type => :type do
             end
         end
     end
+
+    describe 'entries' do
+      context 'is_to_s' do
+        let(:entries) { [ 'queue/app-mails', 'java:jboss/exported/jms/queue/app-mails'] }
+        let(:params) { extend_params({ :entries => entries }) }
+        let(:property)  { type.property(:entries) }
+        it do
+          expect(property.is_to_s(entries)).to eq( "[\"queue/app-mails\", \"java:jboss/exported/jms/queue/app-mails\"]" )
+        end
+      end
+      context 'should_to_s' do
+        let(:entries) { [ 'queue/app-mails', 'java:jboss/exported/jms/queue/app-mails'] }
+        let(:params) { extend_params({ :entries => entries }) }
+        let(:property)  { type.property(:entries) }
+        it do
+          expect(property.should_to_s(entries)).to eq( "[\"queue/app-mails\", \"java:jboss/exported/jms/queue/app-mails\"]" )
+        end
+      end
+    end
 end

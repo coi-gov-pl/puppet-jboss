@@ -13,7 +13,20 @@ describe 'jboss_deploy', :type => :type do
   end
 
   let(:type) { described_class.new(params) }
-  let(:params) { extend_params({}) }
-  it { expect(type).not_to be_nil }
+
+  context 'no parameters given' do
+    let(:params) { extend_params({}) }
+    it { expect(type).not_to be_nil }
+  end
+
+  describe 'controler' do
+    context 'given :undef' do
+      let(:params) { extend_params({ :controller => :undef }) }
+      it do
+        expect { type }.to raise_error(ex_class,
+          'Parameter controller failed on Jboss_deploy[spec-artifact]: Domain controller must be provided')
+        end
+    end
+  end
 
 end
