@@ -108,7 +108,7 @@ describe 'Fact jboss_fullconfig', :type => :fact do
       end
 
       # it_behaves_like 'is not nill and empty'
-      it { expect(subject.to_s).to eq("{\"home\"=>\"/usr/lib/wildfly-12.2.0.Final\", \"product\"=>\"wildfly\", \"version\"=>\"12.2.0.Final\", \"config\"=>\"standalone-full.xml\", \"user\"=>\"wildfly\", \"console_log\"=>\"/var/log/wildfly/console.log\", \"runasdomain\"=>false, \"mode\"=>\"standalone\", \"controller\"=>\"127.0.0.1:9990\", \"profile\"=>\"full\"}")}
+      it { expect(subject.to_s).to eq("{\"mode\"=>\"standalone\", \"console_log\"=>\"/var/log/wildfly/console.log\", \"config\"=>\"standalone-full.xml\", \"profile\"=>\"full\", \"runasdomain\"=>false, \"user\"=>\"wildfly\", \"version\"=>\"12.2.0.Final\", \"home\"=>\"/usr/lib/wildfly-12.2.0.Final\", \"product\"=>\"wildfly\", \"controller\"=>\"127.0.0.1:9990\"}")}
     end
   end
 end
