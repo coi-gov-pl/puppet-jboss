@@ -107,8 +107,21 @@ describe 'Fact jboss_fullconfig', :type => :fact do
         expect(Puppet_X::Coi::Jboss::Configuration).to receive(:ruby_version).once.and_return('1.8.7')
       end
 
-      # it_behaves_like 'is not nill and empty'
-      it { expect(subject.to_s).to eq("{\"mode\"=>\"standalone\", \"console_log\"=>\"/var/log/wildfly/console.log\", \"config\"=>\"standalone-full.xml\", \"profile\"=>\"full\", \"runasdomain\"=>false, \"user\"=>\"wildfly\", \"version\"=>\"12.2.0.Final\", \"home\"=>\"/usr/lib/wildfly-12.2.0.Final\", \"product\"=>\"wildfly\", \"controller\"=>\"127.0.0.1:9990\"}")}
+      it_behaves_like 'is not nill and empty'
+      let('subject_sorted') { eval(subject.to_s).to_a.sort }
+      let("expected_output") {[["config", "standalone-full.xml"],
+                               ["console_log", "/var/log/wildfly/console.log"],
+                               ["controller", "127.0.0.1:9990"],
+                               ["home", "/usr/lib/wildfly-12.2.0.Final"],
+                               ["mode", "standalone"],
+                               ["product", "wildfly"],
+                               ["profile", "full"],
+                               ["runasdomain", false],
+                               ["user", "wildfly"],
+                               ["version", "12.2.0.Final"]]
+                             }
+
+      it { expect(subject_sorted).to eq(expected_output)}
     end
   end
 end
