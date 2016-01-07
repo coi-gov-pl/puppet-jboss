@@ -75,5 +75,24 @@ context "mocking default values" do
       it {expect(subject).to eq('asdfhagfgaskfagbfjbgk') }
     end
 
+    describe '#destroy' do
+      before :each do
+        cmd = "/subsystem=security/security-domain=#{resource[:name]}:remove()"
+        compilecmd = "/profile=full-ha/#{cmd}"
+
+        bringDownName = 'Security Domain'
+        expected_output = { :result => 'asda'}
+
+        expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
+        expect(provider).to receive(:bringDown).with(bringDownName, compilecmd).and_return(expected_output)
+      end
+      subject { provider.destroy }
+      it { expect(subject).to eq('asda') }
+    end
+
+    describe '#preparelines' do
+      
+    end
+
   end
 end
