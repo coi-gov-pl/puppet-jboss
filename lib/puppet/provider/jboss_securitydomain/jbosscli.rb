@@ -3,16 +3,15 @@ require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbossc
 Puppet::Type.type(:jboss_securitydomain).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
 
   def create
-    cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add(login-modules=[{code=>\"#{@resource[:code]}\",flag=>\"#{@resource[:codeflag]}\",module-options=>["
-    @resource[:moduleoptions].each_with_index do |(key, value), index|
+    cmd = "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add(login-modules=[{code=>\"#{@resource[:code]}\",flag=>\"#{@resource[:codeflag]}\",module-options=>["
+    options = []
+    @resource[:moduleoptions].keys.sort.each do |key|
+      value = @resource[:moduleoptions][key]
       val = value.to_s.gsub(/\n/, ' ').strip
-      cmd += '%s => "%s"' % [key, val]
-      if index == @resource[:moduleoptions].length - 1
-        break
-      end
-      cmd += ","
+      options << '%s => "%s"' % [key, val]
     end
-    cmd += "]}])"
+    cmd += options.join(',') + "]}])"
+    cmd = compilecmd(cmd)
     cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
     bringUp('Security Domain Cache Type', cmd2)[:result]
     bringUp('Security Domain', cmd)[:result]
@@ -48,7 +47,7 @@ Puppet::Type.type(:jboss_securitydomain).provide(:jbosscli, :parent => Puppet::P
         givenhash["#{key}"] = value.to_s.gsub(/\n/, ' ').strip
       end
     end
-    
+
     data['login-modules'][0]['module-options'].each do |key, value|
       existinghash[key.to_s] = value.to_s.gsub(/\n/, ' ').strip
     end
@@ -63,5 +62,5 @@ Puppet::Type.type(:jboss_securitydomain).provide(:jbosscli, :parent => Puppet::P
     end
     return true
   end
-  
+
 end
