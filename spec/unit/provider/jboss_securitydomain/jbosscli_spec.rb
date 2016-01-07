@@ -89,10 +89,5 @@ context "mocking default values" do
       subject { provider.destroy }
       it { expect(subject).to eq('asda') }
     end
-
-    describe '#preparelines' do
-      
-    end
-
   end
 end
