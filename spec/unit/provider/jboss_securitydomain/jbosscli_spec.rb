@@ -89,5 +89,62 @@ context "mocking default values" do
       subject { provider.destroy }
       it { expect(subject).to eq('asda') }
     end
-  end
+
+    describe '#exist?' do
+      before :each do
+        cmd = "/subsystem=security/security-domain=#{resource[:name]}/authentication=classic:read-resource()"
+        compilecmd = "/profile=full-ha/#{cmd}"
+
+        lines = 'asd'
+
+        bringDownName = 'Security Domain'
+        expected_lines =  <<-eos
+        {
+            "outcome" => "success",
+            "result" => {
+                "login-modules" => [{
+                    "code" => "Database",
+                    "flag" => "required",
+                    "module" => undefined,
+                    "module-options" => {
+                        "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?",
+                        "hashStorePassword" => "false",
+                        "principalsQuery" => "select 'haslo' from uzytkownik u where u.login = upper(?)",
+                        "hashUserPassword" => "false",
+                        "dsJndiName" => "java:jboss/datasources/datasources_auth"
+                    }
+                }],
+                "login-module" => {"Database" => undefined}
+            }
+        }
+        eos
+
+        expected_res = {
+          :cmd    => compilecmd,
+          :result => res_result,
+          :lines  => expected_lines
+        }
+
+        expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
+        expect(provider).to receive(:executeWithoutRetry).with(compilecmd).and_return(expected_res)
+      end
+
+      subject { provider.exists? }
+
+      context 'with res[:result] => true' do
+        let(:res_result) { true }
+
+        before :each do
+          expect(provider).to receive(:destroy).and_return(nil)
+        end
+
+        it { expect(subject).to eq(true) }
+      end
+
+      context 'with [:result] => false' do
+        let(:res_result) { false }
+        it { expect(subject).to eq(false) }
+      end
+    end
+end
 end
