@@ -98,6 +98,16 @@ context "mocking default values" do
         lines = 'asd'
 
         bringDownName = 'Security Domain'
+        content =  <<-eos
+        {
+            "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?",
+            "hashStorePassword" => "false",
+            "principalsQuery" => "select 'haslo' from uzytkownik u where u.login = upper(?)",
+            "hashUserPassword" => "false",
+            "dsJndiName" => "java:jboss/datasources/datasources_auth"
+        }
+        eos
+
         expected_lines =  <<-eos
         {
             "outcome" => "success",
@@ -106,13 +116,7 @@ context "mocking default values" do
                     "code" => "Database",
                     "flag" => "required",
                     "module" => undefined,
-                    "module-options" => {
-                        "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?",
-                        "hashStorePassword" => "false",
-                        "principalsQuery" => "select 'haslo' from uzytkownik u where u.login = upper(?)",
-                        "hashUserPassword" => "false",
-                        "dsJndiName" => "java:jboss/datasources/datasources_auth"
-                    }
+                    "module-options" => #{content}
                 }],
                 "login-module" => {"Database" => undefined}
             }
@@ -131,14 +135,14 @@ context "mocking default values" do
 
       subject { provider.exists? }
 
-      context 'with res[:result] => true' do
+      context 'with res[:result] => true and existinghash && givenhash are not nil' do
         let(:res_result) { true }
 
         before :each do
           expect(provider).to receive(:destroy).and_return(nil)
         end
 
-        it { expect(subject).to eq(true) }
+        it { expect(subject).to eq(false) }
       end
 
       context 'with [:result] => false' do

@@ -52,7 +52,7 @@ module SecurityDomain
       data['login-modules'][0]['module-options'].each do |key, value|
         existinghash[key.to_s] = value.to_s.gsub(/\n/, ' ').strip
       end
-
+      
       if !existinghash.nil? && !givenhash.nil? && existinghash != givenhash
         diff = givenhash.to_a - existinghash.to_a
         Puppet.notice "Security domain should be recreated. Diff: #{diff.inspect}"
