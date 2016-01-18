@@ -135,5 +135,162 @@ context "mocking default values" do
       it { expect(subject).to eq('asd') }
     end
 
+    describe '#exist? with tests for name_exists?' do
+      before :each do
+        allow(provider).to receive(:is_exact_deployment?).and_return(:expected_mocked_output)
+      end
+      describe '#name_exists? and outcome => failed' do
+        before :each do
+          cmd = "/deployment=super-crm-1.1.0:read-resource()"
+          expected_output = { :outcome => 'failed'}
+
+          expect(provider).to receive(:executeWithoutRetry).with(cmd).and_return(expected_output)
+        end
+
+        subject { provider.exists? }
+        it { expect(subject).to eq(false) }
+      end
+
+      describe '#exists? and :outcome => success and :name => asd' do
+        before :each do
+          cmd = "/deployment=super-crm-1.1.0:read-resource()"
+          expected_output = {
+            :outcome => 'success',
+            :name    => 'asd',
+            }
+
+          expect(provider).to receive(:executeWithoutRetry).with(cmd).and_return(expected_output)
+        end
+
+        subject { provider.exists? }
+        it { expect(subject).to eq(:expected_mocked_output) }
+      end
+
+      describe '#name_exists? and :outcome => success and :name => nil' do
+        before :each do
+          cmd = "/deployment=super-crm-1.1.0:read-resource()"
+          expected_output = {
+            :outcome => 'success',
+            }
+
+          expect(provider).to receive(:executeWithoutRetry).with(cmd).and_return(expected_output)
+        end
+
+        subject { provider.exists? }
+        it { expect(subject).to eq(false) }
+      end
+    end
+
+    describe '#servergroups with runasdomain => false' do
+      before :each do
+      end
+
+      let(:extended_repl) { {
+          :runasdomain => false,
+          :servergroups => ['crm-servers'],
+        } }
+
+      subject { provider.servergroups }
+      it { expect(subject).to eq(['crm-servers']) }
+    end
+
+    describe '#servergroups with runasdomain => true and :result => false' do
+      before :each do
+
+        expected_output = {
+          :result => false,
+          :name    => 'asd',
+          }
+
+        cmd = "deployment-info --name=#{resource[:name]}"
+
+        expect(provider).to receive(:execute).with(cmd).and_return(expected_output)
+      end
+
+      let(:extended_repl) { {
+          :runasdomain => true,
+        } }
+
+      subject { provider.servergroups }
+      it { expect(subject).to eq([]) }
+    end
+
+    describe '#servergroups with runasdomain => true and :result => true and lines => added  and :servergroups => not nil' do
+      before :each do
+
+        content =  <<-eos
+        NAME RUNTIME-NAME
+        super-crm  super-crm
+
+        SERVER-GROUP STATE
+        app-group    added
+        eos
+
+        lines = content.split("\n")
+
+        expected_output = {
+          :result => true,
+          :name   => 'asd',
+          :lines => lines,
+          }
+
+        cmd = "deployment-info --name=#{resource[:name]}"
+
+        expect(provider).to receive(:execute).with(cmd).and_return(expected_output)
+      end
+
+      let(:extended_repl) { {
+          :runasdomain => true,
+          :servergroups => 'crm-servers',
+        } }
+
+      subject { provider.servergroups }
+      it { expect(subject).to eq(['app-group']) }
+    end
+
+    describe '#servergroups with runasdomain => true and :result => true and lines => added  and :servergroups => nil' do
+      before :each do
+
+        content =  <<-eos
+        NAME RUNTIME-NAME
+        super-crm  super-crm
+
+        SERVER-GROUP STATE
+        app-group    added
+        eos
+
+        lines = content.split("\n")
+
+        expected_output = {
+          :result => true,
+          :name   => 'asd',
+          :lines => lines,
+          }
+
+        cmd = "deployment-info --name=#{resource[:name]}"
+
+        expect(provider).to receive(:execute).with(cmd).and_return(expected_output)
+      end
+
+      let(:extended_repl) { {
+          :runasdomain => true,
+        } }
+
+      subject { provider.servergroups }
+      it { expect(subject).to eq(nil) }
+    end
+
+    describe '#servergroups with value' do
+      before :each do
+        cmd = "deploy --name=#{resource[:name]} --server-groups=super-crm-1"
+
+        expect(provider).to receive(:servergroups).and_return(['super-crm'])
+        expect(provider).to receive(:bringUp).with('Deployment', cmd).and_return('asd')
+      end
+
+      subject { provider.servergroups = ['super-crm', 'super-crm-1'] }
+      it { expect(subject).to eq(["super-crm", "super-crm-1"]) }
+    end
+
 end
 end

@@ -11,11 +11,11 @@ module JbossDeploy
   def create
     cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}"
     if @resource[:runasdomain]
-      servergroups = @resource[:servergroups]
-      if servergroups.nil? or servergroups.empty? or servergroups == ['']
+      groups = @resource[:servergroups]
+      if groups.nil? or groups.empty? or groups == ['']
         cmd = "#{cmd} --all-server-groups"
       else
-        cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
+        cmd = "#{cmd} --server-groups=#{groups.join(',')}"
       end
     end
     if @resource[:redeploy]
@@ -28,35 +28,15 @@ module JbossDeploy
   def destroy
     cmd = "undeploy #{@resource[:name]}"
     if @resource[:runasdomain]
-      servergroups = @resource[:servergroups]
-      if servergroups.nil? or servergroups.empty? or servergroups == ['']
+      groups = @resource[:servergroups]
+      if groups.nil? or groups.empty? or groups == ['']
         cmd = "#{cmd} --all-relevant-server-groups"
       else
-        cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
+        cmd = "#{cmd} --server-groups=#{groups.join(',')}"
       end
     end
     isprintinglog = 0
     bringDown 'Deployment', cmd
-  end
-
-  def name_exists?
-    res = executeWithoutRetry "deployment-info --name=#{@resource[:name]}"
-    if res[:result] == false
-        return false
-    end
-    for line in res[:lines]
-      line.strip!
-      if line =~ /^#{@resource[:name]}[ ]+/
-        Puppet.debug "Deployment found: #{line}"
-        return true
-      end
-    end
-    Puppet.debug "No deployment matching #{@resource[:name]} found."
-    return false
-  end
-
-  def is_exact_deployment?
-    true
   end
 
   def exists?
@@ -99,9 +79,29 @@ module JbossDeploy
     Puppet.debug(value.inspect())
 
     toset = value - current
+    binding.pry
     cmd = "deploy --name=#{@resource[:name]} --server-groups=#{toset.join(',')}"
     res = bringUp('Deployment', cmd)
   end
+
+  private
+  def name_exists?
+    res = executeWithoutRetry "/deployment=#{@resource[:name]}:read-resource()"
+    if res[:outcome] == 'failed'
+        return false
+    end
+    unless res[:name].nil?
+      Puppet.debug "Deployment found: #{res[:name]}"
+      return true
+    end
+    Puppet.debug "No deployment matching #{@resource[:name]} found."
+    return false
+  end
+
+  def is_exact_deployment?
+    true
+  end
+
 end
 end
 end
