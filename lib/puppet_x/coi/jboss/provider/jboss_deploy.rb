@@ -79,7 +79,6 @@ module JbossDeploy
     Puppet.debug(value.inspect())
 
     toset = value - current
-    binding.pry
     cmd = "deploy --name=#{@resource[:name]} --server-groups=#{toset.join(',')}"
     res = bringUp('Deployment', cmd)
   end
