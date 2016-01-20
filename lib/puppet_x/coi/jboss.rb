@@ -5,7 +5,7 @@ module Puppet_X
     # Require relative kernel-like method
     def self.require_relative(relative_path, lvl = 0)
       stack = Kernel.caller
-      file,  = stack[lvl].split(':')
+      file = stack[lvl].split(/:\d/,2).first
       file = './' if ['(eval)', '(pry)', ''].include?(file)
       file = File.dirname(file)
       path = File.expand_path(File.join(file, relative_path))
