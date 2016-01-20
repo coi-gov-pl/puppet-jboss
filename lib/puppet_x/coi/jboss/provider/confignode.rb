@@ -1,13 +1,5 @@
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
-
-module Provider
-# A class for ConfigNode
-module ConfigNode
+# A module for ConfigNode
+module Puppet_X::Coi::Jboss::Provider::ConfigNode
 
   def create
     trace 'create'
@@ -263,8 +255,4 @@ module ConfigNode
     end
     arr.join ', '
   end
-end
-end
-end
-end
 end
