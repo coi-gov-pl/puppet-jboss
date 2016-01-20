@@ -135,42 +135,6 @@ module ConfigNode
     return value
   end
 
-  def enabled?
-    trace 'enabled?'
-
-    return status == :running
-  end
-
-  def stopped?
-    trace 'stopped?'
-
-    return status == :stopped
-  end
-
-  def enabled?
-    trace 'enabled?'
-
-    return status == :enabled
-  end
-
-  def disabled?
-    trace 'disabled?'
-
-    return status == :disabled
-  end
-
-  def present?
-    trace 'present?'
-
-    return status == :present
-  end
-
-  def absent?
-    trace 'absent?'
-
-    return status == :absent
-  end
-
   def properties
     trace 'properties()'
 
