@@ -98,8 +98,8 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "host to connect"
     isrequired
     validate do |value|
-      # Regex developed here (hostnames, ipv4, ipv6): https://regex101.com/r/hJ4jD1/1
-      re = /(?=^.{1,253}$)(^(((?!-)[a-zA-Z0-9-]{1,63}(?<!-))|((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63})$|(?:\d{1,3}\.){3}\d{1,3}|(?:[a-f0-9]{0,4}:){2,4}[a-f0-9]{0,4})/
+      # Regex developed here (hostnames, ipv4, ipv6): https://regex101.com/r/hJ4jD1/3
+      re = /^((?:[a-zA-Z0-9_-]+\.)*[a-zA-Z0-9_-]+|(?:[a-fA-F0-9]{0,4}:){2,5}[a-fA-F0-9]{1,4})$/
       unless value == '' or re.match(value.to_s)
         raise ArgumentError, "Datasource host is invalid, given #{value.inspect}"
       end
