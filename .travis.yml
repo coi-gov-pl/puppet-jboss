@@ -4,7 +4,7 @@ sudo: false
 addons:
   apt:
     sources:
-    - ppa:raphink/augeas
+    - augeas
     packages:
     - libaugeas-dev
     - libxml2-dev
