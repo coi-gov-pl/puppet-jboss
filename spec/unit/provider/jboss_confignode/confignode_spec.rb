@@ -111,6 +111,26 @@ context "mocking default values" do
       it { expect(subject).to eq(nil) }
     end
 
+    describe '#destroy with status == :running and later on :ensure' do
+      before :each do
+
+        bringDownName = 'Configuration node STOP'
+        cmd = '/profile=full/subsystem=messaging/hornetq-server=default:stop(blocking=true)'
+
+        bringDownNameDestroy = 'Configuration node'
+        cmdDestroy = '/profile=full/subsystem=messaging/hornetq-server=default:remove()'
+
+        expect(provider).to receive(:exists?).and_return(true)
+        expect(provider).to receive(:status).and_return(:running)
+        expect(provider).to receive(:status).and_return(:ensure)
+        expect(provider).to receive(:bringDown).with(bringDownName, cmd).and_return(true)
+        expect(provider).to receive(:bringDown).with(bringDownNameDestroy, cmdDestroy).and_return(true)
+      end
+
+      subject { provider.destroy }
+      it { expect(subject).to eq(true) }
+    end
+
     describe '#destroy with exists? => true and status :running => nil' do
       before :each do
 
@@ -296,14 +316,46 @@ context "mocking default values" do
       it { expect(subject).to eq(:stopped) }
     end
 
-    describe '#ensure :enabled' do
+    describe '#ensure :enabled with status :ensure' do
       before :each do
 
-        expect(provider).to receive(:doEnable).and_return(true)
+        bringUpName = 'Configuration node ENABLE'
+        cmd = '/profile=full/subsystem=messaging/hornetq-server=default:enable()'
+
+        expect(provider).to receive(:status).and_return(:ensure)
+        expect(provider).to receive(:bringUp).with(bringUpName, cmd).and_return(true)
       end
 
       subject { provider.ensure = :enabled }
       it { expect(subject).to eq(:enabled) }
+    end
+
+    describe '#ensure :enabled with status :absent' do
+      before :each do
+
+        bringUpName = 'Configuration node ENABLE'
+        cmd = '/profile=full/subsystem=messaging/hornetq-server=default:enable()'
+
+        expect(provider).to receive(:status).and_return(:ensure)
+        expect(provider).to receive(:bringUp).with(bringUpName, cmd).and_return(true)
+      end
+
+      subject { provider.ensure = :enabled }
+      it { expect(subject).to eq(:enabled) }
+    end
+
+    describe '#ensure= value with value => :running' do
+        before :each do
+          bringUpName = 'Configuration node START'
+          cmd = '/profile=full/subsystem=messaging/hornetq-server=default:start(blocking=true)'
+
+          expect(provider).to receive(:status).and_return(:absent)
+          expect(provider).to receive(:create).and_return(true)
+          expect(provider).to receive(:bringUp).with(bringUpName, cmd).and_return(true)
+        end
+
+        subject {provider.ensure= :running}
+        it { expect(subject).to eq(:running) }
     end
 
     describe '#ensure :disabled' do
@@ -316,7 +368,99 @@ context "mocking default values" do
       it { expect(subject).to eq(:disabled) }
     end
 
+    describe '#ensure= value with value => :stopped' do
+        before :each do
+          bringUpName = 'Configuration node STOP'
+          cmd = '/profile=full/subsystem=messaging/hornetq-server=default:stop(blocking=true)'
 
+          expect(provider).to receive(:status).and_return(:absent)
+          expect(provider).to receive(:create).and_return(true)
+          expect(provider).to receive(:bringDown).with(bringUpName, cmd).and_return(true)
+        end
 
+        subject {provider.ensure= :stopped}
+        it { expect(subject).to eq(:stopped) }
+    end
+
+    describe '#ensure= value with value => :enabled' do
+        before :each do
+          bringUpName = 'Configuration node ENABLE'
+          cmd = '/profile=full/subsystem=messaging/hornetq-server=default:enable()'
+
+          expect(provider).to receive(:status).and_return(:absent)
+          expect(provider).to receive(:create).and_return(true)
+          expect(provider).to receive(:bringUp).with(bringUpName, cmd).and_return(true)
+        end
+
+        subject {provider.ensure= :enabled}
+        it { expect(subject).to eq(:enabled) }
+    end
+
+    describe '#ensure= value with value => :disabled' do
+        before :each do
+          bringUpName = 'Configuration node DISABLE'
+          cmd = '/profile=full/subsystem=messaging/hornetq-server=default:disable()'
+
+          expect(provider).to receive(:status).and_return(:absent)
+          expect(provider).to receive(:create).and_return(true)
+          expect(provider).to receive(:bringDown).with(bringUpName, cmd).and_return(true)
+        end
+
+        subject {provider.ensure= :disabled}
+        it { expect(subject).to eq(:disabled) }
+    end
+
+    describe '#properties and @data => nil' do
+      before :each do
+        provider.instance_variable_set(:@data, nil)
+      end
+
+      subject { provider.properties }
+      it { expect(subject).to eq({}) }
+    end
+
+    describe '#properties and @data => asd ' do
+      before :each do
+        property_hash = { :properties => {
+            'security-enabled' => false,
+          }}
+        provider.instance_variable_set(:@data, 'asd')
+        provider.instance_variable_set(:@property_hash, property_hash)
+      end
+
+      subject { provider.properties }
+      it { expect(subject).to eq({"security-enabled"=>false}) }
+    end
+
+    describe '#properties and @data => asd and value is keyword' do
+      before :each do
+        property_hash = { :properties => {
+            'security-enabled' => :false,
+          }}
+        provider.instance_variable_set(:@data, 'asd')
+        provider.instance_variable_set(:@property_hash, property_hash)
+      end
+
+      subject { provider.properties }
+      it { expect(subject).to eq({"security-enabled"=>"false"}) }
+    end
+
+    describe '#properties' do
+      before :each do
+        data = { :aaa => :bbb}
+        provider.instance_variable_set(:@data, data)
+
+        bringUpName = 'Configuration node property'
+        cmd = '/profile=full/subsystem=messaging/hornetq-server=default:write-attribute(name=security-enabled, value=:false)'
+
+        expect(provider).to receive(:bringUp).with(bringUpName, cmd).and_return(true)
+      end
+
+      props = {
+          'security-enabled' => :false,
+        }
+      subject { provider.properties = props }
+      it { expect(subject).to eq({"security-enabled"=>:false}) }
+    end
 end
 end
