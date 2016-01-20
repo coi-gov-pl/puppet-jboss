@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-require File.expand_path(File.join(File.dirname(__FILE__), '../../puppet_x/coi/jboss/configuration'))
+require_relative '../configuration'
 require 'tempfile'
 
 class Object
@@ -7,7 +6,7 @@ class Object
     return true if self.nil?
     self.respond_to?(:empty?) ? self.empty? : !self
   end
-  
+
   def to_bool
     if self.respond_to?(:empty?)
       str = self
@@ -25,16 +24,16 @@ end
 class Hash
   def hashbackmap
     result = {}
-  
+
     self.each do |key, val|
       result[key] = yield val
     end
-  
+
     result
   end
 end
 
-class Puppet::Provider::Jbosscli < Puppet::Provider
+class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
   @@bin = "bin/jboss-cli.sh"
   @@contents = nil
@@ -45,23 +44,23 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
       path = "#{home}/#{@@bin}"
       return path
     end
-  
+
     def jbosshome
       Puppet_X::Coi::Jboss::Configuration::config_value :home
     end
-    
+
     def jbosslog
       Puppet_X::Coi::Jboss::Configuration::config_value :console_log
     end
-    
+
     def config_runasdomain
       Puppet_X::Coi::Jboss::Configuration::config_value :runasdomain
     end
-  
+
     def config_controller
       Puppet_X::Coi::Jboss::Configuration::config_value :controller
     end
-  
+
     def config_profile
       Puppet_X::Coi::Jboss::Configuration::config_value :profile
     end
@@ -69,35 +68,35 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
 
   # TODO: Uncomment for defered provider confinment after droping support for Puppet < 3.0
-  # commands :jbosscli => Puppet::Provider::Jbosscli.jbossclibin
+  # commands :jbosscli => Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.jbossclibin
 
   def runasdomain?
     @resource[:runasdomain]
   end
-  
+
   def getlog(lines)
     last_lines = `tail -n #{lines} #{jbosslog}`
   end
-  
+
   def printlog(lines)
-    return " ---\n JBoss AS log (last #{lines} lines): \n#{getlog lines}" 
+    return " ---\n JBoss AS log (last #{lines} lines): \n#{getlog lines}"
   end
 
   def execute jbosscmd
     retry_count = @resource[:retry]
     retry_timeout = @resource[:retry_timeout]
-    ctrlcfg = Puppet::Provider::Jbosscli.controllerConfig @resource
-    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, ctrlcfg, retry_count, retry_timeout
+    ctrlcfg = Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.controllerConfig @resource
+    return Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.execute jbosscmd, runasdomain?, ctrlcfg, retry_count, retry_timeout
   end
 
   def executeWithoutRetry jbosscmd
-    ctrlcfg = Puppet::Provider::Jbosscli.controllerConfig @resource
-    return Puppet::Provider::Jbosscli.execute jbosscmd, runasdomain?, ctrlcfg, 0, 0
+    ctrlcfg = Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.controllerConfig @resource
+    return Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.execute jbosscmd, runasdomain?, ctrlcfg, 0, 0
   end
 
   def executeAndGet jbosscmd
-    ctrlcfg = Puppet::Provider::Jbosscli.controllerConfig @resource
-    return Puppet::Provider::Jbosscli.executeAndGet jbosscmd, runasdomain?, ctrlcfg, 0, 0
+    ctrlcfg = Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.controllerConfig @resource
+    return Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.executeAndGet jbosscmd, runasdomain?, ctrlcfg, 0, 0
   end
 
   def self.controllerConfig resource
@@ -108,19 +107,19 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
       }
       return conf
   end
-  
+
   def self.last_execute_status
     $?
   end
-  
+
   def self.execshell(cmd)
     `#{cmd}`
   end
-  
+
   def self.jbossas?
     Facter.value(:jboss_product) == 'jboss-as'
   end
-  
+
   def self.timeout_cli
     '--timeout=50000' unless jbossas?
   end
@@ -142,12 +141,12 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
       ENV['__PASSWD'] = ctrlcfg[:ctrlpasswd]
       cmd += " --password=$__PASSWD"
     end
-	
+
     retries = 0
     result = ''
     lines = ''
     begin
-      if retries > 0 
+      if retries > 0
         Puppet.warning "JBoss CLI command failed, try #{retries}/#{retry_count}, last status: #{result.exitstatus.to_s}, message: #{lines}"
         sleep retry_timeout.to_i
       end
@@ -165,11 +164,11 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
       :lines  => lines
     }
   end
-  
+
   def setattribute(path, name, value)
     setattribute_raw path, name, escape(value)
   end
-  
+
   def setattribute_raw(path, name, value)
     Puppet.debug "#{name.inspect} setting to #{value.inspect} for path: #{path}"
     cmd = "#{path}:write-attribute(name=\"#{name.to_s}\", value=#{value})"
@@ -183,29 +182,29 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     end
     @property_hash[name] = value
   end
-  
+
   def bringUp(typename, args)
     return executeWithFail(typename, args, 'to create')
   end
-  
+
   def bringDown(typename, args)
     return executeWithFail(typename, args, 'to remove')
   end
-  
+
   $add_log = nil
-  
+
   def isprintinglog=(setting)
     $add_log = setting
   end
-  
+
   def trace method
     Puppet.debug '%s[%s] > IN > %s' % [self.class, @resource[:name], method]
   end
-  
+
   def traceout method, retval
     Puppet.debug '%s[%s] > OUT > %s: %s' % [self.class, @resource[:name], method, retval.inspect]
   end
-  
+
   def self.escape value
     if value.respond_to? :to_str
       str = value.gsub(/([^\\])\"/, '\1\\"')
@@ -214,27 +213,27 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     end
     return str.inspect
   end
-  
+
   def escape value
-    Puppet::Provider::Jbosscli.escape value
+    Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.escape value
   end
-  
+
   def executeWithFail(typename, passed_args, way)
     executed = execute(passed_args)
     if not executed[:result]
       ex = "\n#{typename} failed #{way}:\n[CLI command]: #{executed[:cmd]}\n[Error message]: #{executed[:lines]}"
       if not $add_log.nil? and $add_log > 0
         ex = "#{ex}\n#{printlog $add_log}"
-      end 
+      end
       raise ex
     end
     return executed
   end
-  
+
   def compilecmd cmd
-    Puppet::Provider::Jbosscli.compilecmd @resource[:runasdomain], @resource[:profile], cmd
+    Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.compilecmd @resource[:runasdomain], @resource[:profile], cmd
   end
-  
+
   def self.compilecmd runasdomain, profile, cmd
     out = cmd.to_s
     asdomain = runasdomain.to_bool
@@ -272,6 +271,5 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
       }
     end
   end
-  
 
 end

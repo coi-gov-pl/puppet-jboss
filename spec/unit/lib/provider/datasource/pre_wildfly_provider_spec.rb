@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'puppet_x/coi/jboss/provider/datasource/pre_wildfly_provider'
 
 describe Puppet_X::Coi::Jboss::Provider::Datasource::PreWildFlyProvider do
 

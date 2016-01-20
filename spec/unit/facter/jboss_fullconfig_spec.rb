@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'puppet_x/coi/jboss/configuration'
 
 describe 'Fact jboss_fullconfig', :type => :fact do
 

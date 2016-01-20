@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/functions/jboss_short_version')
+require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss')
 
 # Jboss AS private short version function
 #

@@ -1,13 +1,5 @@
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
-
-module Provider
 # A class for JBoss deploy
-module JbossDeploy
+module Puppet_X::Coi::Jboss::Provider::Deploy
   def create
     cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}"
     if @resource[:runasdomain]
@@ -101,8 +93,4 @@ module JbossDeploy
     true
   end
 
-end
-end
-end
-end
 end

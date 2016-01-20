@@ -1,11 +1,5 @@
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
 # A custom class that holds custom functions
-class Functions
+class Puppet_X::Coi::Jboss::Functions
 
   class << self
     # PRIVATE INTERNAL FUNCTION. Return type of application server given as input
@@ -20,7 +14,4 @@ class Functions
       if m then m[1] else nil end
     end
   end
-end
-end
-end
 end

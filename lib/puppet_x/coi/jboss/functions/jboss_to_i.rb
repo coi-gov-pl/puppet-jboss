@@ -1,11 +1,5 @@
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
 # A custom class that holds custom functions
-class Functions
+class Puppet_X::Coi::Jboss::Functions
 
   class << self
     # PRIVATE INTERNAL FUNCTION. Casts any value to integer
@@ -19,7 +13,4 @@ class Functions
       args[0].to_s.to_i
     end
   end
-end
-end
-end
 end

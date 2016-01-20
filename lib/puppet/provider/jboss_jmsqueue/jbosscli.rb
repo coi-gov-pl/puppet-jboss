@@ -1,6 +1,8 @@
-require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbosscli.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss'))
 
-Puppet::Type.type(:jboss_jmsqueue).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
+Puppet::Type.type(:jboss_jmsqueue).provide(:jbosscli,
+    :parent => Puppet_X::Coi::Jboss::Provider::AbstractJbossCli) do
+
   def create
     if runasdomain?
       profile = "--profile=#{@resource[:profile]}"
@@ -53,23 +55,23 @@ Puppet::Type.type(:jboss_jmsqueue).provide(:jbosscli, :parent => Puppet::Provide
     $data = res[:data]
     return true
   end
-  
+
   def durable
     trace 'durable'
     Puppet.debug "Durable given: #{@resource[:durable].inspect}"
     $data['durable'].to_bool.to_s
   end
-  
+
   def durable= value
     trace 'durable= %s' % value.to_s
     setattr 'durable', ('"%s"' % value.to_bool)
   end
-  
+
   def entries
     trace 'entries'
     $data['entries']
   end
-  
+
   def entries= value
     trace 'entries= %s' % value.inspect
     entries = value.join '", "'
@@ -78,11 +80,11 @@ Puppet::Type.type(:jboss_jmsqueue).provide(:jbosscli, :parent => Puppet::Provide
     else
       raise "Array of entries can not be empty"
     end
-    setattr 'entries', entries 
+    setattr 'entries', entries
   end
-  
-  private 
-  
+
+  private
+
   def setattr name, value
     setattribute_raw "/subsystem=messaging/hornetq-server=default/jms-queue=#{@resource[:name]}", name, value
   end

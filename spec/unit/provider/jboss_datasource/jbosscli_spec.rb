@@ -70,9 +70,9 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
       let(:status) { double(:exitstatus => 0) }
       before :each do
         re = /.*bin\/jboss-cli.sh --timeout=50000 --connect --file=.+jbosscli.* --controller=127.0.0.1:9999/
-        expect(Puppet::Provider::Jbosscli).to receive(:last_execute_status).
+        expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:last_execute_status).
           at_least(:once).and_return(status)
-        expect(Puppet::Provider::Jbosscli).to receive(:execshell).
+        expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:execshell).
           at_least(:once).with(re).and_return(xa_result, nonxa_result)
       end
       it { expect(provider.class.instances).not_to be_empty }
@@ -168,7 +168,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         "testing;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
       end
       before :each do
-        expect(Puppet::Provider::Jbosscli).to receive(:executeAndGet).
+        expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:executeAndGet).
           with(command, runasdomain, ctrlcfg, retry_count, timeout).and_return(result)
       end
 

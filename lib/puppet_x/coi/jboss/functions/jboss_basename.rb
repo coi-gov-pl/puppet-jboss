@@ -1,11 +1,5 @@
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
 # A custom class that holds custom functions
-class Functions
+class Puppet_X::Coi::Jboss::Functions
 
   class << self
     # PRIVATE INTERNAL FUNCTION. Returns the last component of the filename given in file_name
@@ -22,7 +16,4 @@ class Functions
       end
     end
   end
-end
-end
-end
 end

@@ -1,13 +1,14 @@
-require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbosscli.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss'))
 
-Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
-  
+Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli,
+    :parent => Puppet_X::Coi::Jboss::Provider::AbstractJbossCli) do
+
   @data = {}
 
   def create
     name = @resource[:name]
     map = get_attribs_map
-     
+
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{name}:add(#{cmdlize_attribs_map map})"
     bringUp 'JDBC-Driver', cmd
   end
@@ -16,7 +17,7 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:remove"
     bringDown 'JDBC-Driver', cmd
   end
-  
+
   def exists?
     @data = {}
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:read-resource(recursive=true)"
@@ -29,7 +30,7 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
     @data = res[:data]
     return true
   end
-  
+
   def setattrib name, value
     Puppet.debug(name + ' setting to ' + value)
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
@@ -39,42 +40,42 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
       raise "Cannot set #{name}: #{res[:data]}"
     end
     @data[name] = value
-  end 
-  
+  end
+
   def classname
     @data['driver-class-name']
   end
-  
+
   def classname= value
     setattrib 'driver-class-name', value
   end
-  
+
   def modulename
     @data['driver-module-name']
   end
-  
+
   def modulename= value
     setattrib 'driver-module-name', value
   end
-  
+
   def datasourceclassname
     @data['driver-datasource-class-name']
   end
-  
+
   def datasourceclassname= value
     setattrib 'driver-datasource-class-name', value
   end
-  
+
   def xadatasourceclassname
     @data['driver-xa-datasource-class-name']
   end
-  
+
   def xadatasourceclassname= value
     setattrib 'driver-xa-datasource-class-name', value
   end
-  
+
   private
-  
+
   def get_attribs_map
     name = @resource[:name]
     modulename = @resource[:modulename]
@@ -90,7 +91,7 @@ Puppet::Type.type(:jboss_jdbcdriver).provide(:jbosscli, :parent => Puppet::Provi
     map['driver-class-name'] = classname if classname
     map
   end
-  
+
   def cmdlize_attribs_map input
     list = []
     input.each do |key, value|

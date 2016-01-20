@@ -1,13 +1,7 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '/configuration'))
+require_relative 'configuration'
 
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
 # A class for JBoss facts
-class Facts
+class Puppet_X::Coi::Jboss::Facts
   class << self
       def define_fullconfig_fact
         config = Puppet_X::Coi::Jboss::Configuration::read
@@ -31,8 +25,4 @@ class Facts
         end
       end
   end
-end
-
-end
-end
 end
