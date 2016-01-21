@@ -6,7 +6,7 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "Name of type resource"
     isnamevar
   end
-  
+
   newproperty(:xa) do
     desc "Is it XA Datasource?"
     newvalues :true, :false
@@ -15,15 +15,15 @@ Puppet::Type.newtype(:jboss_datasource) do
       value == :true or value == true
     end
   end
-  
+
   newproperty(:dbname) do
     desc "The database's name"
   end
-  
+
   newproperty(:jndiname) do
     desc "jndi-name"
   end
-  
+
   newproperty(:jta) do
     desc "jta"
     newvalues :true, :false
@@ -67,24 +67,43 @@ Puppet::Type.newtype(:jboss_datasource) do
 
   newproperty(:options) do
     desc "Extra options for datasource or xa-datasource"
-    
+
     validate do |value|
-      unless value.respond_to? :[]
-        fail "You can pass only hash-like objects"
+      absentlike = [:absent, :undef, nil]
+      absentlike.concat(absentlike.map {|v| v.to_s})
+      hashlike = (value.respond_to? :[] and value.respond_to? :each and not value.is_a? String and not value.is_a? Symbol)
+      unless absentlike.include?(value) or hashlike
+        fail "You can pass only hash-like objects or absent and undef values, given #{value.inspect}"
       end
     end
-    
+
+    munge do |value|
+      if %w{absent undef}.include?(value) then value.to_sym else value end
+    end
+
     def change_to_s(current, desire)
       changes = []
-      desire.each do |key, desired_value|
-        current_value = current[key]
-        message = "option '#{key}' has changed from #{current_value.inspect} to #{desired_value.inspect}"
-        changes << message unless current_value == desired_value   
+      absentlike = [:absent, :undef, nil]
+      absentlike.concat(absentlike.map {|v| v.to_s})
+      keys = []
+      keys.concat(desire.keys) unless absentlike.include?(desire)
+      keys.concat(current.keys) unless absentlike.include?(current)
+      keys.uniq.sort.each do |key|
+        desired_value = if absentlike.include?(desire) then desire else desire[key] end
+        current_value = if absentlike.include?(current) then current else current[key] end
+        if absentlike.include?(desired_value) and not absentlike.include?(current_value) then
+          message = "option '#{key}' was #{current_value.inspect} and has been removed"
+        elsif absentlike.include?(current_value) and not absentlike.include?(desired_value)
+          message = "option '#{key}' has been set to #{desired_value.inspect}"
+        else
+          message = "option '#{key}' has changed from #{current_value.inspect} to #{desired_value.inspect}"
+        end
+        changes << message unless current_value == desired_value
       end
       changes.join ', '
     end
   end
-  
+
   newproperty(:enabled) do
     desc "Is datasource enabled?"
     newvalues :true, :false
@@ -105,7 +124,7 @@ Puppet::Type.newtype(:jboss_datasource) do
       end
     end
   end
-  
+
   newproperty(:port) do
     desc "port to connect"
     isrequired
@@ -113,12 +132,12 @@ Puppet::Type.newtype(:jboss_datasource) do
       unless value == '' or /^\d+$/.match(value.to_s)
         raise ArgumentError, "Datasource port is invalid, given #{value.inspect}"
       end
-    end    
+    end
     munge do |value|
-      if value == '' then 0 else Integer(value) end      
+      if value == '' then 0 else Integer(value) end
     end
   end
-  
+
   newproperty(:jdbcscheme) do
     desc "jdbcscheme to be used"
     isrequired
@@ -133,7 +152,7 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "Indicate that server is in domain mode"
     defaultto true
   end
-  
+
   newparam(:controller) do
     desc "Domain controller host:port address"
     # Default is set to support listing of datasources without parameters (for easy use)
@@ -144,7 +163,7 @@ Puppet::Type.newtype(:jboss_datasource) do
       end
     end
   end
-  
+
   newparam :ctrluser do
     desc 'A user name to connect to controller'
   end
@@ -164,4 +183,3 @@ Puppet::Type.newtype(:jboss_datasource) do
   end
 
 end
-
