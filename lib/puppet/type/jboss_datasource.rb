@@ -98,7 +98,9 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "host to connect"
     isrequired
     validate do |value|
-      unless value =~ /\w/ or value == ''
+      # Regex developed here (hostnames, ipv4, ipv6): https://regex101.com/r/hJ4jD1/3
+      re = /^((?:[a-zA-Z0-9_-]+\.)*[a-zA-Z0-9_-]+|(?:[a-fA-F0-9]{0,4}:){2,5}[a-fA-F0-9]{1,4})$/
+      unless value == '' or re.match(value.to_s)
         raise ArgumentError, "Datasource host is invalid, given #{value.inspect}"
       end
     end
@@ -108,7 +110,7 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "port to connect"
     isrequired
     validate do |value|
-      unless value =~ /\d/ or value == ''
+      unless value == '' or /^\d+$/.match(value.to_s)
         raise ArgumentError, "Datasource port is invalid, given #{value.inspect}"
       end
     end    
