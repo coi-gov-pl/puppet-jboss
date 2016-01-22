@@ -25,7 +25,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
     if not execute("#{hornetcmd}:read-resource()")[:result]
       bringUp "Default HornetQ", "#{hornetcmd}:add()"
     end
-    cmd = "jms-queue #{profile} add --queue-address=#{@resource[:name]} --entries=#{entries} --durable=\"#{durable.to_s}\""
+    cmd = "jms-queue #{profile} add --queue-address=#{@resource[:name]} --entries=#{entries} --durable=#{durable.to_s}"
     bringUp "JMS Queue", cmd
   end
 

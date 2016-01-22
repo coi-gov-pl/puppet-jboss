@@ -1,11 +1,10 @@
 # A module for Jdbcdriver
 module Puppet_X::Coi::Jboss::Provider::Jdbcdriver
-  @data = {}
 
   def create
     name = @resource[:name]
     map = get_attribs_map
-    
+
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{name}:add(#{cmdlize_attribs_map map})"
     bringUp 'JDBC-Driver', cmd
   end
@@ -91,7 +90,8 @@ module Puppet_X::Coi::Jboss::Provider::Jdbcdriver
 
   def cmdlize_attribs_map input
     list = []
-    input.each do |key, value|
+    input.keys.sort.each do |key|
+      value = input[key]
       list.push "#{key}=#{value.inspect}"
     end
     list.join ','

@@ -18,7 +18,7 @@ context "mocking default values" do
     Puppet_X::Coi::Jboss::Configuration.reset_config
   end
 
-  describe 'Puppet::Type::Confignode::ProviderJbosscli' do
+  describe 'Puppet::Type::JBoss_jmsqueue::ProviderJbosscli' do
 
     let(:described_class) do
       Puppet::Type.type(:jboss_jmsqueue).provider(:jbosscli)
@@ -81,7 +81,7 @@ context "mocking default values" do
 
         # line 20
         cmdCompile = '/subsystem=messaging'
-        compiledCMDSubsystem = '/profile/full-ha/subsystem=messaging'
+        compiledCMDSubsystem = '/profile=full-ha/subsystem=messaging'
         expect(provider).to receive(:compilecmd).with(cmdCompile).and_return(compiledCMDSubsystem)
 
         # line 21
@@ -94,7 +94,7 @@ context "mocking default values" do
 
         # line 24
         hornetCMD = '/subsystem=messaging/hornetq-server=default'
-        compiledHornetCMD = "/profile/full-ha/#{hornetCMD}"
+        compiledHornetCMD = "/profile=full-ha/#{hornetCMD}"
         execHornetCMD = "#{compiledHornetCMD}:read-resource()"
         hornetBringUpName = 'Default HornetQ'
         horneBringUpCMD = "#{compiledHornetCMD}:add()"
@@ -104,7 +104,7 @@ context "mocking default values" do
         expect(provider).to receive(:bringUp).with(hornetBringUpName, horneBringUpCMD).and_return(true)
 
         # line 28
-        finalCMD = "jms-queue --profile=full-ha add --queue-address=#{resource[:name]} --entries=#{resource[:entries]} --durable=\"#{resource[:durable].to_s}\""
+        finalCMD = 'jms-queue --profile=full-ha add --queue-address=app-mails --entries=["queue/app-mails", "java:jboss/exported/jms/queue/app-mails"] --durable=true'
         finalBringUpName = 'JMS Queue'
         expect(provider).to receive(:bringUp).with(finalBringUpName, finalCMD).and_return(true)
 
@@ -194,12 +194,12 @@ context "mocking default values" do
 
     describe "#entries with true" do
       before :each do
-        entries = "[\"true\"]"
+        entries = "[\"true\", \"false\"]"
         expect(provider).to receive(:setattr).with('entries', entries).and_return("true")
       end
 
-      subject { provider.entries= ['true'] }
-      it { expect(subject).to eq (["true"]) }
+      subject { provider.entries = ['true', 'false'] }
+      it { expect(subject).to eq (['true', 'false']) }
     end
 end
 end

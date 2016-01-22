@@ -18,7 +18,7 @@ context "mocking default values" do
     Puppet_X::Coi::Jboss::Configuration.reset_config
   end
 
-  describe 'Puppet::Type::Confignode::ProviderJbosscli' do
+  describe 'Puppet::Type::Jboss_jdbcdriver::ProviderJbosscli' do
 
     let(:described_class) do
       Puppet::Type.type(:jboss_jdbcdriver).provider(:jbosscli)
@@ -55,11 +55,11 @@ context "mocking default values" do
     describe '#create' do
       before :each do
 
-      cmdlizedMap = "driver-name=\"app-mails\",driver-module-name=\"super-crm\",driver-datasource-class-name=\"datasourceclassname\",driver-xa-datasource-class-name=\"xadsname\",driver-class-name=\"driverclasname\""
+      cmdlizedMap = 'driver-class-name="driverclasname",driver-datasource-class-name="datasourceclassname",driver-module-name="super-crm",driver-name="app-mails",driver-xa-datasource-class-name="xadsname"'
 
 
       cmd = "/subsystem=datasources/jdbc-driver=app-mails:add(#{cmdlizedMap})"
-      compiledcmd = "profile/full-ha/#{cmd}"
+      compiledcmd = "/profile=full-ha/#{cmd}"
       bringUpName = 'JDBC-Driver'
       expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
 
@@ -74,7 +74,7 @@ context "mocking default values" do
       before :each do
 
         cmd = "/subsystem=datasources/jdbc-driver=#{resource[:name]}:remove"
-        compiledcmd = "profile/full-ha/#{cmd}"
+        compiledcmd = "/profile=full-ha/#{cmd}"
         bringDownName = 'JDBC-Driver'
 
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
@@ -88,7 +88,7 @@ context "mocking default values" do
     describe 'exists?' do
       before :each do
         cmd = "/subsystem=datasources/jdbc-driver=#{resource[:name]}:read-resource(recursive=true)"
-        compiledcmd = "profile/full-ha/#{cmd}"
+        compiledcmd = "/profile=full-ha/#{cmd}"
         expected_output = {
           :result => true,
         }

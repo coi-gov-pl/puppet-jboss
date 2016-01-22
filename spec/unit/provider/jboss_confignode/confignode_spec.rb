@@ -18,7 +18,7 @@ context "mocking default values" do
     Puppet_X::Coi::Jboss::Configuration.reset_config
   end
 
-  describe 'Puppet::Type::Confignode::ProviderJbosscli' do
+  describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
 
     let(:described_class) do
       Puppet::Type.type(:jboss_confignode).provider(:jbosscli)
