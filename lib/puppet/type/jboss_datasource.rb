@@ -69,17 +69,36 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "Extra options for datasource or xa-datasource"
     
     validate do |value|
-      unless value.respond_to? :[]
-        fail "You can pass only hash-like objects"
+      absentlike = [:absent, :undef, nil]
+      absentlike.concat(absentlike.map {|v| v.to_s})
+      hashlike = (value.respond_to? :[] and value.respond_to? :each and not value.is_a? String and not value.is_a? Symbol)
+      unless absentlike.include?(value) or hashlike
+        fail "You can pass only hash-like objects or absent and undef values, given #{value.inspect}"
       end
     end
-    
+
+    munge do |value|
+      if %w{absent undef}.include?(value) then value.to_sym else value end
+    end
+
     def change_to_s(current, desire)
       changes = []
-      desire.each do |key, desired_value|
-        current_value = current[key]
-        message = "option '#{key}' has changed from #{current_value.inspect} to #{desired_value.inspect}"
-        changes << message unless current_value == desired_value   
+      absentlike = [:absent, :undef, nil]
+      absentlike.concat(absentlike.map {|v| v.to_s})
+      keys = []
+      keys.concat(desire.keys) unless absentlike.include?(desire)
+      keys.concat(current.keys) unless absentlike.include?(current)
+      keys.uniq.sort.each do |key|
+        desired_value = if absentlike.include?(desire) then desire else desire[key] end
+        current_value = if absentlike.include?(current) then current else current[key] end
+        if absentlike.include?(desired_value) and not absentlike.include?(current_value) then
+          message = "option '#{key}' was #{current_value.inspect} and has been removed"
+        elsif absentlike.include?(current_value) and not absentlike.include?(desired_value)
+          message = "option '#{key}' has been set to #{desired_value.inspect}"
+        else
+          message = "option '#{key}' has changed from #{current_value.inspect} to #{desired_value.inspect}"
+        end
+        changes << message unless current_value == desired_value
       end
       changes.join ', '
     end

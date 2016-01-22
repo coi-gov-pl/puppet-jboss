@@ -207,10 +207,11 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
           :xa          => true,
           :runasdomain => false,
           :jdbcscheme  => 'h2:mem',
-          :options     => {},
+          :options     => datasource_options,
           :jndiname    => 'jboss:/datasources/testing'
         }
       end
+      let(:datasource_options) do {} end
       before :each do
         cli = '/subsystem=datasources/xa-data-source=testing:read-resource(recursive=true)'
         expect(provider).to receive(:executeAndGet).with(cli).at_least(:once).and_return({
@@ -235,6 +236,63 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
           subject { provider.jta_opt(cmd) }
           it { expect(subject).to be_nil }
           it { expect(cmd).to be_empty }
+        end
+
+        describe 'options=(new_options)' do
+          let(:datasource_options) do
+            {
+              'xa-some-opt' => 'true',
+              'sample-opt'  => 'gigabyte'
+            }
+          end
+          let(:datasource_options_setattrb_response) do
+            { :result => true, :data   => {} }
+          end
+          before :each do
+            datasource_options.each do |k, v|
+              allow(provider).to receive(:getattrib).with(k).and_return(v)
+            end
+          end
+          subject { provider.options = new_options }
+          shared_examples 'is working like a charm' do
+            it { expect { subject }.not_to raise_error }
+          end
+          context 'with new_options equal to { "xa-some-opt" => false }' do
+            let(:new_options) do
+              { "xa-some-opt" => false, 'sample-opt'  => 'gigabyte' }
+            end
+            before :each do
+              new_options.each do |k, v|
+                if datasource_options[k] != v
+                  expect(provider).to receive(:executeAndGet).
+                    with("/subsystem=datasources/xa-data-source=testing:write-attribute(name=\"#{k}\", value=#{v.inspect})").
+                    and_return(datasource_options_setattrb_response)
+                end
+              end
+            end
+            it_behaves_like 'is working like a charm'
+          end
+          context 'for cases that undefines setted values' do
+            before :each do
+              datasource_options.each do |k, v|
+                expect(provider).to receive(:executeAndGet).
+                  with("/subsystem=datasources/xa-data-source=testing:undefine-attribute(name=\"#{k}\")").
+                  and_return(datasource_options_setattrb_response)
+              end
+            end
+            context 'with new_options equal to :absent' do
+              let(:new_options) { :absent }
+              it_behaves_like 'is working like a charm'
+            end
+            context 'with new_options equal to :undef' do
+              let(:new_options) { :undef }
+              it_behaves_like 'is working like a charm'
+            end
+            context 'with new_options equal to nil' do
+              let(:new_options) { nil }
+              it_behaves_like 'is working like a charm'
+            end
+          end
         end
       end
       context 'while using JBoss EAP 6.2.0.GA' do
