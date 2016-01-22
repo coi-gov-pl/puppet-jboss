@@ -167,17 +167,22 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
   
   def setattribute(path, name, value)
-    setattribute_raw path, name, escape(value)
+    escaped = value.nil? ? nil : escape(value)
+    setattribute_raw(path, name, escaped)
   end
   
   def setattribute_raw(path, name, value)
     Puppet.debug "#{name.inspect} setting to #{value.inspect} for path: #{path}"
-    cmd = "#{path}:write-attribute(name=\"#{name.to_s}\", value=#{value})"
+    if value.nil?
+      cmd = "#{path}:undefine-attribute(name=\"#{name.to_s}\")"
+    else
+      cmd = "#{path}:write-attribute(name=\"#{name.to_s}\", value=#{value})"
+    end
     if runasdomain?
       cmd = "/profile=#{@resource[:profile]}#{cmd}"
     end
     res = executeAndGet(cmd)
-    Puppet.debug(res.inspect)
+    Puppet.debug("Setting attribute response: #{res.inspect}")
     if not res[:result]
       raise "Cannot set #{name} for #{path}: #{res[:data]}"
     end
@@ -216,7 +221,7 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
   end
   
   def escape value
-    Puppet::Provider::Jbosscli.escape value
+    Puppet::Provider::Jbosscli.escape(value)
   end
   
   def executeWithFail(typename, passed_args, way)
