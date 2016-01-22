@@ -78,7 +78,16 @@ Puppet::Type.newtype(:jboss_datasource) do
     end
 
     munge do |value|
-      if %w{absent undef}.include?(value) then value.to_sym else value end
+      hashlike = (value.respond_to? :[] and value.respond_to? :each and not value.is_a? String and not value.is_a? Symbol)
+      absentlike = [:absent, :undef, nil]
+      absentlike.concat(absentlike.map {|v| v.to_s})
+      ret = if %w{absent undef}.include?(value) then value.to_sym else value end
+      if hashlike
+        value.each do |k, v|
+          ret[k] = absentlike.include?(v) ? nil : v
+        end
+      end
+      ret
     end
 
     def change_to_s(current, desire)
