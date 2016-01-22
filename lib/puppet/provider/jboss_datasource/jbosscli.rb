@@ -206,10 +206,8 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
   end
   
   def options= value
-    actual = {}
     absentlike = [:absent, :undef, nil]
     managed_fetched_options.each do |key, fetched_value|
-      actual[key] = fetched_value
       if absentlike.include?(value)
         expected_value = nil
       else
@@ -217,14 +215,8 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli, :parent => Puppet::Provi
       end
       if expected_value != fetched_value
         setattrib(key, expected_value)
-        if expected_value.nil?
-          actual.delete(key)
-        else
-          actual[key] = expected_value
-        end
       end
     end
-    actual
   end
   
   def enabled
