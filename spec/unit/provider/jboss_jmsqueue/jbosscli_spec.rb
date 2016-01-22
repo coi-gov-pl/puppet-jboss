@@ -125,5 +125,24 @@ context "mocking default values" do
       subject { provider.destroy }
       it { expect(subject).to eq(true) }
     end
+
+    describe '#exists?' do
+      before :each do
+        $data = nil
+        cmd = "/subsystem=messaging/hornetq-server=default/jms-queue=#{resource[:name]}:read-resource()"
+        compiledCMD = "/profile=full-ha#{cmd}"
+
+        expected_output = {
+          :result => true,
+          :data   => 'asd',
+        }
+
+        expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledCMD)
+        expect(provider).to receive(:executeAndGet).with(compiledCMD).and_return(expected_output)
+      end
+
+      subject { provider.exists? }
+      it { expect(subject).to eq(true) }
+    end
 end
 end
