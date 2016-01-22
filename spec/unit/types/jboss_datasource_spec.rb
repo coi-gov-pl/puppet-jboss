@@ -34,10 +34,9 @@ describe 'jboss_datasource', :type => :type do
     end
     context 'given "5x45"' do
       let(:params) { extend_params({ :port => "5x45" }) }
-      before { skip('FIXME: A buggy host validation, ref: coi-gov-pl/puppet-jboss#8') }
       it do
-        expect { type }.to raise_error(ex_class, 
-          'Parameter port failed on Jboss_datasource[spec-datasource]: Datasource port is invalid, given "an invalid port"')
+        expect { type }.to raise_error(ex_class,
+          'Parameter port failed on Jboss_datasource[spec-datasource]: Datasource port is invalid, given "5x45"')
       end
     end
     context 'property :port' do
@@ -62,12 +61,23 @@ describe 'jboss_datasource', :type => :type do
       end
     end
     context 'given "an invalid host"' do
-      before { skip('FIXME: A buggy host validation, ref: coi-gov-pl/puppet-jboss#8') }
       let(:params) { extend_params({ :host => "an invalid host" }) }
       it do
-        expect { type }.to raise_error(ex_class, 
+        expect { type }.to raise_error(ex_class,
           'Parameter host failed on Jboss_datasource[spec-datasource]: Datasource host is invalid, given "an invalid host"')
       end
+    end
+    context 'given "node-01.example.org"' do
+      let(:params) { extend_params({ :host => "node-01.example.org" }) }
+      it { expect { type }.not_to raise_error }
+    end
+    context 'given "192.168.16.2"' do
+      let(:params) { extend_params({ :host => "192.168.16.2" }) }
+      it { expect { type }.not_to raise_error }
+    end
+    context 'given "fe80::250:56ff:fec0:8"' do
+      let(:params) { extend_params({ :host => "fe80::250:56ff:fec0:8" }) }
+      it { expect { type }.not_to raise_error }
     end
   end
 

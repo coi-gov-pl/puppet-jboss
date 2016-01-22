@@ -1,12 +1,15 @@
 ---
 language: ruby
-# TODO: GH Issue #4 - Try to execute standard Ruby builds on Travis CI on container infrastructure
-sudo: required
-install:
-  - sudo add-apt-repository -y ppa:raphink/augeas
-  - sudo apt-get update
-  - sudo apt-get install -y libaugeas-dev libxml2-dev
-  - bundle install --without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
+sudo: false
+addons:
+  apt:
+    sources:
+    - augeas
+    packages:
+    - libaugeas-dev
+    - libxml2-dev
+bundler_args: --without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
+cache: bundler
 script: bundle exec rake test
 before_install: rm -f Gemfile.lock
 matrix:
