@@ -175,9 +175,16 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
   end
 
   def options= value
+    absentlike = [:absent, :undef, nil]
     managed_fetched_options.each do |key, fetched_value|
-      expected_value = value[key]
-      setattrib(key, expected_value) if expected_value != fetched_value
+      if absentlike.include?(value)
+        expected_value = nil
+      else
+        expected_value = value[key]
+      end
+      if expected_value != fetched_value
+        setattrib(key, expected_value)
+      end
     end
   end
 

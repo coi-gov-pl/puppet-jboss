@@ -39,21 +39,19 @@ describe 'jboss_confignode', :type => :type do
         let(:properties) { false }
         subject { type.property(:properties).change_to_s(from, to) }
         context 'from :absent and to hash', :from => :absent, :to => { 'alice' => 'five', 'bob' => 'seven' } do
-          before { skip('FIXME: A proper message while executing change_to_s for :to == :absent, ref: coi-gov-pl/puppet-jboss#9')}
           let(:from) { |expl| expl.metadata[:from] }
           let(:to) { |expl| expl.metadata[:to] }
-          it { expect(subject).to eq("property 'alice' has been changed from nil to \"five\", property 'bob' has been changed from nil to \"seven\"") }
+          it { expect(subject).to eq("property 'alice' has been set to \"five\", property 'bob' has been set to \"seven\"") }
         end
         context 'from hash and to changed hash', :from => { 'alice' => 'five', 'bob' => 'nine' }, :to => { 'alice' => 'five', 'bob' => 'seven' } do
           let(:from) { |expl| expl.metadata[:from] }
           let(:to) { |expl| expl.metadata[:to] }
-          it { expect(subject).to eq("property 'bob' has been changed from \"nine\" to \"seven\"") }
+          it { expect(subject).to eq("property 'bob' has changed from \"nine\" to \"seven\"") }
         end
         context 'from hash and to :absent', :from => { 'alice' => 'five', 'bob' => 'nine' }, :to => :absent do
-          before { skip('FIXME: A proper message while executing change_to_s for :to == :absent, ref: coi-gov-pl/puppet-jboss#9')}
           let(:from) { |expl| expl.metadata[:from] }
           let(:to) { |expl| expl.metadata[:to] }
-          it { expect(subject).to eq('properties has been removed') }
+          it { expect(subject).to eq("property 'alice' was \"five\" and has been removed, property 'bob' was \"nine\" and has been removed") }
         end
       end
     end

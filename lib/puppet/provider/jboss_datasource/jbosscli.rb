@@ -15,4 +15,5 @@ Puppet::Type.type(:jboss_datasource).provide(:jbosscli,
   class << self
     include Puppet_X::Coi::Jboss::Provider::Datasource::Static
   end
+
 end
