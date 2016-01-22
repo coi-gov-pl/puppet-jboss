@@ -56,6 +56,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
   def durable
     trace 'durable'
     Puppet.debug "Durable given: #{@resource[:durable].inspect}"
+    # normalization
     $data['durable'].to_bool.to_s
   end
 

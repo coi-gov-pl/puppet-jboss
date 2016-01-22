@@ -126,7 +126,7 @@ context "mocking default values" do
       it { expect(subject).to eq(true) }
     end
 
-    describe '#exists?' do
+    describe '#exists? with result => true' do
       before :each do
         $data = nil
         cmd = "/subsystem=messaging/hornetq-server=default/jms-queue=#{resource[:name]}:read-resource()"
@@ -143,6 +143,63 @@ context "mocking default values" do
 
       subject { provider.exists? }
       it { expect(subject).to eq(true) }
+    end
+
+    describe '#exists? with result => false' do
+      before :each do
+        $data = nil
+        cmd = "/subsystem=messaging/hornetq-server=default/jms-queue=#{resource[:name]}:read-resource()"
+        compiledCMD = "/profile=full-ha#{cmd}"
+
+        expected_output = {
+          :result => false,
+          :data   => 'asd',
+        }
+
+        expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledCMD)
+        expect(provider).to receive(:executeAndGet).with(compiledCMD).and_return(expected_output)
+      end
+
+      subject { provider.exists? }
+      it { expect(subject).to eq(false) }
+    end
+
+    describe '#durable' do
+      before :each do
+        $data = {
+          'durable' => 'true',
+        }
+      end
+      subject { provider.durable }
+      it { expect(subject).to eq("true") }
+    end
+
+    describe '#durable = true' do
+      before :each do
+        expect(provider).to receive(:setattr).with('durable', "\"true\"").and_return(true)
+      end
+      subject { provider.durable = "true" }
+      it { expect(subject).to eq("true") }
+    end
+
+    describe '#entries' do
+      before :each do
+        $data = {
+          'entries' => 'asd',
+        }
+      end
+      subject { provider.entries }
+      it { expect(subject).to eq('asd') }
+    end
+
+    describe "#entries with true" do
+      before :each do
+        entries = "[\"true\"]"
+        expect(provider).to receive(:setattr).with('entries', entries).and_return("true")
+      end
+
+      subject { provider.entries= ['true'] }
+      it { expect(subject).to eq (["true"]) }
     end
 end
 end
