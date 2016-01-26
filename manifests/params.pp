@@ -5,7 +5,7 @@ class jboss::params inherits jboss::internal::params {
   $product          = hiera('jboss::params::product', 'wildfly')
 
   # Version of JBoss Application Server
-  $version          = hiera('jboss::params::version', '8.2.0.Final')
+  $version          = hiera('jboss::params::version', '9.0.2.Final')
 
   # Deprcated, will deleted in next major version
   include jboss::internal::quirks::autoinstall
