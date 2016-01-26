@@ -1,6 +1,6 @@
 include jboss
 
-jboss::interface { 'public':
+jboss::interface { 'public-additional':
   ensure       => 'present',
-  inet_address => '192.168.5.33',
+  inet_address => $::ipaddresss,
 }
