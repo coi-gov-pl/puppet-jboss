@@ -27,6 +27,8 @@ module Kernel
   define_method(:require_relative) { |rel| Puppet_X::Coi::require_relative(rel, lvl = 1) } unless Kernel.respond_to? :require_relative
 end
 
+require_relative 'jboss/constants'
+require_relative 'jboss/buildins_utils'
 require_relative 'jboss/configuration'
 require_relative 'jboss/facts'
 

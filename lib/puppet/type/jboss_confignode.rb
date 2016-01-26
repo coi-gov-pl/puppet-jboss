@@ -1,4 +1,7 @@
+require File.expand_path(File.join(File.dirname(__FILE__), '../../puppet_x/coi/jboss'))
+
 Puppet::Type.newtype(:jboss_confignode) do
+
   @doc = "Generic configuration entry for JBoss Application Sever"
 
   newproperty(:ensure) do
@@ -35,9 +38,8 @@ Puppet::Type.newtype(:jboss_confignode) do
     end
 
     def change_to_s(current, desire)
+      absentlike = Puppet_X::Coi::Jboss::Constants::ABSENTLIKE_WITH_S
       changes = []
-      absentlike = [:absent, :undef, nil]
-      absentlike.concat(absentlike.map {|v| v.to_s})
       keys = []
       keys.concat(desire.keys) unless absentlike.include?(desire)
       keys.concat(current.keys) unless absentlike.include?(current)

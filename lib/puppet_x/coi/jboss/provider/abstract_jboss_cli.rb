@@ -2,38 +2,7 @@
 require_relative '../configuration'
 require 'tempfile'
 
-class Object
-  def blank?
-    return true if self.nil?
-    self.respond_to?(:empty?) ? self.empty? : !self
-  end
-
-  def to_bool
-    if self.respond_to?(:empty?)
-      str = self
-    else
-      str = self.to_s
-    end
-    if self.is_a? Numeric
-      return self != 0
-    end
-    return true if self == true || str =~ (/(true|t|yes|y)$/i)
-    return false if self == false || self.blank? || str =~ (/(false|f|no|n)$/i)
-    raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
-  end
-end
-class Hash
-  def hashbackmap
-    result = {}
-
-    self.each do |key, val|
-      result[key] = yield val
-    end
-
-    result
-  end
-end
-
+# Base class for all JBoss providers
 class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
   @@bin = "bin/jboss-cli.sh"
@@ -242,7 +211,8 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
   def self.compilecmd runasdomain, profile, cmd
     out = cmd.to_s
-    asdomain = runasdomain.to_bool
+    convr = Puppet_X::Coi::Jboss::BuildinsUtils::ToBooleanConverter.new(runasdomain)
+    asdomain = convr.to_bool
     if asdomain && out[0..9] == '/subsystem'
       out = "/profile=#{profile}#{out}"
     end

@@ -1,5 +1,6 @@
 # A module for Jmsqueue
 module Puppet_X::Coi::Jboss::Provider::Jmsqueue
+  include Puppet_X::Coi::Jboss::BuildinsUtils
   def create
     if runasdomain?
       profile = "--profile=#{@resource[:profile]}"
@@ -12,7 +13,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
     else
       raise "Array of entries can not be empty"
     end
-    durable = @resource[:durable].to_bool
+    durable = ToBooleanConverter.new(@resource[:durable]).to_bool
     extcmd = "/extension=org.jboss.as.messaging"
     if not execute("#{extcmd}:read-resource()")[:result]
       bringUp "Extension - messaging", "#{extcmd}:add()"
@@ -57,12 +58,12 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
     trace 'durable'
     Puppet.debug "Durable given: #{@resource[:durable].inspect}"
     # normalization
-    $data['durable'].to_bool.to_s
+    ToBooleanConverter.new($data['durable']).to_bool.to_s
   end
 
   def durable= value
     trace 'durable= %s' % value.to_s
-    setattr 'durable', ('"%s"' % value.to_bool)
+    setattr 'durable', ('"%s"' % ToBooleanConverter.new(value).to_bool)
   end
 
   def entries

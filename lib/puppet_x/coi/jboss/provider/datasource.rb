@@ -2,7 +2,8 @@ require_relative '../configuration'
 
 # A class for JBoss datasource provider
 module Puppet_X::Coi::Jboss::Provider::Datasource
-
+  include Puppet_X::Coi::Jboss::Constants
+  include Puppet_X::Coi::Jboss::BuildinsUtils
   def create
     cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ]
     jta_opt(cmd)
@@ -175,9 +176,8 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
   end
 
   def options= value
-    absentlike = [:absent, :undef, nil]
     managed_fetched_options.each do |key, fetched_value|
-      if absentlike.include?(value)
+      if ABSENTLIKE.include?(value)
         expected_value = nil
       else
         expected_value = value[key]
@@ -377,7 +377,8 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     end
     readed = getattrib('xa-datasource-properties')
     key = property.to_s
-    if readed.nil? or readed[key].nil? or readed[key]['value'].blank?
+    bm = BlankMatcher.new(readed[key]['value'])
+    if readed.nil? or readed[key].nil? or bm.blank?
       name = @resource[:name]
       cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{key}:read-attribute(name=value)"
       result = executeAndGet cmd
