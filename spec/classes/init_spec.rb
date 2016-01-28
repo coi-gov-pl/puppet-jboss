@@ -2,9 +2,9 @@ require 'spec_helper_puppet'
 
 describe 'jboss', :type => :class do
   let(:facts) do
-    { 
+    {
       :operatingsystem => 'OracleLinux',
-      :osfamily        => 'RedHat', 
+      :osfamily        => 'RedHat',
       :ipaddress       => '192.168.0.1',
       :concat_basedir  => '/root/concat',
       :puppetversion   => Puppet.version
@@ -31,12 +31,19 @@ describe 'jboss', :type => :class do
     it { is_expected.to contain_anchor 'jboss::service::started' }
     it { is_expected.to contain_user 'jboss' }
     it { is_expected.to contain_group 'jboss' }
+    it { is_expected.to contain_class('jboss::internal::package').with ({
+      :version      => '8.2.0.Final',
+      :product      => 'wildfly',
+      :jboss_user   => 'jboss',
+      :jboss_group  => 'jboss',
+      :java_version => 'latest'
+      })}
   end
   context 'with product => jboss-eap and version => 6.4.0.GA parameters set' do
     let(:params) do
       { :product => 'jboss-eap', :version => '6.4.0.GA' }
     end
-    
+
     it { is_expected.to compile }
     it { is_expected.to contain_class 'jboss' }
     it { is_expected.to contain_user 'jboss' }
@@ -46,7 +53,7 @@ describe 'jboss', :type => :class do
     let(:params) do
       { :jboss_user => 'appserver' }
     end
-    
+
     it { is_expected.to compile }
     it { is_expected.to contain_class 'jboss' }
     it { is_expected.to contain_user 'appserver' }
@@ -62,5 +69,9 @@ describe 'jboss', :type => :class do
         :download_url => 'file:///tmp/wildfly-8.2.0.Final.zip'
         })
     end
+    it { is_expected.to contain_class 'jboss::params' }
+    it { is_expected.to contain_class 'jboss::internal::compatibility' }
+    it { is_expected.to contain_class 'jboss::internal::configuration' }
+    it { is_expected.to contain_class 'jboss::internal::service' }
   end
 end

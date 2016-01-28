@@ -12,7 +12,8 @@ describe 'jboss::logging::syslog', :type => :define do
   } }
 
   it { is_expected.to compile }
-  it do 
+  it { is_expected.to contain_jboss__logging__syslog(title) }
+  it do
     is_expected.to contain_jboss__clientry("/subsystem=logging/syslog-handler=#{title}").
       with_ensure('present').
       with_properties({
@@ -24,4 +25,3 @@ describe 'jboss::logging::syslog', :type => :define do
       })
   end
 end
-
