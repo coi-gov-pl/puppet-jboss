@@ -249,7 +249,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
 
     props = @resource[:properties]
     arr = []
-    props.each do |key, value|
+    props.reject { |k,v| v.nil? }.each do |key, value|
       preparedval = escape value
       arr.push "#{key}=#{preparedval}"
     end
