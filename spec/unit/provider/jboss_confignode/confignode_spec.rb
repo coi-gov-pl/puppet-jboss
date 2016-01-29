@@ -30,6 +30,7 @@ context "mocking default values" do
         :ensure     => 'present',
         :properties => {
           'security-enabled' => false,
+          'some-other-prop'  => nil
         }
       }
     end
