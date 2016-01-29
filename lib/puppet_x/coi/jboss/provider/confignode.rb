@@ -248,6 +248,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     trace 'compileprops'
 
     props = @resource[:properties]
+    Puppet.debug("Properties to be compiled: #{props.inspect}")
     arr = []
     props.reject { |k,v| v.nil? }.each do |key, value|
       preparedval = escape value

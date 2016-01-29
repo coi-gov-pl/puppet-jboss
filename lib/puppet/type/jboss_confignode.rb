@@ -28,8 +28,8 @@ Puppet::Type.newtype(:jboss_confignode) do
       if %w{absent undef}.include?(value)
         value.to_sym
       else
-        hashlike = (value.respond_to? :[] and value.respond_to? :each and not value.is_a? String and not value.is_a? Symbol)
-        unless hashlike
+        matcher = Puppet_X::Coi::Jboss::BuildinsUtils::HashlikeMatcher.new(value)
+        unless matcher.hashlike?
           {}
         else
           value
