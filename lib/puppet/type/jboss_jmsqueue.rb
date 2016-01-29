@@ -9,7 +9,7 @@ Puppet::Type.newtype(:jboss_jmsqueue) do
 
   newproperty(:entries, :array_matching => :all) do
     desc "entries passed as array"
-    
+
     def is_to_s is
       return is.inspect
     end
@@ -23,7 +23,7 @@ Puppet::Type.newtype(:jboss_jmsqueue) do
     defaultto false
     desc "durable true/false"
   end
-    
+
   newparam(:profile) do
     desc "The JBoss profile name"
     defaultto "full"
@@ -33,7 +33,7 @@ Puppet::Type.newtype(:jboss_jmsqueue) do
     desc "Indicate that server is in domain mode"
     defaultto true
   end
-  
+
   newparam(:controller) do
     desc "Domain controller host:port address"
     validate do |value|
@@ -42,7 +42,7 @@ Puppet::Type.newtype(:jboss_jmsqueue) do
       end
     end
   end
-  
+
   newparam :ctrluser do
     desc 'A user name to connect to controller'
   end

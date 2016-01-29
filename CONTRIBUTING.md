@@ -79,10 +79,12 @@ with:
 
     bundle exec rake acceptance
 
-This will run the tests on an Ubuntu 14.04 virtual machine. You can also
-run the integration tests against Centos 6.5 with.
+This will run the tests on an Centos 6.5 docker container. You can also
+run the integration tests against any other configuration specified in directory `spec/acceptance/nodesets`. For example for Ubuntu 14.04 running on virtualbox via Vagrant you should run:
 
-    RS_SET=centos-65-x64-docker bundle exec rake acceptance
+    RS_SET=ubuntu-14.04-x86_64-vagrant bundle exec rake acceptance
+
+**Caution!** To run Vagrant boxes when you have installed Vagrant in version 1.5 or above, you need to have `bundler` in version range: >= 1.5.2 <= 1.10.5. This is due to fact of invalid version in vagrant-wrapper gem package.
 
 If you don't want to have to recreate the virtual machine every time you
 can use `BEAKER_DESTROY=no` and `BEAKER_PROVISION=no`. On the first run you will

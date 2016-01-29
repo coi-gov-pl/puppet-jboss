@@ -1,16 +1,5 @@
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
-# JBoss provider module
-module Provider
-# JBoss datasource provider module
-module Datasource
-
 # A class for JBoss post WildFly datasource provider
-class PostWildFlyProvider
+class Puppet_X::Coi::Jboss::Provider::Datasource::PostWildFlyProvider
   def initialize(provider)
     @provider = provider
   end
@@ -34,10 +23,4 @@ class PostWildFlyProvider
   def jta_opt(cmd)
     cmd.push "--jta=#{@provider.resource[:jta].inspect}" unless @provider.xa?
   end
-end
-
-end
-end
-end
-end
 end

@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss')
+
 # Jboss AS private type version function
 #
 # jboss_type_version(string) : string
@@ -6,9 +8,6 @@
 # 'eap-6.2.0.GA' -> 'eap'
 module Puppet::Parser::Functions
   newfunction(:jboss_type_version, :type => :rvalue) do |args|
-    version = args[0]
-    re = /^([a-z]+)-(?:\d+\.\d+)\.\d+(?:\.[A-Za-z]+)?$/
-    m = re.match(version)
-    if m then m[1] else nil end
+    Puppet_X::Coi::Jboss::Functions.jboss_type_version args
   end
 end

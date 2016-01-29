@@ -1,4 +1,4 @@
-# Puppet Module for JBoss EAP and Wildfly application servers 
+# Puppet Module for JBoss EAP and Wildfly application servers
 
 ### ...with configuration management of resources and deployment in domain and stand-alone modes
 
@@ -9,8 +9,8 @@
 1. [Overview](#overview)
 1. [Module Description - What the module does and why it is useful](#module-description)
 1. [Setup - The basics of getting started with JBoss](#setup)
-    3.1. [What JBoss module affects](#what-jboss-module-affects)
-    3.1. [Beginning with JBoss module](#beginning-with-jboss-module)
+  1. [What JBoss module affects](#what-jboss-module-affects)
+  1. [Beginning with JBoss module](#beginning-with-jboss-module)
 1. [Install classes reference](#install-classes-reference)
 1. [Configuration classes reference](#configuration-classes-reference)
 1. [Application defined types reference](#application-defined-types-reference)
@@ -29,7 +29,7 @@ This module can install JBoss Enterprise Application Platform and WildFly applic
 The Center for Information Technology in Poland manage the JBoss application server farm. We were looking for a simple tool to support and automate the management of these servers in the spirit of DevOps methodology. The tool should also be powerful enough to satisfy all, even future requirements. Nothing was able to meet our requirements, so we have designed and wrote the corresponding Puppet module.
 
 The module allows user to perform all necessary operations for JBoss servers. Here are couple of features:
- 
+
  * Installation and upgrading of application servers in domain and standalone modes,
  * support for JBoss AS, EAP, and WildFly,
  * support for the Red Hat and Debian operating systems families,
@@ -39,9 +39,9 @@ The module allows user to perform all necessary operations for JBoss servers. He
  * management of JBoss network interfaces,
  * JPA datasource management, security domains, JMS queues, resource adapters and system logging
  * deployment and removing of artifacts
- 
+
 In addition to the above list, you can also configure any JBoss CLI reachable configuration, with the entire set of parameters. This allows you to configure any parameter supported by JBoss.
- 
+
 Take a look. We will be happy to receive your feedback.
 
 ## Setup
@@ -121,7 +121,7 @@ class { 'jboss':
 
 ### The `jboss::domain::node` configure class
 
-This class will setup JBoss server to run as node of the domain. 
+This class will setup JBoss server to run as node of the domain.
 
 It takes two parameters: `ctrluser` and `ctrlpassword`. User name and password must be setup to JBoss controller. Easiest way to add jboss management user with `jboss::user` type.
 
@@ -152,7 +152,7 @@ Application defined types are here to be directly expected by applications runni
 
 ### The `jboss::datasource` defined type
 
-This defined type can be used to add and remove JBoss data sources. It support both XA and Non-XA data sources. It can setup data sources and manage required drivers. 
+This defined type can be used to add and remove JBoss data sources. It support both XA and Non-XA data sources. It can setup data sources and manage required drivers.
 
 ```puppet
 # Non-XA data source
@@ -206,9 +206,9 @@ More on parameters for [`jboss::jmsqueue` defined type](https://github.com/coi-g
 
 ### The `jboss::resourceadapter` defined type
 
-This defined type can be used to add and remove JBoss resource adapters. A resource adapter 
+This defined type can be used to add and remove JBoss resource adapters. A resource adapter
 is a deployable Java EE component that provides communication between a Java EE application
-and an Enterprise Information System (EIS) using the Java Connector Architecture (JCA) 
+and an Enterprise Information System (EIS) using the Java Connector Architecture (JCA)
 specification
 
 See more info here: https://docs.oracle.com/javaee/6/tutorial/doc/bncjh.html
@@ -231,8 +231,8 @@ More on parameters for [`jboss::resourceadapter` defined type](https://github.co
 
 ### The `jboss::securitydomain` defined type
 
-This defined type can be used to add and remove JBoss security domains. A security domain 
-consists of configurations for authentication, authorization, security mapping, and auditing. 
+This defined type can be used to add and remove JBoss security domains. A security domain
+consists of configurations for authentication, authorization, security mapping, and auditing.
 It implements Java Authentication and Authorization Service (JAAS) declarative security.
 
 See here: https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Security_Guide/sect-Security_Domains.html
@@ -259,8 +259,8 @@ More on parameters for [`jboss::securitydomain` defined type](https://github.com
 
 ### The `jboss::module` defined type
 
-This defined type can add and remove JBoss static modules. Static modules are predefined in 
-the `JBOSS_HOME/modules/` directory of the application server. Each sub-directory represents 
+This defined type can add and remove JBoss static modules. Static modules are predefined in
+the `JBOSS_HOME/modules/` directory of the application server. Each sub-directory represents
 one module and contains one or more JAR files and a configuration file - `module.xml`.
 
 More info on modules here: https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6/html/Development_Guide/chap-Class_Loading_and_Modules.html
@@ -442,8 +442,21 @@ To contribute to this module please read carefully the [CONTRIBUTING.md](https:/
 
 ## Release Notes
 
-* `1.0.0`
- * First publicly available version
- * Support for JBoss EAP, JBoss AS and Wildfly
- * Support for JPA datasource management, Security Domain JBoss, JMS queues, resource adapters and messages logging
- * Support for deploying artifacts
+* `1.0.3` - RubyCake
+  * Bug: #9 Correct a way that options are validated and displyed for datasource type
+  * Bug: #8 Correct a way that port and host are validated for datasource type
+  * Bug: #21 Fix hiera key in params.pp for java_autoinstall parameter
+  * Bug: #17 Fix to be able to supply install zip as off-line file
+  * Quality: #22 Fix Puppet Forge warning: "Dependencies contain unbounded ranges."
+  * Quality: #41 Adding code of conduct file
+  * Tests: #10 Write spec test to cover not covered Ruby files (up 80%)
+  * CI: #34 Running acceptance tests on rvm 2.1 instead of default
+  * CI: #4 Try to execute standard Ruby builds on Travis CI on container infrastructure
+* `1.0.2` - MintyFrost
+  * Enhancement: move documentation to the Wiki and document all public manifests
+  * Bug: make acceptance tests work on Travis
+* `1.0.0` - First public release
+  * First publicly available version
+  * Support for JBoss EAP, JBoss AS and Wildfly
+  * Support for JPA datasource management, Security Domain JBoss, JMS queues, resource adapters and messages logging
+  * Support for deploying artifacts

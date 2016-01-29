@@ -1,14 +1,13 @@
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
 # A class for JBoss configuration
-class Configuration
+class Puppet_X::Coi::Jboss::Configuration
   class << self
-  
+
     @config = nil
+
+    # Test method that return current version(for comatability with ruby 1.8)
+    def ruby_version
+      RUBY_VERSION
+    end
 
     # Gets the main config file
     def configfile
@@ -65,7 +64,7 @@ class Configuration
       @config = value
       nil
     end
-    
+
     # Gets configuration value by its symbol
     #
     # @param key [Symbol] a key in hash
@@ -86,8 +85,4 @@ class Configuration
     end
 
   end
-end
-
-end
-end
 end
