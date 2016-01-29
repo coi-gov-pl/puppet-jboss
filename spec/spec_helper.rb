@@ -67,3 +67,5 @@ RSpec.configure do |c|
     PuppetlabsSpec::Files.cleanup
   end
 end
+
+require 'puppet_x/coi/jboss'

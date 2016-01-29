@@ -159,7 +159,7 @@ describe 'jboss_datasource', :type => :type do
           'Parameter options failed on Jboss_datasource[spec-datasource]: You can pass only hash-like objects or absent and undef values, given true')
       end
     end
-    context 'given' do
+    context 'display changes via change_to_s(from, to) using' do
       let(:options) { {} }
       subject { type.property(:options).change_to_s(from, to) }
       context 'from :absent and to hash', :from => :absent, :to => { 'alice' => 'five', 'bob' => 'seven' } do
@@ -176,6 +176,23 @@ describe 'jboss_datasource', :type => :type do
         let(:from) { |expl| expl.metadata[:from] }
         let(:to) { |expl| expl.metadata[:to] }
         it { expect(subject).to eq('option \'alice\' was "five" and has been removed, option \'bob\' was "nine" and has been removed') }
+      end
+    end
+
+    context 'munge new values using' do
+      let(:options) { {} }
+      subject { type.property(:options).munge(new_values) }
+      context 'regular hash' do
+        let(:new_values) { { 'alice' => 'five', 'bob' => 'seven' } }
+        it { expect(subject).to eq({ 'alice' => 'five', 'bob' => 'seven' }) }
+      end
+      context 'hash with :undef\'s' do
+        let(:new_values) { { 'alice' => :undef, 'bob' => 'seven' } }
+        it { expect(subject).to eq({ 'alice' => nil, 'bob' => 'seven' }) }
+      end
+      context 'an :undef\'s' do
+        let(:new_values) { :undef }
+        it { expect(subject).to eq(:undef) }
       end
     end
   end
