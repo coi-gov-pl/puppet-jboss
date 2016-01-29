@@ -2,5 +2,5 @@ include jboss
 
 jboss::interface { 'public-additional':
   ensure       => 'present',
-  inet_address => $::ipaddresss,
+  inet_address => $::ipaddress,
 }
