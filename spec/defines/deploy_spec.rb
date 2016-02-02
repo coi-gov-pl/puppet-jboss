@@ -36,10 +36,10 @@ describe 'jboss::deploy', :type => :define do
       :inet_address => nil
       }) }
     it { is_expected.to contain_augeas('ensure present interface public').with ({
-        :context => '/files/usr/lib/wildfly-8.2.0.Final/standalone/configuration/standalone-full.xml/',
-        :changes => "set server/interfaces/interface[last()+1]/#attribute/name public",
-        :onlyif  => "match server/interfaces/interface[#attribute/name='public'] size == 0"
-        }) }
+      :context => '/files/usr/lib/wildfly-8.2.0.Final/standalone/configuration/standalone-full.xml/',
+      :changes => "set server/interfaces/interface[last()+1]/#attribute/name public",
+      :onlyif  => "match server/interfaces/interface[#attribute/name='public'] size == 0"
+      }) }
     it { is_expected.to contain_augeas('interface public set any-address').with ({
       :context => '/files/usr/lib/wildfly-8.2.0.Final/standalone/configuration/standalone-full.xml/',
       :changes => "set server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value 'true'",
