@@ -1,4 +1,3 @@
----
 language: ruby
 sudo: false
 addons:
@@ -8,7 +7,7 @@ addons:
     packages:
     - libaugeas-dev
     - libxml2-dev
-bundler_args: --without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
+bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}"
 cache: bundler
 script: bundle exec rake test
 before_install: rm -f Gemfile.lock
@@ -42,12 +41,11 @@ matrix:
     services: docker
     env: PUPPET_VERSION="3.8.4" RS_SET="ubuntu-14.04-x86_64-docker"
     script: bundle exec rake acceptance
-  # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
   email: false
   slack:
     rooms:
-      - $SLACK_TOKEN#ci
+      secure: jKciSvj0RpuEcUSuEG4jXTsfWKo3sN1eYzdy9fdeO6ku7PCVkbLWunfrED7zEHGbfiiiAkdUoMqrgxQIz+iyEmS/kusa3/3II4J4NYcQE3jJz4+57ovfoMEJY1NWGofohW06NHkg+c9VwPKdtdUDWEcJ9jVvntXcPlMyJkoSk7I+EWyonyR/hzhDn8EjYGA+PQ+xdFAvBr1hN+1AFUGVwOub91Kv5UGjT6A/kqKx0uNUqF1raiizmpx2AZDixGnDRv2RpDDKjdUjA34RIHXxTrJvP4GIDInEho9Cnt11/OJtk7xm65wBS7vA3eCKse/QoPmbTpO21+HG0/pwKDujZL9mcbCGofRpfTtrDS5Fd0y3VxC3iyJN3fOUP9hxk3u+SZDWXFQAFVoR12LI9FMNSV5p4Kb0HoZ+6y7rk72ET0a76ubHu+r04pH14g8JTWi2ILI4DTvXOixmNZZIYbk8iodLUcxoubyIDcKkvaJ1MjXlEF3ZVg3+HYtk42xyir6uSKjA9OTHuHJkmxzSkjLaGh5SayhTTCf9FKiPcjztM2dHyZ18F0ZwCWAqmiMtSgKS9NkIBL1xJJWa8NAo8q5XOi1dlGUqLrQIxuA0aRoICxHjXF31hg7qRzzCZMM0MptNbkNxtxFtzg1n9tGQyepJBZyWJxvvk31N1sLHhdxFrDQ=
     on_success: always
     on_failure: always
     on_start: always
