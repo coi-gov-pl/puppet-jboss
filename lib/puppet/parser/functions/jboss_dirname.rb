@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss')
+
 # Jboss AS private dirname function
 #
 # jboss_dirname(string) : string
@@ -8,10 +10,6 @@
 # local file system.
 module Puppet::Parser::Functions
   newfunction(:jboss_dirname, :type => :rvalue) do |args|
-    if args[0].is_a?(Array)
-      args.collect do |a| File.dirname(a) end
-    else
-      File.dirname(args[0])
-    end
+    Puppet_X::Coi::Jboss::Functions.jboss_dirname args
   end
 end

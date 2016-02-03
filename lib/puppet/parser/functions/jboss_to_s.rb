@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/functions/jboss_to_s')
+require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss')
 
 # Jboss AS private to_s function
 #

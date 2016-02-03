@@ -1,8 +1,8 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss/functions/jboss_to_bool'))
-require File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), 'jbosscli.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss'))
 
-Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::Provider::Jbosscli) do
-  
+Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli,
+    :parent => Puppet_X::Coi::Jboss::Provider::AbstractJbossCli) do
+
   def create
     name = @resource[:name]
     jndiname = @resource[:jndiname]
@@ -17,7 +17,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}:remove()"
     bringDown "Resource adapter", cmd
   end
-  
+
   def exists?
     $data = nil
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}:read-resource(recursive=true)"
@@ -29,23 +29,23 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     $data = res[:data]
     return true
   end
-  
+
   def archive
     $data['archive']
   end
-  
+
   def archive= value
-    setbasicattr 'archive', value 
+    setbasicattr 'archive', value
   end
-  
+
   def transactionsupport
     $data['transaction-support']
   end
-  
+
   def transactionsupport= value
-    setbasicattr 'transaction-support', value 
+    setbasicattr 'transaction-support', value
   end
-  
+
   def jndiname
     jndis = []
     if $data['connection-definitions'].nil?
@@ -62,7 +62,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     Puppet.debug "JNDI getter -------- POST! => #{jndis.inspect}"
     return jndis
   end
-  
+
   def jndiname= value
     Puppet.debug "JNDI setter -------- PRE!"
     names = jndiname
@@ -71,7 +71,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     toadd = value - names    # New array minus existing provides array to be added
     trace 'jndiname=(%s) :: toadd=%s' % [value.inspect, toadd.inspect]
     toremove.each do |jndi|
-      destroyconn jndi  
+      destroyconn jndi
     end
     toadd.each do |jndi|
       config = prepareconfig()
@@ -79,23 +79,23 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     end
     exists? # Re read configuration
   end
-  
+
   def classname
     getconnectionattr 'class-name'
   end
-  
+
   def classname= value
     setconnectionattr 'class-name', value
   end
-  
+
   def backgroundvalidation
     getconnectionattr 'background-validation'
   end
-  
+
   def backgroundvalidation= value
     setconnectionattr 'background-validation', value
   end
-  
+
   def security
     if Puppet_X::Coi::Jboss::Functions.jboss_to_bool(getconnectionattr 'security-application')
       return 'application'
@@ -108,7 +108,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     end
     return nil
   end
-  
+
   def security= value
     if value == 'application'
       setconnectionattr 'security-application', true
@@ -126,9 +126,9 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
       raise "Invalid value for security: #{value}. Supported values are: application, domain-and-application, domain"
     end
   end
-  
+
   protected
-  
+
   def createConnections
     if $data.nil?
       exists? # Re read configuration
@@ -139,7 +139,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
       end
     end
   end
-  
+
   def connExists? jndi
     if $data['connection-definitions'].nil?
       $data['connection-definitions'] = {}
@@ -156,7 +156,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     end
     return res[:result]
   end
-  
+
   def createconn jndi, config
     name = @resource[:name]
     connectionParams = makejbprops config
@@ -164,19 +164,19 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{connectionName}:add(#{connectionParams})"
     bringUp "Resource adapter connection-definition", cmd
   end
-  
+
   def destroyconn jndi
     name = @resource[:name]
     connectionName = escapeforjbname jndi
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{connectionName}:remove()"
     bringDown "Resource adapter connection-definition", cmd
   end
-  
+
   def prepareconfig
     params = {
       :basics => {
         'archive'             => @resource[:archive],
-        'transaction-support' => @resource[:transactionsupport],        
+        'transaction-support' => @resource[:transactionsupport],
       },
       :connections => {},
     }
@@ -206,15 +206,15 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     end
     return params
   end
-  
+
   def escapeforjbname input
     input.gsub(/([^\\])\//, '\1\\/').gsub(/([^\\]):/, '\1\\:')
   end
-  
+
   def unescapeforjbname input
     input.gsub(/\\\//, '/').gsub(/\\:/, ':')
   end
-  
+
   def makejbprops input
     inp = {}
     input.each do |k, v|
@@ -224,12 +224,12 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
     end
     inp.inspect.gsub('=>', '=').gsub(/[\{\}]/, '').gsub(/\"([^\"]+)\"=/,'\1=')
   end
-  
+
   def setbasicattr name, value
     setattribute "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}", name, value
     $data[name] = value
   end
-  
+
   def setconnectionattr name, value
     prepareconfig()[:connections].each do |jndi, config|
       if not connExists? jndi
@@ -246,7 +246,7 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
       $data['connection-definitions'][jndi][name] = value
     end
   end
-  
+
   def getconnectionattr name
     prepareconfig()[:connections].each do |jndi, config|
       if not connExists? jndi
@@ -258,5 +258,5 @@ Puppet::Type.type(:jboss_resourceadapter).provide(:jbosscli, :parent => Puppet::
       return $data['connection-definitions'][jndi][name]
     end
   end
-  
+
 end

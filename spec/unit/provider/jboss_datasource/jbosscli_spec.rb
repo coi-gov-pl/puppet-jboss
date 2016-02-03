@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'puppet_x/coi/jboss/configuration'
+require "spec_helper"
+require "puppet_x/coi/jboss/configuration"
 
 context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version => '6.4.0.GA'" do
 
@@ -14,7 +14,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
   before :each do
     Puppet_X::Coi::Jboss::Configuration.reset_config(mock_values)
   end
-  
+
   after :each do
     Puppet_X::Coi::Jboss::Configuration.reset_config
   end
@@ -32,21 +32,21 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         :jdbcscheme  => 'h2:mem',
       }
     end
-  
+
     let(:resource) do
       raw = sample_repl.dup
       raw[:provider] = described_class.name
       Puppet::Type.type(:jboss_datasource).new(raw)
     end
-  
+
     let(:provider) do
       resource.provider
     end
-  
+
     before :each do
       allow(provider.class).to receive(:suitable?).and_return(true)
     end
-  
+
     describe 'Result of self.instances()' do
       let(:xa_result) do
         <<-eos
@@ -69,16 +69,16 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
       end
       let(:status) { double(:exitstatus => 0) }
       before :each do
-        re = /.*bin\/jboss-cli.sh --timeout=50000 --connect --file=\/tmp\/jbosscli.* --controller=127.0.0.1:9999/
-        expect(Puppet::Provider::Jbosscli).to receive(:last_execute_status).
+        re = /.*bin\/jboss-cli.sh --timeout=50000 --connect --file=.+jbosscli.* --controller=127.0.0.1:9999/
+        expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:last_execute_status).
           at_least(:once).and_return(status)
-        expect(Puppet::Provider::Jbosscli).to receive(:execshell).
+        expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:execshell).
           at_least(:once).with(re).and_return(xa_result, nonxa_result)
       end
       it { expect(provider.class.instances).not_to be_empty }
       context 'its size' do
         subject { provider.class.instances.size }
-        it { expect(subject).to eq(2) }  
+        it { expect(subject).to eq(2) }
       end
       context 'for second result, parameter' do
         subject { provider.class.instances[1] }
@@ -87,7 +87,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         its(:xa) { should eq(false) }
       end
     end
-    
+
     context 'Given `testing` Non-XA datasource using h2:mem' do
       let(:command) do
         '/subsystem=datasources/data-source=testing:read-resource(recursive=true)'
@@ -96,7 +96,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
       let(:timeout) { 0 }
       let(:retry_count) { 0 }
       let(:ctrlcfg) do
-        { 
+        {
           :controller => "127.0.0.1:9990",
           :ctrluser   => nil,
           :ctrlpasswd => nil
@@ -168,30 +168,30 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         "testing;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
       end
       before :each do
-        expect(Puppet::Provider::Jbosscli).to receive(:executeAndGet).
+        expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:executeAndGet).
           with(command, runasdomain, ctrlcfg, retry_count, timeout).and_return(result)
       end
-    
+
       describe 'result of dbname()' do
         subject { provider.dbname }
         it { expect(subject).not_to be_nil }
         it { expect(subject).not_to be_empty }
         it { expect(subject).to eq(expected_connection) }
       end
-      
+
       describe 'result of host()' do
         subject { provider.host }
         it { expect(subject).not_to be_nil }
         it { expect(subject).to be_empty }
         it { expect(subject).to eq('') }
       end
-      
+
       describe 'result of port()' do
         subject { provider.port }
         it { expect(subject).not_to be_nil }
         it { expect(subject).to eq(0) }
       end
-      
+
       describe 'result of jdbcscheme()' do
         subject { provider.jdbcscheme }
         it { expect(subject).not_to be_nil }
