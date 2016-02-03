@@ -45,3 +45,9 @@ matrix:
   # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
   email: false
+  slack:
+    rooms:
+      - $SLACK_TOKEN#ci
+    on_success: always
+    on_failure: always
+    on_start: always
