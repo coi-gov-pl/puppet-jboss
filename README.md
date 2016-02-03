@@ -442,6 +442,16 @@ To contribute to this module please read carefully the [CONTRIBUTING.md](https:/
 
 ## Release Notes
 
+* `1.0.3` - RubyCake
+  * Bug: #9 Correct a way that options are validated and displyed for datasource type
+  * Bug: #8 Correct a way that port and host are validated for datasource type
+  * Bug: #21 Fix hiera key in params.pp for java_autoinstall parameter
+  * Bug: #17 Fix to be able to supply install zip as off-line file
+  * Quality: #22 Fix Puppet Forge warning: "Dependencies contain unbounded ranges."
+  * Quality: #41 Adding code of conduct file
+  * Tests: #10 Write spec test to cover not covered Ruby files (up 80%)
+  * CI: #34 Running acceptance tests on rvm 2.1 instead of default
+  * CI: #4 Try to execute standard Ruby builds on Travis CI on container infrastructure
 * `1.0.2` - MintyFrost
   * Enhancement: move documentation to the Wiki and document all public manifests
   * Bug: make acceptance tests work on Travis
