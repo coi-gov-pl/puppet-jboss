@@ -1,3 +1,4 @@
+---
 language: ruby
 sudo: false
 addons:
@@ -41,6 +42,7 @@ matrix:
     services: docker
     env: PUPPET_VERSION="3.8.4" RS_SET="ubuntu-14.04-x86_64-docker"
     script: bundle exec rake acceptance
+  # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
   email: false
   slack:
