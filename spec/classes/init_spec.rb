@@ -32,7 +32,7 @@ describe 'jboss', :type => :class do
     it { is_expected.to contain_user 'jboss' }
     it { is_expected.to contain_group 'jboss' }
     it { is_expected.to contain_class('jboss::internal::package').with ({
-      :version      => '8.2.0.Final',
+      :version      => '9.0.2.Final',
       :product      => 'wildfly',
       :jboss_user   => 'jboss',
       :jboss_group  => 'jboss',

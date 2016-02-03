@@ -1,12 +1,11 @@
 require 'spec_helper_puppet'
 
 describe 'jboss::internal::service', :type => :define do
-  bind_variables_list = [
+  basic_bind_variables_list = [
     "inet-address", "link-local-address",
     "loopback", "loopback-address", "multicast",
     "nic", "nic-match", "point-to-point", "public-address",
-    "site-local-address", "subnet-match", "up", "virtual",
-    "any-ipv4-address", "any-ipv6-address" ]
+    "site-local-address", "subnet-match", "up", "virtual" ]
 
   anchor_list = [
     "begin", "end", "configuration::begin", "configuration::end",
@@ -28,10 +27,11 @@ describe 'jboss::internal::service', :type => :define do
     anchor_list.each do |item|
       it { is_expected.to contain_anchor("#{item}") }
     end
-    bind_variables_list.each do |var|
+    basic_bind_variables_list.each do |var|
       it { is_expected.to contain_augeas("interface public rm #{var}") }
       it { is_expected.to contain_jboss__internal__interface__foreach("public:#{var}") }
     end
+    it { is_expected.to contain_jboss__internal__interface__foreach("public:any-address") }
     it { is_expected.to contain_service('wildfly').with ({
       :ensure => 'running',
       :enable => true
