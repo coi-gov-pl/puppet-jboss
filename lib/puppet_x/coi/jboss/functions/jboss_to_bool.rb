@@ -1,11 +1,5 @@
-# A puppet x module
-module Puppet_X
-# A COI puppet_x module
-module Coi
-# JBoss module
-module Jboss
 # A custom class that holds custom functions
-class Functions
+class Puppet_X::Coi::Jboss::Functions
 
   class << self
     # PRIVATE INTERNAL FUNCTION. Casts any value to boolean
@@ -22,8 +16,8 @@ class Functions
         return string
       end
       string = string.to_s if string.is_a?(Symbol)
-      string = string.inspect unless string.is_a?(String) 
-  
+      string = string.inspect unless string.is_a?(String)
+
       # We consider all the yes, no, y, n and so on too ...
       result = case string
         #
@@ -37,11 +31,8 @@ class Functions
         else
           false
       end
-  
+
       return result
     end
   end
-end
-end
-end
 end

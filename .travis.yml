@@ -1,12 +1,15 @@
 ---
 language: ruby
-# TODO: GH Issue #4 - Try to execute standard Ruby builds on Travis CI on container infrastructure
-sudo: required
-install:
-  - sudo add-apt-repository -y ppa:raphink/augeas
-  - sudo apt-get update
-  - sudo apt-get install -y libaugeas-dev libxml2-dev
-  - bundle install --without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
+sudo: false
+addons:
+  apt:
+    sources:
+    - augeas
+    packages:
+    - libaugeas-dev
+    - libxml2-dev
+bundler_args: --without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
+cache: bundler
 script: bundle exec rake test
 before_install: rm -f Gemfile.lock
 matrix:
@@ -24,20 +27,20 @@ matrix:
     env: PUPPET_VERSION="~> 3.0"
   - rvm: '2.1'
     env: PUPPET_VERSION="~> 3.0" STRICT_VARIABLES=yes
-  - rvm: default
+  - rvm: '2.1'
     sudo: required
     services: docker
-    env: PUPPET_VERSION="3.8.3" RS_SET="centos-6-x86_64-docker"
+    env: PUPPET_VERSION="3.8.4" RS_SET="centos-6-x86_64-docker"
     script: bundle exec rake acceptance
-  - rvm: default
+  - rvm: '2.1'
     sudo: required
     services: docker
-    env: PUPPET_VERSION="3.8.3" RS_SET="debian-7-x86_64-docker"
+    env: PUPPET_VERSION="3.8.4" RS_SET="debian-7-x86_64-docker"
     script: bundle exec rake acceptance
-  - rvm: default
+  - rvm: '2.1'
     sudo: required
     services: docker
-    env: PUPPET_VERSION="3.8.3" RS_SET="ubuntu-14.04-x86_64-docker"
+    env: PUPPET_VERSION="3.8.4" RS_SET="ubuntu-14.04-x86_64-docker"
     script: bundle exec rake acceptance
   # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
