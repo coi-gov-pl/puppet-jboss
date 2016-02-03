@@ -31,6 +31,10 @@ describe 'jboss::datasource', :type => :define do
   end
 
   it { is_expected.to compile.with_all_deps }
+  it { is_expected.to contain_class 'jboss' }
+  it { is_expected.to contain_class 'jboss::internal::service' }
+  it { is_expected.to contain_class 'jboss::internal::runtime::node' }
+
   it do
     is_expected.to contain_jboss_jdbcdriver('test-driver').
       with_classname('com.example.TestDriver').with_modulename('test-driver')
@@ -42,7 +46,7 @@ describe 'jboss::datasource', :type => :define do
     is_expected.to contain_jboss_datasource('test-datasource').
       with_port(1234)
   end
-  
+
   it do
     is_expected.to contain_jboss_datasource('test-datasource').
       with_xa(false)
@@ -57,7 +61,7 @@ describe 'jboss::datasource', :type => :define do
       let(:params) do
         merge_params({ :options => options, :xa => true })
       end
-  
+
       it { is_expected.to contain_jboss_datasource('test-datasource').with_xa(true) }
       it do is_expected.to contain_jboss_datasource('test-datasource').with_options({
         "validate-on-match"=>false,
@@ -73,7 +77,7 @@ describe 'jboss::datasource', :type => :define do
       let(:params) do
         merge_params({ :options => options, :xa => false })
       end
-  
+
       it { is_expected.to contain_jboss_datasource('test-datasource').with_xa(false) }
       it do is_expected.to contain_jboss_datasource('test-datasource').with_options({
         "validate-on-match"=>false,
@@ -85,4 +89,3 @@ describe 'jboss::datasource', :type => :define do
     end
   end
 end
-
