@@ -15,7 +15,7 @@ describe 'jboss::clientry', :type => :define do
 
   shared_examples 'completly working define' do
     it { is_expected.to compile }
-    it { is_expected.to contain_jboss_confignode(title).with ({
+    it { is_expected.to contain_jboss_confignode(title).with({
       :ensure => 'present',
       :path   => 'profile/test'
       }) }
@@ -29,25 +29,25 @@ describe 'jboss::clientry', :type => :define do
     it { is_expected.to contain_class 'jboss::internal::runtime::dc' }
     it { is_expected.to contain_class 'jboss::internal::configure::interfaces' }
     it { is_expected.to contain_jboss_confignode(title).that_requires('Anchor[jboss::package::end]') }
-    it { is_expected.to contain_jboss__clientry(title).with ({
+    it { is_expected.to contain_jboss__clientry(title).with({
       :ensure => 'present',
       :path   => 'profile/test',
       }) }
-    it { is_expected.to contain_jboss__interface('public').with ({
+    it { is_expected.to contain_jboss__interface('public').with({
       :ensure       => 'present',
       :inet_address => nil
       }) }
-    it { is_expected.to contain_augeas('ensure present interface public').with ({
+    it { is_expected.to contain_augeas('ensure present interface public').with({
         :context => '/files/usr/lib/wildfly-8.2.0.Final/standalone/configuration/standalone-full.xml/',
         :changes => "set server/interfaces/interface[last()+1]/#attribute/name public",
         :onlyif  => "match server/interfaces/interface[#attribute/name='public'] size == 0"
         }) }
-    it { is_expected.to contain_augeas('interface public set any-address').with ({
+    it { is_expected.to contain_augeas('interface public set any-address').with({
       :context => '/files/usr/lib/wildfly-8.2.0.Final/standalone/configuration/standalone-full.xml/',
       :changes => "set server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value 'true'",
       :onlyif  => "get server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value != 'true'"
       }) }
-    it { is_expected.to contain_jboss__internal__interface__foreach("public:any-address").with ({
+    it { is_expected.to contain_jboss__internal__interface__foreach("public:any-address").with({
       :cfg_file => '/usr/lib/wildfly-8.2.0.Final/standalone/configuration/standalone-full.xml',
       :path     => 'server/interfaces'
       }) }
@@ -57,17 +57,17 @@ describe 'jboss::clientry', :type => :define do
     end
 
     bind_variables_list.each do |var|
-      it { is_expected.to contain_augeas("interface public rm #{var}").with ({
+      it { is_expected.to contain_augeas("interface public rm #{var}").with({
         :context => '/files/usr/lib/wildfly-8.2.0.Final/standalone/configuration/standalone-full.xml/',
         :changes => "rm server/interfaces/interface[#attribute/name='public']/#{var}",
         :onlyif  => "match server/interfaces/interface[#attribute/name='public']/#{var} size != 0"
         }) }
-      it { is_expected.to contain_jboss__internal__interface__foreach("public:#{var}").with ({
+      it { is_expected.to contain_jboss__internal__interface__foreach("public:#{var}").with({
         :cfg_file => '/usr/lib/wildfly-8.2.0.Final/standalone/configuration/standalone-full.xml',
         :path     => 'server/interfaces'
         }) }
     end
-    it { is_expected.to contain_service('wildfly').with ({
+    it { is_expected.to contain_service('wildfly').with({
       :ensure => 'running',
       :enable => true
       }) }

@@ -32,7 +32,7 @@ describe 'jboss::internal::service', :type => :define do
       it { is_expected.to contain_augeas("interface public rm #{var}") }
       it { is_expected.to contain_jboss__internal__interface__foreach("public:#{var}") }
     end
-    it { is_expected.to contain_service('wildfly').with ({
+    it { is_expected.to contain_service('wildfly').with({
       :ensure => 'running',
       :enable => true
       })}
