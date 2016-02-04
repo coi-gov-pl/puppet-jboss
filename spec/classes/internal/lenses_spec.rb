@@ -11,7 +11,7 @@ describe 'jboss::internal::lenses', :type => :class do
     it { is_expected.to contain_file('/usr/lib/wildfly-8.2.0.Final/lenses/jbxml.aug').that_requires(
       'File[/usr/lib/wildfly-8.2.0.Final/lenses/]'
       )}
-    it { is_expected.to contain_file('/usr/lib/wildfly-8.2.0.Final/lenses').with ({
+    it { is_expected.to contain_file('/usr/lib/wildfly-8.2.0.Final/lenses').with({
       :ensure  => 'directory',
       :owner   => 'jboss',
       }) }
