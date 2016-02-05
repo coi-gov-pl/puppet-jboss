@@ -6,7 +6,7 @@ describe 'jboss::securitydomain', :type => :define do
     it { is_expected.to contain_class 'jboss' }
     it { is_expected.to contain_class 'jboss::internal::service' }
     it { is_expected.to contain_class 'jboss::internal::runtime::node' }
-    it { is_expected.to contain_jboss_securitydomain(title).with ({
+    it { is_expected.to contain_jboss_securitydomain(title).with({
       :ensure => 'present'
       }) }
     it { is_expected.to contain_jboss__securitydomain(title) }
