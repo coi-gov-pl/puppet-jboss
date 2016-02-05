@@ -27,10 +27,10 @@ context "mocking default values for SecurityDomain" do
       {
         :name          => 'testing',
         :code          => 'Database',
-        :codeflag      => 'true',
+        :codeflag      => false,
         :moduleoptions =>  {
           'principalsQuery'   => 'select \'password\' from users u where u.login = ?',
-          'hashUserPassword'  => false,
+          'hashUserPassword'  => true,
         },
       }
     end
@@ -49,12 +49,14 @@ context "mocking default values for SecurityDomain" do
       allow(provider.class).to receive(:suitable?).and_return(true)
     end
 
-    context 'methods with implementation after WildFly' do
+    context 'methods with implementation for modern JBoss servers, that means after releases of WildFly 8 or JBoss EAP 6.4' do
       describe '#create' do
         before :each do
           moduleoptions = 'hashUserPassword => "false",principalsQuery => "select \'password\' from users u where u.login = ?"'
 
-          cmd = "subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles:add(code=Database, flag=true,module-options=[(\"hashUserPassword\" => \"false\"),(\"principalsQuery\" => \"select 'password' from users u where u.login = ?\")]}])"
+          cmd = 'subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles' +
+          ':add(code="Database",flag=false,module-options=[("hashUserPassword"=>true),' +
+          '("principalsQuery"=>"select \'password\' from users u where u.login = ?")]}])'
           compilecmd = "/profile=full-ha/#{cmd}"
 
           cmd2 = "/subsystem=security/security-domain=#{resource[:name]}:add(cache-type=default)"
@@ -65,7 +67,7 @@ context "mocking default values for SecurityDomain" do
 
           bringUpName = 'Security Domain Cache Type'
           bringUpName2 = 'Security Domain'
-          expected_output = { :result => 'asdfhagfgaskfagbfjbgk' }
+          expected_output = { :result => 'A mcked value indicating that everythings works just fine' }
           expected_output2 = { :result => 'dffghbdfnmkbsdkj' }
 
 
@@ -73,7 +75,7 @@ context "mocking default values for SecurityDomain" do
           expect(provider).to receive(:bringUp).with(bringUpName2, compilecmd).and_return(expected_output)
         end
         subject { provider.create }
-        it {expect(subject).to eq('asdfhagfgaskfagbfjbgk') }
+        it {expect(subject).to eq('A mcked value indicating that everythings works just fine') }
       end
 
       describe '#destroy' do
@@ -82,13 +84,13 @@ context "mocking default values for SecurityDomain" do
           compilecmd = "/profile=full-ha/#{cmd}"
 
           bringDownName = 'Security Domain'
-          expected_output = { :result => 'asda'}
+          expected_output = { :result => 'A mocked value indicating that #destroy method runned without any problems'}
 
           expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
           expect(provider).to receive(:bringDown).with(bringDownName, compilecmd).and_return(expected_output)
         end
         subject { provider.destroy }
-        it { expect(subject).to eq('asda') }
+        it { expect(subject).to eq('A mocked value indicating that #destroy method runned without any problems') }
       end
 
       describe '#exist?' do
@@ -153,16 +155,20 @@ context "mocking default values for SecurityDomain" do
       end
     end
 
-    context 'methods with implementation before WildFly' do
-      context '#create' do
-        before :each do
-          #resource[:version] = '6.2.0.GA'
-          binding.pry
-        end
-        subject { provider.create }
-        it { expect(subject).to eq('asd') }
-
+    context 'methods with implementation that run before WildFly 8 or JBoss EAP 6.4 came out' do
+      before :each do
+        expect(Puppet_X::Coi::Jboss::Configuration).to receive(:is_pre_wildfly?).and_return(true)
       end
+      describe '#create' do
+        subject { provider.create }
+        let(:mocked_result) { 'A mocked result that indicate #create method executed just fine' }
+        before :each do
+          expect(provider).to receive(:bringUp).twice.and_return({:result => mocked_result})
+          expect(provider).to receive(:compilecmd).twice
+        end
+        it { is_expected.to eq mocked_result }
+      end
+    end
+
   end
-end
 end

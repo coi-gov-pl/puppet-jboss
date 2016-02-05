@@ -72,8 +72,8 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
         @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(self)
       else
         @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(self)
+      end
+    end
+    @impl
   end
-  @impl
-end
-end
 end

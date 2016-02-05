@@ -1,21 +1,28 @@
 require "spec_helper"
 
 describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider do
-  let(:resource) { {
-    :name          => 'testing',
-    :code          => 'Database',
-    :codeflag      => 'true',
-    :moduleoptions =>  {
-      'principalsQuery'   => 'select \'password\' from users u where u.login = ?',
-      'hashUserPassword'  => false,
-    },
-  } }
+  let(:resource) do
+    {
+      :name          => 'testing-is-awesome',
+      :code          => 'DB',
+      :codeflag      => false,
+      :moduleoptions =>  {
+        'hashUserPassword' => true,
+        'principalsQuery'  => 'select passwd from users where login = ?',
+      }
+    }
+  end
 
   let(:provider) { double('mock', :resource => resource) }
   let(:instance) { described_class.new(provider) }
 
   describe '#create_parametrized_cmd with pre wildfly' do
     subject { instance.create_parametrized_cmd }
-    it { is_expected.to eq "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>\"true\",module-options=>[hashUserPassword => \"false\",principalsQuery => \"select 'password' from users u where u.login = ?\"]}])" }
+    let(:cli_command) do
+      '/subsystem=security/security-domain=testing-is-awesome/authentication=classic' +
+      ':add(login-modules=[{code=>"DB",flag=>false,module-options=>' +
+      '["hashUserPassword"=>true,"principalsQuery"=>"select passwd from users where login = ?"]}])'
+    end
+    it { is_expected.to eq cli_command }
   end
 end
