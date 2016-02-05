@@ -1,15 +1,9 @@
+require_relative '../configuration'
+
 # A class for JBoss security domain provider
 module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def create
-    cmd = "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add(login-modules=[{code=>\"#{@resource[:code]}\",flag=>\"#{@resource[:codeflag]}\",module-options=>["
-    options = []
-    @resource[:moduleoptions].keys.sort.each do |key|
-      value = @resource[:moduleoptions][key]
-      val = value.to_s.gsub(/\n/, ' ').strip
-      options << '%s => "%s"' % [key, val]
-    end
-    cmd += options.join(',') + "]}])"
-    cmd = compilecmd(cmd)
+    cmd = compilecmd create_parametrized_cmd
     cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
     bringUp('Security Domain Cache Type', cmd2)[:result]
     bringUp('Security Domain', cmd)[:result]
@@ -66,4 +60,22 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
       gsub(/\((\"[^\"]+\") => (\"[^\"]+\")\)/, '\1 => \2').
       gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
   end
+
+  def create_parametrized_cmd
+    provider_impl().create_parametrized_cmd()
+  end
+
+  def provider_impl
+    require_relative 'securitydomain/pre_wildfly_provider'
+    require_relative 'securitydomain/post_wildfly_provider'
+
+    if @impl.nil?
+      if Puppet_X::Coi::Jboss::Configuration::is_pre_wildfly?
+        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(self)
+      else
+        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(self)
+  end
+  @impl
+end
+end
 end
