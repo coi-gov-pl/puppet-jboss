@@ -1,20 +1,24 @@
-# A class for JBoss post WildFly datasource provider
-class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider
+# A module for JBoss post WildFly security domain provider
+class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider <
+  Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
+  # This is a default constructor
+  # @param {Puppet_X::Coi::Jboss::Provider::SecurityDomain} provider a security domain provider
   def initialize(provider)
     @provider = provider
   end
 
-  def create_parametrized_cmd
+  protected
 
-    correct_cmd = "subsystem=security/security-domain=#{@provider.resource[:name]}/authentication=classic/login-module=" + 
-    "UsersRoles:add(code=#{@provider.resource[:code]},flag=#{@provider.resource[:codeflag]},module-options=["
-    options = []
-    @provider.resource[:moduleoptions].keys.sort.each do |key|
-      value = @provider.resource[:moduleoptions][key]
-      val = value.to_s.gsub(/\n/, ' ').strip
-      options << '(%s => %s)' % [key.inspect, val.inspect]
-    end
-    correct_cmd += options.join(',') + "]}])"
-    correct_cmd
+  def correct_command_template_begining(resource)
+    "subsystem=security/security-domain=#{resource[:name]}/authentication=classic/login-module=" +
+    "UsersRoles:add(code=#{resource[:code].inspect},flag=#{resource[:codeflag].inspect},module-options=["
+  end
+
+  def correct_command_template_ending
+    ']}])'
+  end
+
+  def module_option_template
+    '(%s=>%s)'
   end
 end
