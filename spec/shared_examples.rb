@@ -8,9 +8,12 @@ module Testing::JBoss::SharedExamples
       it { is_expected.to contain_class 'jboss' }
       it { is_expected.to contain_group 'jboss' }
       it { is_expected.to contain_package 'wget' }
+      it { is_expected.to contain_package 'unzip' }
       it { is_expected.to contain_class 'jboss::internal::service' }
-      it { is_expected.to contain_class 'jboss::internal::runtime::node' }
       it { is_expected.to contain_class 'jboss::params' }
+      it { is_expected.to contain_class 'jboss::internal::runtime' }
+      it { is_expected.to contain_class 'jboss::internal::augeas' }
+      it { is_expected.to contain_class 'jboss::internal::params' }
       it { is_expected.to contain_class 'jboss::internal::runtime::dc' }
     end
     name
