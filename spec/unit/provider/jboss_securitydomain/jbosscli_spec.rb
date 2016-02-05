@@ -49,7 +49,7 @@ context "mocking default values for SecurityDomain" do
       allow(provider.class).to receive(:suitable?).and_return(true)
     end
 
-    context 'methods with implementation before WildFly' do
+    context 'methods with implementation after WildFly' do
       describe '#create' do
         before :each do
           moduleoptions = 'hashUserPassword => "false",principalsQuery => "select \'password\' from users u where u.login = ?"'
@@ -153,9 +153,16 @@ context "mocking default values for SecurityDomain" do
       end
     end
 
-    context 'methods with implementation after WildFly' do
+    context 'methods with implementation before WildFly' do
       context '#create' do
-    end
+        before :each do
+          #resource[:version] = '6.2.0.GA'
+          binding.pry
+        end
+        subject { provider.create }
+        it { expect(subject).to eq('asd') }
+
+      end
   end
 end
 end
