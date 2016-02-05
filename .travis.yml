@@ -8,11 +8,12 @@ addons:
     packages:
     - libaugeas-dev
     - libxml2-dev
+    - libgmp3-dev
 bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}"
 cache: bundler
 script: bundle exec rake test
 before_install:
- - 'bundler --version || gem install bundler'
+ - 'bundler --version || gem install bundler' # TODO:Remove if fixed - travis-ci/travis-ci#5578
  - 'rm -f Gemfile.lock'
 matrix:
   fast_finish: true
