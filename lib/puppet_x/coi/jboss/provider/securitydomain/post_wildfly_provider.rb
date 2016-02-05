@@ -6,7 +6,8 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider
 
   def create_parametrized_cmd
 
-    correct_cmd = "subsystem=security/security-domain=#{@provider.resource[:name]}/authentication=classic/login-module=UsersRoles:add(code=#{@provider.resource[:code]}, flag=#{@provider.resource[:codeflag]},module-options=["
+    correct_cmd = "subsystem=security/security-domain=#{@provider.resource[:name]}/authentication=classic/login-module=" + 
+    "UsersRoles:add(code=#{@provider.resource[:code]},flag=#{@provider.resource[:codeflag]},module-options=["
     options = []
     @provider.resource[:moduleoptions].keys.sort.each do |key|
       value = @provider.resource[:moduleoptions][key]

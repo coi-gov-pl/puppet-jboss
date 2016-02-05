@@ -1,5 +1,3 @@
-require_relative '../configuration'
-
 # A class for JBoss security domain provider
 module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def create
