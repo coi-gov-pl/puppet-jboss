@@ -3,7 +3,7 @@ require 'spec_helper_puppet'
 describe 'jboss::jmsqueue', :type => :define do
   shared_examples 'completly working define' do
     it { is_expected.to compile }
-    it { is_expected.to contain_jboss_jmsqueue(title).with ({
+    it { is_expected.to contain_jboss_jmsqueue(title).with({
       :ensure  => 'present',
       :entries => [
       'queue/app-mails',

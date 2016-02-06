@@ -31,7 +31,7 @@ describe 'jboss', :type => :class do
     it { is_expected.to contain_anchor 'jboss::service::started' }
     it { is_expected.to contain_user 'jboss' }
     it { is_expected.to contain_group 'jboss' }
-    it { is_expected.to contain_class('jboss::internal::package').with ({
+    it { is_expected.to contain_class('jboss::internal::package').with({
       :version      => '9.0.2.Final',
       :product      => 'wildfly',
       :jboss_user   => 'jboss',

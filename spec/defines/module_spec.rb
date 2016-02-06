@@ -20,21 +20,21 @@ describe 'jboss::module', :type => :define do
     it { is_expected.to contain_user 'jboss' }
     it { is_expected.to contain_group 'jboss' }
     it { is_expected.to contain_class 'jboss::params' }
-    it { is_expected.to contain_jboss__internal__module__assemble(title).with ({
+    it { is_expected.to contain_jboss__internal__module__assemble(title).with({
       :layer        => 'jdbc',
       :artifacts    => ["https://jdbc.postgresql.org/download/postgresql-9.4-1204.jdbc41.jar"],
       :dependencies => ["javax.transaction.api", "javax.api"]
     })}
 
-    it { is_expected.to contain_jboss__module(title).with ({
+    it { is_expected.to contain_jboss__module(title).with({
       :layer        => 'jdbc',
       :artifacts    => ["https://jdbc.postgresql.org/download/postgresql-9.4-1204.jdbc41.jar"]
       }) }
-    it { is_expected.to contain_jboss__interface('public').with ({
+    it { is_expected.to contain_jboss__interface('public').with({
       :ensure       => 'present',
       :inet_address => nil
       }) }
-    it { is_expected.to contain_augeas('ensure present interface public').with ({
+    it { is_expected.to contain_augeas('ensure present interface public').with({
       :context => "/files#{cfg_file}/",
       :changes => "set server/interfaces/interface[last()+1]/#attribute/name public",
       :onlyif  => "match server/interfaces/interface[#attribute/name='public'] size == 0"
@@ -43,23 +43,23 @@ describe 'jboss::module', :type => :define do
       it { is_expected.to contain_anchor("#{item}") }
     end
     basic_bind_variables_list.each do |var|
-      it { is_expected.to contain_augeas("interface public rm #{var}").with ({
+      it { is_expected.to contain_augeas("interface public rm #{var}").with({
         :context => "/files#{cfg_file}/",
         :changes => "rm server/interfaces/interface[#attribute/name='public']/#{var}",
         :onlyif  => "match server/interfaces/interface[#attribute/name='public']/#{var} size != 0"
         }) }
-      it { is_expected.to contain_jboss__internal__interface__foreach("public:#{var}").with ({
+      it { is_expected.to contain_jboss__internal__interface__foreach("public:#{var}").with({
         :cfg_file => cfg_file,
         :path     => 'server/interfaces'
         }) }
       end
 
-    it { is_expected.to contain_augeas('interface public set any-address').with ({
+    it { is_expected.to contain_augeas('interface public set any-address').with({
       :context => "/files#{cfg_file}/",
       :changes => "set server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value 'true'",
       :onlyif  => "get server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value != 'true'"
       }) }
-    it { is_expected.to contain_jboss__internal__interface__foreach("public:any-address").with ({
+    it { is_expected.to contain_jboss__internal__interface__foreach("public:any-address").with({
       :cfg_file => cfg_file,
       :path     => 'server/interfaces'
       }) }
