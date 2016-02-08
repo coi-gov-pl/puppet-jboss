@@ -15,7 +15,7 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider <
   end
 
   def correct_command_template_ending
-    ']}])'
+    ')])'
   end
 
   def module_option_template

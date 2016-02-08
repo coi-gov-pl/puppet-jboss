@@ -12,6 +12,8 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
     resource[:moduleoptions].keys.sort.each do |key|
       value = resource[:moduleoptions][key]
       val = value
+      # FIXME: After coi-gov-pl/puppet-jboss#59 is resolved the fallowing lines
+      # should be moved to mungle function in securitydomain type not provider
       val = 'undefined' if val.nil?
       val = val.to_s if val.is_a?(Symbol)
       # New lines in values are not supported, they can't be passed to JBoss CLI
