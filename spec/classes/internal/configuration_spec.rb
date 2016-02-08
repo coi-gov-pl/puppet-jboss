@@ -57,9 +57,7 @@ describe 'jboss::internal::configuration', :type => :class do
       }
     end
     it_behaves_like 'completly working define'
-    it_behaves_like working_jboss_installation
-    it_behaves_like common_anchors
-    it_behaves_like common_interfaces('8.2.0.Final')
+    it_behaves_like_full_working_jboss_installation
     it { is_expected.to contain_file('/etc/sysconfig/wildfly.conf') }
   end
 
@@ -77,9 +75,7 @@ describe 'jboss::internal::configuration', :type => :class do
       }
     end
     it_behaves_like 'completly working define'
-    it_behaves_like working_jboss_installation
-    it_behaves_like common_anchors
-    it_behaves_like common_interfaces('8.2.0.Final')
+    it_behaves_like_full_working_jboss_installation
     it { is_expected.to contain_file('/etc/default/wildfly') }
   end
 end

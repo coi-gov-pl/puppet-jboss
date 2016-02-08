@@ -33,9 +33,7 @@ describe 'jboss::clientry', :type => :define do
       }
     end
     it_behaves_like 'completly working define'
-    it_behaves_like working_jboss_installation
-    it_behaves_like common_anchors
-    it_behaves_like common_interfaces('8.2.0.Final')
+    it_behaves_like_full_working_jboss_installation
   end
 
   context 'on Debian os family' do
@@ -54,8 +52,6 @@ describe 'jboss::clientry', :type => :define do
       }
     end
     it_behaves_like 'completly working define'
-    it_behaves_like working_jboss_installation
-    it_behaves_like common_anchors
-    it_behaves_like common_interfaces('8.2.0.Final')
+    it_behaves_like_full_working_jboss_installation
   end
 end

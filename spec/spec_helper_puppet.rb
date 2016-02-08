@@ -4,6 +4,6 @@ require 'spec_helper'
 module Testing
   module JBoss end
 end
-require 'shared_examples'
+require 'testing/jboss/shared_examples'
 
 at_exit { RSpec::Puppet::Coverage.report! }

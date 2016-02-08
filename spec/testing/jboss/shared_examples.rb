@@ -1,4 +1,38 @@
 module Testing::JBoss::SharedExamples
+  DEFAULT_VERSION = '8.2.0.Final'
+  DEFAULT_PRODUCT = 'wildfly'
+  DEFAULT_WITH    = [
+    :anchors,
+    :interfaces,
+    :packages
+  ]
+  DEFAULT_OPTIONS = {
+    :product => DEFAULT_PRODUCT,
+    :version => DEFAULT_VERSION,
+    :with    => DEFAULT_WITH
+  }
+
+  def it_behaves_like_full_working_jboss_installation(options = DEFAULT_OPTIONS)
+    without = options[:without] || []
+    with = options[:with] || DEFAULT_WITH
+    with = [with] unless with.is_a? Array
+    with = with.reject { |el| without.include? el  }
+    version = options[:version] || DEFAULT_VERSION
+    product = options[:product] || DEFAULT_PRODUCT
+    it_behaves_like working_jboss_installation
+    it_behaves_like containg_installation_packages if with.include? :packages
+    it_behaves_like common_anchors if with.include? :anchors
+    it_behaves_like common_interfaces(version, product) if with.include? :interfaces
+  end
+
+  def containg_installation_packages
+    name = 'containing installation packages'
+    shared_examples(name) do
+      it { is_expected.to contain_package 'wget' }
+      it { is_expected.to contain_package 'unzip' }
+    end
+    name
+  end
 
   def working_jboss_installation
     name = "working jboss installation"
@@ -7,8 +41,6 @@ module Testing::JBoss::SharedExamples
       it { is_expected.to contain_user 'jboss' }
       it { is_expected.to contain_class 'jboss' }
       it { is_expected.to contain_group 'jboss' }
-      it { is_expected.to contain_package 'wget' }
-      it { is_expected.to contain_package 'unzip' }
       it { is_expected.to contain_class 'jboss::internal::service' }
       it { is_expected.to contain_class 'jboss::params' }
       it { is_expected.to contain_class 'jboss::internal::runtime' }
@@ -33,7 +65,7 @@ module Testing::JBoss::SharedExamples
     name
   end
 
-  def common_interfaces(version)
+  def common_interfaces(version = DEFAULT_VERSION, product = DEFAULT_PRODUCT)
     bind_variables_list = [
       "inet-address", "link-local-address",
       "loopback", "loopback-address", "multicast",
@@ -48,31 +80,31 @@ module Testing::JBoss::SharedExamples
         :inet_address => nil
         }) }
       it { is_expected.to contain_augeas('ensure present interface public').with({
-          :context => "/files/usr/lib/wildfly-#{version}/standalone/configuration/standalone-full.xml/",
+          :context => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
           :changes => "set server/interfaces/interface[last()+1]/#attribute/name public",
           :onlyif  => "match server/interfaces/interface[#attribute/name='public'] size == 0"
           }) }
       it { is_expected.to contain_augeas('interface public set any-address').with({
-        :context => "/files/usr/lib/wildfly-#{version}/standalone/configuration/standalone-full.xml/",
+        :context => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
         :changes => "set server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value 'true'",
         :onlyif  => "get server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value != 'true'"
         }) }
       it { is_expected.to contain_jboss__internal__interface__foreach("public:any-address").with({
-        :cfg_file => "/usr/lib/wildfly-#{version}/standalone/configuration/standalone-full.xml",
+        :cfg_file => "/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml",
         :path     => 'server/interfaces'
         }) }
-      it { is_expected.to contain_service('wildfly').with({
+      it { is_expected.to contain_service(product).with({
         :ensure => 'running',
         :enable => true
         }) }
       bind_variables_list.each do |var|
         it { is_expected.to contain_augeas("interface public rm #{var}").with({
-          :context => "/files/usr/lib/wildfly-#{version}/standalone/configuration/standalone-full.xml/",
+          :context => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
           :changes => "rm server/interfaces/interface[#attribute/name='public']/#{var}",
           :onlyif  => "match server/interfaces/interface[#attribute/name='public']/#{var} size != 0"
           }) }
         it { is_expected.to contain_jboss__internal__interface__foreach("public:#{var}").with({
-          :cfg_file => "/usr/lib/wildfly-#{version}/standalone/configuration/standalone-full.xml",
+          :cfg_file => "/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml",
           :path     => 'server/interfaces'
           }) }
       end
