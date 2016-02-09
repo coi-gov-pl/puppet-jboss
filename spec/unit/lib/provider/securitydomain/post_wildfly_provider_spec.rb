@@ -21,7 +21,7 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
     let(:cli_command) do
       'subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles:' +
       'add(code="Database",flag=true,module-options=[("hashUserPassword"=>false),' +
-      '("principalsQuery"=>"select \'password\' from users u where u.login = ?")]}])'
+      '("principalsQuery"=>"select \'password\' from users u where u.login = ?")])'
     end
     it { is_expected.to eq cli_command }
   end

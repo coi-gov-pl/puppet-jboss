@@ -56,7 +56,7 @@ context "mocking default values for SecurityDomain" do
 
           cmd = 'subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles' +
           ':add(code="Database",flag=false,module-options=[("hashUserPassword"=>true),' +
-          '("principalsQuery"=>"select \'password\' from users u where u.login = ?")]}])'
+          '("principalsQuery"=>"select \'password\' from users u where u.login = ?")])'
           compilecmd = "/profile=full-ha/#{cmd}"
 
           cmd2 = "/subsystem=security/security-domain=#{resource[:name]}:add(cache-type=default)"
