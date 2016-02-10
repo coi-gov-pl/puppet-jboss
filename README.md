@@ -42,7 +42,9 @@ The module allows user to perform all necessary operations for JBoss servers. He
 
 In addition to the above list, you can also configure any JBoss CLI reachable configuration, with the entire set of parameters. This allows you to configure any parameter supported by JBoss.
 
-Take a look. We will be happy to receive your feedback.
+### Got questions?
+
+We will be happy to receive your feedback. Ask as about everything releated to this module on [Slack](https://puppet-jboss.slack.com)!
 
 ## Setup
 
