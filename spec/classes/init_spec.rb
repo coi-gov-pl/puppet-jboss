@@ -1,6 +1,8 @@
 require 'spec_helper_puppet'
 
 describe 'jboss', :type => :class do
+  extend Testing::JBoss::SharedExamples
+  extend Testing::RspecPuppet::Package
   let(:facts) do
     {
       :operatingsystem => 'OracleLinux',
@@ -10,55 +12,60 @@ describe 'jboss', :type => :class do
       :puppetversion   => Puppet.version
     }
   end
+
   context 'with defaults for all parameters' do
     it { is_expected.to compile }
-    it do
-      is_expected.to contain_class('jboss').with({
-        :product      => 'wildfly',
-        :version      => '8.2.0.Final',
-        :download_url => 'http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip'
-        })
-    end
-    it { is_expected.to contain_anchor 'jboss::begin' }
-    it { is_expected.to contain_anchor 'jboss::end' }
-    it { is_expected.to contain_anchor 'jboss::configuration::begin' }
-    it { is_expected.to contain_anchor 'jboss::configuration::end' }
-    it { is_expected.to contain_anchor 'jboss::installed' }
-    it { is_expected.to contain_anchor 'jboss::package::begin' }
-    it { is_expected.to contain_anchor 'jboss::package::end' }
-    it { is_expected.to contain_anchor 'jboss::service::begin' }
-    it { is_expected.to contain_anchor 'jboss::service::end' }
-    it { is_expected.to contain_anchor 'jboss::service::started' }
-    it { is_expected.to contain_user 'jboss' }
-    it { is_expected.to contain_group 'jboss' }
-    it { is_expected.to contain_class('jboss::internal::package').with({
-      :version      => '8.2.0.Final',
-      :product      => 'wildfly',
-      :jboss_user   => 'jboss',
-      :jboss_group  => 'jboss',
-      :java_version => 'latest'
-      })}
+    it { is_expected.to contain_class('jboss::internal::package') }
+    it_behaves_like_full_working_jboss_installation
   end
-  context 'with product => jboss-eap and version => 6.4.0.GA parameters set' do
-    let(:params) do
-      { :product => 'jboss-eap', :version => '6.4.0.GA' }
-    end
 
+  context 'with product => jboss-wildfly parameters set' do
+    let(:product) { 'wildfly' }
+    let(:version) { '8.2.0.Final' }
+    let(:pre_condition) do
+      "class { 'jboss': product => '#{product}', version => '#{version}' }"
+    end
     it { is_expected.to compile }
-    it { is_expected.to contain_class 'jboss' }
-    it { is_expected.to contain_user 'jboss' }
-    it { is_expected.to contain_group 'jboss' }
+    package_files_for_jboss_product
   end
+
+  context 'with product => jboss-eap and version => 6.4.0.GA parameters set' do
+    let(:product) { 'jboss-eap' }
+    let(:version) { '6.4.0.GA' }
+    let(:pre_condition) do
+      "class { 'jboss': product => '#{product}', version => '#{version}' }"
+    end
+    it { is_expected.to compile }
+    package_files_for_jboss_product({:product => 'jboss-eap', :version => '6.4.0.GA'})
+  end
+
+  context 'with product => jboss-eap and version => 6.2.0.GA parameters set' do
+    let(:product) { 'jboss-eap' }
+    let(:version) { '6.2.0.GA' }
+    let(:pre_condition) do
+      "class { 'jboss': product => '#{product}', version => '#{version}' }"
+    end
+    it { is_expected.to compile }
+    package_files_for_jboss_product({:product => 'jboss-eap', :version => '6.2.0.GA'})
+  end
+
+  context 'with product => jboss-as and version => 7.1.0.Final parameters set' do
+    let(:product) { 'jboss-as' }
+    let(:version) { '7.1.0.Final' }
+    let(:pre_condition) do
+      "class { 'jboss': product => '#{product}', version => '#{version}' }"
+    end
+    it { is_expected.to compile }
+    package_files_for_jboss_product({:product => 'jboss-as', :version => '7.1.0.Final'})
+  end
+
   context 'with jboss_user => appserver parameter set' do
     let(:params) do
       { :jboss_user => 'appserver' }
     end
-
     it { is_expected.to compile }
-    it { is_expected.to contain_class 'jboss' }
-    it { is_expected.to contain_user 'appserver' }
-    it { is_expected.to contain_group 'jboss' }
   end
+
   context 'with download_url => file:///tmp/wildfly-8.2.0.Final.zip set' do
     let(:params) do
       { :download_url => 'file:///tmp/wildfly-8.2.0.Final.zip' }
@@ -73,5 +80,6 @@ describe 'jboss', :type => :class do
     it { is_expected.to contain_class 'jboss::internal::compatibility' }
     it { is_expected.to contain_class 'jboss::internal::configuration' }
     it { is_expected.to contain_class 'jboss::internal::service' }
+
   end
 end
