@@ -27,6 +27,7 @@ describe 'jboss', :type => :class do
     end
     it { is_expected.to compile }
     package_files_for_jboss_product
+    package_exec_for_jboss
   end
 
   context 'with product => jboss-eap and version => 6.4.0.GA parameters set' do

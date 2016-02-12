@@ -26,11 +26,20 @@ module Testing::RspecPuppet::Package
         :address   => 'http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip',
         :fetch_dir => "/usr/src/download-#{product}-#{version}"}).
         that_requires("File[/usr/src/download-#{product}-#{version}]")}
-      it { is_expected.to contain_jboss__internal__util__groupaccess("/usr/lib/#{product}-#{version}") }
+      it { is_expected.to contain_jboss__internal__util__groupaccess("/usr/lib/#{product}-#{version}").with({
+        :user => 'jboss'
+        })}
       it { is_expected.to contain_file("/etc/#{product}/domain.xml") }
       it { is_expected.to contain_file("/etc/#{product}/host.xml") }
       it { is_expected.to contain_file("/etc/#{product}/standalone.xml") }
       it { is_expected.to contain_file("/etc/init.d/#{product}") }
     end
+  end
+
+  def package_exec_for_jboss
+    it { is_expected.to contain_exec('jboss::unzip-downloaded') }
+    it { is_expected.to contain_exec('jboss::move-unzipped') }
+    it { is_expected.to contain_exec('jboss::test-extraction') }
+    it { is_expected.to contain_exec('jboss::package::check-for-java') }
   end
 end
