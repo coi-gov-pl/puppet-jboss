@@ -7,8 +7,39 @@ module Jboss
 # A class for JBoss configuration
 class Configuration
   class << self
-  
+
     @config = nil
+
+
+    # Add settings of jboss configuration file to facts
+    def add_config_facts
+      config = read
+      require 'pp'
+      pp config
+      unless config.nil?
+        config.each do |key, value|
+          fact_symbol = "jboss_#{key}".to_sym
+          Facter.add(fact_symbol) do
+            setcode { value }
+          end
+        end
+        Facter.add(:jboss_fullconfig) do
+          setcode do
+            if RUBY_VERSION < '1.9.0'
+              class << config
+                define_method(:to_s, proc { self.inspect })
+              end
+            end
+            config
+          end
+        end
+      end
+    end
+
+    # refresh jboss configuration file facts
+    def refresh_config_facts
+      add_config_facts
+    end
 
     # Gets the main config file
     def configfile
@@ -65,7 +96,7 @@ class Configuration
       @config = value
       nil
     end
-    
+
     # Gets configuration value by its symbol
     #
     # @param key [Symbol] a key in hash

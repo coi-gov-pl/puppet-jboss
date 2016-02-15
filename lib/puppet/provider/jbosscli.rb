@@ -117,11 +117,6 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     `#{cmd}`
   end
 
-  def self.reload_facter
-    Facter.clear
-    Facter.loadfacts
-  end
-
   def self.jboss_product
     Facter.value(:jboss_product)
   end
@@ -130,13 +125,13 @@ class Puppet::Provider::Jbosscli < Puppet::Provider
     # jboss_product fact is not set on first run, so that
     # calls to jboss-cli can fail (if jboss-as is installed)
     if jboss_product.nil?
-      reload_facter
+      Puppet_X::Coi::Jboss::Configuration::refresh_config_facts
     end
     jboss_product == 'jboss-as'
   end
   
   def self.timeout_cli
-    '--timeout=50000' unless jbossas?
+    '--timeout=50000' if jbossas?
   end
 
   def self.execute jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout
