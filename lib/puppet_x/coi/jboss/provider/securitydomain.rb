@@ -1,7 +1,9 @@
 # A class for JBoss security domain provider
 module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def create
-    cmd = compilecmd create_parametrized_cmd
+    commands_template = make_command_templates
+    
+    cmd = compilecmd make_command_templates
     cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
     bringUp('Security Domain Cache Type', cmd2)[:result]
     bringUp('Security Domain', cmd)[:result]
@@ -23,6 +25,8 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     lines = preparelines res[:lines]
     data = eval(lines)['result']
     Puppet.debug "Security Domain exists: #{data.inspect}"
+
+    save_state(data)
 
     existinghash = Hash.new
     givenhash = Hash.new
@@ -49,6 +53,11 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   end
 
   private
+
+  def save_state data
+    @state = data if @state.nil?
+    @state
+  end
 
   # Method prepares lines outputed by JBoss CLI tool, changing output to be readable in Ruby
   #

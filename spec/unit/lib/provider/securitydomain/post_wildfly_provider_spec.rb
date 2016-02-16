@@ -17,11 +17,10 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
   let(:instance) { described_class.new(provider) }
 
   describe '#create_parametrized_cmd with post wildfly' do
-    subject { instance.create_parametrized_cmd }
+    subject { instance.make_command_templates }
     let(:cli_command) do
-      'subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles:' +
-      'add(code="Database",flag=true,module-options=[("hashUserPassword"=>false),' +
-      '("principalsQuery"=>"select \'password\' from users u where u.login = ?")])'
+      ["subsystem=security", "security-domain=testing", "authentication=classic", "login-module=UsersRoles:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]
+
     end
     it { is_expected.to eq cli_command }
   end
