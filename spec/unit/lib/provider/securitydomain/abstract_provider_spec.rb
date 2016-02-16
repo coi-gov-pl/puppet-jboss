@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider do
   let(:instance) { described_class.new }
-  let(:message) { 'Abstract class, implement ths method' }
+  let(:message) { 'Abstract class, implement this method' }
   describe '#correct_command_template_begining' do
     subject { instance.send(:correct_command_template_begining, 'sample') }
     it { expect { subject }.to raise_error(message) }
