@@ -15,8 +15,8 @@ describe 'jboss', :type => :class do
     it do
       is_expected.to contain_class('jboss').with({
         :product      => 'wildfly',
-        :version      => '8.2.0.Final',
-        :download_url => 'http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip'
+        :version      => '9.0.2.Final',
+        :download_url => 'http://download.jboss.org/wildfly/9.0.2.Final/wildfly-9.0.2.Final.zip'
         })
     end
     it { is_expected.to contain_anchor 'jboss::begin' }
@@ -32,7 +32,7 @@ describe 'jboss', :type => :class do
     it { is_expected.to contain_user 'jboss' }
     it { is_expected.to contain_group 'jboss' }
     it { is_expected.to contain_class('jboss::internal::package').with({
-      :version      => '8.2.0.Final',
+      :version      => '9.0.2.Final',
       :product      => 'wildfly',
       :jboss_user   => 'jboss',
       :jboss_group  => 'jboss',
