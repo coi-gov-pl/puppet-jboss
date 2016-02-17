@@ -9,44 +9,28 @@ describe 'jboss::interface', :type => :define do
   ]
   legacy_bind_variables_list = [ "any-ipv4-address", "any-ipv6-address" ]
 
-  let(:generic_params) {{ :any_address => 'true' }}
-  let(:any_addr_property) {{ 'any-address' => 'true' }}
-
   let(:title)  { 'test-interface' }
-  let(:facts)  { generic_facts.merge(runtime_facts) }
-  let(:params) { generic_params.merge(runtime_params) }
-  let(:basic_bind_variables) { Hash[basic_bind_variables_list.map {|x| [x, :undef]}] }
+
+  let(:generic_params)        {{ :any_address => 'true' }}
+  let(:any_addr_property)     {{ 'any-address' => 'true' }}
+  let(:basic_bind_variables)  { Hash[basic_bind_variables_list.map {|x| [x, :undef]}] }
   let(:legacy_bind_variables) { Hash[legacy_bind_variables_list.map {|x| [x, :undef]}] }
 
   shared_examples 'completly working define' do
-    context 'with defaults' do
-      let(:runtime_facts)  {{}}
-      let(:runtime_params) {{}}
-
-      it { is_expected.to compile }
-      it { is_expected.to contain_class 'jboss::params' }
-      it { is_expected.to contain_class 'jboss' }
-      it { is_expected.to contain_class 'jboss::internal::augeas' }
-      it { is_expected.to contain_class 'jboss::internal::runtime' }
-      it { is_expected.to contain_jboss__interface(title) }
-      it { is_expected.to contain_jboss__interface('public') }
-      basic_bind_variables_list.each do |var|
-        it { is_expected.to contain_augeas("interface #{title} rm #{var}") }
-        it { is_expected.to contain_augeas("interface public rm #{var}") }
-        it { is_expected.to contain_jboss__internal__interface__foreach("#{title}:#{var}")}
-        it { is_expected.to contain_jboss__internal__interface__foreach("public:#{var}")}
-      end
-      it { is_expected.to contain_jboss__internal__interface__foreach("#{title}:any-address")}
-      it { is_expected.to contain_jboss__internal__interface__foreach("public:any-address")}
-      it { is_expected.to contain_augeas("ensure present interface #{title}") }
-      it { is_expected.to contain_augeas("ensure present interface public") }
-      it { is_expected.to contain_augeas("interface #{title} set any-address") }
-      it { is_expected.to contain_augeas("interface public set any-address") }
+    it { is_expected.to contain_jboss__interface(title) }
+    it { is_expected.to contain_augeas("ensure present interface #{title}") }
+    it { is_expected.to contain_augeas("interface #{title} set any-address") }
+    it { is_expected.to contain_jboss__internal__interface__foreach("#{title}:any-address") }
+    basic_bind_variables_list.each do |var|
+      it { is_expected.to contain_augeas("interface #{title} rm #{var}") }
+      it { is_expected.to contain_jboss__internal__interface__foreach("#{title}:#{var}") }
     end
+  end
 
+  shared_examples 'a define with properly configured interface' do
     context 'with jboss_running => true and runasdomain => false parameters set' do
-      let(:runtime_facts)  {{ :jboss_running => 'true' }}
-      let(:runtime_params) {{ :runasdomain => 'false' }}
+      let(:facts)  { generic_facts.merge({ :jboss_running => 'true' })}
+      let(:params) { generic_params.merge({ :runasdomain => 'false' })}
       let(:pre_condition)  { "class { jboss: product => '#{product}', version => '#{version}'}" }
 
       context 'with product => wildfly and version => 9.0.2.Final parameters set' do
@@ -82,8 +66,8 @@ describe 'jboss::interface', :type => :define do
     end
 
     context 'with jboss_running => false and runasdomain => false parameters set' do
-      let(:runtime_facts)  {{ :jboss_running => 'false' }}
-      let(:runtime_params) {{ :runasdomain => 'false' }}
+      let(:facts)  { generic_facts.merge({ :jboss_running => 'false' })}
+      let(:params) { generic_params.merge({ :runasdomain => 'false' })}
       let(:pre_condition)  { "class { jboss: product => '#{product}', version => '#{version}'}" }
 
       context 'with product => wildfly and version => 9.0.2.Final parameters set' do
@@ -133,6 +117,7 @@ describe 'jboss::interface', :type => :define do
   end
 
   context 'On RedHat os family' do
+    extend Testing::JBoss::SharedExamples
     let(:generic_facts) do
       {
         :operatingsystem => 'OracleLinux',
@@ -142,11 +127,16 @@ describe 'jboss::interface', :type => :define do
         :puppetversion   => Puppet.version
       }
     end
+    let(:facts) {generic_facts}
+    let(:params) {generic_params}
 
     it_behaves_like 'completly working define'
+    it_behaves_like 'a define with properly configured interface'
+    it_behaves_like_full_working_jboss_installation
   end
 
   context 'On Debian os family' do
+    extend Testing::JBoss::SharedExamples
     let(:generic_facts) do
       {
         :operatingsystem => 'Ubuntu',
@@ -157,7 +147,11 @@ describe 'jboss::interface', :type => :define do
         :puppetversion   => Puppet.version
       }
     end
+    let(:facts) {generic_facts}
+    let(:params) {generic_params}
 
     it_behaves_like 'completly working define'
+    it_behaves_like 'a define with properly configured interface'
+    it_behaves_like_full_working_jboss_installation
   end
 end
