@@ -14,8 +14,6 @@ class Configuration
     # Add settings of jboss configuration file to facts
     def add_config_facts
       config = read
-      require 'pp'
-      pp config
       unless config.nil?
         config.each do |key, value|
           fact_symbol = "jboss_#{key}".to_sym
