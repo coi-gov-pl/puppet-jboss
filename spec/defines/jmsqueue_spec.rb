@@ -2,21 +2,24 @@ require 'spec_helper_puppet'
 
 describe 'jboss::jmsqueue', :type => :define do
   shared_examples 'completly working define' do
-    it { is_expected.to compile }
     it { is_expected.to contain_jboss_jmsqueue(title).with({
       :ensure  => 'present',
       :entries => [
       'queue/app-mails',
       'java:jboss/exported/jms/queue/app-mails']
       }) }
-    it { is_expected.to contain_jboss_jmsqueue(title).that_requires('Anchor[jboss::package::end]') }
-    it { is_expected.to contain_class 'jboss' }
-    it { is_expected.to contain_class 'jboss::internal::service' }
-    it { is_expected.to contain_class 'jboss::internal::runtime::node' }
-    it { is_expected.to contain_jboss__jmsqueue(title) }
+    it { is_expected.to contain_jboss_jmsqueue(title).
+      that_requires('Anchor[jboss::package::end]') }
+    it { is_expected.to contain_jboss__jmsqueue(title).with({
+      :ensure  => 'present',
+      :entries => [
+      'queue/app-mails',
+      'java:jboss/exported/jms/queue/app-mails']
+      }) }
   end
 
   context 'On RedHat os family' do
+    extend Testing::JBoss::SharedExamples
     let(:title) { 'test-jmsqueue' }
     let(:params) { { :entries => [
     'queue/app-mails',
@@ -31,9 +34,11 @@ describe 'jboss::jmsqueue', :type => :define do
       }
     end
     it_behaves_like 'completly working define'
+    it_behaves_like_full_working_jboss_installation
   end
 
   context 'On Debian os family' do
+    extend Testing::JBoss::SharedExamples
     let(:title) { 'test-jmsqueue' }
     let(:params) { { :entries => [
     'queue/app-mails',
@@ -49,5 +54,6 @@ describe 'jboss::jmsqueue', :type => :define do
       }
     end
     it_behaves_like 'completly working define'
+    it_behaves_like_full_working_jboss_installation
   end
 end

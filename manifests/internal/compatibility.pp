@@ -4,13 +4,13 @@ class jboss::internal::compatibility {
 
   case $jboss::product {
     'wildfly': {
-      if versioncmp($jboss::version, '8.0.0') < 0 or versioncmp($jboss::version, '9.0.0') >= 0 {
-        fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: Wildfly 8.x series")
+      if versioncmp($jboss::version, '8.0.0') < 0 or versioncmp($jboss::version, '10.0.0') >= 0 {
+        fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: Wildfly 8.x and 9.x series")
       }
     }
     'jboss-eap': {
-      if versioncmp($jboss::version, '6.0.0') < 0 or versioncmp($jboss::version, '7.0.0') >= 0 {
-        fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: JBoss EAP 6.x series")
+      if versioncmp($jboss::version, '6.0.0') < 0 or versioncmp($jboss::version, '8.0.0') >= 0 {
+        fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: JBoss EAP 6.x and 7.x series")
       }
     }
     'jboss-as': {

@@ -1,20 +1,18 @@
 require 'spec_helper_puppet'
 
-describe 'jboss::deploy', :type => :define do
+describe 'jboss::internal::augeas', :type => :class do
+  DEFAULT_VERSION = '9.0.2.Final'
+  DEFAULT_PRODUCT = 'wildfly'
+
   shared_examples 'completly working define' do
-    it { is_expected.to contain_jboss__deploy(title).with({
-      :ensure => 'present',
-      :jndi   => title
-      }) }
-    it { is_expected.to contain_jboss_deploy(title).with({
-      :ensure => 'present',
-      :source => '/tmp/jboss.war'
-      }) }
-end
+    it { is_expected.to contain_class 'jboss::internal::lenses' }
+    it { is_expected.to contain_class 'jboss::internal::augeas' }
+    it { is_expected.to contain_file("/usr/lib/#{DEFAULT_PRODUCT}-#{DEFAULT_VERSION}/lenses/jbxml.aug") }
+  end
+
   context 'On RedHat os family' do
     extend Testing::JBoss::SharedExamples
-    let(:title) { 'test-deploy' }
-    let(:params) { { :path => '/tmp/jboss.war', } }
+    let(:title) { 'test-augeas' }
     let(:facts) do
       {
         :operatingsystem => 'OracleLinux',
@@ -26,12 +24,12 @@ end
     end
     it_behaves_like 'completly working define'
     it_behaves_like_full_working_jboss_installation
+
   end
 
   context 'On Debian os family' do
     extend Testing::JBoss::SharedExamples
-    let(:title) { 'test-deploy' }
-    let(:params) { { :path => '/tmp/jboss.war', } }
+    let(:title) { 'test-augeas' }
     let(:facts) do
       {
         :operatingsystem => 'Ubuntu',
