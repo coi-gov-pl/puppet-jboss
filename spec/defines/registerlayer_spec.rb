@@ -3,6 +3,11 @@ require 'spec_helper_puppet'
 describe 'jboss::internal::module::registerlayer', :type => :define do
   let(:title) { 'testlayer' }
   let(:params) { { :layer => title, } }
+  let(:pre_condition)  { "class { jboss: product => '#{product}', version => '#{version}', jboss_user => '#{user}', jboss_group => '#{group}' }" }
+  let(:product) {'wildfly'}
+  let(:version) {'9.0.2.Final'}
+  let(:user) {'test-user'}
+  let(:group) {'test-group'}
   let(:facts) do
     {
     :osfamily             => 'RedHat',
@@ -15,13 +20,13 @@ describe 'jboss::internal::module::registerlayer', :type => :define do
   it { is_expected.to contain_class 'jboss' }
   it { is_expected.to contain_jboss__internal__module__registerlayer("#{title}") }
   it { is_expected.to contain_exec("jboss::module::layer::#{title}").with({
-    :user => 'jboss'
+    :user => 'test-user'
     }) }
   it {
-    is_expected.to contain_file("/usr/lib/wildfly-8.2.0.Final/modules/system/layers/#{title}").with({
+    is_expected.to contain_file("/usr/lib/#{product}-#{version}/modules/system/layers/#{title}").with({
     :ensure => 'directory',
-    :owner  => 'jboss',
-    :group  => 'jboss',
+    :owner  => 'test-user',
+    :group  => 'test-group',
     :mode   => '0640'
     }) }
 end
