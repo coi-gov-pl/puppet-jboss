@@ -14,6 +14,7 @@ define jboss::internal::module::registerlayer (
     exec { "jboss::module::layer::${layer}":
       command => "/bin/awk -F'=' 'BEGIN {ins = 0} /^layers=/ { ins = ins + 1; print \$1=${layer},\$2 } END {if(ins == 0) print \"layers=${layer},base\"}' > ${jboss::home}/modules/layers.conf",
       unless  => "/bin/egrep -e '^layers=.*${layer}.*' ${jboss::home}/modules/layers.conf",
+      user    => $jboss::jboss_user,
       require => Anchor['jboss::installed'],
       notify  => Service[$jboss::product],
     }
