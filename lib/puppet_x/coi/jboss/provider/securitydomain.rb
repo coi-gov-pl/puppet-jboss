@@ -1,8 +1,10 @@
 # A class for JBoss security domain provider
 module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def create
+    data = state
     commands_template = make_command_templates
-    
+    commands = prepare_commands_for_ensure(commands_template, data)
+
     cmd = compilecmd make_command_templates
     cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
     bringUp('Security Domain Cache Type', cmd2)[:result]
@@ -52,10 +54,52 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     return true
   end
 
+  def exists_recursive?
+    cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:read-resource(recursive=true)"
+    res = executeWithoutRetry cmd
+    if not res[:result]
+      Puppet.debug "Security Domain does NOT exist"
+      return false
+    end
+    undefined = nil
+    lines = preparelines res[:lines]
+    data = eval(lines)['result']
+    Puppet.debug "Security Domain exists: #{data.inspect}"
+
+    save_state(data)
+
+    existinghash = Hash.new
+    givenhash = Hash.new
+
+    unless @resource[:moduleoptions].nil?
+      @resource[:moduleoptions].each do |key, value|
+        givenhash["#{key}"] = value.to_s.gsub(/\n/, ' ').strip
+      end
+    end
+
+    data['login-modules'][0]['module-options'].each do |key, value|
+      existinghash[key.to_s] = value.to_s.gsub(/\n/, ' ').strip
+    end
+
+    if !existinghash.nil? && !givenhash.nil? && existinghash != givenhash
+      diff = givenhash.to_a - existinghash.to_a
+      Puppet.notice "Security domain should be recreated. Diff: #{diff.inspect}"
+      Puppet.debug "Security domain moduleoptions existing hash => #{existinghash.inspect}"
+      Puppet.debug "Security domain moduleoptions given hash => #{givenhash.inspect}"
+      destroy
+      return false
+    end
+    return true
+  end
+
   private
 
   def save_state data
     @state = data if @state.nil?
+    @state
+  end
+
+  def state
     @state
   end
 
