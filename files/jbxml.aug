@@ -2,6 +2,8 @@
    Author: Francis Giraldeau <francis.giraldeau@usherbrooke.ca>
 
    Reference: http://www.w3.org/TR/2006/REC-xml11-20060816/
+
+   This file is based on xml.aug lens from augeas v0.10.0
 *)
 
 module JBXml =
@@ -92,7 +94,7 @@ let doctype       = decl_def /!DOCTYPE/ (decl_outer|id_def)
 let attributes    = [ label "#attribute" .
                       [ sep_spc . key nmtoken . sep_eq . sto_dquote ]+ ]
 let attributes_sq = [ label "#attribute" .
-                      [ sep_spc . key nmtoken . sep_eq . sto_squote ]+ ]
+                      [ sep_spc . key nmtoken . sep_eq . (sto_dquote|sto_squote) ]+ ]
 
 
 let prolog        = [ label "#declaration" .
