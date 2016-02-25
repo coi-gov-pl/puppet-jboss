@@ -153,6 +153,67 @@ context "mocking default values for SecurityDomain" do
           it { expect(subject).to eq(false) }
         end
       end
+
+      describe '#exist recursive?' do
+        before :each do
+          cmd = "/subsystem=security/security-domain=#{resource[:name]}:read-resource(recursive=true)"
+          compilecmd = "/profile=full-ha/#{cmd}"
+
+          lines = 'asd'
+
+          bringDownName = 'Security Domain'
+          content =  <<-eos
+          {
+              "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?",
+              "hashStorePassword" => "false",
+              "principalsQuery" => "select 'haslo' from uzytkownik u where u.login = upper(?)",
+              "hashUserPassword" => "false",
+              "dsJndiName" => "java:jboss/datasources/datasources_auth"
+          }
+          eos
+
+          expected_lines =  <<-eos
+          {
+              "outcome" => "success",
+              "result" => {
+                  "login-modules" => [{
+                      "code" => "Database",
+                      "flag" => "required",
+                      "module" => undefined,
+                      "module-options" => #{content}
+                  }],
+                  "login-module" => {"Database" => undefined}
+              }
+          }
+          eos
+
+          expected_res = {
+            :cmd    => compilecmd,
+            :result => res_result,
+            :lines  => expected_lines
+          }
+
+          expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
+          expect(provider).to receive(:executeWithoutRetry).with(compilecmd).and_return(expected_res)
+        end
+
+        subject { provider.exists_recursive? }
+
+        context 'with res[:result] => true and existinghash && givenhash are not nil' do
+          let(:res_result) { true }
+
+          before :each do
+            expect(provider).to receive(:destroy).and_return(nil)
+          end
+
+          it { expect(subject).to eq(false) }
+        end
+
+        context 'with [:result] => false' do
+          let(:res_result) { false }
+          it { expect(subject).to eq(false) }
+        end
+      end
     end
 
     context 'methods with implementation that run before WildFly 8 or JBoss EAP 6.4 came out' do

@@ -5,8 +5,8 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::LogicCreator do
 
   describe 'for pre wildfly' do
     before :each do
-      let(:data) { { :data => 'asd'} }
-      instance.instance_variable_set(:@state, false)
     end
+
+    subject { instance.prepare_commands_for_ensure() }
   end
 end
