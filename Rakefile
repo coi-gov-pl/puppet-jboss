@@ -65,7 +65,7 @@ end
 
 desc "Run syntax, lint, and spec tests."
 task :test => [
-  :metadata,
+  :metadata_lint,
   :lint,
   :validate,
   :clean_fixtures,
