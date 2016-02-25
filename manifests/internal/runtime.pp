@@ -5,8 +5,11 @@ class jboss::internal::runtime {
   $runasdomain   = $jboss::runasdomain
   $profile       = $jboss::profile
 
+  $domainbinconfigfile     = 'domain.conf'
+  $standalonebinconfigfile = 'standalone.conf'
+
   $domainconfigfile = 'domain.xml'
-  $hostconfigfile = 'host.xml'
+  $hostconfigfile   = 'host.xml'
 
   $standaloneconfigfile = $profile ? {
     ''        => 'standalone.xml',
@@ -17,6 +20,11 @@ class jboss::internal::runtime {
     default   => 'standalone-full.xml'
   }
 
+  $binconfigfile = $runasdomain ? {
+    true    => $domainbinconfigfile,
+    default => $standalonebinconfigfile,
+  }
+
   $configfile = $runasdomain ? {
     true    => $domainconfigfile,
     default => $standaloneconfigfile,
@@ -25,8 +33,10 @@ class jboss::internal::runtime {
   validate_absolute_path($jboss::home)
 
   $standaloneconfigpath = "${jboss::home}/standalone/configuration/${standaloneconfigfile}"
-  $hostconfigpath = "${jboss::home}/domain/configuration/${hostconfigfile}"
-  $domainconfigpath = "${jboss::home}/domain/configuration/${domainconfigfile}"
+  $hostconfigpath       = "${jboss::home}/domain/configuration/${hostconfigfile}"
+  $domainconfigpath     = "${jboss::home}/domain/configuration/${domainconfigfile}"
+
+  $binconfigpath        = "${jboss::home}/bin/${binconfigfile}"
 
   include jboss::internal::runtime::dc
 }
