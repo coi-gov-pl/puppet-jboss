@@ -13,10 +13,10 @@
 # [*jndi*]
 #     **This is the namevar**. The JNDI name of deployed archive.
 # [*redeploy*]
-#     This parameter can be used to force redeployment of already deployed archive. By default it 
+#     This parameter can be used to force redeployment of already deployed archive. By default it
 #     is equals for false
 # [*servergroups*]
-#     In domain mode, you need to pass here actual server group name on which you wish to deploy 
+#     In domain mode, you need to pass here actual server group name on which you wish to deploy
 #     the archive.
 #
 define jboss::deploy (
@@ -27,6 +27,7 @@ define jboss::deploy (
   $servergroups = hiera('jboss::deploy::servergroups', undef),
   $controller   = $::jboss::controller,
   $runasdomain  = $::jboss::runasdomain,
+  $runtime_name = undef,
 ) {
   include jboss
   include jboss::internal::runtime::node
@@ -40,8 +41,9 @@ define jboss::deploy (
     controller   => $controller,
     ctrluser     => $jboss::internal::runtime::node::username,
     ctrlpasswd   => $jboss::internal::runtime::node::password,
+    runtime_name => $runtime_name,
     require      => [
-      Anchor['jboss::service::end'],
+      Anchor['jboss::end'],
       Exec['jboss::service::restart'],
     ],
   }

@@ -86,12 +86,21 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     `#{cmd}`
   end
 
-  def self.jbossas?
-    Facter.value(:jboss_product) == 'jboss-as'
+  def self.jboss_product
+    Facter.value(:jboss_product)
   end
 
+  def self.jbossas?
+    # jboss_product fact is not set on first run, so that
+    # calls to jboss-cli can fail (if jboss-as is installed)
+    if jboss_product.nil?
+      Puppet_X::Coi::Jboss::Configuration::refresh_config_facts
+    end
+    jboss_product == 'jboss-as'
+  end
+  
   def self.timeout_cli
-    '--timeout=50000' unless jbossas?
+    '--timeout=50000' if jbossas?
   end
 
   def self.execute jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout
@@ -111,12 +120,12 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
       ENV['__PASSWD'] = ctrlcfg[:ctrlpasswd]
       cmd += " --password=$__PASSWD"
     end
-
+	
     retries = 0
     result = ''
     lines = ''
     begin
-      if retries > 0
+      if retries > 0 
         Puppet.warning "JBoss CLI command failed, try #{retries}/#{retry_count}, last status: #{result.exitstatus.to_s}, message: #{lines}"
         sleep retry_timeout.to_i
       end
@@ -134,7 +143,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
       :lines  => lines
     }
   end
-
+  
   def setattribute(path, name, value)
     escaped = value.nil? ? nil : escape(value)
     setattribute_raw(path, name, escaped)
@@ -247,5 +256,6 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
       }
     end
   end
+  
 
 end
