@@ -31,7 +31,7 @@ RSpec::Core::RakeTask.new(:spec_puppet) do |t|
 end
 desc "Run spec tests on an existing fixtures directory (for Ruby code)"
 RSpec::Core::RakeTask.new(:spec_ruby) do |t|
-  t.rspec_opts = ['--color --order rand']
+  t.rspec_opts = ['--color']
   t.verbose = true
   t.pattern = 'spec/{unit,functions,hosts,integration,types}/**/*_spec.rb'
 end

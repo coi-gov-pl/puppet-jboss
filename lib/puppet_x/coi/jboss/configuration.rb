@@ -5,6 +5,10 @@ class Puppet_X::Coi::Jboss::Configuration
 
     @config = nil
 
+    # Test method that return current version(for comatability with ruby 1.8)
+    def ruby_version
+       RUBY_VERSION
+    end
 
     # Add settings of jboss configuration file to facts
     def add_config_facts
@@ -18,7 +22,7 @@ class Puppet_X::Coi::Jboss::Configuration
         end
         Facter.add(:jboss_fullconfig) do
           setcode do
-            if RUBY_VERSION < '1.9.0'
+            if Puppet_X::Coi::Jboss::Configuration.ruby_version < '1.9.0'
               class << config
                 define_method(:to_s, proc { self.inspect })
               end
