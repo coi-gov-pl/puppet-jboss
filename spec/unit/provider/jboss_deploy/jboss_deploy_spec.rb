@@ -292,5 +292,27 @@ context "mocking default values" do
       it { expect(subject).to eq(["super-crm", "super-crm-1"]) }
     end
 
+    describe '#refresh' do
+      before :each do
+
+        bringDownName = 'Deployment'
+        cmd = 'undeploy super-crm-1.1.0 --all-relevant-server-groups'
+
+        bringUpName = 'Deployment'
+        cmd2 = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups'
+
+        expect(provider).to receive(:bringDown).with(bringDownName, cmd).and_return('asd')
+        expect(provider).to receive(:bringUp).with(bringDownName, cmd2).and_return('asd')
+
+      end
+
+      let(:extended_repl) { {
+          :redeploy => false,
+        } }
+
+      subject { provider.refresh }
+      it { expect(subject).to eq('asd') }
+    end
+
 end
 end
