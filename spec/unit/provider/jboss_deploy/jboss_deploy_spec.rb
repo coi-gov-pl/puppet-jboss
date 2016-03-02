@@ -64,7 +64,7 @@ context "mocking default values" do
         bringDownName = 'Deployment'
         cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --server-groups=crm-servers'
 
-        expect(provider).to receive(:bringUp).with(bringDownName, cmd   ).and_return('asd')
+        expect(provider).to receive(:bringUp).with(bringDownName, cmd).and_return('asd')
       end
 
       let(:extended_repl) { {
