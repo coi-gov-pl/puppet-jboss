@@ -13,10 +13,15 @@ class jboss::internal::service {
   anchor { 'jboss::service::begin': }
 
   $servicename = $jboss::product
+  # TODO: change to $::virtual after dropping support for Puppet 2.x
+  $enable = $::jboss_virtual ? {
+    'docker' => undef,
+    default  => true,
+  }
 
   service { $servicename:
     ensure     => running,
-    enable     => true,
+    enable     => $enable,
     hasstatus  => true,
     hasrestart => true,
     subscribe  => [

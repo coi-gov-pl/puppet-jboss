@@ -47,15 +47,7 @@ describe 'jboss::internal::configuration', :type => :class do
   context 'On RedHat os family' do
     extend Testing::JBoss::SharedExamples
     let(:title) { 'test-configuration' }
-    let(:facts) do
-      {
-        :operatingsystem => 'OracleLinux',
-        :osfamily        => 'RedHat',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :puppetversion   => Puppet.version
-      }
-    end
+    let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
     it_behaves_like 'completly working define'
     it_behaves_like_full_working_jboss_installation
     it { is_expected.to contain_file('/etc/sysconfig/wildfly.conf') }
@@ -64,16 +56,7 @@ describe 'jboss::internal::configuration', :type => :class do
   context 'On Debian os family' do
     extend Testing::JBoss::SharedExamples
     let(:title) { 'test-configuration' }
-    let(:facts) do
-      {
-        :operatingsystem => 'Ubuntu',
-        :osfamily        => 'Debian',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :lsbdistcodename => 'trusty',
-        :puppetversion   => Puppet.version
-      }
-    end
+    let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
     it_behaves_like 'completly working define'
     it_behaves_like_full_working_jboss_installation
     it { is_expected.to contain_file('/etc/default/wildfly') }
