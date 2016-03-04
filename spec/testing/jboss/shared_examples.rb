@@ -1,5 +1,5 @@
 module Testing::JBoss::SharedExamples
-  DEFAULT_VERSION = '8.2.0.Final'
+  DEFAULT_VERSION = '9.0.2.Final'
   DEFAULT_PRODUCT = 'wildfly'
   DEFAULT_WITH    = [
     :anchors,
@@ -66,12 +66,11 @@ module Testing::JBoss::SharedExamples
   end
 
   def common_interfaces(version = DEFAULT_VERSION, product = DEFAULT_PRODUCT)
-    bind_variables_list = [
+    basic_bind_variables_list = [
       "inet-address", "link-local-address",
       "loopback", "loopback-address", "multicast",
       "nic", "nic-match", "point-to-point", "public-address",
-      "site-local-address", "subnet-match", "up", "virtual",
-      "any-ipv4-address", "any-ipv6-address" ]
+      "site-local-address", "subnet-match", "up", "virtual" ]
     name = 'common interfaces'
     shared_examples(name) do
       it { is_expected.to contain_class 'jboss::internal::configure::interfaces' }
@@ -97,7 +96,7 @@ module Testing::JBoss::SharedExamples
         :ensure => 'running',
         :enable => true
         }) }
-      bind_variables_list.each do |var|
+      basic_bind_variables_list.each do |var|
         it { is_expected.to contain_augeas("interface public rm #{var}").with({
           :context => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
           :changes => "rm server/interfaces/interface[#attribute/name='public']/#{var}",

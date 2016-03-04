@@ -421,8 +421,8 @@ This module is explicitly tested on:
 With servers:
 
  * JBoss AS 7.1
- * JBoss EAP 6.1 - 6.4,
- * WildFly 8.x
+ * JBoss EAP 6.1 - 6.4, 7.0
+ * WildFly 8.x, 9.x
 
 Should be fully compatible with those operating systems:
 
