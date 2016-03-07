@@ -1,11 +1,10 @@
 module Testing::Acceptance::Cleaner
   def remove_jboss_installation(serv)
     shell "service #{serv} stop"
-    shell "rm -rf /usr/lib/#{serv}*"
-    shell "rm -rf /etc/#{serv}*"
-    shell "rm -rf /etc/init.d/#{serv}*"
-    shell "rm -rf /etc/default/#{serv}*"
-    shell "rm -rf /etc/sysconfig/#{serv}*"
-    shell "rm -rf /var/log/#{serv}*"
+    rm_sprecs = [
+      '/usr/lib', '/etc', '/etc/init.d',
+      '/etc/sysconfig', '/etc/default', '/var/log'
+    ].map { |e| "#{e}/#{serv}*" }.join(' ')
+    shell "rm -rf #{rm_sprecs} /etc/jboss-as /etc/profile.d/jboss.sh"
   end
 end
