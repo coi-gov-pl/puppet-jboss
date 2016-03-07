@@ -12,8 +12,9 @@ define jboss::internal::module::registerlayer (
 
   if (!defined(Exec["jboss::module::layer::${layer}"])) {
     exec { "jboss::module::layer::${layer}":
-      command => "/bin/awk -F'=' 'BEGIN {ins = 0} /^layers=/ { ins = ins + 1; print \$1=${layer},\$2 } END {if(ins == 0) print \"layers=${layer},base\"}' > ${jboss::home}/modules/layers.conf",
-      unless  => "/bin/egrep -e '^layers=.*${layer}.*' ${jboss::home}/modules/layers.conf",
+      command => "awk -F'=' 'BEGIN {ins = 0} /^layers=/ { ins = ins + 1; print \$1=${layer},\$2 } END {if(ins == 0) print \"layers=${layer},base\"}' > ${jboss::home}/modules/layers.conf",
+      unless  => "egrep -e '^layers=.*${layer}.*' ${jboss::home}/modules/layers.conf",
+      path    => $::path,
       user    => $jboss::jboss_user,
       require => Anchor['jboss::installed'],
       notify  => Service[$jboss::product],

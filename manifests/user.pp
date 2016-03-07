@@ -53,6 +53,9 @@ define jboss::user (
   $filepath = "${home}/${dir}/configuration/${file}"
   $filepath_roles = "${home}/${dir}/configuration/application-roles.properties"
   $jbossuserfix = '2>&1 | awk \'BEGIN{a=0}{if (/Error/){a=1};print}END{if (a==1) exit 1}\''
+  Exec {
+    path => $::path,
+  }
 
   case $ensure {
     'present': {
