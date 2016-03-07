@@ -69,7 +69,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
       end
       let(:status) { double(:exitstatus => 0) }
       before :each do
-        re = /.*bin\/jboss-cli.sh --timeout=50000 --connect --file=.+jbosscli.* --controller=127.0.0.1:9999/
+        re = /.*\/bin\/jboss-cli\.sh  --connect --file=.*jbosscli.* --controller=127\.0\.0\.1:[0-9]*/
         expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:last_execute_status).
           at_least(:once).and_return(status)
         expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:execshell).
