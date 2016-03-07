@@ -34,6 +34,17 @@ module Testing::JBoss::SharedExamples
     name
   end
 
+def containing_basic_class_structure
+  name = "containing basic class structure"
+  shared_examples(name) do
+    it { is_expected.to compile }
+    it { is_expected.to contain_class 'jboss' }
+    it { is_expected.to contain_class 'jboss::internal::service' }
+    it { is_expected.to contain_class 'jboss::internal::runtime::node' }
+  end
+  name
+end
+
   def working_jboss_installation
     name = "working jboss installation"
     shared_examples(name) do
@@ -47,6 +58,16 @@ module Testing::JBoss::SharedExamples
       it { is_expected.to contain_class 'jboss::internal::augeas' }
       it { is_expected.to contain_class 'jboss::internal::params' }
       it { is_expected.to contain_class 'jboss::internal::runtime::dc' }
+    end
+    name
+  end
+
+  def it_behaves_like_containing_basic_includes
+    name = 'it_behaves_like_containing_basic_includes'
+    shared_examples(name) do
+      it { is_expected.to contain_class('jboss') }
+      it { is_expected.to contain_class('jboss::internal::service') }
+      it { is_expected.to contain_class('jboss::internal::runtime::node') }
     end
     name
   end
