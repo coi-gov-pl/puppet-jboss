@@ -1,6 +1,13 @@
 require 'spec_helper_puppet'
 
 describe 'jboss::interface', :type => :define do
+
+  shared_examples 'basic class structure' do
+    it { is_expected.to contain_class('jboss') }
+    it { is_expected.to contain_class('jboss::internal::augeas') }
+    it { is_expected.to contain_class('jboss::internal::runtime') }
+  end
+
   basic_bind_variables_list = [
     "inet-address", "link-local-address",
     "loopback", "loopback-address", "multicast",
@@ -130,9 +137,10 @@ describe 'jboss::interface', :type => :define do
     let(:facts) {generic_facts}
     let(:params) {generic_params}
 
+    it_behaves_like 'basic class structure'
+
     it_behaves_like 'completly working define'
     it_behaves_like 'a define with properly configured interface'
-    it_behaves_like_full_working_jboss_installation
   end
 
   context 'On Debian os family' do
@@ -152,6 +160,5 @@ describe 'jboss::interface', :type => :define do
 
     it_behaves_like 'completly working define'
     it_behaves_like 'a define with properly configured interface'
-    it_behaves_like_full_working_jboss_installation
   end
 end
