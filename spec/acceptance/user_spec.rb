@@ -4,12 +4,13 @@ describe 'user.pp smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('o
   let(:baseserver) { Testing::Acceptance::SmokeTestReader.smoke_pp :init }
   let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :user }
 
-  it 'should work idempotently with no errors' do
-    # First install base server
+  it 'should install base server with no errors' do
     apply_manifest(baseserver, :catch_failures => true)
-
-    # Apply target manifest
+  end
+  it 'should add resource adapter with no errors' do
     apply_manifest(pp, :catch_failures => true)
+  end
+  it 'should work idempotently' do
     apply_manifest(pp, :catch_changes  => true)
   end
   describe service('wildfly') do
