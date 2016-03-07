@@ -19,7 +19,7 @@ describe 'jboss::clientry', :type => :define do
   end
 
   context 'on RedHat os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
 
     let(:title) { 'test-clientry' }
     let(:params) { { :path => 'profile/test', } }
@@ -37,7 +37,7 @@ describe 'jboss::clientry', :type => :define do
   end
 
   context 'on Debian os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
 
     let(:title) { 'test-clientry' }
     let(:params) { { :path => 'profile/test', } }

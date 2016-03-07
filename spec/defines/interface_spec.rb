@@ -117,7 +117,7 @@ describe 'jboss::interface', :type => :define do
   end
 
   context 'On RedHat os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:generic_facts) do
       {
         :operatingsystem => 'OracleLinux',
@@ -136,7 +136,7 @@ describe 'jboss::interface', :type => :define do
   end
 
   context 'On Debian os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:generic_facts) do
       {
         :operatingsystem => 'Ubuntu',
