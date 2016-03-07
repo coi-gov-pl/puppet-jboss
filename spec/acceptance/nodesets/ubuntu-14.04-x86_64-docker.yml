@@ -4,7 +4,6 @@ HOSTS:
     hypervisor : docker
     image: ubuntu:14.04
     docker_preserve_image: true
-    docker_cmd: '["/sbin/init"]'
     docker_image_commands:
       - 'rm /usr/sbin/policy-rc.d'
       - 'rm /sbin/initctl; dpkg-divert --rename --remove /sbin/initctl'

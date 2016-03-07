@@ -4,7 +4,6 @@ HOSTS:
     hypervisor : docker
     image: centos:6
     docker_preserve_image: true
-    docker_cmd: '["/sbin/init"]'
     docker_image_commands:
       - 'yum install -y crontabs tar wget'
 CONFIG:
