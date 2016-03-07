@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'resourceadapter.pp smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
+describe 'resourceadapter smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
   let(:baseserver) { Testing::Acceptance::SmokeTestReader.smoke_pp :init }
   let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :resourceadapter }
 

@@ -1,9 +1,9 @@
 require 'spec_helper_acceptance'
 
-describe 'init.pp smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
+describe 'init smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
   let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :init }
 
-  it 'should add resource adapter with no errors' do
+  it 'should install WildFly 9.x with no errors' do
     apply_manifest(pp, :catch_failures => true)
   end
   it 'should work idempotently' do

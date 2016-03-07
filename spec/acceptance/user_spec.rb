@@ -1,13 +1,13 @@
 require 'spec_helper_acceptance'
 
-describe 'user.pp smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
+describe 'user smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
   let(:baseserver) { Testing::Acceptance::SmokeTestReader.smoke_pp :init }
   let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :user }
 
   it 'should install base server with no errors' do
     apply_manifest(baseserver, :catch_failures => true)
   end
-  it 'should add resource adapter with no errors' do
+  it 'should add user with no errors' do
     apply_manifest(pp, :catch_failures => true)
   end
   it 'should work idempotently' do
