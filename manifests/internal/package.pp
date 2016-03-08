@@ -10,6 +10,7 @@ class jboss::internal::package (
   $java_version     = $jboss::params::java_version,
   $java_package     = $jboss::params::java_package,
   $install_dir      = $jboss::params::install_dir,
+  $java_dist        = $jboss::params::java_dist,
   # Prerequisites class, that can be overwritten
 ) inherits jboss::params {
   include jboss
@@ -75,7 +76,7 @@ class jboss::internal::package (
 
   if $java_autoinstall {
     class { 'java':
-      distribution => 'jdk',
+      distribution => $java_dist,
       version      => $java_version,
       package      => $java_package,
       notify       => Service[$jboss::product],

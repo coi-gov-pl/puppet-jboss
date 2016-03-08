@@ -21,6 +21,9 @@ class jboss::params inherits jboss::internal::params {
   # Java package version, undef, jdk, jre
   $java_package     = hiera('jboss::params::java_package', undef)
 
+  # Java distribution: jre or jdk
+  $java_dist        = hiera('jboss::params::java_dist', 'jre')
+
   # User for Jboss Application Server
   $jboss_user       = hiera('jboss::params::jboss_user', 'jboss')
 
