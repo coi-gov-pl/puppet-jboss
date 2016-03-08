@@ -6,6 +6,7 @@ define jboss::internal::module::assemble (
   $dependencies = [],
 ) {
   include jboss
+  include jboss::internal::params
 
   $replaced = regsubst($modulename, '\.', '/', 'G')
   $dir = "modules/system/layers/${layer}/${replaced}/main"
@@ -19,7 +20,7 @@ define jboss::internal::module::assemble (
   exec { "jboss::module::assemble::${name}(dir=${dir})":
     command => "/bin/mkdir -p ${jboss::home}/${dir}",
     unless  => "test -d ${jboss::home}/${dir}",
-    path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    path    => $jboss::internal::params::syspath,
     notify  => Service[$jboss::product],
     require => Anchor['jboss::package::end'],
   }

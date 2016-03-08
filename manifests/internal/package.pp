@@ -14,6 +14,7 @@ class jboss::internal::package (
 ) inherits jboss::params {
   include jboss
   include jboss::internal::runtime
+  include jboss::internal::params
   include jboss::internal::compatibility
 
   $download_rootdir     = $jboss::internal::params::download_rootdir
@@ -43,7 +44,7 @@ class jboss::internal::package (
   }
 
   Exec {
-    path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    path      => $jboss::internal::params::syspath,
     logoutput => 'on_failure',
   }
 

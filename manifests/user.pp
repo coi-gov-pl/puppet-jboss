@@ -26,6 +26,7 @@ define jboss::user (
   include jboss
   require jboss::internal::package
   include jboss::internal::service
+  include jboss::internal::params
 
   $home = $jboss::home
 
@@ -54,7 +55,7 @@ define jboss::user (
   $filepath_roles = "${home}/${dir}/configuration/application-roles.properties"
   $jbossuserfix = '2>&1 | awk \'BEGIN{a=0}{if (/Error/){a=1};print}END{if (a==1) exit 1}\''
   Exec {
-    path => $::path,
+    path => $jboss::internal::params::syspath,
   }
 
   case $ensure {

@@ -8,4 +8,10 @@ class jboss::internal::params {
 
   include jboss::internal::params::socketbinding
   include jboss::internal::params::memorydefaults
+
+  # Util System PATH variable to avoid mocking in tests
+  $syspath = $::path ? {
+    undef   => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    default => $::path,
+  }
 }

@@ -4,9 +4,10 @@ class jboss::internal::service {
   include jboss
   include jboss::params
   include jboss::internal::configuration
+  include jboss::internal::params
 
   Exec {
-    path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    path      => $jboss::internal::params::syspath,
     logoutput => 'on_failure',
   }
 

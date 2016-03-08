@@ -3,6 +3,7 @@ define jboss::internal::module::registerlayer (
   $layer = name,
 ) {
   include jboss
+  include jboss::internal::params
 
   File {
     mode   => '0640',
@@ -14,7 +15,7 @@ define jboss::internal::module::registerlayer (
     exec { "jboss::module::layer::${layer}":
       command => "awk -F'=' 'BEGIN {ins = 0} /^layers=/ { ins = ins + 1; print \$1=${layer},\$2 } END {if(ins == 0) print \"layers=${layer},base\"}' > ${jboss::home}/modules/layers.conf",
       unless  => "egrep -e '^layers=.*${layer}.*' ${jboss::home}/modules/layers.conf",
-      path    => $::path,
+      path    => $jboss::internal::params::syspath,
       user    => $jboss::jboss_user,
       require => Anchor['jboss::installed'],
       notify  => Service[$jboss::product],
