@@ -9,8 +9,8 @@ HOSTS:
     image: centos:centos6
     hypervisor: docker
     docker_preserve_image: true
-    docker_image_commands: 
-      - 'yum install -y tar vim'
+    docker_image_commands:
+      - 'yum install -y crontabs'
 CONFIG:
   type: pe
   pe_ver: 3.8.2
