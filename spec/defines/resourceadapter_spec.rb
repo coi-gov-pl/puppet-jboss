@@ -30,7 +30,6 @@ describe 'jboss::resourceadapter', :type => :define do
     end
     let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
 
-    it_behaves_like containg_installation_packages
     it_behaves_like containing_basic_class_structure
     it_behaves_like 'contains self'
   end
@@ -48,7 +47,6 @@ describe 'jboss::resourceadapter', :type => :define do
     end
     let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
 
-    it_behaves_like containg_installation_packages
     it_behaves_like containing_basic_class_structure
     it_behaves_like 'contains self'
   end

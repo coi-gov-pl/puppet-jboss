@@ -69,7 +69,6 @@ describe 'jboss::internal::configuration', :type => :class do
     it_behaves_like 'contains basic class structure'
     it_behaves_like 'contains basic anchor structure'
     it_behaves_like 'contains file structure'
-    it_behaves_like common_interfaces
 
     it { is_expected.to contain_file('/etc/sysconfig/wildfly.conf') }
   end
@@ -83,7 +82,6 @@ describe 'jboss::internal::configuration', :type => :class do
     it_behaves_like 'contains basic class structure'
     it_behaves_like 'contains basic anchor structure'
     it_behaves_like 'contains file structure'
-    it_behaves_like common_interfaces
 
     it { is_expected.to contain_file('/etc/default/wildfly') }
   end
