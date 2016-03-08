@@ -5,7 +5,7 @@ HOSTS:
     image: centos:6
     docker_preserve_image: true
     docker_image_commands:
-      - 'yum install -y crontabs'
+      - 'yum install -y crontabs wget'
 CONFIG:
   type: foss
   log_level: debug

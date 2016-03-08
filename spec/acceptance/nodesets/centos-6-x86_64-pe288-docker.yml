@@ -10,7 +10,7 @@ HOSTS:
     hypervisor: docker
     docker_preserve_image: true
     docker_image_commands:
-      - 'yum install -y crontabs'
+      - 'yum install -y crontabs wget'
 CONFIG:
   type: pe
   pe_ver: 2.8.8
