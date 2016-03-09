@@ -5,8 +5,6 @@ eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.ruby18')), binding) if R
 eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.local')), binding) if File.exists?('Gemfile.local')
 
 group :test do
-  require "pry"
-  binding.pry
   gem 'rake',                           :require => false unless dependencies.map {|dep| dep.name}.include?('rake')
   gem 'rspec-puppet',                   :require => false
   gem 'puppetlabs_spec_helper',         :require => false
