@@ -6,10 +6,12 @@ describe 'jboss::securitydomain', :type => :define do
     it { is_expected.to contain_class('jboss') }
     it { is_expected.to contain_class('jboss::internal::service') }
     it { is_expected.to contain_class('jboss::internal::runtime::node') }
-    it { is_expected.to  contain_jboss_securitydomain(title).with(
-      :ensure        => 'present',
-      :controller    => '127.0.0.1',
-      )}
+    it do
+      is_expected.to  contain_jboss_securitydomain(title).with({
+        :ensure        => 'present',
+        :controller    => '127.0.0.1',
+      })
+    end
   end
 
   shared_examples 'contains self' do
