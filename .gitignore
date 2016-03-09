@@ -11,3 +11,4 @@ Puppetfile.lock
 .librarian/
 log
 Vagrantfile
+Gemfile.local

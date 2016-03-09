@@ -1,7 +1,13 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
+eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.ruby19')), binding) if RUBY_VERSION < '2.0.0' and RUBY_VERSION >= '1.9.0'
+eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.ruby18')), binding) if RUBY_VERSION < '1.9.0'
+eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.local')), binding) if File.exists?('Gemfile.local')
+
 group :test do
-  gem 'rake',                           :require => false
+  require "pry"
+  binding.pry
+  gem 'rake',                           :require => false unless dependencies.map {|dep| dep.name}.include?('rake')
   gem 'rspec-puppet',                   :require => false
   gem 'puppetlabs_spec_helper',         :require => false
   gem 'puppet-lint',                    :require => false
@@ -48,8 +54,5 @@ group :development do
     end
   end
 end
-
-eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.ruby19')), binding) if RUBY_VERSION < '2.0.0' and RUBY_VERSION >= '1.9.0'
-eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.ruby18')), binding) if RUBY_VERSION < '1.9.0'
 
 # vim:ft=ruby
