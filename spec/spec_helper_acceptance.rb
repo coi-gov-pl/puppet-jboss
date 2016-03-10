@@ -10,10 +10,10 @@ unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
   foss_opts = { :default_action => 'gem_install' }
   foss_opts[:version]        = puppetver unless puppetver.nil?
   foss_opts[:facter_version] = facterver unless facterver.nil?
-  
+
   if default.is_pe?
     install_pe
-  else 
+  else
     install_puppet foss_opts
   end
 
@@ -37,6 +37,12 @@ end
 
 UNSUPPORTED_PLATFORMS = ['AIX','windows','Solaris', 'Suse']
 
+module Testing
+  module Acceptance end
+end
+require 'testing/acceptance/cleaner'
+require 'testing/acceptance/smoke_test_reader'
+
 RSpec.configure do |c|
   # Project root
   proj_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
@@ -44,15 +50,14 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     # Install module and dependencies
-    install_dev_puppet_module(:source => proj_root, :module_name => 'jboss')
-
     hosts.each do |host|
       on host, "/bin/touch #{default['puppetpath']}/hiera.yaml"
       on host, 'chmod 755 /root'
-      on host, puppet('module','install','puppetlabs-stdlib', '--version', '3.2.0'), { :acceptable_exit_codes => [0,1] }
-      on host, puppet('module','install','puppetlabs-java', '--version', '1.3.0'), { :acceptable_exit_codes => [0,1] }
-      on host, puppet('module','install','puppetlabs-concat', '--version', '1.0.0'), { :acceptable_exit_codes => [0,1] }
+      # Installs module for dependencies and then removes it
+      on host, puppet('module','install','coi/jboss'), { :acceptable_exit_codes => [0,1] }
+      on host, puppet('module','uninstall','coi/jboss'), { :acceptable_exit_codes => [0,1] }
     end
-
+    install_dev_puppet_module(:source => proj_root, :module_name => 'jboss')
+    hosts.each { |host| on host, puppet('module', 'list'), { :acceptable_exit_codes => [0,1] } }
   end
 end

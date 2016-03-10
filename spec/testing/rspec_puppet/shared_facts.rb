@@ -1,4 +1,4 @@
-class Testing::JBoss::SharedFacts
+class Testing::RspecPuppet::SharedFacts
   DEFAULT_IP         = '192.168.0.1'
   DEFAULT_CONCAT_DIR = '/root/concat'
 

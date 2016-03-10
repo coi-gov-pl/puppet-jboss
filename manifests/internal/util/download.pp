@@ -9,6 +9,7 @@ define jboss::internal::util::download (
   $filename     = undef,
   $install_wget = true,
 ) {
+  include jboss::internal::params
 
   if $filename == undef {
     $base = jboss_basename($uri)
@@ -42,7 +43,7 @@ define jboss::internal::util::download (
       exec { "wget -q '${uri}' -O '${dest}' && chmod ${mode} '${dest}' && chown ${owner}:${group} '${dest}'":
         alias     => "download ${name}",
         logoutput => 'on_failure',
-        path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        path      => $jboss::internal::params::syspath,
         creates   => $dest,
         timeout   => $timeout,
         require   => [
