@@ -9,17 +9,17 @@ describe 'jboss::internal::configure::interfaces', :type => :define do
   end
 
   context 'On RedHat os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-conf-interfaces' }
-    let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
     it_behaves_like 'contains self'
   end
 
   context 'On Debian os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-conf-interfaces' }
-    let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
     it_behaves_like 'contains self'
   end

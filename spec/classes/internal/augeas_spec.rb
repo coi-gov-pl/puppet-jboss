@@ -12,18 +12,17 @@ describe 'jboss::internal::augeas', :type => :class do
   end
 
   context 'On RedHat os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-augeas' }
-    let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
     it_behaves_like 'contains self'
   end
 
   context 'On Debian os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-augeas' }
-    let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
-
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
     it_behaves_like 'contains self'
   end
 end

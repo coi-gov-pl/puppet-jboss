@@ -34,7 +34,7 @@ describe 'jboss::internal::service', :type => :class do
   context 'on RedHat os family' do
     context 'on Docker container' do
       let(:facts) do
-        Testing::JBoss::SharedFacts.oraclelinux_facts(
+        Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
           :jboss_virtual => 'docker'
         )
       end
@@ -51,7 +51,7 @@ describe 'jboss::internal::service', :type => :class do
     end
     context 'on non-Docker machine' do
       let(:facts) do
-        Testing::JBoss::SharedFacts.oraclelinux_facts(
+        Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
           :jboss_virtual => 'phisycal'
         )
       end
@@ -71,7 +71,7 @@ describe 'jboss::internal::service', :type => :class do
   context 'on Debian os family' do
     context 'on Docker container' do
       let(:facts) do
-        Testing::JBoss::SharedFacts.ubuntu_facts(
+        Testing::RspecPuppet::SharedFacts.ubuntu_facts(
           :jboss_virtual => 'docker'
         )
       end
@@ -88,7 +88,7 @@ describe 'jboss::internal::service', :type => :class do
     end
     context 'on non-Docker machine' do
       let(:facts) do
-        Testing::JBoss::SharedFacts.ubuntu_facts(
+        Testing::RspecPuppet::SharedFacts.ubuntu_facts(
           :jboss_virtual => 'vmware'
         )
       end

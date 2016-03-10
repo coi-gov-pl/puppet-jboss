@@ -19,7 +19,7 @@ describe 'jboss::deploy', :type => :define do
   end
 
   context 'On RedHat os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-deploy' }
     let(:params) { { :path => '/tmp/jboss.war', } }
     let(:facts) do
@@ -36,7 +36,7 @@ describe 'jboss::deploy', :type => :define do
   end
 
   context 'On Debian os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-deploy' }
     let(:params) { { :path => '/tmp/jboss.war', } }
     let(:facts) do

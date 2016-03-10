@@ -1,4 +1,4 @@
-module Testing::JBoss::SharedExamples
+module Testing::RspecPuppet::SharedExamples
   DEFAULT_VERSION = '9.0.2.Final'
   DEFAULT_PRODUCT = 'wildfly'
   DEFAULT_WITH    = [

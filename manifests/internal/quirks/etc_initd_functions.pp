@@ -1,6 +1,7 @@
 # Internal class - Quircks for /etc/init.d/functions loading from RHEL even on Debian like systems
 class jboss::internal::quirks::etc_initd_functions {
   include jboss
+  include jboss::internal::params
   include jboss::internal::service
   include jboss::internal::compatibility
 
@@ -19,7 +20,7 @@ class jboss::internal::quirks::etc_initd_functions {
       onlyif  => "test \"$(head -n 1 ${jboss::internal::compatibility::initd_file})\" = '#!/bin/sh'",
       require => Anchor['jboss::package::end'],
       notify  => Service[$jboss::internal::service::servicename],
-      path    => $::path,
+      path    => $jboss::internal::params::syspath,
     }
   }
 }

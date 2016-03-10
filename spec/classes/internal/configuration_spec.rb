@@ -61,7 +61,7 @@ describe 'jboss::internal::configuration', :type => :class do
   end
 
   context 'On RedHat os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-configuration' }
     let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
 
@@ -74,9 +74,9 @@ describe 'jboss::internal::configuration', :type => :class do
   end
 
   context 'On Debian os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-configuration' }
-    let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
     it_behaves_like 'contains self'
     it_behaves_like 'contains basic class structure'

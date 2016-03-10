@@ -9,12 +9,12 @@ describe 'jboss::internal::prerequisites', :type => :define do
 
   context 'On RedHat os family' do
     let(:title) { 'test-prerequisites' }
-    let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
     it_behaves_like 'completly working define'
   end
   context 'On Debian os family' do
     let(:title) { 'test-module' }
-    let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
     it_behaves_like 'completly working define'
   end
 end

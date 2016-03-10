@@ -10,10 +10,12 @@ class jboss::internal::package (
   $java_version     = $jboss::params::java_version,
   $java_package     = $jboss::params::java_package,
   $install_dir      = $jboss::params::install_dir,
+  $java_dist        = $jboss::params::java_dist,
   # Prerequisites class, that can be overwritten
 ) inherits jboss::params {
   include jboss
   include jboss::internal::runtime
+  include jboss::internal::params
   include jboss::internal::compatibility
 
   $download_rootdir     = $jboss::internal::params::download_rootdir
@@ -43,7 +45,7 @@ class jboss::internal::package (
   }
 
   Exec {
-    path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    path      => $jboss::internal::params::syspath,
     logoutput => 'on_failure',
   }
 
@@ -74,7 +76,7 @@ class jboss::internal::package (
 
   if $java_autoinstall {
     class { 'java':
-      distribution => 'jdk',
+      distribution => $java_dist,
       version      => $java_version,
       package      => $java_package,
       notify       => Service[$jboss::product],
