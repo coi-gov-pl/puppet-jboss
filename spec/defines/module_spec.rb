@@ -25,7 +25,7 @@ describe 'jboss::module', :type => :define do
         :dependencies => ['javax.transaction.api', 'javax.api']
       }
     end
-    let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
     it_behaves_like 'contains self'
   end
@@ -40,7 +40,7 @@ describe 'jboss::module', :type => :define do
         :dependencies => ['javax.transaction.api', 'javax.api']
       }
     end
-    let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
     it_behaves_like 'contains self'
   end

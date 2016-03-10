@@ -3,7 +3,7 @@ require 'spec_helper_puppet'
 describe 'jboss::datasource', :type => :define do
 
   context 'on RedHat os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     def merge_params(hash = {})
       hash.merge({
         :username   => 'test-username',
@@ -21,7 +21,7 @@ describe 'jboss::datasource', :type => :define do
 
     let(:title) { 'test-datasource' }
     let(:params) { merge_params }
-    let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
     it { is_expected.to compile.with_all_deps }
     it_behaves_like containing_basic_class_structure
@@ -82,7 +82,7 @@ describe 'jboss::datasource', :type => :define do
   end
 
   context 'on Ubuntu os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     def merge_params(hash = {})
       hash.merge({
         :username   => 'test-username',
@@ -100,7 +100,7 @@ describe 'jboss::datasource', :type => :define do
 
     let(:title) { 'test-datasource' }
     let(:params) { merge_params }
-    let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
     it { is_expected.to compile.with_all_deps }
     it_behaves_like containing_basic_class_structure

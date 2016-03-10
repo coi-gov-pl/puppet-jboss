@@ -24,7 +24,7 @@ describe 'jboss::jmsqueue', :type => :define do
     let(:params) { { :entries => [
     'queue/app-mails',
     'java:jboss/exported/jms/queue/app-mails'], } }
-    let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
     it_behaves_like containing_basic_class_structure
     it_behaves_like 'contains self'
@@ -36,7 +36,7 @@ describe 'jboss::jmsqueue', :type => :define do
     let(:params) { { :entries => [
     'queue/app-mails',
     'java:jboss/exported/jms/queue/app-mails'], } }
-    let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
     it_behaves_like containing_basic_class_structure
     it_behaves_like 'contains self'

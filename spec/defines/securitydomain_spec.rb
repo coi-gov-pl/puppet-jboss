@@ -25,7 +25,7 @@ describe 'jboss::securitydomain', :type => :define do
         :controller   => '127.0.0.1'
       }
     }
-    let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
     it_behaves_like 'contains class structure'
     it_behaves_like 'contains self'
@@ -35,8 +35,11 @@ describe 'jboss::securitydomain', :type => :define do
   context 'On Debian os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-securitydomain' }
-
-    let(:facts) { Testing::JBoss::SharedFacts.ubuntu_facts }
+    let(:params) {{
+        :controller   => '127.0.0.1'
+      }
+    }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
     it_behaves_like 'contains class structure'
     it_behaves_like 'contains self'

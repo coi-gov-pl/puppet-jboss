@@ -63,7 +63,7 @@ describe 'jboss::internal::configuration', :type => :class do
   context 'On RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-configuration' }
-    let(:facts) { Testing::JBoss::SharedFacts.oraclelinux_facts }
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
     it_behaves_like 'contains self'
     it_behaves_like 'contains basic class structure'
