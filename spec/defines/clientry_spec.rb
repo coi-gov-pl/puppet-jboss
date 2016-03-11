@@ -2,7 +2,7 @@ require 'spec_helper_puppet'
 
 describe 'jboss::clientry', :type => :define do
 
-  shared_examples 'completly working define' do
+  shared_examples 'contain self' do
     it do
       is_expected.to contain_jboss_confignode(title).with({
         :ensure => 'present',
@@ -23,17 +23,11 @@ describe 'jboss::clientry', :type => :define do
 
     let(:title) { 'test-clientry' }
     let(:params) { { :path => 'profile/test', } }
-    let(:facts) do
-      {
-        :operatingsystem => 'OracleLinux',
-        :osfamily        => 'RedHat',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :puppetversion   => Puppet.version
-      }
-    end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
+
+    it_behaves_like containing_basic_class_structure
+
+    it_behaves_like 'contain self'
   end
 
   context 'on Debian os family' do
@@ -41,17 +35,10 @@ describe 'jboss::clientry', :type => :define do
 
     let(:title) { 'test-clientry' }
     let(:params) { { :path => 'profile/test', } }
-    let(:facts) do
-      {
-        :operatingsystem => 'Ubuntu',
-        :osfamily        => 'Debian',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :lsbdistcodename => 'trusty',
-        :puppetversion   => Puppet.version
-      }
-    end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
+
+    it_behaves_like containing_basic_class_structure
+
+    it_behaves_like 'contain self'
   end
 end

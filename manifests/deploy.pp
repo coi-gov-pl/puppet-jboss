@@ -13,10 +13,10 @@
 # [*jndi*]
 #     **This is the namevar**. The JNDI name of deployed archive.
 # [*redeploy*]
-#     This parameter can be used to force redeployment of already deployed archive. By default it 
+#     This parameter can be used to force redeployment of already deployed archive. By default it
 #     is equals for false
 # [*servergroups*]
-#     In domain mode, you need to pass here actual server group name on which you wish to deploy 
+#     In domain mode, you need to pass here actual server group name on which you wish to deploy
 #     the archive.
 #
 define jboss::deploy (

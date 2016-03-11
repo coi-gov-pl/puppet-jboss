@@ -1,7 +1,7 @@
 require 'spec_helper_puppet'
 
 describe 'jboss::jmsqueue', :type => :define do
-  shared_examples 'completly working define' do
+  shared_examples 'contains self' do
     it { is_expected.to contain_jboss_jmsqueue(title).with({
       :ensure  => 'present',
       :entries => [
@@ -24,17 +24,10 @@ describe 'jboss::jmsqueue', :type => :define do
     let(:params) { { :entries => [
     'queue/app-mails',
     'java:jboss/exported/jms/queue/app-mails'], } }
-    let(:facts) do
-      {
-        :operatingsystem => 'OracleLinux',
-        :osfamily        => 'RedHat',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :puppetversion   => Puppet.version
-      }
-    end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
+
+    it_behaves_like containing_basic_class_structure
+    it_behaves_like 'contains self'
   end
 
   context 'On Debian os family' do
@@ -43,17 +36,9 @@ describe 'jboss::jmsqueue', :type => :define do
     let(:params) { { :entries => [
     'queue/app-mails',
     'java:jboss/exported/jms/queue/app-mails'], } }
-    let(:facts) do
-      {
-        :operatingsystem => 'Ubuntu',
-        :osfamily        => 'Debian',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :lsbdistcodename => 'trusty',
-        :puppetversion   => Puppet.version
-      }
-    end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
+
+    it_behaves_like containing_basic_class_structure
+    it_behaves_like 'contains self'
   end
 end
