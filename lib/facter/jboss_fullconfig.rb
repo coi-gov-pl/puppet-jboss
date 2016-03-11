@@ -1,3 +1,3 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '../puppet_x/coi/jboss'))
 
-Puppet_X::Coi::Jboss::Configuration::add_config_facts
+Puppet_X::Coi::Jboss::Facts.define_fullconfig_fact

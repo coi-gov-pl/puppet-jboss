@@ -1,4 +1,4 @@
-
+require_relative 'facts'
 # A class for JBoss configuration
 class Puppet_X::Coi::Jboss::Configuration
   class << self
@@ -12,7 +12,7 @@ class Puppet_X::Coi::Jboss::Configuration
 
     # refresh jboss configuration file facts
     def refresh_config_facts
-      add_config_facts
+      Puppet_X::Coi::Jboss::Facts::add_config_facts
     end
 
     # Gets the main config file
