@@ -12,5 +12,4 @@ Puppetfile.lock
 log
 Vagrantfile
 .DS_Store
-
 Gemfile.local

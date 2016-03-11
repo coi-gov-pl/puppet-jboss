@@ -1,4 +1,5 @@
 require_relative 'facts'
+
 # A class for JBoss configuration
 class Puppet_X::Coi::Jboss::Configuration
   class << self
