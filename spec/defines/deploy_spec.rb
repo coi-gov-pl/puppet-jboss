@@ -1,18 +1,25 @@
 require 'spec_helper_puppet'
 
 describe 'jboss::deploy', :type => :define do
-  shared_examples 'completly working define' do
-    it { is_expected.to contain_jboss__deploy(title).with({
-      :ensure => 'present',
-      :jndi   => title
-      }) }
+
+  shared_examples 'containing class structure' do
+    it { is_expected.to contain_class('jboss') }
+    it { is_expected.to contain_class('jboss::internal::runtime::node') }
     it { is_expected.to contain_jboss_deploy(title).with({
       :ensure => 'present',
       :source => '/tmp/jboss.war'
       }) }
-end
+  end
+
+  shared_examples 'containing self' do
+    it { is_expected.to contain_jboss__deploy(title).with({
+        :ensure => 'present',
+        :jndi   => title
+    }) }
+  end
+
   context 'On RedHat os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-deploy' }
     let(:params) { { :path => '/tmp/jboss.war', } }
     let(:facts) do
@@ -24,12 +31,12 @@ end
         :puppetversion   => Puppet.version
       }
     end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
+    it_behaves_like 'containing class structure'
+    it_behaves_like 'containing self'
   end
 
   context 'On Debian os family' do
-    extend Testing::JBoss::SharedExamples
+    extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-deploy' }
     let(:params) { { :path => '/tmp/jboss.war', } }
     let(:facts) do
@@ -42,8 +49,7 @@ end
         :puppetversion   => Puppet.version
       }
     end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
-
+    it_behaves_like 'containing class structure'
+    it_behaves_like 'containing self'
   end
 end

@@ -4,19 +4,25 @@ class jboss::internal::service {
   include jboss
   include jboss::params
   include jboss::internal::configuration
+  include jboss::internal::params
 
   Exec {
-    path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    path      => $jboss::internal::params::syspath,
     logoutput => 'on_failure',
   }
 
   anchor { 'jboss::service::begin': }
 
   $servicename = $jboss::product
+  # TODO: change to $::virtual after dropping support for Puppet 2.x
+  $enable = $::jboss_virtual ? {
+    'docker' => undef,
+    default  => true,
+  }
 
   service { $servicename:
     ensure     => running,
-    enable     => true,
+    enable     => $enable,
     hasstatus  => true,
     hasrestart => true,
     subscribe  => [

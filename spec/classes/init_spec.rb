@@ -1,15 +1,9 @@
 require 'spec_helper_puppet'
 
 describe 'jboss', :type => :class do
-  let(:facts) do
-    {
-      :operatingsystem => 'OracleLinux',
-      :osfamily        => 'RedHat',
-      :ipaddress       => '192.168.0.1',
-      :concat_basedir  => '/root/concat',
-      :puppetversion   => Puppet.version
-    }
-  end
+
+  let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
+  extend Testing::RspecPuppet::SharedExamples
   context 'with defaults for all parameters' do
     it { is_expected.to compile }
     it do
@@ -73,5 +67,9 @@ describe 'jboss', :type => :class do
     it { is_expected.to contain_class 'jboss::internal::compatibility' }
     it { is_expected.to contain_class 'jboss::internal::configuration' }
     it { is_expected.to contain_class 'jboss::internal::service' }
+
+    it_behaves_like common_interfaces
+    it_behaves_like common_anchors
+
   end
 end

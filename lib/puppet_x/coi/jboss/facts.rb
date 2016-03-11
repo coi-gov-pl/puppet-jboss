@@ -24,5 +24,17 @@ class Puppet_X::Coi::Jboss::Facts
           end
         end
       end
+
+    # Check if is running inside Docker container
+    # Implementation is taken from Facter 2.1.x
+    # @deprecated TODO: remove after dropping support for Puppet 2.x
+    # @return {boolean} true if running inside container
+    def dockerized?
+      path = Pathname.new('/proc/1/cgroup')
+      return false unless path.readable?
+      in_docker = path.readlines.any? {|l| l.split(":")[2].to_s.start_with? '/docker/' }
+      return true if in_docker
+      return false
+    end
   end
 end

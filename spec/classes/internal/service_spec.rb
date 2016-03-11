@@ -1,41 +1,107 @@
 require 'spec_helper_puppet'
 
-describe 'jboss::internal::service', :type => :define do
-  shared_examples 'completly working define' do
+describe 'jboss::internal::service', :type => :class do
+  shared_examples 'containg service anchors' do
+    it { is_expected.to contain_anchor('jboss::service::begin') }
+    it { is_expected.to contain_anchor('jboss::service::end') }
+    it { is_expected.to contain_anchor('jboss::service::started') }
+  end
+  shared_examples 'containg class structure' do
     it { is_expected.to contain_class 'jboss::internal::service' }
-    it { is_expected.to contain_exec('jboss::move-unzipped') }
+    it { is_expected.to contain_class('jboss') }
+    it { is_expected.to contain_class('jboss::params') }
+    it { is_expected.to contain_class('jboss::internal::configuration') }
+  end
+  shared_examples 'containg service execs' do
+    it do
+      is_expected.to contain_exec('jboss::service::test-running').
+      with(
+        :loglevel  => 'emerg',
+        :command   => 'tail -n 50 /var/log/wildfly/console.log && exit 1',
+        :unless    => 'ps aux | grep wildfly | grep -vq grep',
+        :logoutput => true
+      )
+    end
+    it do
+      is_expected.to contain_exec('jboss::service::restart').
+      with(
+        :command     => 'service wildfly stop ; pkill -9 -f "^java.*jboss"  ; service wildfly start',
+        :refreshonly => true
+      )
+    end
   end
 
-  context 'On RedHat os family' do
-    extend Testing::JBoss::SharedExamples
-    let(:title) { 'test-service' }
-    let(:facts) do
-      {
-        :operatingsystem => 'OracleLinux',
-        :osfamily        => 'RedHat',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :puppetversion   => Puppet.version
-      }
+  context 'on RedHat os family' do
+    context 'on Docker container' do
+      let(:facts) do
+        Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
+          :jboss_virtual => 'docker'
+        )
+      end
+      it_behaves_like 'containg service anchors'
+      it_behaves_like 'containg service execs'
+      it_behaves_like 'containg class structure'
+      it { is_expected.to contain_service('wildfly').
+        with(
+          :ensure     => 'running',
+          :enable     => nil,
+          :hasstatus  => true,
+          :hasrestart => true
+        ) }
     end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
+    context 'on non-Docker machine' do
+      let(:facts) do
+        Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
+          :jboss_virtual => 'phisycal'
+        )
+      end
+      it_behaves_like 'containg service anchors'
+      it_behaves_like 'containg service execs'
+      it_behaves_like 'containg class structure'
+      it { is_expected.to contain_service('wildfly').
+        with(
+          :ensure     => 'running',
+          :enable     => true,
+          :hasstatus  => true,
+          :hasrestart => true
+        ) }
+    end
   end
 
-  context 'On Debian os family' do
-    extend Testing::JBoss::SharedExamples
-    let(:title) { 'test-module' }
-    let(:facts) do
-      {
-        :operatingsystem => 'Ubuntu',
-        :osfamily        => 'Debian',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :lsbdistcodename => 'trusty',
-        :puppetversion   => Puppet.version
-      }
+  context 'on Debian os family' do
+    context 'on Docker container' do
+      let(:facts) do
+        Testing::RspecPuppet::SharedFacts.ubuntu_facts(
+          :jboss_virtual => 'docker'
+        )
+      end
+      it_behaves_like 'containg service anchors'
+      it_behaves_like 'containg service execs'
+      it_behaves_like 'containg class structure'
+      it { is_expected.to contain_service('wildfly').
+        with(
+          :ensure     => 'running',
+          :enable     => nil,
+          :hasstatus  => true,
+          :hasrestart => true
+        ) }
     end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
+    context 'on non-Docker machine' do
+      let(:facts) do
+        Testing::RspecPuppet::SharedFacts.ubuntu_facts(
+          :jboss_virtual => 'vmware'
+        )
+      end
+      it_behaves_like 'containg service anchors'
+      it_behaves_like 'containg service execs'
+      it_behaves_like 'containg class structure'
+      it { is_expected.to contain_service('wildfly').
+        with(
+          :ensure     => 'running',
+          :enable     => true,
+          :hasstatus  => true,
+          :hasrestart => true
+        ) }
+    end
   end
 end
