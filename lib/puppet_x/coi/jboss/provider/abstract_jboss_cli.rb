@@ -100,7 +100,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   def self.timeout_cli
-    '--timeout=50000' if jbossas?
+    '--timeout=50000' unless jbossas?
   end
 
   def self.execute jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout
@@ -129,6 +129,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
         sleep retry_timeout.to_i
       end
       Puppet.debug "Command send to JBoss CLI: " + jbosscmd
+      Puppet.debug "Cmd to be executed %s" % cmd
       lines = self.execshell(cmd)
       result = self.last_execute_status
       retries += 1
