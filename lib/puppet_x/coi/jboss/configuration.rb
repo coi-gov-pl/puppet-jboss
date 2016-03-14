@@ -1,5 +1,3 @@
-require_relative 'facts'
-
 # A class for JBoss configuration
 class Puppet_X::Coi::Jboss::Configuration
   class << self
@@ -9,11 +7,6 @@ class Puppet_X::Coi::Jboss::Configuration
     # Test method that return current version(for comatability with ruby 1.8)
     def ruby_version
       RUBY_VERSION
-    end
-
-    # refresh jboss configuration file facts
-    def refresh_config_facts
-      Puppet_X::Coi::Jboss::Facts::add_config_facts
     end
 
     # Gets the main config file
