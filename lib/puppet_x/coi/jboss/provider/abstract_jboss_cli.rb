@@ -86,8 +86,17 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     `#{cmd}`
   end
 
+  def self.jboss_product
+    Facter.value(:jboss_product)
+  end
+
   def self.jbossas?
-    Facter.value(:jboss_product) == 'jboss-as'
+    # jboss_product fact is not set on first run, so that
+    # calls to jboss-cli can fail (if jboss-as is installed)
+    if jboss_product.nil?
+      Puppet_X::Coi::Jboss::FactsRefresher::refresh_facts
+    end
+    jboss_product == 'jboss-as'
   end
 
   def self.timeout_cli
@@ -111,7 +120,6 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
       ENV['__PASSWD'] = ctrlcfg[:ctrlpasswd]
       cmd += " --password=$__PASSWD"
     end
-
     retries = 0
     result = ''
     lines = ''
@@ -121,6 +129,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
         sleep retry_timeout.to_i
       end
       Puppet.debug "Command send to JBoss CLI: " + jbosscmd
+      Puppet.debug "Cmd to be executed %s" % cmd
       lines = self.execshell(cmd)
       result = self.last_execute_status
       retries += 1
@@ -247,5 +256,6 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
       }
     end
   end
+
 
 end

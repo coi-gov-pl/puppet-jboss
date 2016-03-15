@@ -11,4 +11,5 @@ Puppetfile.lock
 .librarian/
 log
 Vagrantfile
+.DS_Store
 Gemfile.local

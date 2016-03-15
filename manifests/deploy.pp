@@ -27,6 +27,7 @@ define jboss::deploy (
   $servergroups = hiera('jboss::deploy::servergroups', undef),
   $controller   = $::jboss::controller,
   $runasdomain  = $::jboss::runasdomain,
+  $runtime_name = undef,
 ) {
   include jboss
   include jboss::internal::runtime::node
@@ -40,8 +41,9 @@ define jboss::deploy (
     controller   => $controller,
     ctrluser     => $jboss::internal::runtime::node::username,
     ctrlpasswd   => $jboss::internal::runtime::node::password,
+    runtime_name => $runtime_name,
     require      => [
-      Anchor['jboss::service::end'],
+      Anchor['jboss::end'],
       Exec['jboss::service::restart'],
     ],
   }

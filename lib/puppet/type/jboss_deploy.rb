@@ -25,7 +25,12 @@ Puppet::Type.newtype(:jboss_deploy) do
     desc "Indicate that server is in domain mode"
     defaultto true
   end
-  
+
+  newparam(:runtime_name) do
+    desc "Set the runtime-name"
+  end
+
+
   newparam(:controller) do
     desc "Domain controller host:port address"
     validate do |value|
@@ -52,5 +57,9 @@ Puppet::Type.newtype(:jboss_deploy) do
     desc "Retry timeout in seconds"
     defaultto 1
   end
-  
+
+  def refresh
+    provider.refresh
+  end
+
 end

@@ -3,27 +3,28 @@ require_relative 'configuration'
 # A class for JBoss facts
 class Puppet_X::Coi::Jboss::Facts
   class << self
-      def define_fullconfig_fact
-        config = Puppet_X::Coi::Jboss::Configuration::read
-        unless config.nil?
-          config.each do |key, value|
-            fact_symbol = "jboss_#{key}".to_sym
-            Facter.add(fact_symbol) do
-              setcode { value }
-            end
+    # Add settings of jboss configuration file to facts
+    def define_fullconfig_fact
+      config = Puppet_X::Coi::Jboss::Configuration::read
+      unless config.nil?
+        config.each do |key, value|
+          fact_symbol = "jboss_#{key}".to_sym
+          Facter.add(fact_symbol) do
+            setcode { value }
           end
-          Facter.add(:jboss_fullconfig) do
-            setcode do
-              if Puppet_X::Coi::Jboss::Configuration.ruby_version < '1.9.0'
-                class << config
-                  define_method(:to_s, proc { self.inspect })
-                end
+        end
+        Facter.add(:jboss_fullconfig) do
+          setcode do
+            if Puppet_X::Coi::Jboss::Configuration.ruby_version < '1.9.0'
+              class << config
+                define_method(:to_s, proc { self.inspect })
               end
-              config
             end
+            config
           end
         end
       end
+    end
 
     # Check if is running inside Docker container
     # Implementation is taken from Facter 2.1.x
@@ -36,5 +37,6 @@ class Puppet_X::Coi::Jboss::Facts
       return true if in_docker
       return false
     end
+
   end
 end
