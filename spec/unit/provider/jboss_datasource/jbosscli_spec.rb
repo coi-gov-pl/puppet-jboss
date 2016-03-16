@@ -74,6 +74,8 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
           at_least(:once).and_return(status)
         expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:execshell).
           at_least(:once).with(re).and_return(xa_result, nonxa_result)
+          expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:jbossas?).and_return(false)
+          expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:jbossas?).and_return(false)
       end
       it { expect(provider.class.instances).not_to be_empty }
       context 'its size' do

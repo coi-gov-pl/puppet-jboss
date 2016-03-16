@@ -75,7 +75,7 @@ describe Puppet_X::Coi::Jboss::FactsRefresher do
           expect(Facter).to receive(:list).and_return(['test_fact', 'jboss_test_fact'])
         end
         let(:facts) { ['asd'] }
-        it { expect{subject}.to raise_error(Puppet::Error, 'Cannot refresh fact that is not set by puppet-jboss') }
+        it { expect{subject}.to raise_error(Puppet::Error, 'Argument error, given symbol: asd is on valid fact') }
       end
     end
   end

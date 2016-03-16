@@ -9,7 +9,7 @@ class Puppet_X::Coi::Jboss::Facts
       unless config.nil?
         config.each do |key, value|
           fact_symbol = "jboss_#{key}".to_sym
-          self.set_fact fact_symbol, value
+          add_fact fact_symbol, value
         end
         Facter.add(:jboss_fullconfig) do
           setcode do
@@ -39,7 +39,7 @@ class Puppet_X::Coi::Jboss::Facts
     # Add new fact with name and value taken from function parameters
     # @param {name} name of the fact to be added
     # @param {value} value of fact to be added
-    def set_fact name, value
+    def add_fact name, value
       Facter.add(name.to_sym) { setcode { value } }
     end
   end
