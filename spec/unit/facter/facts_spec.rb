@@ -56,4 +56,27 @@ describe Puppet_X::Coi::Jboss::FactsRefresher do
       end
     end
   end
+
+  context 'tests for refreshing facts' do
+    describe '#refresh_facts' do
+      subject { described_class.refresh_facts(facts) }
+
+      context 'refresh facts from correct list of facts' do
+        before :each do
+          expect(Facter).to receive(:list).and_return(['test_fact', 'jboss_test_fact'])
+          expect(Puppet_X::Coi::Jboss::Configuration).to receive(:read).and_return({ :jboss_test_fact => 'test' })
+        end
+        let(:facts) { ['jboss_test_fact'] }
+        it { expect(subject).to eq(["jboss_test_fact"]) }
+      end
+
+      context 'raise error if fact is not real' do
+        before :each do
+          expect(Facter).to receive(:list).and_return(['test_fact', 'jboss_test_fact'])
+        end
+        let(:facts) { ['asd'] }
+        it { expect{subject}.to raise_error(Puppet::Error, 'Cannot refresh fact that is not set by puppet-jboss') }
+      end
+    end
+  end
 end

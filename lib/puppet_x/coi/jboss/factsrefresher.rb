@@ -3,8 +3,22 @@ require_relative 'facts'
 class Puppet_X::Coi::Jboss::FactsRefresher
   class << self
 
-    def refresh_facts
-      Puppet_X::Coi::Jboss::Facts::define_fullconfig_fact
+    # Method to refresh given facts
+    # @param {[String]}  list of fact names to be refreshed
+    def refresh_facts value
+      facts = Facter.list # get all facts in the system
+      value.each do |val|
+        if facts.include? val.to_s
+          self.delete_resolves val
+          self.delete_value val
+
+          config = Puppet_X::Coi::Jboss::Configuration::read
+          fact_value = config[val.to_sym]
+          Puppet_X::Coi::Jboss::Facts::set_fact val.to_sym, fact_value
+        else
+          raise Puppet::Error, 'Cannot refresh fact that is not set by puppet-jboss'
+        end
+      end
     end
 
     # Method used to delete resolves in given fact
@@ -30,8 +44,11 @@ class Puppet_X::Coi::Jboss::FactsRefresher
     end
 
     private
+    # Method used to validate if fact is system or module fact
+    # @param {String} name of the fact to be validated
+    # @return {true} if fact name is from jboss module
     def validate_fact_name value
       value.to_s.start_with? 'jboss'
-  end
+    end
 end
 end

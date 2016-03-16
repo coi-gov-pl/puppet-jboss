@@ -94,7 +94,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     # jboss_product fact is not set on first run, so that
     # calls to jboss-cli can fail (if jboss-as is installed)
     if jboss_product.nil?
-      Puppet_X::Coi::Jboss::FactsRefresher::refresh_facts
+      Puppet_X::Coi::Jboss::FactsRefresher::refresh_facts :jboss_product
     end
     jboss_product == 'jboss-as'
   end
