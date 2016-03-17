@@ -32,6 +32,10 @@ define jboss::deploy (
   include jboss
   include jboss::internal::runtime::node
 
+  if $runtime_name != undef {
+    validate_re($runtime_name, '.+.(\.ear|\.zip|\.war|\.jar)$')
+  }
+
   jboss_deploy { $jndi:
     ensure       => $ensure,
     source       => $path,
