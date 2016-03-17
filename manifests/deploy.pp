@@ -33,7 +33,7 @@ define jboss::deploy (
   include jboss::internal::runtime::node
 
   if $runtime_name != undef {
-    validate_re($runtime_name, '.+.(\.ear|\.zip|\.war|\.jar)$')
+    validate_re($runtime_name, '.+(\.ear|\.zip|\.war|\.jar)$', 'Invalid file extension, module only supports: .jar, .war, .ear, .rar')
   }
 
   jboss_deploy { $jndi:
