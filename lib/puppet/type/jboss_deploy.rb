@@ -28,6 +28,9 @@ Puppet::Type.newtype(:jboss_deploy) do
 
   newparam(:runtime_name) do
     desc "Set the runtime-name"
+    validate do |value|
+      fail('Invalid file extension, module only supports: .jar, .war, .ear, .rar') if (value =~ /.+.(\.ear|\.zip|\.war|\.jar)$/) == nil
+    end
   end
 
 
