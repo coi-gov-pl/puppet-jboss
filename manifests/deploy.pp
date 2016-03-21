@@ -46,7 +46,6 @@ define jboss::deploy (
     ctrluser            => $jboss::internal::runtime::node::username,
     ctrlpasswd          => $jboss::internal::runtime::node::password,
     runtime_name        => $runtime_name,
-    subscribe           => Jboss::Deploy[$name],
     require             => [
       Anchor['jboss::end'],
       Exec['jboss::service::restart'],
