@@ -23,7 +23,7 @@ describe Puppet_X::Coi::Jboss::FactsRefresher do
           expect(facter_value).to eq([])
         end
 
-        let(:fact) { 'jboss_fact' }
+        let(:fact) { :jboss_fact }
         it { expect(subject).to eq([]) }
       end
     end
@@ -39,7 +39,7 @@ describe Puppet_X::Coi::Jboss::FactsRefresher do
           expect(facter_value).to eq({})
         end
 
-        let(:fact) { 'jboss_fact' }
+        let(:fact) { :jboss_fact }
         it { expect(subject).to eq({}) }
       end
     end
@@ -52,10 +52,10 @@ describe Puppet_X::Coi::Jboss::FactsRefresher do
       context 'refresh facts from correct list of facts' do
         before :each do
           expect(Facter).to receive(:list).and_return(['test_fact', 'jboss_test_fact'])
-          expect(Puppet_X::Coi::Jboss::Configuration).to receive(:read).exactly(facts.size).and_return({ :jboss_test_fact => 'test' })
+          expect(Puppet_X::Coi::Jboss::Configuration).to receive(:read).at_least(1).times.and_return({ :jboss_test_fact => 'test' })
         end
-        let(:facts) { ['jboss_test_fact'] }
-        it { expect(subject).to eq(["jboss_test_fact"]) }
+        let(:facts) { [:jboss_test_fact] }
+        it { expect(subject).to eq([:jboss_test_fact]) }
       end
     end
   end
