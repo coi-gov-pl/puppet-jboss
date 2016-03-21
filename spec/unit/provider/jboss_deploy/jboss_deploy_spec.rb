@@ -52,7 +52,7 @@ context "mocking default values" do
     describe '#create with servergroups nill' do
       before :each do
         bringDownName = 'Deployment'
-        cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups'
+        cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups --force'
         expect(provider).to receive(:bringUp).with(bringDownName, cmd ).and_return('asd')
       end
       subject { provider.create }

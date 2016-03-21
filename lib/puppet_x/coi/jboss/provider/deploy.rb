@@ -9,7 +9,7 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
   end
 
   def redeploy_on_refresh
-    Puppet.Debug('Refresh event from deploy')
+    Puppet.debug('Refresh event from deploy')
     undeploy if @resource[:redeploy_on_refresh]
     deploy
   end
