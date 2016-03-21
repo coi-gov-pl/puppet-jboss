@@ -29,4 +29,14 @@ describe 'jboss_deploy', :type => :type do
     end
   end
 
+  describe ':runtime_name' do
+    context 'given invalid input' do
+      let(:params) {  extend_params( :runtime_name => 'not_valid_runtime_name' ) }
+      it do
+        expect { type }.to raise_error(ex_class,
+          'Parameter runtime_name failed on Jboss_deploy[spec-artifact]: Invalid file extension, module only supports: .jar, .war, .ear, .rar')
+        end
+    end
+  end
+
 end
