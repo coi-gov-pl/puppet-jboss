@@ -8,8 +8,9 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
     undeploy
   end
 
-  def refresh
-    undeploy unless @resource[:redeploy]
+  def redeploy_on_refresh
+    Puppet.Debug('Refresh event from deploy')
+    undeploy if @resource[:redeploy_on_refresh]
     deploy
   end
 
@@ -89,7 +90,7 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
         cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
       end
     end
-    if @resource[:redeploy]
+    if @resource[:redeploy_on_refresh]
       cmd = "#{cmd} --force"
     end
     isprintinglog = 100

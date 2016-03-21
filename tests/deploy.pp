@@ -18,8 +18,8 @@ exec { "wget https://repo1.maven.org/maven2/${group}/${artifact}/${version}/${fi
 }
 
 jboss::deploy { $file:
-  ensure  => 'present',
-  path    => $fullpath,
-  require => Exec['wget'],
+  ensure    => 'present',
+  path      => $fullpath,
+  subscribe => Exec['wget'],
   # servergroup => 'foobar-group', # on domain mode
 }

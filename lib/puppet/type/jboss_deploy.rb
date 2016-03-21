@@ -12,9 +12,9 @@ Puppet::Type.newtype(:jboss_deploy) do
     desc "Path to the EAR/WAR file."
   end
 
-  newparam(:redeploy, :boolean => true) do
+  newparam(:redeploy_on_refresh, :boolean => true) do
     desc "Force redeployment"
-    defaultto false
+    defaultto true
   end
 
   newproperty(:servergroups, :array_matching => :all) do
@@ -61,8 +61,9 @@ Puppet::Type.newtype(:jboss_deploy) do
     defaultto 1
   end
 
+  # Native method that triggers when resource is changed
   def refresh
-    provider.refresh
+    provider.redeploy_on_refresh
   end
 
 end

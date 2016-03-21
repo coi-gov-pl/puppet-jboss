@@ -75,7 +75,7 @@ context "mocking default values" do
       it { expect(subject).to eq('asd') }
     end
 
-    describe '#create with redeploy' do
+    describe '#create with redeploy_on_refresh' do
       before :each do
         bringDownName = 'Deployment'
         cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups --force'
@@ -83,7 +83,7 @@ context "mocking default values" do
         expect(provider).to receive(:bringUp).with(bringDownName, cmd).and_return('asd')
       end
       let(:extended_repl) { {
-          :redeploy => true,
+          :redeploy_on_refresh => true,
         } }
       subject { provider.create }
       it { expect(subject).to eq('asd') }
@@ -307,10 +307,10 @@ context "mocking default values" do
       end
 
       let(:extended_repl) { {
-          :redeploy => false,
+          :redeploy_on_refresh => false,
         } }
 
-      subject { provider.refresh }
+      subject { provider.redeploy_on_refresh }
       it { expect(subject).to eq('asd') }
     end
 
