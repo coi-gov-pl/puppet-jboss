@@ -23,7 +23,7 @@ define jboss::deploy (
   $path,
   $ensure              = 'present',
   $jndi                = $name,
-  $redeploy_on_refresh = false,
+  $redeploy_on_refresh = true,
   $servergroups        = hiera('jboss::deploy::servergroups', undef),
   $controller          = $::jboss::controller,
   $runasdomain         = $::jboss::runasdomain,
