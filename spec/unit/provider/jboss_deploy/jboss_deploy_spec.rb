@@ -62,7 +62,7 @@ context "mocking default values" do
     describe '#create wit servergroups not nill' do
       before :each do
         bringDownName = 'Deployment'
-        cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --server-groups=crm-servers'
+        cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --server-groups=crm-servers --force'
 
         expect(provider).to receive(:bringUp).with(bringDownName, cmd).and_return('asd')
       end
@@ -292,27 +292,45 @@ context "mocking default values" do
       it { expect(subject).to eq(["super-crm", "super-crm-1"]) }
     end
 
-    describe '#refresh' do
-      before :each do
+    describe '#redeploy_on_refresh' do
 
-        bringDownName = 'Deployment'
-        cmd = 'undeploy super-crm-1.1.0 --all-relevant-server-groups'
+      context 'with default value' do
+        before :each do
 
-        bringUpName = 'Deployment'
-        cmd2 = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups'
+          bringDownName = 'Deployment'
+          cmd = 'undeploy super-crm-1.1.0 --all-relevant-server-groups'
 
-        expect(provider).to receive(:bringDown).with(bringDownName, cmd).and_return('asd')
-        expect(provider).to receive(:bringUp).with(bringDownName, cmd2).and_return('asd')
+          bringUpName = 'Deployment'
+          cmd2 = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups --force'
 
+          expect(provider).to receive(:bringDown).with(bringDownName, cmd).and_return('asd')
+          expect(provider).to receive(:bringUp).with(bringDownName, cmd2).and_return('asd')
+
+        end
+
+        let(:extended_repl) { {
+            :redeploy_on_refresh => true,
+          } }
+
+        subject { provider.redeploy_on_refresh }
+        it { expect(subject).to eq('asd') }
       end
 
-      let(:extended_repl) { {
-          :redeploy_on_refresh => false,
-        } }
+      context 'with value set to false' do
+        before :each do
 
-      subject { provider.redeploy_on_refresh }
-      it { expect(subject).to eq('asd') }
+          bringUpName = 'Deployment'
+          cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups'
+
+          expect(provider).to receive(:bringUp).with(bringUpName, cmd).and_return('asd')
+        end
+        let(:extended_repl) { {
+            :redeploy_on_refresh => false,
+          } }
+
+        subject { provider.redeploy_on_refresh }
+        it { expect(subject).to eq('asd') }
+      end
     end
-
 end
 end
