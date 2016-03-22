@@ -1,4 +1,4 @@
-module Testing::JBoss::SharedExamples
+module Testing::RspecPuppet::SharedExamples
   DEFAULT_VERSION = '9.0.2.Final'
   DEFAULT_PRODUCT = 'wildfly'
   DEFAULT_WITH    = [
@@ -12,41 +12,14 @@ module Testing::JBoss::SharedExamples
     :with    => DEFAULT_WITH
   }
 
-  def it_behaves_like_full_working_jboss_installation(options = DEFAULT_OPTIONS)
-    without = options[:without] || []
-    with = options[:with] || DEFAULT_WITH
-    with = [with] unless with.is_a? Array
-    with = with.reject { |el| without.include? el  }
-    version = options[:version] || DEFAULT_VERSION
-    product = options[:product] || DEFAULT_PRODUCT
-    it_behaves_like working_jboss_installation
-    it_behaves_like containg_installation_packages if with.include? :packages
-    it_behaves_like common_anchors if with.include? :anchors
-    it_behaves_like common_interfaces(version, product) if with.include? :interfaces
-  end
 
-  def containg_installation_packages
-    name = 'containing installation packages'
-    shared_examples(name) do
-      it { is_expected.to contain_package 'wget' }
-      it { is_expected.to contain_package 'unzip' }
-    end
-    name
-  end
-
-  def working_jboss_installation
-    name = "working jboss installation"
+  def containing_basic_class_structure
+    name = "containing basic class structure"
     shared_examples(name) do
       it { is_expected.to compile }
-      it { is_expected.to contain_user 'jboss' }
       it { is_expected.to contain_class 'jboss' }
-      it { is_expected.to contain_group 'jboss' }
       it { is_expected.to contain_class 'jboss::internal::service' }
-      it { is_expected.to contain_class 'jboss::params' }
-      it { is_expected.to contain_class 'jboss::internal::runtime' }
-      it { is_expected.to contain_class 'jboss::internal::augeas' }
-      it { is_expected.to contain_class 'jboss::internal::params' }
-      it { is_expected.to contain_class 'jboss::internal::runtime::dc' }
+      it { is_expected.to contain_class 'jboss::internal::runtime::node' }
     end
     name
   end

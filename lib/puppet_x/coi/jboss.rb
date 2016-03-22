@@ -31,6 +31,7 @@ require_relative 'jboss/constants'
 require_relative 'jboss/buildins_utils'
 require_relative 'jboss/configuration'
 require_relative 'jboss/facts'
+require_relative 'jboss/factsrefresher'
 
 require_relative 'jboss/functions/jboss_basename'
 require_relative 'jboss/functions/jboss_dirname'

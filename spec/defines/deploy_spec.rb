@@ -1,49 +1,74 @@
 require 'spec_helper_puppet'
 
 describe 'jboss::deploy', :type => :define do
-  shared_examples 'completly working define' do
-    it { is_expected.to contain_jboss__deploy(title).with({
-      :ensure => 'present',
-      :jndi   => title
-      }) }
+
+  shared_examples 'containing class structure' do
+    it { is_expected.to contain_class('jboss') }
+    it { is_expected.to contain_class('jboss::internal::runtime::node') }
     it { is_expected.to contain_jboss_deploy(title).with({
       :ensure => 'present',
       :source => '/tmp/jboss.war'
       }) }
-end
+  end
+
+  shared_examples 'containing self' do
+    it { is_expected.to contain_jboss__deploy(title).with({
+        :ensure => 'present',
+        :jndi   => title
+    }) }
+  end
+
+  shared_examples 'raise error' do
+    it { is_expected.to raise_error(Puppet::Error, /Invalid file extension, module only supports: .jar, .war, .ear, .rar/) }
+  end
+
   context 'On RedHat os family' do
-    extend Testing::JBoss::SharedExamples
-    let(:title) { 'test-deploy' }
-    let(:params) { { :path => '/tmp/jboss.war', } }
-    let(:facts) do
-      {
-        :operatingsystem => 'OracleLinux',
-        :osfamily        => 'RedHat',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :puppetversion   => Puppet.version
+    extend Testing::RspecPuppet::SharedExamples
+    let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
+    context 'valid runtime_name' do
+      let(:title) { 'test-deploy' }
+      let(:params) { {
+        :path => '/tmp/jboss.war',
+        :runtime_name => 'foobar-app.war'}
       }
+
+      it_behaves_like 'containing class structure'
+      it_behaves_like 'containing self'
     end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
+
+    context 'invalid runtime name' do
+      let(:title) { 'test-deploy' }
+      let(:params) { {
+        :path => '/tmp/jboss.war',
+        :runtime_name => 'foobar-app'}
+      }
+
+      it_behaves_like 'raise error'
+    end
+
   end
 
   context 'On Debian os family' do
-    extend Testing::JBoss::SharedExamples
-    let(:title) { 'test-deploy' }
-    let(:params) { { :path => '/tmp/jboss.war', } }
-    let(:facts) do
-      {
-        :operatingsystem => 'Ubuntu',
-        :osfamily        => 'Debian',
-        :ipaddress       => '192.168.0.1',
-        :concat_basedir  => '/root/concat',
-        :lsbdistcodename => 'trusty',
-        :puppetversion   => Puppet.version
-      }
-    end
-    it_behaves_like 'completly working define'
-    it_behaves_like_full_working_jboss_installation
+    extend Testing::RspecPuppet::SharedExamples
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
+    context 'valid runtime_name' do
+      let(:title) { 'test-deploy' }
+      let(:params) { { :path => '/tmp/jboss.war', } }
+
+
+      it_behaves_like 'containing class structure'
+      it_behaves_like 'containing self'
+    end
+
+    context 'invalid runtime_name' do
+      let(:title) { 'test-deploy' }
+      let(:params) { {
+        :path => '/tmp/jboss.war',
+        :runtime_name => 'foobar-app'}
+      }
+
+      it_behaves_like 'raise error'
+    end
   end
 end

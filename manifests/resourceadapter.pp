@@ -1,10 +1,10 @@
 # == Define: jboss::resourceadapter
 #
-# This defined type can be used to add and remove JBoss resource adapters. A resource adapter 
+# This defined type can be used to add and remove JBoss resource adapters. A resource adapter
 # is a deployable Java EE component that provides communication between a Java EE application
-# and an Enterprise Information System (EIS) using the Java Connector Architecture (JCA) 
+# and an Enterprise Information System (EIS) using the Java Connector Architecture (JCA)
 # specification
-# 
+#
 # See here: https://docs.oracle.com/javaee/6/tutorial/doc/bncjh.html
 #
 # === Parameters
