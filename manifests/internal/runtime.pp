@@ -2,6 +2,12 @@
 class jboss::internal::runtime {
   include jboss
 
+  # Base URL for downloading Jboss Application Server installation package
+  $download_urlbase = hiera('jboss::params::download_urlbase', 'http://download.jboss.org')
+
+  # Full URL for downloading JBoss Application Server installation package
+  $download_url     = hiera('jboss::params::download_url', "${download_urlbase}/${jboss::product}/${jboss::version}/${jboss::product}-${jboss::version}.zip")
+
   $runasdomain   = $jboss::runasdomain
   $profile       = $jboss::profile
 

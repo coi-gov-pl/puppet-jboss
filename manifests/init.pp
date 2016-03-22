@@ -70,7 +70,7 @@ class jboss (
   $jboss_user       = $jboss::params::jboss_user,
   $jboss_group      = $jboss::params::jboss_group,
   $version          = $jboss::params::version,
-  $download_url     = $jboss::params::download_url,
+  $download_url     = $jboss::internal::runtime::download_url,
   $java_autoinstall = $jboss::params::java_autoinstall,
   $java_version     = $jboss::params::java_version,
   $java_package     = $jboss::params::java_package,
