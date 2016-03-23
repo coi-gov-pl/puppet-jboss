@@ -5,8 +5,13 @@ class jboss::internal::runtime {
   # Base URL for downloading Jboss Application Server installation package
   $download_urlbase = hiera('jboss::params::download_urlbase', 'http://download.jboss.org')
 
-  # Full URL for downloading JBoss Application Server installation package
-  $download_url     = hiera('jboss::params::download_url', "${download_urlbase}/${jboss::product}/${jboss::version}/${jboss::product}-${jboss::version}.zip")
+  if $jboss::product == 'jboss-as' {
+    $as_version = jboss_short_version($jboss::version)
+    $download_url = hiera('jboss::params::download_url', "${download_urlbase}/${jboss::product}/${as_version}/${jboss::version}/${jboss::product}-${jboss::version}.zip")
+  } else {
+    # Full URL for downloading JBoss Application Server installation package
+    $download_url     = hiera('jboss::params::download_url', "${download_urlbase}/${jboss::product}/${jboss::version}/${jboss::product}-${jboss::version}.zip")
+  }
 
   $runasdomain   = $jboss::runasdomain
   $profile       = $jboss::profile
