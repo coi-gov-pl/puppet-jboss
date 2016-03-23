@@ -70,7 +70,7 @@ class jboss (
   $jboss_user       = $jboss::params::jboss_user,
   $jboss_group      = $jboss::params::jboss_group,
   $version          = $jboss::params::version,
-  $download_url     = $jboss::internal::runtime::download_url,
+  $download_url     = undef,
   $java_autoinstall = $jboss::params::java_autoinstall,
   $java_version     = $jboss::params::java_version,
   $java_package     = $jboss::params::java_package,
@@ -84,6 +84,9 @@ class jboss (
 ) inherits jboss::params {
 
   $home              = "${install_dir}/${product}-${version}"
+
+  include jboss::internal::defaults
+  include jboss::internal::runtime
 
   include jboss::internal::compatibility
 
@@ -99,7 +102,7 @@ class jboss (
     product          => $product,
     jboss_user       => $jboss_user,
     jboss_group      => $jboss_group,
-    download_url     => $download_url,
+    download_url     => $jboss::internal::runtime::download_url,
     java_autoinstall => $java_autoinstall,
     java_version     => $java_version,
     java_package     => $java_package,
