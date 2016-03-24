@@ -1,12 +1,16 @@
 # A module for JBoss security domain common abstract provider
 class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
+
+  def initialize provider
+    @provider = provider
+  end
   COMMAND_SPLITTER = ','
   NEWLINE_REPLACEMENT = ' '
 
   # Creates a parametrized command to be executed by provider
   # @return {String} a complete command without profile
   def make_command_templates
-    resource = @provider.resource
+    resource = @provider
     correct_cmd = correct_command_template_begining(resource)
     options = []
     resource[:moduleoptions].keys.sort.each do |key|
