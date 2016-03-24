@@ -1,6 +1,6 @@
 # Internal class that installs JBoss
 class jboss::internal::package (
-  $download_url,
+  $download_url     = $jboss::internal::runtime::download_url,
   $prerequisites,
   $jboss_user,
   $jboss_group,
@@ -86,6 +86,10 @@ class jboss::internal::package (
 
   file { $download_dir:
     ensure => 'directory',
+  }
+
+  if $download_file == undef {
+    fail Puppet::Error, 'Download_url cannot be undef'
   }
 
   jboss::internal::util::fetch::file { $download_file:

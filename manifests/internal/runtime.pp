@@ -2,6 +2,13 @@
 class jboss::internal::runtime {
   include jboss
 
+  include jboss::internal::defaults
+
+  $download_url = $jboss::download_url ? {
+    undef   => $jboss::internal::defaults::download_url,
+    default => $jboss::download_url
+  }
+
   $runasdomain   = $jboss::runasdomain
   $profile       = $jboss::profile
 

@@ -10,7 +10,6 @@ describe 'jboss', :type => :class do
       is_expected.to contain_class('jboss').with({
         :product      => 'wildfly',
         :version      => '9.0.2.Final',
-        :download_url => 'http://download.jboss.org/wildfly/9.0.2.Final/wildfly-9.0.2.Final.zip'
         })
     end
     it { is_expected.to contain_anchor 'jboss::begin' }
