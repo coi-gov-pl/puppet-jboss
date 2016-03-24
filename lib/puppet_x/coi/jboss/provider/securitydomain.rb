@@ -1,11 +1,16 @@
 # A class for JBoss security domain provider
 module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def create
-    data = state
-    commands_template = make_command_templates
-    commands = prepare_commands_for_ensure(commands_template, data)
+    # data = state
 
-    cmd = compilecmd make_command_templates
+    # logic_creator = Puppet_X::Coi::Jboss::Provider::SecurityDomain::LogicCreator.new(state)
+
+    commands_template = create_parametrized_cmd
+    Puppet.debug('Commands template to be executed', commands_template)
+    commands = ('/').join(commands_template)
+    Puppet.debug('Command after join', commands)
+
+    cmd = compilecmd commands
     cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
     bringUp('Security Domain Cache Type', cmd2)[:result]
     bringUp('Security Domain', cmd)[:result]
@@ -113,7 +118,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   end
 
   def create_parametrized_cmd
-    provider_impl().create_parametrized_cmd()
+    provider_impl().make_command_templates()
   end
 
   def provider_impl

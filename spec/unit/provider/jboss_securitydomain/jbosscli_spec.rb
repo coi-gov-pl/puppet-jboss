@@ -50,7 +50,7 @@ context "mocking default values for SecurityDomain" do
     end
 
     context 'methods with implementation for modern JBoss servers, that means after releases of WildFly 8 or JBoss EAP 6.4' do
-      xdescribe '#create' do
+      describe '#create' do
         before :each do
           moduleoptions = 'hashUserPassword => "false",principalsQuery => "select \'password\' from users u where u.login = ?"'
 
@@ -62,6 +62,11 @@ context "mocking default values for SecurityDomain" do
           cmd2 = "/subsystem=security/security-domain=#{resource[:name]}:add(cache-type=default)"
           compilecmd2 = "/profile=full-ha/#{cmd2}"
 
+          result = { :asd => 1 }
+          list_result = ['a', 'b', 'c']
+
+          expect(provider).to receive(:state).and_return(result)
+          expect(provider).to receive(:create_parametrized_cmd).and_return(list_result)
           expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
           expect(provider).to receive(:compilecmd).with(cmd2).and_return(compilecmd2)
 
@@ -220,7 +225,7 @@ context "mocking default values for SecurityDomain" do
       before :each do
         expect(Puppet_X::Coi::Jboss::Configuration).to receive(:is_pre_wildfly?).and_return(true)
       end
-      xdescribe '#create' do
+      describe '#create' do
         subject { provider.create }
         let(:mocked_result) { 'A mocked result that indicate #create method executed just fine' }
         before :each do
