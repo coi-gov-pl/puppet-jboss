@@ -1,9 +1,6 @@
 # A class for JBoss security domain provider
 module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def create
-    # data = state
-
-    # logic_creator = Puppet_X::Coi::Jboss::Provider::SecurityDomain::LogicCreator.new(state)
 
     commands_template = create_parametrized_cmd
     Puppet.debug('Commands template to be executed', commands_template)
