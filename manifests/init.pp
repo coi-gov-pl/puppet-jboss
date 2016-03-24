@@ -70,7 +70,7 @@ class jboss (
   $jboss_user       = $jboss::params::jboss_user,
   $jboss_group      = $jboss::params::jboss_group,
   $version          = $jboss::params::version,
-  $download_url     = $jboss::params::download_url,
+  $download_url     = undef,
   $java_autoinstall = $jboss::params::java_autoinstall,
   $java_version     = $jboss::params::java_version,
   $java_package     = $jboss::params::java_package,
@@ -85,6 +85,9 @@ class jboss (
 
   $home              = "${install_dir}/${product}-${version}"
 
+  include jboss::internal::defaults
+  include jboss::internal::runtime
+
   include jboss::internal::compatibility
 
   $controller       = "${controller_host}:${jboss::internal::compatibility::controller_port}"
@@ -94,12 +97,18 @@ class jboss (
 
   $servicename = $jboss::internal::service::servicename
 
+  $full_download_url = $jboss::internal::runtime::download_url
+
+  if $full_download_url == undef {
+    fail Puppet::Errorr, 'Full download url cannot be undef'
+  }
+
   class { 'jboss::internal::package':
     version          => $version,
     product          => $product,
     jboss_user       => $jboss_user,
     jboss_group      => $jboss_group,
-    download_url     => $download_url,
+    download_url     => $full_download_url,
     java_autoinstall => $java_autoinstall,
     java_version     => $java_version,
     java_package     => $java_package,
