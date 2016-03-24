@@ -97,12 +97,18 @@ class jboss (
 
   $servicename = $jboss::internal::service::servicename
 
+  $full_download_url = $jboss::internal::runtime::download_url
+
+  if $full_download_url == undef {
+    fail Puppet::Errorr, "Full download url cannot be undef"
+  }
+
   class { 'jboss::internal::package':
     version          => $version,
     product          => $product,
     jboss_user       => $jboss_user,
     jboss_group      => $jboss_group,
-    download_url     => $jboss::internal::runtime::download_url,
+    download_url     => $full_download_url,
     java_autoinstall => $java_autoinstall,
     java_version     => $java_version,
     java_package     => $java_package,

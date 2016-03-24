@@ -88,6 +88,10 @@ class jboss::internal::package (
     ensure => 'directory',
   }
 
+  if $download_file == undef {
+    fail Puppet::Error, 'Download_url cannot be undef'
+  }
+
   jboss::internal::util::fetch::file { $download_file:
     address   => $download_url,
     fetch_dir => $download_dir,

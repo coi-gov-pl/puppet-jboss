@@ -10,7 +10,7 @@ class jboss::internal::defaults {
   if $jboss::product == 'jboss-as' {
     $__as_version = jboss_short_version($jboss::version)
     $__trimmed_product_name = regsubst($jboss::product, '-', '')
-    $__download_url = hiera('jboss::params::download_url', "${download_urlbase}/${__trimmed_product_name}/${__as_version}/${jboss::product}-${jboss::version}/${jboss::product}-${jboss::version}.zip")
+    $download_url = hiera('jboss::params::download_url', "${download_urlbase}/${__trimmed_product_name}/${__as_version}/${jboss::product}-${jboss::version}/${jboss::product}-${jboss::version}.zip")
   } else {
     # Full URL for downloading JBoss Application Server installation package
     $download_url     = hiera('jboss::params::download_url', "${download_urlbase}/${jboss::product}/${jboss::version}/${jboss::product}-${jboss::version}.zip")
