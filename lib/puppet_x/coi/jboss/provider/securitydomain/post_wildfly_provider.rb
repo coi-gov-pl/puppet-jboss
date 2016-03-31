@@ -10,8 +10,8 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider <
   protected
 
   def correct_command_template_begining(resource)
-    "subsystem=security/security-domain=#{resource[:name]}/authentication=classic/login-module=" +
-    "UsersRoles:add(code=#{resource[:code].inspect},flag=#{resource[:codeflag].inspect},module-options=["
+    "/subsystem=security/security-domain=#{resource[:name]}/authentication=classic/login-module=#{resource[:name]}:add" +
+    "(code=#{resource[:code].inspect},flag=#{resource[:codeflag].inspect},module-options=["
   end
 
   def correct_command_template_ending

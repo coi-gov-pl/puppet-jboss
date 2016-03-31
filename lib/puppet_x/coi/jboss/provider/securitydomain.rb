@@ -3,13 +3,15 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def create
 
     commands_template = create_parametrized_cmd
-    Puppet.debug('Commands template to be executed', commands_template)
-    commands = ('/').join(commands_template)
-    Puppet.debug('Command after join', commands)
+    commands = commands_template.join('/')
 
     cmd = compilecmd commands
     cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
+
+    cmd3 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add()"
+
     bringUp('Security Domain Cache Type', cmd2)[:result]
+    bringUp('SecurityDomain Authentication', cmd3)[:result]
     bringUp('Security Domain', cmd)[:result]
   end
 
@@ -19,8 +21,9 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   end
 
   def exists?
-    cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:read-resource()"
+    cmd = compilecmd "/subsystem=security:read-resource(recursive=true)"
     res = executeWithoutRetry cmd
+    Puppet.debug("#{@resource[:name]}")
     if not res[:result]
       Puppet.debug "Security Domain does NOT exist"
       return false
@@ -28,44 +31,17 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     undefined = nil
     lines = preparelines res[:lines]
     data = eval(lines)['result']
-    Puppet.debug "Security Domain exists: #{data.inspect}"
-
-    save_state(data)
-
-    existinghash = Hash.new
-    givenhash = Hash.new
-
-    unless @resource[:moduleoptions].nil?
-      @resource[:moduleoptions].each do |key, value|
-        givenhash["#{key}"] = value.to_s.gsub(/\n/, ' ').strip
+    name = @resource[:name]
+    if data["security-domain"].key? @resource[:name]
+      Puppet.debug('There is securitydomain with such name')
+      if data['security-domain'][name]['authentication'].nil?
+        Puppet.debug('Authentication does not exists')
+        save_authentication false
       end
-    end
-
-    data['login-modules'][0]['module-options'].each do |key, value|
-      existinghash[key.to_s] = value.to_s.gsub(/\n/, ' ').strip
-    end
-
-    if !existinghash.nil? && !givenhash.nil? && existinghash != givenhash
-      diff = givenhash.to_a - existinghash.to_a
-      Puppet.notice "Security domain should be recreated. Diff: #{diff.inspect}"
-      Puppet.debug "Security domain moduleoptions existing hash => #{existinghash.inspect}"
-      Puppet.debug "Security domain moduleoptions given hash => #{givenhash.inspect}"
-      destroy
+      return true
+    else
       return false
     end
-    return true
-  end
-
-  def exists_recursive?
-    cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:read-resource(recursive=true)"
-    res = executeWithoutRetry cmd
-    if not res[:result]
-      Puppet.debug "Security Domain does NOT exist"
-      return false
-    end
-    undefined = nil
-    lines = preparelines res[:lines]
-    data = eval(lines)['result']
     Puppet.debug "Security Domain exists: #{data.inspect}"
 
     save_state(data)
@@ -95,6 +71,11 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   end
 
   private
+
+  def save_authentication data
+    @auth = data if @auth.nil?
+    @auth
+  end
 
   def save_state data
     @state = data if @state.nil?

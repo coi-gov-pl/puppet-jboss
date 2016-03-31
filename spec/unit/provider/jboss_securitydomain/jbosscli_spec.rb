@@ -50,6 +50,7 @@ context "mocking default values for SecurityDomain" do
     end
 
     context 'methods with implementation for modern JBoss servers, that means after releases of WildFly 8 or JBoss EAP 6.4' do
+
       describe '#create' do
         before :each do
           moduleoptions = 'hashUserPassword => "false",principalsQuery => "select \'password\' from users u where u.login = ?"'
@@ -63,16 +64,15 @@ context "mocking default values for SecurityDomain" do
           compilecmd2 = "/profile=full-ha/#{cmd2}"
 
           result = { :asd => 1 }
-          list_result = ['a', 'b', 'c']
+          list_result = ['subsystem=security', 'security-domain=testing', 'authentication=classic', "login-module=UsersRoles:add(code=\"Database\",flag=false,module-options=[(\"hashUserPassword\"=>true),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]
 
-          expect(provider).to receive(:state).and_return(result)
           expect(provider).to receive(:create_parametrized_cmd).and_return(list_result)
           expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
           expect(provider).to receive(:compilecmd).with(cmd2).and_return(compilecmd2)
 
           bringUpName = 'Security Domain Cache Type'
           bringUpName2 = 'Security Domain'
-          expected_output = { :result => 'A mcked value indicating that everythings works just fine' }
+          expected_output = { :result => 'A mocked value indicating that everythings works just fine' }
           expected_output2 = { :result => 'dffghbdfnmkbsdkj' }
 
 
@@ -80,7 +80,7 @@ context "mocking default values for SecurityDomain" do
           expect(provider).to receive(:bringUp).with(bringUpName2, compilecmd).and_return(expected_output)
         end
         subject { provider.create }
-        it {expect(subject).to eq('A mcked value indicating that everythings works just fine') }
+        it {expect(subject).to eq('A mocked value indicating that everythings works just fine') }
       end
 
       describe '#destroy' do
@@ -97,142 +97,130 @@ context "mocking default values for SecurityDomain" do
         subject { provider.destroy }
         it { expect(subject).to eq('A mocked value indicating that #destroy method runned without any problems') }
       end
-
-      describe '#exist?' do
-        before :each do
-          cmd = "/subsystem=security/security-domain=#{resource[:name]}/authentication=classic:read-resource()"
-          compilecmd = "/profile=full-ha/#{cmd}"
-
-          lines = 'asd'
-
-          bringDownName = 'Security Domain'
-          content =  <<-eos
-          {
-              "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?",
-              "hashStorePassword" => "false",
-              "principalsQuery" => "select 'haslo' from uzytkownik u where u.login = upper(?)",
-              "hashUserPassword" => "false",
-              "dsJndiName" => "java:jboss/datasources/datasources_auth"
-          }
-          eos
-
-          expected_lines =  <<-eos
-          {
-              "outcome" => "success",
-              "result" => {
-                  "login-modules" => [{
-                      "code" => "Database",
-                      "flag" => "required",
-                      "module" => undefined,
-                      "module-options" => #{content}
-                  }],
-                  "login-module" => {"Database" => undefined}
-              }
-          }
-          eos
-
-          expected_res = {
-            :cmd    => compilecmd,
-            :result => res_result,
-            :lines  => expected_lines
-          }
-
-          expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
-          expect(provider).to receive(:executeWithoutRetry).with(compilecmd).and_return(expected_res)
-        end
-
-        subject { provider.exists? }
-
-        context 'with res[:result] => true and existinghash && givenhash are not nil' do
-          let(:res_result) { true }
-
-          before :each do
-            expect(provider).to receive(:destroy).and_return(nil)
-          end
-
-          it { expect(subject).to eq(false) }
-        end
-
-        context 'with [:result] => false' do
-          let(:res_result) { false }
-          it { expect(subject).to eq(false) }
-        end
-      end
-
-      describe '#exist recursive?' do
-        before :each do
-          cmd = "/subsystem=security/security-domain=#{resource[:name]}:read-resource(recursive=true)"
-          compilecmd = "/profile=full-ha/#{cmd}"
-
-          lines = 'asd'
-
-          bringDownName = 'Security Domain'
-          content =  <<-eos
-          {
-              "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?",
-              "hashStorePassword" => "false",
-              "principalsQuery" => "select 'haslo' from uzytkownik u where u.login = upper(?)",
-              "hashUserPassword" => "false",
-              "dsJndiName" => "java:jboss/datasources/datasources_auth"
-          }
-          eos
-
-          expected_lines =  <<-eos
-          {
-              "outcome" => "success",
-              "result" => {
-                  "login-modules" => [{
-                      "code" => "Database",
-                      "flag" => "required",
-                      "module" => undefined,
-                      "module-options" => #{content}
-                  }],
-                  "login-module" => {"Database" => undefined}
-              }
-          }
-          eos
-
-          expected_res = {
-            :cmd    => compilecmd,
-            :result => res_result,
-            :lines  => expected_lines
-          }
-
-          expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
-          expect(provider).to receive(:executeWithoutRetry).with(compilecmd).and_return(expected_res)
-        end
-
-        subject { provider.exists_recursive? }
-
-        context 'with res[:result] => true and existinghash && givenhash are not nil' do
-          let(:res_result) { true }
-
-          before :each do
-            expect(provider).to receive(:destroy).and_return(nil)
-          end
-
-          it { expect(subject).to eq(false) }
-        end
-
-        context 'with [:result] => false' do
-          let(:res_result) { false }
-          it { expect(subject).to eq(false) }
-        end
-      end
     end
 
     context 'methods with implementation that run before WildFly 8 or JBoss EAP 6.4 came out' do
-      before :each do
-        expect(Puppet_X::Coi::Jboss::Configuration).to receive(:is_pre_wildfly?).and_return(true)
-      end
       describe '#create' do
+
+        before :each do
+          expect(Puppet_X::Coi::Jboss::Configuration).to receive(:is_pre_wildfly?).and_return(true)
+        end
+
         subject { provider.create }
         let(:mocked_result) { 'A mocked result that indicate #create method executed just fine' }
         before :each do
+
+          list_result = [1,2,3]
+          # expect(provider).to receive(:create_parametrized_cmd).and_return(list_result)
           expect(provider).to receive(:bringUp).twice.and_return({:result => mocked_result})
           expect(provider).to receive(:compilecmd).twice
         end
         it { is_expected.to eq mocked_result }
+      end
+
+      describe '#exists? when authentication is present' do
+        subject { provider.exists? }
+
+
+        before :each do
+
+          cmd = "/subsystem=security:read-resource(recursive=true)"
+          data = {
+              "outcome" => "success",
+              "result" => {
+                  "deep-copy-subject-mode" => false,
+                  "security-domain" => {
+                      "testing" => {
+                          "cache-type" => "default",
+                          "acl" => nil,
+                          "audit" => nil,
+                          "authentication" => {"classic" => {
+                              "login-modules" => [{
+                                  "code" => "Database",
+                                  "flag" => "optional",
+                                  "module" => nil,
+                                  "module-options" => {
+                                    "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?",
+                                    "hashStorePassword" => "false",
+                                    "principalsQuery" => "select 'haslo' from uzytkownik u where u.login = upper(?)",
+                                    "hashUserPassword" => "false",
+                                    "dsJndiName" => "java:jboss/datasources/datasources_auth"
+                                  }
+                              }],
+                          }},
+                          "authorization" => nil,
+                          "identity-trust" => nil,
+                          "jsse" => nil,
+                          "mapping" => nil
+                      },
+                  },
+                  "vault" => nil
+              }
+          }
+          compiledcmd = "/profile=full-ha/subsystem=security:read-resource(recursive=true)"
+
+
+          expected_res = {
+            :cmd    => compiledcmd,
+            :result => res_result,
+            :lines  => data
+          }
+
+          expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
+          expect(provider).to receive(:executeWithoutRetry).with(compiledcmd).and_return(expected_res)
+          expect(provider).to receive(:preparelines).with(data).and_return(expected_res)
+          expect(provider).to receive(:eval).with(expected_res).and_return(data)
+
+        end
+        let(:res_result) { true }
+        it { is_expected.to eq(true) }
+      end
+
+      describe '#exists? when authentication is not present' do
+        subject { provider.exists? }
+
+
+        before :each do
+
+          cmd = "/subsystem=security:read-resource(recursive=true)"
+          data = {
+              "outcome" => "success",
+              "result" => {
+                  "deep-copy-subject-mode" => false,
+                  "security-domain" => {
+                      "testing" => {
+                          "cache-type" => "default",
+                          "acl" => nil,
+                          "audit" => nil,
+                          "authentication" => nil,
+                          "authorization" => nil,
+                          "identity-trust" => nil,
+                          "jsse" => nil,
+                          "mapping" => nil
+                      },
+                  },
+                  "vault" => nil
+              }
+          }
+          compiledcmd = "/profile=full-ha/subsystem=security:read-resource(recursive=true)"
+
+
+          expected_res = {
+            :cmd    => compiledcmd,
+            :result => res_result,
+            :lines  => data
+          }
+
+          expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
+          expect(provider).to receive(:executeWithoutRetry).with(compiledcmd).and_return(expected_res)
+          expect(provider).to receive(:preparelines).with(data).and_return(expected_res)
+          expect(provider).to receive(:eval).with(expected_res).and_return(data)
+
+        end
+        let(:res_result) { true }
+        let(:auth) { subject.instance_variable_get(:@auth) }
+        it { is_expected.to eq(true) }
+        it { expect(auth).to eq(false) }
       end
     end
   end
