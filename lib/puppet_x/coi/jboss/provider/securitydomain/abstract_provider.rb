@@ -11,10 +11,11 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
   # @return {String} a complete command without profile
   def make_command_templates
     resource = @provider
-    correct_cmd = correct_command_template_begining(resource)
+    res = resource.instance_variable_get(:@resource)
+    correct_cmd = correct_command_template_begining(res)
     options = []
-    resource[:moduleoptions].keys.sort.each do |key|
-      value = resource[:moduleoptions][key]
+    res[:moduleoptions].keys.sort.each do |key|
+      value = res[:moduleoptions][key]
       val = value
       # FIXME: After coi-gov-pl/puppet-jboss#59 is resolved the fallowing lines
       # should be moved to mungle function in securitydomain type not provider
