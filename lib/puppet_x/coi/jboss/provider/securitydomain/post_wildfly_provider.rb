@@ -1,4 +1,4 @@
-# A module for JBoss post WildFly security domain provider
+# A module for JBoss post WildFly security domain provider that provides command to be executed
 class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider <
   Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
   # This is a default constructor
