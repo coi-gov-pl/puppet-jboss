@@ -51,35 +51,61 @@ context "mocking default values for SecurityDomain" do
 
     context 'methods with implementation for modern JBoss servers, that means after releases of WildFly 8 or JBoss EAP 6.4' do
 
+      before :each do
+        provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(provider))
+      end
+
       describe '#create' do
         before :each do
-          moduleoptions = 'hashUserPassword => "false",principalsQuery => "select \'password\' from users u where u.login = ?"'
 
-          cmd = 'subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles' +
+          provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(provider))
+
+          provider.instance_variable_set(:@auth, false)
+
+          login_modules_command = 'subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles' +
           ':add(code="Database",flag=false,module-options=[("hashUserPassword"=>true),' +
           '("principalsQuery"=>"select \'password\' from users u where u.login = ?")])'
-          compilecmd = "/profile=full-ha/#{cmd}"
+          compiled_login_modules_command = "/profile=full-ha/#{login_modules_command}"
 
-          cmd2 = "/subsystem=security/security-domain=#{resource[:name]}:add(cache-type=default)"
-          compilecmd2 = "/profile=full-ha/#{cmd2}"
+          cache_command = "/subsystem=security/security-domain=#{resource[:name]}:add(cache-type=default)"
+          compiled_cache_command = "/profile=full-ha/#{cache_command}"
 
-          result = { :asd => 1 }
+          auth_command = "/subsystem=security/security-domain=#{resource[:name]}/authentication=classic:add()"
+
+          compiled_auth_command = "/profile=full-ha/#{auth_command}"
+
           list_result = ['subsystem=security', 'security-domain=testing', 'authentication=classic', "login-module=UsersRoles:add(code=\"Database\",flag=false,module-options=[(\"hashUserPassword\"=>true),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]
 
+          # create_parametrized_cmd
           expect(provider).to receive(:create_parametrized_cmd).and_return(list_result)
-          expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
-          expect(provider).to receive(:compilecmd).with(cmd2).and_return(compilecmd2)
+
+          # cache command
+          expect(provider).to receive(:compilecmd).with(cache_command).and_return(compiled_cache_command)
+
+          # auth
+          expect(provider).to receive(:compilecmd).with(auth_command).and_return(compiled_auth_command)
+
+          # login modules
+          expect(provider).to receive(:compilecmd).with(login_modules_command).and_return(compiled_login_modules_command)
+
 
           bringUpName = 'Security Domain Cache Type'
-          bringUpName2 = 'Security Domain'
+          bringUpName2 = 'Security Domain Authentication'
+          bringUpName3 = 'Security Domain'
+
           expected_output = { :result => 'A mocked value indicating that everythings works just fine' }
           expected_output2 = { :result => 'dffghbdfnmkbsdkj' }
 
 
-          expect(provider).to receive(:bringUp).with(bringUpName, compilecmd2).and_return(expected_output)
-          expect(provider).to receive(:bringUp).with(bringUpName2, compilecmd).and_return(expected_output)
+          expect(provider).to receive(:bringUp).with(bringUpName, compiled_cache_command).and_return(expected_output)
+
+          expect(provider).to receive(:bringUp).with(bringUpName2, compiled_auth_command).and_return(expected_output)
+
+          expect(provider).to receive(:bringUp).with(bringUpName3, compiled_login_modules_command).and_return(expected_output)
+
         end
         subject { provider.create }
+
         it {expect(subject).to eq('A mocked value indicating that everythings works just fine') }
       end
 
@@ -102,18 +128,16 @@ context "mocking default values for SecurityDomain" do
     context 'methods with implementation that run before WildFly 8 or JBoss EAP 6.4 came out' do
       describe '#create' do
 
-        before :each do
-          expect(Puppet_X::Coi::Jboss::Configuration).to receive(:is_pre_wildfly?).and_return(true)
-        end
-
         subject { provider.create }
         let(:mocked_result) { 'A mocked result that indicate #create method executed just fine' }
+
         before :each do
 
-          list_result = [1,2,3]
-          # expect(provider).to receive(:create_parametrized_cmd).and_return(list_result)
-          expect(provider).to receive(:bringUp).twice.and_return({:result => mocked_result})
-          expect(provider).to receive(:compilecmd).twice
+          provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(provider))
+
+          expect(provider).to receive(:bringUp).exactly(3).times.and_return({:result => mocked_result})
+          expect(provider).to receive(:compilecmd).exactly(3).times
+
         end
         it { is_expected.to eq mocked_result }
       end
@@ -174,53 +198,6 @@ context "mocking default values for SecurityDomain" do
         end
         let(:res_result) { true }
         it { is_expected.to eq(true) }
-      end
-
-      describe '#exists? when authentication is not present' do
-        subject { provider.exists? }
-
-
-        before :each do
-
-          cmd = "/subsystem=security:read-resource(recursive=true)"
-          data = {
-              "outcome" => "success",
-              "result" => {
-                  "deep-copy-subject-mode" => false,
-                  "security-domain" => {
-                      "testing" => {
-                          "cache-type" => "default",
-                          "acl" => nil,
-                          "audit" => nil,
-                          "authentication" => nil,
-                          "authorization" => nil,
-                          "identity-trust" => nil,
-                          "jsse" => nil,
-                          "mapping" => nil
-                      },
-                  },
-                  "vault" => nil
-              }
-          }
-          compiledcmd = "/profile=full-ha/subsystem=security:read-resource(recursive=true)"
-
-
-          expected_res = {
-            :cmd    => compiledcmd,
-            :result => res_result,
-            :lines  => data
-          }
-
-          expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
-          expect(provider).to receive(:executeWithoutRetry).with(compiledcmd).and_return(expected_res)
-          expect(provider).to receive(:preparelines).with(data).and_return(expected_res)
-          expect(provider).to receive(:eval).with(expected_res).and_return(data)
-
-        end
-        let(:res_result) { true }
-        let(:auth) { subject.instance_variable_get(:@auth) }
-        it { is_expected.to eq(true) }
-        it { expect(auth).to eq(false) }
       end
     end
   end

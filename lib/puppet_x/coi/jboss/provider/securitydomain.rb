@@ -1,33 +1,41 @@
 # A class for JBoss security domain provider
 module Puppet_X::Coi::Jboss::Provider::SecurityDomain
-  def create
 
+  # Method that creates security-domain in Jboss instance. When invoked it will execute 3 commands, add cache-type with value 'default', add authentication with value classic, add login-modules. Depends on the version of server it will use correct path to set security domain
+  def create
     commands_template = create_parametrized_cmd
     commands = commands_template.join('/')
 
     cmd = compilecmd commands
     cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
 
-    cmd3 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add()"
-
     bringUp('Security Domain Cache Type', cmd2)[:result]
-    bringUp('SecurityDomain Authentication', cmd3)[:result]
+
+    # TODO: Implement some nice way to decide if this method should be invoked, simple if is bleeeh.
+    if not @state
+      cmd3 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add()"
+      bringUp('Security Domain Authentication', cmd3)[:result]
+    end
+
     bringUp('Security Domain', cmd)[:result]
   end
 
+  # Method to remove security-domain from Jboss instance
   def destroy
     cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:remove()"
     bringDown('Security Domain', cmd)[:result]
   end
 
+  # Method to check if there is security domain. Method calls recursive read-resource on security subsystem to validate if security domain is present. In the procces method also checks if authentication is set.
   def exists?
     cmd = compilecmd "/subsystem=security:read-resource(recursive=true)"
     res = executeWithoutRetry cmd
-    Puppet.debug("#{@resource[:name]}")
+
     if not res[:result]
       Puppet.debug "Security Domain does NOT exist"
       return false
     end
+
     undefined = nil
     lines = preparelines res[:lines]
     data = eval(lines)['result']
@@ -38,13 +46,12 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
         Puppet.debug('Authentication does not exists')
         save_authentication false
       end
+      save_authentication true
       return true
     else
       return false
     end
     Puppet.debug "Security Domain exists: #{data.inspect}"
-
-    save_state(data)
 
     existinghash = Hash.new
     givenhash = Hash.new
@@ -72,22 +79,15 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
 
   private
 
+  # Method that saves information abiut presence of authentication in Jboss instance
+  # @param {boolean} boolean value that indicate if authentication is set
+  # @return {boolean}
   def save_authentication data
     @auth = data if @auth.nil?
     @auth
   end
 
-  def save_state data
-    @state = data if @state.nil?
-    @state
-  end
-
-  def state
-    @state
-  end
-
   # Method prepares lines outputed by JBoss CLI tool, changing output to be readable in Ruby
-  #
   # @param {string[]} lines
   def preparelines lines
     lines.
@@ -95,10 +95,14 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
       gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
   end
 
+  # Method to create base for command to be executed when security domain is made
+  # @return {[String]} list of command elements
   def create_parametrized_cmd
     provider_impl().make_command_templates()
   end
 
+  # Method that provides information about which command template should be user_id
+  # @return {Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider|Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider} provider with correct command template
   def provider_impl
     require_relative 'securitydomain/pre_wildfly_provider'
     require_relative 'securitydomain/post_wildfly_provider'

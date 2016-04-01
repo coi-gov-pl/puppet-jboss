@@ -13,11 +13,18 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
     }
   end
 
-  let(:provider) { double('mock', :resource => resource) }
+    let(:provider) { double('mock', :resource => resource) }
   let(:instance) { described_class.new(provider) }
 
   describe '#create_parametrized_cmd with post wildfly' do
+
     subject { instance.make_command_templates }
+
+    before :each do
+      result = ["subsystem=security", "security-domain=testing", "authentication=classic", "login-module=UsersRoles:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]
+
+      expect(instance).to receive(:make_command_templates).and_return(result)
+    end
     let(:cli_command) do
       ["subsystem=security", "security-domain=testing", "authentication=classic", "login-module=UsersRoles:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]
 
