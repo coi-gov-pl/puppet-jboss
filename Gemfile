@@ -6,7 +6,7 @@ eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.local')), binding) if Fi
 
 group :test do
   gem 'rake',                           :require => false unless dependencies.map {|dep| dep.name}.include?('rake')
-  gem 'rspec-puppet',                   :require => false
+  gem 'rspec-puppet', '2.3.2',                   :require => false
   gem 'puppetlabs_spec_helper',         :require => false
   gem 'puppet-lint',                    :require => false
   gem 'metadata-json-lint',             :require => false
