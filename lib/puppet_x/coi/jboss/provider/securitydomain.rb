@@ -12,7 +12,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     bringUp('Security Domain Cache Type', cmd2)[:result]
 
     # TODO: Implement some nice way to decide if this method should be invoked, simple if is bleeeh.
-    if not @state
+    if not @auth
       cmd3 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add()"
       bringUp('Security Domain Authentication', cmd3)[:result]
     end
