@@ -199,6 +199,32 @@ context "mocking default values for SecurityDomain" do
         let(:res_result) { true }
         it { is_expected.to eq(true) }
       end
+
+      context 'result of exists? is false' do
+
+        subject { provider.exists? }
+
+        before :each do
+          compiledcmd = "/profile=full-ha/subsystem=security:read-resource(recursive=true)"
+
+          data = {
+              "outcome" => "failed",
+              "result" => {}
+          }
+
+          expected_res = {
+            :cmd    => compiledcmd,
+            :result => res_result,
+            :lines  => data
+          }
+
+          expect(provider).to receive(:compilecmd).with('/subsystem=security:read-resource(recursive=true)').and_return(compiledcmd)
+          expect(provider).to receive(:executeWithoutRetry).with(compiledcmd).and_return(expected_res)
+        end
+
+        let(:res_result) { false }
+        it { is_expected.to eq(false) }
+      end
     end
   end
 end
