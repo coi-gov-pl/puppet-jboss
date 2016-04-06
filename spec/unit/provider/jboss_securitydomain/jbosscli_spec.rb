@@ -159,18 +159,21 @@ context "mocking default values for SecurityDomain" do
                           "acl" => nil,
                           "audit" => nil,
                           "authentication" => {"classic" => {
-                              "login-modules" => [{
-                                  "code" => "Database",
-                                  "flag" => "optional",
-                                  "module" => nil,
-                                  "module-options" => {
-                                    "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?",
-                                    "hashStorePassword" => "false",
-                                    "principalsQuery" => "select 'haslo' from uzytkownik u where u.login = upper(?)",
-                                    "hashUserPassword" => "false",
-                                    "dsJndiName" => "java:jboss/datasources/datasources_auth"
-                                  }
-                              }],
+                            "login-modules" => [{
+                                "code" => "Database",
+                                "flag" => "optional",
+                                "module" => nil,
+                                "module-options" => {
+                                  "rolesQuery" => "select r.name, \'Roles\' from users u
+                                                  join user_roles ur on ur.user_id = u.id
+                                                  join roles r on r.id = ur.role_id
+                                                  where u.login = ?'",
+                                  "hashStorePassword" => "false",
+                                  "principalsQuery" => "select \'password\' from users u where u.login = ?",
+                                  "hashUserPassword" => "false",
+                                  "dsJndiName" => "java:jboss/datasources/datasources_auth"
+                                }
+                            }],
                           }},
                           "authorization" => nil,
                           "identity-trust" => nil,

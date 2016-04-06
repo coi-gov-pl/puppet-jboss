@@ -41,7 +41,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     data = eval(lines)['result']
     name = @resource[:name]
     if data["security-domain"].key? @resource[:name]
-      Puppet.debug('There is securitydomain with such name')
+      Puppet.debug "here is securitydomain with such name #{name}"
       if data['security-domain'][name]['authentication'].nil?
         Puppet.debug('Authentication does not exists')
         save_authentication false
