@@ -5,6 +5,13 @@ require 'tempfile'
 # Base class for all JBoss providers
 class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
+  attr_writer :compilator
+
+  def initialize()
+    @compilator = Puppet_X::Coi::Jboss::Internal::JbossCompilator.new()
+    @system_executor = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.new()
+  end
+
   @@bin = "bin/jboss-cli.sh"
   @@contents = nil
 
@@ -56,12 +63,12 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     retry_count = @resource[:retry]
     retry_timeout = @resource[:retry_timeout]
     ctrlcfg = Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.controllerConfig @resource
-    return Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.execute jbosscmd, runasdomain?, ctrlcfg, retry_count, retry_timeout
+    return Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.run_command jbosscmd, runasdomain?, ctrlcfg, retry_count, retry_timeout
   end
 
   def executeWithoutRetry jbosscmd
     ctrlcfg = Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.controllerConfig @resource
-    return Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.execute jbosscmd, runasdomain?, ctrlcfg, 0, 0
+    return Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.run_command jbosscmd, runasdomain?, ctrlcfg, 0, 0
   end
 
   def executeAndGet jbosscmd
@@ -101,47 +108,6 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
   def self.timeout_cli
     '--timeout=50000' unless jbossas?
-  end
-
-  def self.execute jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout
-    file = Tempfile.new 'jbosscli'
-    path = file.path
-    file.close
-    file.unlink
-
-    File.open(path, 'w') {|f| f.write(jbosscmd + "\n") }
-
-    ENV['JBOSS_HOME'] = self.jbosshome
-    cmd = "#{self.jbossclibin} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
-    unless ctrlcfg[:ctrluser].nil?
-      cmd += " --user=#{ctrlcfg[:ctrluser]}"
-    end
-    unless ctrlcfg[:ctrlpasswd].nil?
-      ENV['__PASSWD'] = ctrlcfg[:ctrlpasswd]
-      cmd += " --password=$__PASSWD"
-    end
-    retries = 0
-    result = ''
-    lines = ''
-    begin
-      if retries > 0
-        Puppet.warning "JBoss CLI command failed, try #{retries}/#{retry_count}, last status: #{result.exitstatus.to_s}, message: #{lines}"
-        sleep retry_timeout.to_i
-      end
-      Puppet.debug "Command send to JBoss CLI: " + jbosscmd
-      Puppet.debug "Cmd to be executed %s" % cmd
-      lines = self.execshell(cmd)
-      result = self.last_execute_status
-      retries += 1
-    end while (result.exitstatus != 0 && retries <= retry_count)
-    Puppet.debug "Output from JBoss CLI [%s]: %s" % [result.inspect, lines]
-    # deletes the temp file
-    File.unlink path
-    return {
-      :cmd    => jbosscmd,
-      :result => result.exitstatus == 0,
-      :lines  => lines
-    }
   end
 
   def setattribute(path, name, value)
@@ -215,7 +181,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   def compilecmd cmd
-    Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.compilecmd @resource[:runasdomain], @resource[:profile], cmd
+    @compilator.compilecmd(@resource[:runasdomain], @resource[:profile], cmd)
   end
 
   def self.compilecmd runasdomain, profile, cmd
@@ -229,7 +195,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   def self.executeAndGet cmd, runasdomain, ctrlcfg, retry_count, retry_timeout
-    ret = self.execute cmd, runasdomain, ctrlcfg, retry_count, retry_timeout
+    ret = self.run_command cmd, runasdomain, ctrlcfg, retry_count, retry_timeout
     if not ret[:result]
         return {
           :result => false,
@@ -257,5 +223,52 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     end
   end
 
+  # Method that will prepare and delegate execution of command
+  # @param {String} jbosscmd command to be executeAndGet
+  # @param {Boolean} runasdomain if jboss is run in domain mode
+  # @param {Hash} ctrlcfg configuration Hash
+  # @param {Integer} retry_count number of retries after command failure-description
+  # @param {Integer} retry_timeout time after command is timeouted
+  # @return {Hash} hash with result of command executed, output and command
+  def run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
 
+    file = Tempfile.new 'jbosscli'
+    path = file.path
+    file.close
+    file.unlink
+
+    File.open(path, 'w') {|f| f.write(jbosscmd + "\n") }
+
+    ENV['JBOSS_HOME'] = Puppet_X::Coi::Jboss::Configuration::config_value :home
+    cmd = "#{self.jbossclibin} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
+    unless ctrlcfg[:ctrluser].nil?
+      cmd += " --user=#{ctrlcfg[:ctrluser]}"
+    end
+    unless ctrlcfg[:ctrlpasswd].nil?
+      ENV['__PASSWD'] = ctrlcfg[:ctrlpasswd]
+      cmd += " --password=$__PASSWD"
+    end
+    retries = 0
+    result = ''
+    lines = ''
+    begin
+      if retries > 0
+        Puppet.warning "JBoss CLI command failed, try #{retries}/#{retry_count}, last status: #{result.exitstatus.to_s}, message: #{lines}"
+        sleep retry_timeout.to_i
+      end
+      Puppet.debug "Command send to JBoss CLI: " + jbosscmd
+      Puppet.debug "Cmd to be executed %s" % cmd
+      lines = @system_executor.run_command(cmd)
+      result = @system_executor.last_execute_result
+      retries += 1
+    end while (result.exitstatus != 0 && retries <= retry_count)
+    Puppet.debug "Output from JBoss CLI [%s]: %s" % [result.inspect, lines]
+    # deletes the temp file
+    File.unlink path
+    return {
+      :cmd    => jbosscmd,
+      :result => result.success?,
+      :lines  => lines
+    }
+  end
 end

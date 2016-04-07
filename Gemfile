@@ -12,6 +12,7 @@ group :test do
   gem 'puppet-lint',                    :require => false
   gem 'metadata-json-lint',             :require => false
   gem 'json',                           :require => false
+  gem 'os',                             :require => false
 
   if RUBY_VERSION >= '1.9.0'
     gem 'beaker',                       :require => false
