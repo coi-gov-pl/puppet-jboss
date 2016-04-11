@@ -7,13 +7,16 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
   attr_writer :compilator
 
-  def initialize()
-    @compilator = Puppet_X::Coi::Jboss::Internal::JbossCompilator.new()
-    @system_executor = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.new()
+  def initialize(resource=nil)
+    super(resource)
+    @system_executor = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.new
+    @compilator = Puppet_X::Coi::Jboss::Internal::JbossCompilator.new
   end
 
   @@bin = "bin/jboss-cli.sh"
   @@contents = nil
+  # @@system_executor = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.new
+  # @@compilator = Puppet_X::Coi::Jboss::Internal::JbossCompilator.new
 
   class << self
     def jbossclibin
@@ -83,14 +86,6 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
         :ctrlpasswd  => resource[:ctrlpasswd],
       }
       return conf
-  end
-
-  def self.last_execute_status
-    $?
-  end
-
-  def self.execshell(cmd)
-    `#{cmd}`
   end
 
   def self.jboss_product
@@ -169,7 +164,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   def executeWithFail(typename, passed_args, way)
-    executed = execute(passed_args)
+    executed = run_command(passed_args)
     if not executed[:result]
       ex = "\n#{typename} failed #{way}:\n[CLI command]: #{executed[:cmd]}\n[Error message]: #{executed[:lines]}"
       if not $add_log.nil? and $add_log > 0
@@ -181,21 +176,11 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   def compilecmd cmd
-    @compilator.compilecmd(@resource[:runasdomain], @resource[:profile], cmd)
-  end
-
-  def self.compilecmd runasdomain, profile, cmd
-    out = cmd.to_s
-    convr = Puppet_X::Coi::Jboss::BuildinsUtils::ToBooleanConverter.new(runasdomain)
-    asdomain = convr.to_bool
-    if asdomain && out[0..9] == '/subsystem'
-      out = "/profile=#{profile}#{out}"
-    end
-    return out
+    @compilator.compile(@resource[:runasdomain], @resource[:profile], cmd)
   end
 
   def self.executeAndGet cmd, runasdomain, ctrlcfg, retry_count, retry_timeout
-    ret = self.run_command cmd, runasdomain, ctrlcfg, retry_count, retry_timeout
+    ret = Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.run_command(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     if not ret[:result]
         return {
           :result => false,
@@ -230,7 +215,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # @param {Integer} retry_count number of retries after command failure-description
   # @param {Integer} retry_timeout time after command is timeouted
   # @return {Hash} hash with result of command executed, output and command
-  def run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
+  def self.run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
 
     file = Tempfile.new 'jbosscli'
     path = file.path
@@ -258,8 +243,8 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
       end
       Puppet.debug "Command send to JBoss CLI: " + jbosscmd
       Puppet.debug "Cmd to be executed %s" % cmd
-      lines = @system_executor.run_command(cmd)
-      result = @system_executor.last_execute_result
+      lines = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.run_command(cmd)
+      result = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.last_execute_result
       retries += 1
     end while (result.exitstatus != 0 && retries <= retry_count)
     Puppet.debug "Output from JBoss CLI [%s]: %s" % [result.inspect, lines]

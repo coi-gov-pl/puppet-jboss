@@ -47,49 +47,6 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
       allow(provider.class).to receive(:suitable?).and_return(true)
     end
 
-    describe 'Result of self.instances()' do
-      let(:xa_result) do
-        <<-eos
-        {
-          "outcome" => "success",
-          "result" => []
-        }
-        eos
-      end
-      let(:nonxa_result) do
-        <<-eos
-        {
-            "outcome" => "success",
-            "result" => [
-                "ExampleDS",
-                "test-datasource"
-            ]
-        }
-        eos
-      end
-      let(:status) { double(:exitstatus => 0) }
-      before :each do
-        re = /.*\/bin\/jboss-cli\.sh --timeout=50000 --connect --file=.*jbosscli.* --controller=127\.0\.0\.1:[0-9]*/
-        expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:last_execute_status).
-          at_least(:once).and_return(status)
-        expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:execshell).
-          at_least(:once).with(re).and_return(xa_result, nonxa_result)
-          expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:jbossas?).and_return(false)
-          expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:jbossas?).and_return(false)
-      end
-      it { expect(provider.class.instances).not_to be_empty }
-      context 'its size' do
-        subject { provider.class.instances.size }
-        it { expect(subject).to eq(2) }
-      end
-      context 'for second result, parameter' do
-        subject { provider.class.instances[1] }
-        its(:class) { should eq(Puppet::Type::Jboss_datasource::ProviderJbosscli) }
-        its(:name) { should eq('test-datasource') }
-        its(:xa) { should eq(false) }
-      end
-    end
-
     context 'Given `testing` Non-XA datasource using h2:mem' do
       let(:command) do
         '/subsystem=datasources/data-source=testing:read-resource(recursive=true)'
