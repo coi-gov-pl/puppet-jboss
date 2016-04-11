@@ -1,22 +1,20 @@
 # A class for JBoss security domain provider
 module Puppet_X::Coi::Jboss::Provider::SecurityDomain
 
-  require_relative '../internal/jboss_compilator'
-
   # Method that creates security-domain in Jboss instance. When invoked it will execute 3 commands, add cache-type with value 'default', add authentication with value classic, add login-modules. Depends on the version of server it will use correct path to set security domain
   def create
 
     commands_template = create_parametrized_cmd
     commands = commands_template.join('/')
 
-    cmd = @compilator.compilecmd commands
-    cmd2 = @compilator.compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
+    cmd = compilecmd commands
+    cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
 
     bringUp('Security Domain Cache Type', cmd2)[:result]
 
     # TODO: Implement some nice way to decide if this method should be invoked, simple if is bleeeh.
     if not @auth
-      cmd3 = compilator.compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add()"
+      cmd3 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add()"
       bringUp('Security Domain Authentication', cmd3)[:result]
     end
 

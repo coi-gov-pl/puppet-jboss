@@ -62,6 +62,8 @@ context "mocking default values for SecurityDomain" do
 
           provider.instance_variable_set(:@auth, false)
 
+          provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::JbossCompilator.new)
+
           login_modules_command = 'subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles' +
           ':add(code="Database",flag=false,module-options=[("hashUserPassword"=>true),' +
           '("principalsQuery"=>"select \'password\' from users u where u.login = ?")])'
@@ -134,6 +136,7 @@ context "mocking default values for SecurityDomain" do
         before :each do
 
           provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(provider))
+          provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::JbossCompilator.new)
 
           expect(provider).to receive(:bringUp).exactly(3).times.and_return({:result => mocked_result})
           expect(provider).to receive(:compilecmd).exactly(3).times

@@ -37,7 +37,6 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
         @resource[:properties][key] = nil
       end
     end
-
     res = executeAndGet "#{compiledpath}:read-resource(include-runtime=true, include-defaults=false)"
     if res[:result]
       @data = {}
@@ -239,7 +238,6 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
 
   def compiledpath
     trace 'compiledpath'
-
     path = @resource[:path]
     cmd = compilecmd path
   end
