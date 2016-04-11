@@ -5,8 +5,7 @@ describe Puppet_X::Coi::Jboss::Internal::JbossSystemExec do
 
   describe '#exec_command' do
 
-      let(:instance) { described_class.new }
-      subject { instance.exec_command(cmd) }
+      subject { described_class.exec_command(cmd) }
 
       describe 'with correct command' do
         if OS.windows?
@@ -42,9 +41,9 @@ describe Puppet_X::Coi::Jboss::Internal::JbossSystemExec do
     end
 
     let(:instance) { described_class.new }
-    subject { instance.last_execute_result }
+    subject { described_class.last_execute_result }
 
-    it { expect(subject).to eq('mocked result') }
+    it { expect(subject).to be_truthy }
   end
 
 end
