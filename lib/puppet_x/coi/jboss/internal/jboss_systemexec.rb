@@ -4,7 +4,7 @@ class Puppet_X::Coi::Jboss::Internal::JbossSystemExec
   # Runs prepared commands
   # @param {String} cmd command that will be executed
   # @return {String} output of executed command
-  def exec_command(cmd)
+  def self.exec_command(cmd)
     @output = `#{cmd}`
     @result = $?
     @output
@@ -12,7 +12,7 @@ class Puppet_X::Coi::Jboss::Internal::JbossSystemExec
 
   # Method that returns status of last command executed
   # @return {Process::Status} result of last command
-  def last_execute_result
+  def self.last_execute_result
     @result
   end
 end

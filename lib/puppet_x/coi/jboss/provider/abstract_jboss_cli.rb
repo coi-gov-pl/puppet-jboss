@@ -5,7 +5,7 @@ require 'tempfile'
 # Base class for all JBoss providers
 class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
-  attr_writer :compilator
+  # attr_writer :compilator
 
   def initialize(resource=nil)
     super(resource)
@@ -164,7 +164,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   def executeWithFail(typename, passed_args, way)
-    executed = run_command(passed_args)
+    executed = self.run_command(passed_args)
     if not executed[:result]
       ex = "\n#{typename} failed #{way}:\n[CLI command]: #{executed[:cmd]}\n[Error message]: #{executed[:lines]}"
       if not $add_log.nil? and $add_log > 0
@@ -243,7 +243,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
       end
       Puppet.debug "Command send to JBoss CLI: " + jbosscmd
       Puppet.debug "Cmd to be executed %s" % cmd
-      lines = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.run_command(cmd)
+      lines = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.exec_command(cmd)
       result = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.last_execute_result
       retries += 1
     end while (result.exitstatus != 0 && retries <= retry_count)
