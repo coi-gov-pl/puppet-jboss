@@ -5,7 +5,8 @@ describe Puppet_X::Coi::Jboss::Internal::JbossSystemExec do
 
   describe '#exec_command' do
 
-      subject { described_class.exec_command(cmd) }
+      let(:instance) { described_class.new }
+      subject { instance.exec_command(cmd, { 'env_var' => 'asd' }) }
 
       describe 'with correct command' do
         if OS.windows?
@@ -41,7 +42,7 @@ describe Puppet_X::Coi::Jboss::Internal::JbossSystemExec do
     end
 
     let(:instance) { described_class.new }
-    subject { described_class.last_execute_result }
+    subject { instance.last_execute_result }
 
     it { expect(subject).to be_truthy }
   end

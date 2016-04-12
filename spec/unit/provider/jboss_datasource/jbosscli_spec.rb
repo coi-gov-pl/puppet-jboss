@@ -127,8 +127,8 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         "testing;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
       end
       before :each do
-        expect(Puppet_X::Coi::Jboss::Provider::AbstractJbossCli).to receive(:executeAndGet).
-          with(command, runasdomain, ctrlcfg, retry_count, timeout).and_return(result)
+        expect(provider).to receive(:executeAndGet).
+          with("/subsystem=datasources/data-source=testing:read-resource(recursive=true)").and_return(result)
       end
 
       describe 'result of dbname()' do

@@ -33,6 +33,8 @@ end
 
 require_relative 'jboss/internal/jboss_systemexec'
 require_relative 'jboss/internal/jboss_compilator'
+require_relative 'jboss/internal/jboss_runner'
+require_relative 'jboss/internal/execution_state'
 
 require_relative 'jboss/constants'
 require_relative 'jboss/buildins_utils'

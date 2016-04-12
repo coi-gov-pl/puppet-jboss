@@ -13,7 +13,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     bringUp('Security Domain Cache Type', cmd2)[:result]
 
     # TODO: Implement some nice way to decide if this method should be invoked, simple if is bleeeh.
-    if not @auth
+    unless @auth
       cmd3 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add()"
       bringUp('Security Domain Authentication', cmd3)[:result]
     end
@@ -32,7 +32,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     cmd = compilecmd "/subsystem=security:read-resource(recursive=true)"
     res = executeWithoutRetry cmd
 
-    if not res[:result]
+    unless res[:result]
       Puppet.debug "Security Domain does NOT exist"
       return false
     end
@@ -41,8 +41,11 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     lines = preparelines res[:lines]
     data = eval(lines)['result']
     name = @resource[:name]
+
+    is_securitydomain?(data, name)
+
     if data["security-domain"].key? @resource[:name]
-      Puppet.debug "here is securitydomain with such name #{name}"
+      Puppet.debug "There is securitydomain with such name #{name}"
       if data['security-domain'][name]['authentication'].nil?
         Puppet.debug('Authentication does not exists')
         save_authentication false
@@ -79,6 +82,10 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   end
 
   private
+  def is_securitydomain?(data, name)
+    data["security-domain"].key? name
+  end
+
 
   # Method that saves information abiut presence of authentication in Jboss instance
   # @param {boolean} boolean value that indicate if authentication is set
@@ -99,7 +106,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   # Method to create base for command to be executed when security domain is made
   # @return {[String]} list of command elements
   def create_parametrized_cmd
-    provider_impl().make_command_templates()
+    provider_impl.make_command_templates
   end
 
   # Method that provides information about which command template should be user_id

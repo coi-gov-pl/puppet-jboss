@@ -30,6 +30,16 @@ context "mocking default values" do
       }
     end
 
+    let(:mocked_process_status) do
+      process_status = double('Mocked process status', :exitstatus => 0, :success? => true)
+    end
+
+    let(:mocked_system_executor) do
+      mck_system_executor = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.new
+      allow(mck_system_executor).to receive(:run_command)
+      allow(mck_system_executor).to receive(:child_status).and_return(mocked_process_status)
+    end
+
     let(:extended_repl) do
       {}
     end
@@ -47,12 +57,14 @@ context "mocking default values" do
 
     before :each do
       allow(provider.class).to receive(:suitable?).and_return(true)
+      provider.runner = mocked_system_executor
     end
 
     describe '#create with servergroups nill' do
       before :each do
         bringDownName = 'Deployment'
         cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups --force'
+
         expect(provider).to receive(:bringUp).with(bringDownName, cmd ).and_return('asd')
       end
       subject { provider.create }
