@@ -16,7 +16,7 @@ describe Puppet_X::Coi::Jboss::Internal::JbossSystemExec do
           let(:cmd) { 'ls' }
           it { expect { subject}.to_not raise_error }
         elsif OS.linux?
-          let(:cmd) { 'date' }
+          let(:cmd) { 'ls' }
           it { expect { subject}.to_not raise_error }
         end
       end
