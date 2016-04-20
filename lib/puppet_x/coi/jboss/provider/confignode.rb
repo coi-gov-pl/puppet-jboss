@@ -240,6 +240,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
 
   def compiledpath
     trace 'compiledpath'
+
     path = @resource[:path]
     cmd = compilecmd path
   end
