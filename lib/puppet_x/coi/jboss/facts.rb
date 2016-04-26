@@ -24,6 +24,41 @@ class Puppet_X::Coi::Jboss::Facts
       end
     end
 
+    # Adds superuser fact. It returns true if running as a superuser
+    # @return {Facter::Fact}
+    def define_superuser_fact
+      Facter.add(:jboss_superuser) do
+        setcode do
+          id = Facter.value(:id)
+          kernel = Facter.value(:kernel)
+          if kernel == 'Linux'
+            id == 'root'
+          else
+            Facter.debug("Fact jboss_superuser is not supported on #{kernel}")
+            nil
+          end
+        end
+      end
+    end
+
+    # Adds userhomedir fact. It returns user's home directory
+    # @return {Facter::Fact}
+    def define_userhomedir_fact
+      Facter.add(:jboss_userhomedir) do
+        setcode do
+          id = Facter.value(:id)
+          kernel = Facter.value(:kernel)
+          if kernel == 'Linux'
+            passwd_line = Facter::Util::Resolution.exec("getent passwd #{id}")
+            passwd_line.split(':')[5]
+          else
+            Facter.debug("Fact jboss_userhomedir is not supported on #{kernel}")
+            nil
+          end
+        end
+      end
+    end
+
     # Check if is running inside Docker container
     # Implementation is taken from Facter 2.1.x
     # @deprecated TODO: remove after dropping support for Puppet 2.x
