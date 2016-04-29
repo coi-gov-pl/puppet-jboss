@@ -1,6 +1,7 @@
 # A module for Jdbcdriver
 module Puppet_X::Coi::Jboss::Provider::Jdbcdriver
 
+  # Method that creates Jdbcdriver in JBoss instance
   def create
     name = @resource[:name]
     map = get_attribs_map

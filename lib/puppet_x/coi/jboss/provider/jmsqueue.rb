@@ -66,6 +66,8 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
   end
 
   # Standard setter for durable value.
+  #
+  # @param {Boolean} value a value of durable, can be true or false
   def durable= value
     trace 'durable= %s' % value.to_s
     setattr 'durable', ('"%s"' % ToBooleanConverter.new(value).to_bool)
@@ -78,6 +80,8 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
   end
 
   # Standard setter for entries value.
+  #
+  # @param {Array} value a value of entries
   def entries= value
     trace 'entries= %s' % value.inspect
     entries = value.join '", "'
@@ -91,6 +95,9 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
 
   private
 
+  # Methods set attributes for messaging to default hornetq-server
+  # @param {String} name a key for representing name.
+  # @param {Object} value a value of attribute
   def setattr name, value
     setattribute_raw "/subsystem=messaging/hornetq-server=default/jms-queue=#{@resource[:name]}", name, value
   end
