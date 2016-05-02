@@ -10,8 +10,7 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
   # Creates a parametrized command to be executed by provider
   # @return {String} a complete command without profile
   def make_command_templates
-    resource = @provider
-    res = resource.instance_variable_get(:@resource)
+    res = @provider
     correct_cmd = correct_command_template_begining(res)
     options = []
     res[:moduleoptions].keys.sort.each do |key|
@@ -25,8 +24,7 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
       val = val.gsub(/\n/, NEWLINE_REPLACEMENT).strip if val.is_a?(String)
       options << module_option_template % [key.inspect, val.inspect]
     end
-    correct_cmd += options.join(COMMAND_SPLITTER) + correct_command_template_ending
-    correct_cmd.split('/')
+    correct_cmd += options.join(COMMAND_SPLITTER) + correct_command_template_ending 
   end
 
   protected

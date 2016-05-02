@@ -34,12 +34,6 @@ context "mocking default values" do
       process_status = double('Mocked process status', :exitstatus => 0, :success? => true)
     end
 
-    let(:mocked_system_executor) do
-      mck_system_executor = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.new
-      allow(mck_system_executor).to receive(:run_command)
-      allow(mck_system_executor).to receive(:child_status).and_return(mocked_process_status)
-    end
-
     let(:extended_repl) do
       {}
     end
@@ -53,11 +47,6 @@ context "mocking default values" do
 
     let(:provider) do
       resource.provider
-    end
-
-    before :each do
-      allow(provider.class).to receive(:suitable?).and_return(true)
-      provider.runner = mocked_system_executor
     end
 
     describe '#create with servergroups nill' do

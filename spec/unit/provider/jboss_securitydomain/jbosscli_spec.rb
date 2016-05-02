@@ -135,11 +135,15 @@ context "mocking default values for SecurityDomain" do
 
         before :each do
 
-          provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(provider))
-          provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::JbossCompilator.new)
+          # provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(provider))
+          # provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::JbossCompilator.new)
+          #
+          # expect(provider).to receive(:bringUp).exactly(3).times.and_return({:result => mocked_result})
+          # expect(provider).to receive(:compilecmd).exactly(3).times
+          runner =
+          auditor = Puppet_X::Coi::Jboss::Internal::JbossSecurityDomainAuditor.new(sample_repl, runner)
 
-          expect(provider).to receive(:bringUp).exactly(3).times.and_return({:result => mocked_result})
-          expect(provider).to receive(:compilecmd).exactly(3).times
+          expect(provider).to receive(:provider_impl).and_return(Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(sample_repl))
 
         end
         it { is_expected.to eq mocked_result }
@@ -195,13 +199,8 @@ context "mocking default values for SecurityDomain" do
             :result => res_result,
             :lines  => data
           }
-
-          expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
-          expect(provider).to receive(:executeWithoutRetry).with(compiledcmd).and_return(expected_res)
-          expect(provider).to receive(:preparelines).with(data).and_return(expected_res)
-          expect(provider).to receive(:eval).with(expected_res).and_return(data)
-
         end
+
         let(:res_result) { true }
         it { is_expected.to eq(true) }
       end

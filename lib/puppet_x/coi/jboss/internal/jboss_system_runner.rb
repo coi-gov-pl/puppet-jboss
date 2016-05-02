@@ -1,5 +1,9 @@
 # System executor responsible of executing provided commands
-class Puppet_X::Coi::Jboss::Internal::JbossSystemExec
+class Puppet_X::Coi::Jboss::Internal::JbossSystemRunner
+
+  def initialize(system_command_executor)
+    @system_command_executor = system_command_executor
+  end
 
   # Method that handles delegation to system executor
   # @param {String} cmd cmd to be executed
@@ -31,8 +35,8 @@ class Puppet_X::Coi::Jboss::Internal::JbossSystemExec
     fail("Cannot set custom environment #{environment}") if environment && !withenv
 
     withenv.call environment do
-          @output = run_command(cmd)
-          @result = child_status
+          @output = @system_command_executor.run_command(cmd)
+          @result = @system_command_executor.child_status
         end
     @output
   end
@@ -43,15 +47,10 @@ class Puppet_X::Coi::Jboss::Internal::JbossSystemExec
     @result
   end
 
+  # Method that make and execution state object with given parameters
+  # @return {Puppet_X::Coi::Jboss::Internal::ExecutionState} execution state that contains informations about result of command execution
   def exececution_state(jbosscmd, code, success, lines)
-    Puppet_X::Coi::Jboss::Internal::ExecutionState.new(code, success, lines, jbosscmd)
+    Puppet_X::Coi::Jboss::Internal::State::ExecutionState.new(code, success, lines, jbosscmd)
   end
 
-  def run_command(cmd)
-    `#{cmd}`
-  end
-
-  def child_status
-    $?
-  end
 end

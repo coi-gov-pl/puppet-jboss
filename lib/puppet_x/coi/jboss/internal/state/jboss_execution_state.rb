@@ -1,4 +1,4 @@
-class Puppet_X::Coi::Jboss::Internal::ExecutionState
+class Puppet_X::Coi::Jboss::Internal::State::ExecutionState
 
   def initialize(ret_code, success, output, command)
     @ret_code = ret_code

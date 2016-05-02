@@ -1,14 +1,14 @@
 require 'spec_helper'
 require 'os'
 
-describe Puppet_X::Coi::Jboss::Internal::JbossSystemExec do
+describe Puppet_X::Coi::Jboss::Internal::Executor::JbossCommandExecutor do
 
-  describe '#exec_command' do
+  describe '#run_command' do
 
       let(:instance) { described_class.new }
-      subject { instance.exec_command(cmd, { 'env_var' => 'asd' }) }
+      subject { instance.run_command(cmd) }
 
-      describe 'with correct command' do
+      context 'with correct command' do
         if OS.windows?
           let(:cmd) { 'dir' }
           it { expect { subject}.to_not raise_error }
@@ -21,7 +21,7 @@ describe Puppet_X::Coi::Jboss::Internal::JbossSystemExec do
         end
       end
 
-      describe 'with incorrect command' do
+      context 'with incorrect command' do
         if OS.windows?
           let(:cmd) { 'ls' }
           it { expect { subject}.to raise_error }
@@ -35,14 +35,14 @@ describe Puppet_X::Coi::Jboss::Internal::JbossSystemExec do
       end
   end
 
-  describe '#last_execute_status' do
+  describe '#child_status' do
 
     before :each do
       instance.instance_variable_set(:@result, 'mocked result')
     end
 
     let(:instance) { described_class.new }
-    subject { instance.last_execute_result }
+    subject { instance.child_status }
 
     it { expect(subject).to be_truthy }
   end

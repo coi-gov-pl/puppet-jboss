@@ -10,9 +10,7 @@ class Puppet_X::Coi::Jboss::Internal::JbossRunner
   end
 
   def executeAndGet cmd, runasdomain, ctrlcfg, retry_count, retry_timeout
-    Puppet.debug 'I`m in execute and get method in jboss_runner'
     ret = run_command(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
-    Puppet.debug 'I`m after run command'
     unless ret[:result]
       return {
         :result => false,
@@ -20,6 +18,7 @@ class Puppet_X::Coi::Jboss::Internal::JbossRunner
       }
     end
 
+    # TODO move to another method
     # Giving JBoss `undefine` value in Ruby
     undefined = nil
     # JBoss expression and Long value handling
@@ -28,7 +27,7 @@ class Puppet_X::Coi::Jboss::Internal::JbossRunner
 
     begin
       evalines = eval(ret[:lines])
-      Puppet.debug evalines.inspect
+      Puppet.debug(evalines.inspect)
       return {
         :result  => evalines["outcome"] == "success",
         :data    => (evalines["outcome"] == "success" ? evalines["result"] : evalines["failure-description"])
@@ -43,6 +42,7 @@ class Puppet_X::Coi::Jboss::Internal::JbossRunner
     end
   end
 
+  # TODO move to methods
   # Method that will prepare and delegate execution of command
   # @param {String} jbosscmd command to be executeAndGet
   # @param {Boolean} runasdomain if jboss is run in domain mode
@@ -119,5 +119,6 @@ class Puppet_X::Coi::Jboss::Internal::JbossRunner
   def jboss_product
     Facter.value(:jboss_product)
   end
+
 
 end

@@ -68,4 +68,8 @@ RSpec.configure do |c|
   end
 end
 
+module Testing
+  module Mock end
+end
+
 require 'puppet_x/coi/jboss'

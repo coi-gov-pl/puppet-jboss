@@ -20,6 +20,11 @@ module Puppet_X
       end
       # Module that contains internal classes
       module Internal
+
+        module Executor end
+
+        module State end
+
       end
 
     end
@@ -31,10 +36,17 @@ module Kernel
   define_method(:require_relative) { |rel| Puppet_X::Coi::require_relative(rel, lvl = 1) } unless Kernel.respond_to? :require_relative
 end
 
-require_relative 'jboss/internal/jboss_systemexec'
-require_relative 'jboss/internal/jboss_compilator'
+require_relative 'jboss/provider/abstract_jboss_cli'
+require_relative 'jboss/provider/securitydomain'
+require_relative 'jboss/internal/jboss_command_creator'
+require_relative 'jboss/internal/jboss_system_runner'
 require_relative 'jboss/internal/jboss_runner'
-require_relative 'jboss/internal/execution_state'
+require_relative 'jboss/internal/jboss_securitydomain_auditor'
+require_relative 'jboss/internal/jboss_compilator'
+require_relative 'jboss/internal/state/jboss_securitydomain_state'
+require_relative 'jboss/internal/executor/jboss_command_executor'
+
+require_relative 'jboss/internal/state/jboss_execution_state'
 
 require_relative 'jboss/constants'
 require_relative 'jboss/buildins_utils'
@@ -50,14 +62,13 @@ require_relative 'jboss/functions/jboss_to_i'
 require_relative 'jboss/functions/jboss_to_s'
 require_relative 'jboss/functions/jboss_type_version'
 
-require_relative 'jboss/provider/abstract_jboss_cli'
 require_relative 'jboss/provider/datasource'
 require_relative 'jboss/provider/datasource/post_wildfly_provider'
 require_relative 'jboss/provider/datasource/pre_wildfly_provider'
 require_relative 'jboss/provider/datasource/static'
 require_relative 'jboss/provider/confignode'
 require_relative 'jboss/provider/deploy'
-require_relative 'jboss/provider/securitydomain'
+
 require_relative 'jboss/provider/securitydomain/abstract_provider'
 require_relative 'jboss/provider/securitydomain/post_wildfly_provider'
 require_relative 'jboss/provider/securitydomain/pre_wildfly_provider'

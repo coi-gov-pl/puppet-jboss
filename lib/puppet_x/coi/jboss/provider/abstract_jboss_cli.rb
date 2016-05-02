@@ -5,16 +5,14 @@ require 'tempfile'
 # Base class for all JBoss providers
 class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
-  # Default constructor that will also initialize 3 external object, system_executor, compilator and command executor
+  # Default constructor that will also initialize 3 external object, system_runner, compilator and command executor
   def initialize(resource=nil)
     super(resource)
-    system_executor = Puppet_X::Coi::Jboss::Internal::JbossSystemExec.new
     @compilator = Puppet_X::Coi::Jboss::Internal::JbossCompilator.new
-    @runner = Puppet_X::Coi::Jboss::Internal::JbossRunner.new(system_executor)
-  end
 
-  def runner=(value)
-    @runner.system_executor = value
+    system_command_executor = Puppet_X::Coi::Jboss::Internal::Executor::JbossCommandExecutor.new
+    system_runner = Puppet_X::Coi::Jboss::Internal::JbossSystemRunner.new(system_command_executor)
+    @runner = Puppet_X::Coi::Jboss::Internal::JbossRunner.new(system_runner)
   end
 
   @@bin = "bin/jboss-cli.sh"
@@ -78,6 +76,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   # INTERNAL METHODS
+  # TODO make protected or private
   def execute jbosscmd
     retry_count = @resource[:retry]
     retry_timeout = @resource[:retry_timeout]
