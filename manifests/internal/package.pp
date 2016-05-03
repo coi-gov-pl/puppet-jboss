@@ -64,7 +64,7 @@ class jboss::internal::package (
     })
   }
 
-  $confdir = "/etc/${product}"
+  $confdir = "${jboss::etcdir}/${product}"
 
   file { $confdir:
     ensure => 'directory',
@@ -74,7 +74,7 @@ class jboss::internal::package (
     mode   => '0755',
   }
 
-  if $java_autoinstall {
+  if $java_autoinstall and $jboss::superuser {
     class { 'java':
       distribution => $java_dist,
       version      => $java_version,
@@ -125,49 +125,61 @@ class jboss::internal::package (
     require => Exec['jboss::move-unzipped'],
   }
 
-  jboss::internal::util::groupaccess { $jboss::home:
-    user    => $jboss_user,
-    group   => $jboss_group,
-    require => [
-      User[$jboss_user],
-      Exec['jboss::test-extraction'],
-    ],
+  if $jboss::superuser {
+    jboss::internal::util::groupaccess { $jboss::home:
+      user    => $jboss_user,
+      group   => $jboss_group,
+      require => [
+        User[$jboss_user],
+        Exec['jboss::test-extraction'],
+      ],
+      before  => [
+        File['jboss::configuration-link::domain'],
+        File['jboss::configuration-link::host'],
+        File['jboss::configuration-link::standalone'],
+        File['jboss::jbosscli'],
+        Anchor['jboss::installed'],
+      ],
+    }
   }
 
   file { "${confdir}/domain.xml":
-    ensure  => 'link',
-    alias   => 'jboss::configuration-link::domain',
-    target  => "${jboss::home}/domain/configuration/domain.xml",
-    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    ensure => 'link',
+    alias  => 'jboss::configuration-link::domain',
+    target => "${jboss::home}/domain/configuration/domain.xml",
   }
   $hostfile = 'host.xml'
   file { "${confdir}/${hostfile}":
-    ensure  => 'link',
-    alias   => 'jboss::configuration-link::host',
-    target  => "${jboss::home}/domain/configuration/${hostfile}",
-    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    ensure => 'link',
+    alias  => 'jboss::configuration-link::host',
+    target => "${jboss::home}/domain/configuration/${hostfile}",
   }
 
   file { "${confdir}/standalone.xml":
-    ensure  => 'link',
-    alias   => 'jboss::configuration-link::standalone',
-    target  => "${jboss::home}/standalone/configuration/${standaloneconfigfile}",
-    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    ensure => 'link',
+    alias  => 'jboss::configuration-link::standalone',
+    target => "${jboss::home}/standalone/configuration/${standaloneconfigfile}",
   }
 
-  file { "/etc/init.d/${product}":
-    ensure  => 'link',
-    alias   => 'jboss::service-link',
-    target  => $jboss::internal::compatibility::initd_file,
-    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+  if $jboss::superuser {
+    file { "${jboss::etcdir}/init.d/${product}":
+      ensure => 'link',
+      alias  => 'jboss::service-link',
+      target => $jboss::internal::compatibility::initd_file,
+      before => Anchor['jboss::installed'],
+    }
+    Jboss::Internal::Util::Groupaccess[$jboss::home]
+      -> File['jboss::service-link']
   }
 
-  file { "/usr/bin/${jboss::internal::compatibility::product_short}-cli":
+  $jbosscli_path = "${jboss::bindir}/${jboss::internal::compatibility::product_short}-cli"
+
+  file { $jbosscli_path:
     ensure  => 'file',
     alias   => 'jboss::jbosscli',
     content => template('jboss/jboss-cli.erb'),
     mode    => '0755',
-    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    before  => Anchor['jboss::installed'],
   }
 
   exec { 'jboss::package::check-for-java':
@@ -179,12 +191,9 @@ class jboss::internal::package (
 
   anchor { 'jboss::installed':
     require => [
-      Jboss::Internal::Util::Groupaccess[$jboss::home],
       Exec['jboss::test-extraction'],
       File['jboss::confdir'],
       File['jboss::logfile'],
-      File['jboss::jbosscli'],
-      File['jboss::service-link'],
     ],
     before  => Anchor['jboss::package::end'],
   }

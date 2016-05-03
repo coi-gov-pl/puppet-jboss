@@ -17,7 +17,7 @@ class jboss::internal::configuration {
   $configfile    = $jboss::internal::runtime::configfile
   $product       = $jboss::product
   $version       = $jboss::version
-  $etcconfdir    = "/etc/${jboss::product}"
+  $etcconfdir    = "${jboss::etcdir}/${jboss::product}"
   $conffile      = "${etcconfdir}/${jboss::product}.conf"
   $logdir        = "${jboss::internal::params::logbasedir}/${jboss::product}"
   $logfile       = "${logdir}/console.log"
@@ -37,11 +37,20 @@ class jboss::internal::configuration {
     create_resources('augeas', { "jboss::configure::set_hostname(${jboss::hostname})" => $augeas })
   }
 
-  file { '/etc/profile.d/jboss.sh':
-    ensure  => 'file',
-    mode    => '0644',
-    content => "export JBOSS_CONF='${conffile}'",
-    before  => Concat[$conffile],
+  if $jboss::superuser {
+    file { "${jboss::etcdir}/profile.d/jboss.sh":
+      ensure  => 'file',
+      mode    => '0644',
+      content => "export JBOSS_CONF='${conffile}'",
+      before  => Concat[$conffile],
+    }
+  } else {
+    file_line { "${jboss::usermode_basedir}/.profile":
+      ensure => 'present',
+      line   => "export JBOSS_CONF='${conffile}'",
+      path   => "${jboss::usermode_basedir}/.profile",
+      before => Concat[$conffile],
+    }
   }
 
   file { $logdir:
@@ -61,13 +70,13 @@ class jboss::internal::configuration {
   }
 
   if $jboss::product != 'jboss-as' {
-    file { '/etc/jboss-as':
+    file { "${jboss::etcdir}/jboss-as":
       ensure => 'directory',
       owner  => $user,
       group  => $jboss::jboss_group,
       mode   => '2770',
     }
-    file { '/etc/jboss-as/jboss-as.conf':
+    file { "${jboss::etcdir}/jboss-as/jboss-as.conf":
       ensure => 'link',
       target => $conffile,
       before => Anchor['jboss::configuration::end'],
@@ -75,19 +84,19 @@ class jboss::internal::configuration {
   }
 
   $defaults_file = $::osfamily ? {
-    'Debian' => "/etc/default/${jboss::product}",
-    'RedHat' => "/etc/sysconfig/${jboss::product}.conf",
+    'Debian' => "${jboss::etcdir}/default/${jboss::product}",
+    'RedHat' => "${jboss::etcdir}/sysconfig/${jboss::product}.conf",
     default  => undef
   }
   if $defaults_file == undef {
     fail("Unsupported OS Family: ${::osfamily}")
   }
 
-  file { '/etc/default':
+  file { [ $jboss::etcdir, "${jboss::etcdir}/default" ]:
     ensure => 'directory',
   }
 
-  file { [$defaults_file, "/etc/default/${jboss::product}.conf"]:
+  file { [$defaults_file, "${jboss::etcdir}/default/${jboss::product}.conf"]:
     ensure => 'link',
     target => $conffile,
     before => Anchor['jboss::configuration::end'],

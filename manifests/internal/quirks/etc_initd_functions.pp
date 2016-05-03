@@ -5,12 +5,12 @@ class jboss::internal::quirks::etc_initd_functions {
   include jboss::internal::service
   include jboss::internal::compatibility
 
-  if $jboss::product != 'wildfly' and $::osfamily == 'Debian' {
+  if $jboss::product != 'wildfly' and $::osfamily == 'Debian' and $jboss::superuser {
     file { '/sbin/consoletype':
       content => join(['#!/bin/sh', 'echo pty'], "\n"),
       mode    => '0755',
     }
-    file { '/etc/init.d/functions':
+    file { "${jboss::etcdir}/init.d/functions":
       ensure  => 'file',
       source  => 'puppet:///modules/jboss/rhel-initd-functions.sh',
       require => File['/sbin/consoletype'],

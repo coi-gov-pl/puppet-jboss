@@ -20,9 +20,15 @@ class jboss::internal::service {
     default  => true,
   }
 
+  $servicescriptpath = $jboss::superuser ? {
+    true    => undef,
+    default => $jboss::internal::compatibility::initd_file
+  }
+
   service { $servicename:
     ensure     => running,
     enable     => $enable,
+    path       => $servicescriptpath,
     hasstatus  => true,
     hasrestart => true,
     subscribe  => [

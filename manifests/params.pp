@@ -25,10 +25,10 @@ class jboss::params inherits jboss::internal::params {
   $java_dist        = hiera('jboss::params::java_dist', 'jre')
 
   # User for Jboss Application Server
-  $jboss_user       = hiera('jboss::params::jboss_user', 'jboss')
+  $jboss_user       = hiera('jboss::params::jboss_user', $__default_user)
 
   # Group for Jboss Application Server
-  $jboss_group      = hiera('jboss::params::jboss_group', 'jboss')
+  $jboss_group      = hiera('jboss::params::jboss_group', $__default_group)
 
   # Target installation directory root
   $install_dir      = hiera('jboss::params::install_dir', $__default_installdir)
