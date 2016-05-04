@@ -1,9 +1,11 @@
 # System executor responsible of executing provided commands
 class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
 
-  def initialize(system_command_executor)
-    @system_command_executor = system_command_executor
+  def initialize(shell_executor)
+    @shell_executor = shell_executor
   end
+
+  attr_writer :shell_executor
 
   # Method that handles delegation to system executor
   # @param {String} cmd cmd to be executed
@@ -43,8 +45,8 @@ class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
     fail("Cannot set custom environment #{environment}") if environment && !withenv
 
     withenv.call environment do
-          @output = @system_command_executor.run_command(cmd)
-          @result = @system_command_executor.child_status
+          @output = @shell_executor.run_command(cmd)
+          @result = @shell_executor.child_status
         end
     @output
   end

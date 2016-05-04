@@ -2,12 +2,14 @@
 # Class that will handle executions of commands
 class Puppet_X::Coi::Jboss::Internal::CliExecutor
 
-  def initialize(system_executor)
-    @system_executor = system_executor
+  def initialize(execution_state_wrapper)
+    @execution_state_wrapper = execution_state_wrapper
   end
 
-  def system_executor=(value)
-    @system_executor = value
+  attr_writer :execution_state_wrapper
+
+  def shell_executor=(shell_executor)
+    @execution_state_wrapper.shell_executor = shell_executor
   end
 
   def executeAndGet(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)

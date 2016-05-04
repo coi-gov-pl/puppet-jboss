@@ -22,33 +22,24 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   # if security domain is present. In the procces method also checks if authentication is set.
   def exists?
 
-    jboss_runner = ensure_jboss_runner
+    cli_executor = ensure_cli_executor
 
-    @auditor = Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor.new(@resource, jboss_runner)
+    @auditor = Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor.new(@resource, cli_executor)
 
     @auditor.exists?
   end
 
-  def system_command_executor=(new_system_command_executor)
-    @system_executor
+  def execution_state_wrapper=(shell_executor)
+    @cli_executor.shell_executor = shell_executor
   end
 
   private
-  def system_executor=(new_system_executor)
-    before = @system_executor
-    @system_executor = new_system_executor
-    before
-  end
 
-  def system_executor
-    @system_executor
-  end
-
-  def ensure_jboss_runner
-      system_command_executor = Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new
-      system_runner = Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(system_command_executor)
-      @system_executor = Puppet_X::Coi::Jboss::Internal::CliExecutor.new(system_runner) if @system_executor.nil?
-      @system_executor
+  def ensure_cli_executor
+      shell_executor = Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new
+      execution_state_wrapper = Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(shell_executor)
+      @cli_executor = Puppet_X::Coi::Jboss::Internal::CliExecutor.new(execution_state_wrapper) if @cli_executor.nil?
+      @cli_executor
   end
 
   def fetch_commands
