@@ -1,6 +1,6 @@
 # Internal class to audits what is the state of securitydomain in Jboss instance
 # Do not use outside of securitydomain provider
-class Puppet_X::Coi::Jboss::Internal::JbossSecurityDomainAuditor
+class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
 
  def initialize(resource, runner)
    @resource = resource
@@ -31,9 +31,9 @@ class Puppet_X::Coi::Jboss::Internal::JbossSecurityDomainAuditor
 
    data = @state
    unless data['security-domain']["#{@resource[:name]}"]
-     state = Puppet_X::Coi::Jboss::Internal::State::JbossSecurityDomainState.new
+     state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
    else
-   state = Puppet_X::Coi::Jboss::Internal::State::JbossSecurityDomainState.new
+   state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
    Puppet.debug("I`m after state creation")
      unless data['security-domain']["#{@resource[:name]}"]['cache-type'].nil?
        state.is_cache_default = true
@@ -57,7 +57,7 @@ class Puppet_X::Coi::Jboss::Internal::JbossSecurityDomainAuditor
  end
 
  def read_resource
-   compilator = Puppet_X::Coi::Jboss::Internal::JbossCompilator.new
+   compilator = Puppet_X::Coi::Jboss::Internal::CommandCompilator.new
    cmd = compilator.compile(@resource[:runasdomain], @resource[:profile],  "/subsystem=security:read-resource(recursive=true)")
 
    conf = {

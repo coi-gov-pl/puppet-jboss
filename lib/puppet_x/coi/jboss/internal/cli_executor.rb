@@ -1,5 +1,6 @@
+# TODO change to jbossclirunner/jbosscliexecutor
 # Class that will handle executions of commands
-class Puppet_X::Coi::Jboss::Internal::JbossRunner
+class Puppet_X::Coi::Jboss::Internal::CliExecutor
 
   def initialize(system_executor)
     @system_executor = system_executor
@@ -9,7 +10,7 @@ class Puppet_X::Coi::Jboss::Internal::JbossRunner
     @system_executor = value
   end
 
-  def executeAndGet cmd, runasdomain, ctrlcfg, retry_count, retry_timeout
+  def executeAndGet(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     ret = run_command(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     unless ret[:result]
       return {

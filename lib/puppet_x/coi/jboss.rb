@@ -38,15 +38,14 @@ end
 
 require_relative 'jboss/provider/abstract_jboss_cli'
 require_relative 'jboss/provider/securitydomain'
-require_relative 'jboss/internal/jboss_command_creator'
-require_relative 'jboss/internal/jboss_system_runner'
-require_relative 'jboss/internal/jboss_runner'
-require_relative 'jboss/internal/jboss_securitydomain_auditor'
-require_relative 'jboss/internal/jboss_compilator'
-require_relative 'jboss/internal/state/jboss_securitydomain_state'
-require_relative 'jboss/internal/executor/jboss_command_executor'
-
-require_relative 'jboss/internal/state/jboss_execution_state'
+require_relative 'jboss/internal/logic_creator'
+require_relative 'jboss/internal/execution_state_wrapper'
+require_relative 'jboss/internal/cli_executor'
+require_relative 'jboss/internal/securitydomain_auditor'
+require_relative 'jboss/internal/command_compilator'
+require_relative 'jboss/internal/state/execution_state'
+require_relative 'jboss/internal/state/securitydomain_state'
+require_relative 'jboss/internal/executor/shell_executor'
 
 require_relative 'jboss/constants'
 require_relative 'jboss/buildins_utils'

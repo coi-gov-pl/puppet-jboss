@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'os'
 
-describe Puppet_X::Coi::Jboss::Internal::Executor::JbossCommandExecutor do
+describe Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor do
 
   describe '#run_command' do
 

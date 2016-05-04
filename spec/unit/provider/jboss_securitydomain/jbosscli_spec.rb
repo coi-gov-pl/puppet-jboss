@@ -49,7 +49,7 @@ context "mocking default values for SecurityDomain" do
       allow(provider.class).to receive(:suitable?).and_return(true)
     end
 
-    context 'methods with implementation for modern JBoss servers, that means after releases of WildFly 8 or JBoss EAP 6.4' do
+    xcontext 'methods with implementation for modern JBoss servers, that means after releases of WildFly 8 or JBoss EAP 6.4' do
 
       before :each do
         provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(provider))
@@ -62,7 +62,7 @@ context "mocking default values for SecurityDomain" do
 
           provider.instance_variable_set(:@auth, false)
 
-          provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::JbossCompilator.new)
+          provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::CommandCompilator.new)
 
           login_modules_command = 'subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles' +
           ':add(code="Database",flag=false,module-options=[("hashUserPassword"=>true),' +
@@ -127,7 +127,7 @@ context "mocking default values for SecurityDomain" do
       end
     end
 
-    context 'methods with implementation that run before WildFly 8 or JBoss EAP 6.4 came out' do
+    xcontext 'methods with implementation that run before WildFly 8 or JBoss EAP 6.4 came out' do
       describe '#create' do
 
         subject { provider.create }
@@ -136,12 +136,12 @@ context "mocking default values for SecurityDomain" do
         before :each do
 
           # provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(provider))
-          # provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::JbossCompilator.new)
+          # provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::CommandCompilator.new)
           #
           # expect(provider).to receive(:bringUp).exactly(3).times.and_return({:result => mocked_result})
           # expect(provider).to receive(:compilecmd).exactly(3).times
           runner =
-          auditor = Puppet_X::Coi::Jboss::Internal::JbossSecurityDomainAuditor.new(sample_repl, runner)
+          auditor = Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor.new(sample_repl, runner)
 
           expect(provider).to receive(:provider_impl).and_return(Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(sample_repl))
 
@@ -229,6 +229,21 @@ context "mocking default values for SecurityDomain" do
 
         let(:res_result) { false }
         it { is_expected.to eq(false) }
+      end
+    end
+
+    context 'new tests with mocked object' do
+
+      before(:each) do
+
+      end
+
+      context '#create' do
+        before(:each) do
+          expect(provider).to receive(:provider_impl).and_return(Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(resource))
+        end
+        subject { provider.create }
+        it {expect(subject).to eq({}) }
       end
     end
   end

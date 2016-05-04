@@ -1,5 +1,5 @@
 require "spec_helper"
-class Testing::Mock::MockedCommandExecutor < Puppet_X::Coi::Jboss::Internal::JbossCommandExecutor
+class Testing::Mock::MockedShellExecutor < Puppet_X::Coi::Jboss::Internal::JbossCommandExecutor
 
   def initialize
     @commands = {}
@@ -8,12 +8,17 @@ class Testing::Mock::MockedCommandExecutor < Puppet_X::Coi::Jboss::Internal::Jbo
 
   def register_command(command, expected_status, expected_lines)
     status = double('Mocked status', :success? => expected_status)
-    outcome = {:status => status, :output => expected_lines}
-    commands[command] = outcome
+    outcome = { :status => status, :output => expected_lines, :executed => false }
+    @commands[command] = outcome
   end
 
   def run_command(cmd)
     outcome = get_command_outcome(cmd)
+    if outcome[:executed]
+      raise ArgumentError, "Command #{cmd} should be executed only once"
+    else
+      outcome[:executed] = true
+    end
     @last_excuted_command = cmd
     outcome[:output]
   end
@@ -24,6 +29,12 @@ class Testing::Mock::MockedCommandExecutor < Puppet_X::Coi::Jboss::Internal::Jbo
     raise ArgumentError, 'Last executed command is nil' if @last_excuted_command.nil?
     outcome = get_command_outcome(@last_excuted_command)
     outcome[:status]
+  end
+
+  def verify_commands_executed
+    @commands.each do | command ,outcome|
+      raise ArgumentError, "Command #{command} was not executed but was expected" unless outcome[:executed]
+    end
   end
 
   private

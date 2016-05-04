@@ -1,4 +1,5 @@
-class Puppet_X::Coi::Jboss::Internal::JbossCompilator
+# TODO rdocs,
+class Puppet_X::Coi::Jboss::Internal::CommandCompilator
 
   def compile(runasdomain, profile, cmd)
     out = cmd.to_s

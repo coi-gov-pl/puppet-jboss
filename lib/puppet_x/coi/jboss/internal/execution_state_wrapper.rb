@@ -1,5 +1,5 @@
 # System executor responsible of executing provided commands
-class Puppet_X::Coi::Jboss::Internal::JbossSystemRunner
+class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
 
   def initialize(system_command_executor)
     @system_command_executor = system_command_executor
@@ -23,6 +23,14 @@ class Puppet_X::Coi::Jboss::Internal::JbossSystemRunner
     exececution_state(jbosscmd, code, success, lines)
   end
 
+  # Method that returns status of last command executed
+  # @return {Process::Status} result of last command
+  def last_execute_result
+    @result
+  end
+
+  private
+
   # Runs prepared commands
   # @param {String} cmd command that will be executed
   # @param {Hash} environment hash with proccess environment
@@ -39,12 +47,6 @@ class Puppet_X::Coi::Jboss::Internal::JbossSystemRunner
           @result = @system_command_executor.child_status
         end
     @output
-  end
-
-  # Method that returns status of last command executed
-  # @return {Process::Status} result of last command
-  def last_execute_result
-    @result
   end
 
   # Method that make and execution state object with given parameters

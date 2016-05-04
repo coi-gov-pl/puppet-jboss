@@ -8,11 +8,11 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # Default constructor that will also initialize 3 external object, system_runner, compilator and command executor
   def initialize(resource=nil)
     super(resource)
-    @compilator = Puppet_X::Coi::Jboss::Internal::JbossCompilator.new
+    @compilator = Puppet_X::Coi::Jboss::Internal::CommandCompilator.new
 
-    system_command_executor = Puppet_X::Coi::Jboss::Internal::Executor::JbossCommandExecutor.new
-    system_runner = Puppet_X::Coi::Jboss::Internal::JbossSystemRunner.new(system_command_executor)
-    @runner = Puppet_X::Coi::Jboss::Internal::JbossRunner.new(system_runner)
+    system_command_executor = Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new
+    system_runner = Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(system_command_executor)
+    @runner = Puppet_X::Coi::Jboss::Internal::CliExecutor.new(system_runner)
   end
 
   @@bin = "bin/jboss-cli.sh"
