@@ -233,9 +233,9 @@ context "mocking default values for SecurityDomain" do
     end
 
     context 'new tests with mocked object' do
-
       before(:each) do
-
+        mocked_shell_executor = Testing::Mock::MockedShellExecutor.new
+        #provider.execution_state_wrapper=mocked_shell_executor
       end
 
       context '#create' do

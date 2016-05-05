@@ -1,5 +1,5 @@
 require "spec_helper"
-class Testing::Mock::MockedShellExecutor < Puppet_X::Coi::Jboss::Internal::JbossCommandExecutor
+class Testing::Mock::MockedShellExecutor < Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor
 
   def initialize
     @commands = {}

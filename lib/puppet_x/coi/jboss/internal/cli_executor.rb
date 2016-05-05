@@ -12,6 +12,14 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     @execution_state_wrapper.shell_executor = shell_executor
   end
 
+  def shell_executor
+    @execution_state_wrapper.shell_executor
+  end
+
+  def executeWithFail(resource_name, cmd, way)
+    @cli_executor.executeWithFail()
+  end
+
   def executeAndGet(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     ret = run_command(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     unless ret[:result]
@@ -43,6 +51,18 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
         :data    => ret[:lines]
       }
     end
+  end
+
+  private
+
+  def wrap_execution(cmd)
+    conf = {
+      :controller  => @resource[:controller],
+      :ctrluser    => @resource[:ctrluser],
+      :ctrlpasswd  => @resource[:ctrlpasswd],
+    }
+
+    run_command(cmd, @resource[:runasdomain], conf, 0, 0)
   end
 
   # TODO move to methods
@@ -87,7 +107,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
       Puppet.debug "Command send to JBoss CLI: " + jbosscmd
       Puppet.debug "Cmd to be executed %s" % cmd
 
-      execution_state = @system_executor.execute(cmd, jbosscmd, environment)
+      execution_state = @execution_state_wrapper.execute(cmd, jbosscmd, environment)
       Puppet.debug "execution state "
       result = execution_state.ret_code
       lines = execution_state.output
@@ -121,6 +141,20 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
 
   def jboss_product
     Facter.value(:jboss_product)
+  end
+
+  $add_log = nil
+
+  def isprintinglog=(setting)
+    $add_log = setting
+  end
+
+  def getlog(lines)
+    last_lines = `tail -n #{lines} #{jbosslog}`
+  end
+
+  def printlog(lines)
+    " ---\n JBoss AS log (last #{lines} lines): \n#{getlog lines}"
   end
 
 

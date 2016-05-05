@@ -1,12 +1,6 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec/its'
 
-module Testing
-  module Mock end
-end
-
-#require "testing/mock/mocked_command_executor"
-
 unless $executing_puppet
   begin
   gem 'simplecov'
@@ -50,6 +44,13 @@ rescue Gem::LoadError
   # do nothing
 end
 
+module Testing
+  module Mock end
+end
+
+require 'puppet_x/coi/jboss'
+require "testing/mock/mocked_command_executor"
+
 require 'rspec-puppet'
 
 RSpec.configure do |c|
@@ -73,5 +74,3 @@ RSpec.configure do |c|
     PuppetlabsSpec::Files.cleanup
   end
 end
-
-require 'puppet_x/coi/jboss'

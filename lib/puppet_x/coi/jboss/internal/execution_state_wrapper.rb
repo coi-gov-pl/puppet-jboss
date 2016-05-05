@@ -5,14 +5,14 @@ class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
     @shell_executor = shell_executor
   end
 
-  attr_writer :shell_executor
+  attr_accessor :shell_executor
 
   # Method that handles delegation to system executor
   # @param {String} cmd cmd to be executed
   # @param {String} jbosscmd to be executed
   # @param {Hash} environment hash that hold informations about configuration
   # @return {Puppet_X::Coi::Jboss::Internal::ExecutionState} execution state that hold
-  #         information about result of execution
+  # information about result of execution
   def execute(cmd, jbosscmd, environment)
     lines = exec_command(cmd, environment)
     result = last_execute_result

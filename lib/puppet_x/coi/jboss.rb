@@ -30,12 +30,12 @@ module Puppet_X
     end
   end
 end
-
 # Ruby default kernel module
 module Kernel
   define_method(:require_relative) { |rel| Puppet_X::Coi::require_relative(rel, lvl = 1) } unless Kernel.respond_to? :require_relative
 end
 
+require_relative 'jboss/internal/executor/shell_executor'
 require_relative 'jboss/provider/abstract_jboss_cli'
 require_relative 'jboss/provider/securitydomain'
 require_relative 'jboss/internal/logic_creator'
@@ -45,7 +45,7 @@ require_relative 'jboss/internal/securitydomain_auditor'
 require_relative 'jboss/internal/command_compilator'
 require_relative 'jboss/internal/state/execution_state'
 require_relative 'jboss/internal/state/securitydomain_state'
-require_relative 'jboss/internal/executor/shell_executor'
+require_relative 'jboss/internal/securitydomain_destroyer'
 
 require_relative 'jboss/constants'
 require_relative 'jboss/buildins_utils'

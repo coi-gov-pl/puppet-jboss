@@ -5,14 +5,14 @@ require 'tempfile'
 # Base class for all JBoss providers
 class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
+  DEFAULT_SHELL_EXECUTOR = Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new
+
   # Default constructor that will also initialize 3 external object, system_runner, compilator and command executor
   def initialize(resource=nil)
     super(resource)
     @compilator = Puppet_X::Coi::Jboss::Internal::CommandCompilator.new
-
-    system_command_executor = Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new
-    system_runner = Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(system_command_executor)
-    @runner = Puppet_X::Coi::Jboss::Internal::CliExecutor.new(system_runner)
+    @cli_executor = nil
+    ensure_cli_executor
   end
 
   @@bin = "bin/jboss-cli.sh"
@@ -58,14 +58,6 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     @resource[:runasdomain]
   end
 
-  def getlog(lines)
-    last_lines = `tail -n #{lines} #{jbosslog}`
-  end
-
-  def printlog(lines)
-    " ---\n JBoss AS log (last #{lines} lines): \n#{getlog lines}"
-  end
-
   # Public methods
   def bringUp(typename, args)
     executeWithFail(typename, args, 'to create')
@@ -77,16 +69,16 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
   # INTERNAL METHODS
   # TODO make protected or private
-  def execute jbosscmd
+  def execute(jbosscmd)
     retry_count = @resource[:retry]
     retry_timeout = @resource[:retry_timeout]
     ctrlcfg = controllerConfig @resource
-    @runner.run_command(jbosscmd, is_runasdomain, ctrlcfg, retry_count, retry_timeout)
+    @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, retry_count, retry_timeout)
   end
 
-  def executeWithoutRetry jbosscmd
+  def executeWithoutRetry(jbosscmd)
     ctrlcfg = controllerConfig @resource
-    @runner.run_command(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
+    @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
   end
 
   def executeAndGet(jbosscmd)
@@ -94,8 +86,8 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     executeAndGetResult(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
   end
 
-  def executeWithFail(typename, passed_args, way)
-    executed = execute(passed_args)
+  def executeWithFail(typename, cmd, way)
+    executed = execute(cmd)
     if not executed[:result]
       ex = "\n#{typename} failed #{way}:\n[CLI command]: #{executed[:cmd]}\n[Error message]: #{executed[:lines]}"
       if not $add_log.nil? and $add_log > 0
@@ -111,12 +103,12 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   def executeAndGetResult(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
-    @runner.executeAndGet(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
+    @cli_executor.executeAndGet(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
   end
 
   # Method that will prepare and delegate execution of command
   def run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
-    @runner.run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
+    @cli_executor.run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
   end
 
   def controllerConfig resource
@@ -129,15 +121,15 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   def jboss_product
-    @runner.jboss_product
+    @cli_executor.jboss_product
   end
 
   def jbossas?
-    @runner.jbossas?
+    @cli_executor.jbossas?
   end
 
   def timeout_cli
-    @runner.timeout_cli
+    @cli_executor.timeout_cli
   end
 
   def setattribute(path, name, value)
@@ -163,12 +155,6 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     @property_hash[name] = value
   end
 
-  $add_log = nil
-
-  def isprintinglog=(setting)
-    $add_log = setting
-  end
-
   def trace method
     Puppet.debug '%s[%s] > IN > %s' % [self.class, @resource[:name], method]
   end
@@ -184,5 +170,22 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
       str = value
     end
     str.inspect
+  end
+
+  def shell_executor=(shell_executor)
+    @cli_executor.shell_executor = shell_executor
+  end
+
+  def shell_executor
+    @cli_executor.shell_executor
+  end
+
+  protected
+  def ensure_cli_executor
+    if @cli_executor.nil?
+      execution_state_wrapper = Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(DEFAULT_SHELL_EXECUTOR)
+      @cli_executor = Puppet_X::Coi::Jboss::Internal::CliExecutor.new(execution_state_wrapper)
+    end
+    @cli_executor
   end
 end

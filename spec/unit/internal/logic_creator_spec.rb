@@ -16,7 +16,9 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
   let(:system_executor) {Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new }
   let(:system_runner) { Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(system_executor) }
   let(:runner) { Puppet_X::Coi::Jboss::Internal::CliExecutor.new(system_runner) }
-  let(:auditor) { Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor.new(resource, runner) }
+  let(:compilator) { Puppet_X::Coi::Jboss::Internal::CommandCompilator.new() }
+  let(:destroyer) { Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer.new(runner, compilator, resource) }
+  let(:auditor) { Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor.new(resource, runner, compilator, destroyer) }
 
   let(:instance) { described_class.new(auditor, resource, provider) }
   subject { instance.decide }
