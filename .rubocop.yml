@@ -1,0 +1,15 @@
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+
+Metrics/LineLength:
+  Max: 100
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/HashSyntax:
+  EnforcedStyle: hash_rockets
+
+Style/Documentation:
+  Enabled: false
