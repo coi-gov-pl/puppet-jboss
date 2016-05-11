@@ -14,21 +14,31 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
     @cli_executor = cli_executor
     @compilator = compilator
     @destroyer = destroyer
-    @state = nil
   end
+
+  # attr_accessor :state
+  #
+  # def set_state(state)
+  #   @state = state
+  #   @state
+  # end
+  #
+  # def get_state
+  #   @state
+  # end
 
   # Method that checks if securitydomain exists
   # @return {Boolean} returns true if security-domain exists in any state
   def exists?
     raw_result = read_resource_recursive
-
     unless raw_result[:result]
       Puppet.debug 'Security Domain does NOT exist'
       return false
     end
     actual_data = evaluate_data(raw_result)
 
-    resolve_state(actual_data, @resource)
+    result = resolve_state(actual_data, @resource)
+    result
   end
 
   # Internal mathod that saves current state of every subpath of securitydomain
@@ -36,13 +46,15 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
     data = @state
     if data['security-domain'][(@resource[:name]).to_s]
       state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
-      unless data['security-domain'][(@resource[:name]).to_s]['cache-type'].nil?
-        state.is_cache_default = true
+      if data['security-domain'][(@resource[:name]).to_s]['cache-type'].nil?
+        state.is_cache_default = false
       end
-      unless data['security-domain'][(@resource[:name]).to_s]['authentication'].nil?
-        state.is_authentication = true
+      if data['security-domain'][(@resource[:name]).to_s]['authentication'].nil?
+        state.is_authentication = false
       end
-      state
+      if data['security-domain'][(@resource[:name]).to_s]['authentication']['classic']['login-modules'][0]['module-options']
+        state.is_login_modules = false
+      end
     else
       state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
     end
@@ -71,7 +83,10 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
 
   # Method that handles execution of command
   def read_resource_recursive
-    cmd = @compilator.compile(@resource[:runasdomain], @resource[:profile], '/subsystem=security:read-resource(recursive=true)')
+    cmd = @compilator.compile(@resource[:runasdomain],
+                              @resource[:profile],
+                              '/subsystem=security:read-resource(recursive=true)'
+                             )
 
     conf = {
       controller: @resource[:controller],
@@ -88,11 +103,12 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   # @return {Boolean} return true if security-domain with given name exists in any state
   def resolve_state(actual_data, resource)
     @state = actual_data
+    Puppet.debug("Actual Data in resolve state: #{@state}")
     unless actual_data.key? 'security-domain'
       Puppet.debug('There is no securitydomain at all')
       return false
     end
-    
+
     Puppet.debug "Security Domain exists: #{actual_data.inspect}"
 
     existinghash = {}
@@ -106,21 +122,44 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
       end
     end
 
-    if actual_data['login-modules'][0]['module-options']
-      actual_data['login-modules'][0]['module-options'].each do |key, value|
-        existinghash[key.to_s] = value.to_s.tr("\n", ' ').strip
-      end
+    nil_checker = get_nillable_from_hash_recursive(actual_data,
+                                                   ['security-domain',
+                                                    resource[:name].to_s,
+                                                    'authentication',
+                                                    'classic',
+                                                    'login-modules',
+                                                    'module-options'])
 
-      if !existinghash.nil? && !givenhash.nil? && existinghash != givenhash
-        diff = givenhash.to_a - existinghash.to_a
-        Puppet.notice("Security domain should be recreated. Diff: #{diff.inspect}")
-        Puppet.debug("Security domain moduleoptions existing hash => #{existinghash.inspect}")
-        Puppet.debug("Security domain moduleoptions given hash => #{givenhash.inspect}")
-        @destroyer.destroy
-        return false
-      end
-      return true
+    Puppet.debug("Value of nil checker: #{nil_checker}")
+
+    return false if nil_checker.nil?
+
+    actual_data['security-domain'][resource[:name].to_s]['authentication']['classic']['login-modules'][0]['module-options'].each do |key, value|
+      existinghash[key.to_s] = value.to_s.tr("\n", ' ').strip
     end
-    false
+    if !existinghash.nil? && !givenhash.nil? && existinghash != givenhash
+      diff = givenhash.to_a - existinghash.to_a
+      Puppet.notice("Security domain should be recreated. Diff: #{diff.inspect}")
+      Puppet.debug("Security domain moduleoptions existing hash => #{existinghash.inspect}")
+      Puppet.debug("Security domain moduleoptions given hash => #{givenhash.inspect}")
+      @destroyer.destroy(resource)
+      return false
+    end
+    true
+  end
+
+  # Recursive method that check if there is nil value in given hash under keys that are given
+  # as parameters
+  # @param {Hash} hash hash that will be checked
+  # @param {Array} keys keys that will be used to check if their value is null
+  # @return {nil|Boolean} result will be nil if there is nill value under key in given hash
+  # or true if there is no nill value
+  def get_nillable_from_hash_recursive(hash, keys)
+    hash = hash[0] if hash.is_a? Array
+    return true if keys.empty?
+    first_key = keys[0]
+    return nil if hash[first_key].nil?
+    keys.delete first_key
+    get_nillable_from_hash_recursive(hash[first_key], keys)
   end
 end

@@ -3,10 +3,10 @@ AllCops:
     - 'vendor/**/*'
 
 Metrics/LineLength:
-  Max: 100
+  Max: 140
 
 Style/StringLiterals:
-  EnforcedStyle: double_quotes
+  EnforcedStyle: single_quotes
 
 Style/HashSyntax:
   EnforcedStyle: hash_rockets
