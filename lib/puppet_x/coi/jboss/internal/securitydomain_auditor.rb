@@ -3,8 +3,7 @@
 class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   # Standard constructor
   # @param {Hash} resource standard puppet resource object
-  # @param {Puppet_X::Coi::Jboss::Internal::CliExecutor} cli_executor that will handle execution of
-  # command
+  # @param {Puppet_X::Coi::Jboss::Internal::CliExecutor} cli_executor that will handle execution of command
   # @param {Puppet_X::Coi::Jboss::Internal::CommandCompilator} compilator object that handles
   # compilaton of command to be executed
   # @param {Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer} destroyer object that handles removing of
@@ -15,17 +14,6 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
     @compilator = compilator
     @destroyer = destroyer
   end
-
-  # attr_accessor :state
-  #
-  # def set_state(state)
-  #   @state = state
-  #   @state
-  # end
-  #
-  # def get_state
-  #   @state
-  # end
 
   # Method that checks if securitydomain exists
   # @return {Boolean} returns true if security-domain exists in any state
@@ -44,15 +32,20 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   # Internal mathod that saves current state of every subpath of securitydomain
   def fetch_securtydomain_state
     data = @state
+    Puppet.debug("@state in fetch_securtydomain_state: #{data}")
     if data['security-domain'][(@resource[:name]).to_s]
       state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
       if data['security-domain'][(@resource[:name]).to_s]['cache-type'].nil?
+        Puppet.debug('cache-type is nil')
         state.is_cache_default = false
       end
-      if data['security-domain'][(@resource[:name]).to_s]['authentication'].nil?
+      auth = data['security-domain'][(@resource[:name]).to_s]['authentication']
+      if auth.nil?
+        Puppet.debug('Authentication is nil')
         state.is_authentication = false
       end
-      if data['security-domain'][(@resource[:name]).to_s]['authentication']['classic']['login-modules'][0]['module-options']
+      if !auth.nil? && data['security-domain'][(@resource[:name]).to_s]['authentication']['classic']['login-modules'][0]['module-options'].nil?
+        Puppet.debug('Login modules are nil')
         state.is_login_modules = false
       end
     else

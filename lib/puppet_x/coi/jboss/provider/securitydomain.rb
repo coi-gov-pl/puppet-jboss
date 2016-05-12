@@ -23,7 +23,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   # Method to remove security-domain from Jboss instance
   def destroy
     destroyer = ensure_destroyer
-    destroyer.destroy(@resource)
+    destroyer.destroy(@resource)[:result]
   end
 
   private
