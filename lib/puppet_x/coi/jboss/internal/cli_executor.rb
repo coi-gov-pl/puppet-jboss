@@ -1,11 +1,14 @@
 # Class that will handle executions of commands
 class Puppet_X::Coi::Jboss::Internal::CliExecutor
+  # Constructor
+  # @param {Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper} execution_state_wrapper handles command execution
   def initialize(execution_state_wrapper)
     @execution_state_wrapper = execution_state_wrapper
   end
 
   attr_writer :execution_state_wrapper
 
+  # Method that allows us to setup shell executor, used in tests
   def shell_executor=(shell_executor)
     @execution_state_wrapper.shell_executor = shell_executor
   end
@@ -14,6 +17,11 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     @execution_state_wrapper.shell_executor
   end
 
+  # Method that executes command, if method fails it prints log message
+  # @param {String} typename name of resource
+  # @param {String} cmd command that will be executed
+  # @param {String} way bring up|bring down to for logging
+  # @param {Hash} resource standard puppet resource object
   def executeWithFail(typename, cmd, way, resource)
     executed = wrap_execution(cmd, resource)
     unless executed[:result]
@@ -26,6 +34,12 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     executed
   end
 
+  # Method that executes command and returns outut
+  # @param {String} cmd command that will be executed
+  # @param {Boolean} runasdomain if command will be executen in comain instance
+  # @param {Hash} ctrlcfg hash with configuration
+  # @param {Number} retry_count number of retry after failed command
+  # @param {Number} retry_timeout timeout after failed command
   def executeAndGet(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     ret = run_command(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     unless ret[:result]
@@ -35,8 +49,6 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
       }
     end
 
-    # TODO: move to another method
-    # Giving JBoss `undefine` value in Ruby
     undefined = nil
     # JBoss expression and Long value handling
     ret[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
@@ -59,7 +71,33 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     end
   end
 
-  # TODO: move to methods
+  # Method that prepares output from command execution so it can be later evaluated to Ruby hash
+  # @param {String} output output from command execution
+  # @return {Hash} hash with prepared data
+  def evaluate_output(output)
+    undefined = nil
+    # JBoss expression and Long value handling
+    output[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
+    Puppet.debug("output: #{output}")
+    output[:lines].gsub!(/=> (\d+)L/, '=> \1')
+    Puppet.debug("output: #{output}")
+    output
+  end
+
+  def prepare_command(path, ctrlcfg)
+    Puppet.debug('Start of prepare command')
+
+    Puppet.debug("ctrlcfg: #{ctrlcfg}")
+
+    home = Puppet_X::Coi::Jboss::Configuration.config_value :home
+    ENV['JBOSS_HOME'] = home
+
+    jboss_home = "#{home}/bin/jboss-cli.sh"
+    cmd = "#{jboss_home} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
+    cmd += " --user=#{ctrlcfg[:ctrluser]}" unless ctrlcfg[:ctrluser].nil?
+    cmd
+  end
+
   # Method that will prepare and delegate execution of command
   # @param {String} jbosscmd command to be executeAndGet
   # @param {Boolean} runasdomain if jboss is run in domain mode
@@ -75,17 +113,15 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
 
     File.open(path, 'w') { |f| f.write(jbosscmd + "\n") }
 
-    home = Puppet_X::Coi::Jboss::Configuration.config_value :home
-    ENV['JBOSS_HOME'] = home
+    cmd = prepare_command(path, ctrlcfg)
 
-    jboss_home = "#{home}/bin/jboss-cli.sh"
-    cmd = "#{jboss_home} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
-    cmd += " --user=#{ctrlcfg[:ctrluser]}" unless ctrlcfg[:ctrluser].nil?
     environment = ENV.to_hash
+
     unless ctrlcfg[:ctrlpasswd].nil?
       environment['__PASSWD'] = ctrlcfg[:ctrlpasswd]
       cmd += ' --password=$__PASSWD'
     end
+
     retries = 0
     result = ''
     lines = ''
@@ -99,11 +135,8 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
       Puppet.debug('Cmd to be executed %s' % cmd)
 
       execution_state = @execution_state_wrapper.execute(cmd, jbosscmd, environment)
-      Puppet.debug('execution state')
       result = execution_state.ret_code
       lines = execution_state.output
-
-      Puppet.debug 'after execution state'
 
       retries += 1
     end while (result != 0 && retries <= retry_count)

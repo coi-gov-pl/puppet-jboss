@@ -32,7 +32,6 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   # Internal mathod that saves current state of every subpath of securitydomain
   def fetch_securtydomain_state
     data = @state
-    Puppet.debug("@state in fetch_securtydomain_state: #{data}")
     if data['security-domain'][(@resource[:name]).to_s]
       state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
       if data['security-domain'][(@resource[:name]).to_s]['cache-type'].nil?
