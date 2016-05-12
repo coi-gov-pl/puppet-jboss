@@ -35,6 +35,10 @@ class jboss::internal::service {
       Anchor['jboss::package::end'],
       Anchor['jboss::service::begin'],
     ],
+    before     => [
+      Anchor['jboss::service::end'],
+      Anchor['jboss::service::started'],
+    ],
   }
 
   exec { 'jboss::service::test-running':
@@ -43,26 +47,18 @@ class jboss::internal::service {
     unless    => "ps aux | grep ${servicename} | grep -vq grep",
     logoutput => true,
     subscribe => Service[$servicename],
+    before    => Anchor['jboss::service::end'],
   }
 
   exec { 'jboss::service::restart':
     command     => "service ${servicename} stop ; pkill -9 -f \"^java.*jboss\"  ; service ${servicename} start",
     refreshonly => true,
     require     => Exec['jboss::service::test-running'],
+    before      => Anchor['jboss::service::started'],
   }
 
-  anchor { 'jboss::service::end':
-    require => [
-      Service[$servicename],
-      Exec['jboss::service::test-running'],
-    ],
-  }
-
+  anchor { 'jboss::service::end': }
   anchor { 'jboss::service::started':
-    require => [
-      Service[$servicename],
-      Anchor['jboss::service::end'],
-      Exec['jboss::service::restart'],
-    ],
+    require => Anchor['jboss::service::end'],
   }
 }

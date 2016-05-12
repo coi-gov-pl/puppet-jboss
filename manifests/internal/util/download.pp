@@ -9,6 +9,7 @@ define jboss::internal::util::download (
   $filename     = undef,
   $install_wget = true,
 ) {
+  include jboss
   include jboss::internal::params
 
   if $filename == undef {
@@ -23,21 +24,23 @@ define jboss::internal::util::download (
 
   case $uri {
     /^(?:http|https|ftp|sftp|ftps):/ : {
-      if ! defined(Package['wget']) and $install_wget {
+      if !defined(Package['wget']) and $install_wget {
         ensure_packages(['wget'])
       }
 
-      if ! defined(Group[$group]) {
+      if $jboss::superuser and !defined(Group[$group]) {
         ensure_resource('group', $group, {
           ensure => 'present',
         })
+        Group[$group] -> Exec["download ${name}"]
       }
 
-      if ! defined(User[$owner]) {
+      if $jboss::superuser and !defined(User[$owner]) {
         ensure_resource('user', $owner, {
           ensure => 'present',
           gid    => $group,
         })
+        User[$owner] -> Exec["download ${name}"]
       }
 
       exec { "wget -q '${uri}' -O '${dest}' && chmod ${mode} '${dest}' && chown ${owner}:${group} '${dest}'":
@@ -46,11 +49,7 @@ define jboss::internal::util::download (
         path      => $jboss::internal::params::syspath,
         creates   => $dest,
         timeout   => $timeout,
-        require   => [
-          Package['wget'],
-          Group[$group],
-          User[$owner],
-        ],
+        require   => Package['wget'],
       }
     }
     default : {

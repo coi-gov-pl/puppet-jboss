@@ -1,3 +1,4 @@
+# Internal class - do not use it!
 class jboss::internal::configuration {
   include jboss
   include jboss::params
@@ -51,6 +52,14 @@ class jboss::internal::configuration {
       path   => "${jboss::usermode_basedir}/.profile",
       before => Concat[$conffile],
     }
+  }
+
+  file { $jboss::internal::params::logbasedir:
+    ensure => 'directory',
+    alias  => 'jboss::logbasedir',
+    mode   => '2770',
+    owner  => $user,
+    group  => $jboss::jboss_group,
   }
 
   file { $logdir:

@@ -49,11 +49,11 @@ class jboss::internal::package (
     logoutput => 'on_failure',
   }
 
-  if (!defined(Group[$jboss_group])) {
+  if $jboss::superuser and (!defined(Group[$jboss_group])) {
     group { $jboss_group: ensure => 'present', }
   }
 
-  if (!defined(User[$jboss_user])) {
+  if $jboss::superuser and (!defined(User[$jboss_user])) {
     $empty = ''
     create_resources('user', {
       "${jboss_user}${empty}" => {
@@ -65,12 +65,15 @@ class jboss::internal::package (
   }
 
   $confdir = "${jboss::etcdir}/${product}"
-
+  $rootuser = $jboss::superuser ? {
+    true    => 'root',
+    default => undef,
+  }
   file { $confdir:
     ensure => 'directory',
     alias  => 'jboss::confdir',
-    owner  => 'root',
-    group  => 'root',
+    owner  => $rootuser,
+    group  => $rootuser,
     mode   => '0755',
   }
 
@@ -84,7 +87,7 @@ class jboss::internal::package (
     Class['java'] -> Exec['jboss::package::check-for-java']
   }
 
-  file { $download_dir:
+  file { [ $download_rootdir, $download_dir ]:
     ensure => 'directory',
   }
 
