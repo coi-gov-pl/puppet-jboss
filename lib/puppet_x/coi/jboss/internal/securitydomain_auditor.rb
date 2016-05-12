@@ -56,12 +56,12 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
 
   private
 
-  # TODO: check if there is safer way to do it
   def evaluate_data(result)
     undefined = nil
     lines = preparelines(result[:data].to_s)
-    # TODO: $SAFE = 4
+
     evaluated_data = eval(lines)
+
     Puppet.debug("Evaluated data for security-domain #{@resource[:name]}: #{evaluated_data.inspect}")
     evaluated_data
   end
@@ -96,7 +96,6 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   # @return {Boolean} return true if security-domain with given name exists in any state
   def resolve_state(actual_data, resource)
     @state = actual_data
-    Puppet.debug("Actual Data in resolve state: #{@state}")
     unless actual_data.key? 'security-domain'
       Puppet.debug('There is no securitydomain at all')
       return false
@@ -104,32 +103,25 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
 
     Puppet.debug "Security Domain exists: #{actual_data.inspect}"
 
-    existinghash = {}
-    givenhash = {}
+    givenhash = build_givenhash(resource)
 
-    Puppet.debug((resource['moduleoptions']).to_s)
+    path_in_state = ['security-domain',
+                     resource[:name].to_s,
+                     'authentication',
+                     'classic',
+                     'login-modules',
+                     0,
+                     'module-options']
 
-    unless resource[:moduleoptions].nil?
-      resource[:moduleoptions].each do |key, value|
-        givenhash[key.to_s] = value.to_s.tr("\n", ' ').strip
-      end
-    end
-
-    nil_checker = get_nillable_from_hash_recursive(actual_data,
-                                                   ['security-domain',
-                                                    resource[:name].to_s,
-                                                    'authentication',
-                                                    'classic',
-                                                    'login-modules',
-                                                    'module-options'])
+    nil_checker = get_nillable_from_hash_recursive(actual_data, path_in_state)
 
     Puppet.debug("Value of nil checker: #{nil_checker}")
 
     return false if nil_checker.nil?
 
-    actual_data['security-domain'][resource[:name].to_s]['authentication']['classic']['login-modules'][0]['module-options'].each do |key, value|
-      existinghash[key.to_s] = value.to_s.tr("\n", ' ').strip
-    end
+    state_login_modules = array_keys_to_hash_value(actual_data, path_in_state)
+    existinghash = build_existinghash(state_login_modules)
+
     if !existinghash.nil? && !givenhash.nil? && existinghash != givenhash
       diff = givenhash.to_a - existinghash.to_a
       Puppet.notice("Security domain should be recreated. Diff: #{diff.inspect}")
@@ -141,6 +133,42 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
     true
   end
 
+  # Method that will build hash that holds informations about state that is desired
+  # @param {Hash} data
+  # @return {Hash} givenhash with informations about setting of security-domain
+  def build_givenhash(data)
+    givenhash = {}
+    unless data[:moduleoptions].nil?
+      data[:moduleoptions].each do |key, value|
+        givenhash[key.to_s] = value.to_s.tr("\n", ' ').strip
+      end
+    end
+    givenhash
+  end
+
+  # Method that will build hash that holds informations about actual settings of security-domain
+  # @param {Hash} data
+  # @return {Hash} existinghash with informations about desired setting of security-domain
+  def build_existinghash(data)
+    existinghash = {}
+    data.each do |key, value|
+      existinghash[key.to_s] = value.to_s.tr("\n", ' ').strip
+    end
+    existinghash
+  end
+
+  # Method that return value of last given in param
+  # @param {Hash} data hash that holds desired information
+  # @param {Array} keys array of keys in correct order that will be used to exctract value
+  # @return {Object} tmp_data value of last key in keys parameter
+  def array_keys_to_hash_value(data,keys)
+    tmp_data = data
+    keys.each do |key|
+      tmp_data = tmp_data[key]
+    end
+    tmp_data
+  end
+
   # Recursive method that check if there is nil value in given hash under keys that are given
   # as parameters
   # @param {Hash} hash hash that will be checked
@@ -148,7 +176,6 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   # @return {nil|Boolean} result will be nil if there is nill value under key in given hash
   # or true if there is no nill value
   def get_nillable_from_hash_recursive(hash, keys)
-    hash = hash[0] if hash.is_a? Array
     return true if keys.empty?
     first_key = keys[0]
     return nil if hash[first_key].nil?
