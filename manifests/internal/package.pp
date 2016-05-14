@@ -24,6 +24,7 @@ class jboss::internal::package (
   $home                 = $jboss::home
   $configfile           = $jboss::internal::runtime::configfile
   $standaloneconfigfile = $jboss::internal::runtime::standaloneconfigfile
+  $logdir               = "${jboss::internal::params::logbasedir}/${jboss::product}"
 
   case $version {
     /^[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
@@ -164,8 +165,9 @@ class jboss::internal::package (
     target => "${jboss::home}/standalone/configuration/${standaloneconfigfile}",
   }
 
+  $full_initd_file = $jboss::internal::compatibility::full_initd_file
   if $jboss::superuser {
-    file { "${jboss::etcdir}/init.d/${product}":
+    file { $full_initd_file:
       ensure => 'link',
       alias  => 'jboss::service-link',
       target => $jboss::internal::compatibility::initd_file,
@@ -173,6 +175,17 @@ class jboss::internal::package (
     }
     Jboss::Internal::Util::Groupaccess[$jboss::home]
       -> File['jboss::service-link']
+  } else {
+    $pidfile    = "${logdir}/${jboss::product}.pid"
+    file { "${jboss::bindir}/init.d":
+      ensure => 'directory',
+    }
+    file { $full_initd_file:
+      ensure  => 'file',
+      mode    => '0750',
+      content => template('jboss/userland/initd.sh.erb'),
+      before  => Anchor['jboss::package::end'],
+    }
   }
 
   $jbosscli_path = "${jboss::bindir}/${jboss::internal::compatibility::product_short}-cli"

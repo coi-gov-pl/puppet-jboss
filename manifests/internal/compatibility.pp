@@ -41,4 +41,10 @@ class jboss::internal::compatibility {
     default: {}
   }
 
+  if $jboss::superuser {
+    $full_initd_file = "${jboss::etcdir}/init.d/${jboss::product}"
+  } else {
+    $full_initd_file = "${jboss::bindir}/init.d/${jboss::product}"
+  }
+
 }

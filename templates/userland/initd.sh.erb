@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# This is a init.d file for user land mode
+
+# The Jboss home directory.
+#
+export JBOSS_HOME='<%= @home %>'
+
+# The JBoss product name.
+#
+export JBOSS_PRODUCT='<%= @product %>'
+
+# The JBoss version.
+#
+export JBOSS_VERSION='<%= @version %>'
+
+# The JBoss configuration file
+#
+export JBOSS_CONFIG='<%= @configfile %>'
+
+# The username who should own the process.
+#
+export JBOSS_USER='<%= @user %>'
+
+# Location to keep the console log
+#
+export JBOSS_CONSOLE_LOG='<%= @logfile %>'
+
+# Runs JBoss in domain mode?
+export JBOSS_RUNASDOMAIN='<%= @runasdomain.inspect %>'
+
+# JBoss running mode: domain or standalone
+export JBOSS_MODE='<%= @runasdomain ? 'domain' : 'standalone' %>'
+
+# Default JBoss domain controller
+export JBOSS_CONTROLLER='<%= @controller %>'
+
+# Default JBoss domain profile
+export JBOSS_PROFILE='<%= @profile %>'
+
+# A pidfile
+export JBOSS_PIDFILE='<%= @pidfile %>'
+
+export LAUNCH_JBOSS_IN_BACKGROUND=yes
+
+function start() {
+  "${JBOSS_HOME}/bin/${JBOSS_MODE}.sh" > "${JBOSS_CONSOLE_LOG}" &
+}
+
+function stop() {
+  kill $(cat "${JBOSS_PIDFILE}")
+}
+status=0
+case "$1" in
+  start)
+    start
+  ;;
+  stop)
+    stop
+  ;;
+  status)
+    if [ -f "${JBOSS_PIDFILE}" ]; then
+      pid=$(cat "${JBOSS_PIDFILE}")
+      echo "Server ${JBOSS_PRODUCT} is running... (pid: ${pid})"
+    else
+      echo "Server ${JBOSS_PRODUCT} is stopped."
+      status=1
+    fi
+  ;;
+  restart)
+    stop
+    start
+  ;;
+  *)
+    echo "$0 <start|stop|status|restart>" &1>2
+    status=127
+esac
+
+exit $status

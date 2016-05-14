@@ -22,7 +22,7 @@ class jboss::internal::service {
 
   $servicescriptpath = $jboss::superuser ? {
     true    => undef,
-    default => $jboss::internal::compatibility::initd_file
+    default => $jboss::internal::compatibility::full_initd_file
   }
 
   service { $servicename:
