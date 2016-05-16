@@ -180,7 +180,12 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     @cli_executor.shell_executor
   end
 
+  def execution_state_wrapper=(execution_state_wrapper)
+    @cli_executor.execution_state_wrapper = execution_state_wrapper
+  end
+
   protected
+
   def ensure_cli_executor
     if @cli_executor.nil?
       execution_state_wrapper = Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(DEFAULT_SHELL_EXECUTOR)

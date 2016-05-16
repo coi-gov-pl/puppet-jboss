@@ -49,7 +49,7 @@ module Testing
 end
 
 require 'puppet_x/coi/jboss'
-require "testing/mock/mocked_command_executor"
+require 'testing/mock/mocked_execution_state_wrapper'
 
 require 'rspec-puppet'
 

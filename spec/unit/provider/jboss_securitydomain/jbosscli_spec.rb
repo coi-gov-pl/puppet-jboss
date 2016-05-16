@@ -1,12 +1,11 @@
-require "spec_helper"
+require 'spec_helper'
 
-context "mocking default values for SecurityDomain" do
-
+context 'mocking default values for SecurityDomain' do
   let(:mock_values) do
     {
       :product    => 'jboss-eap',
       :version    => '6.4.0.GA',
-      :controller => '127.0.0.1:9999',
+      :controller => '127.0.0.1:9999'
     }
   end
 
@@ -19,7 +18,6 @@ context "mocking default values for SecurityDomain" do
   end
 
   describe 'Puppet::Type::Jboss_securitydomain::ProviderJbosscli' do
-
     let(:described_class) do
       Puppet::Type.type(:jboss_securitydomain).provider(:jbosscli)
     end
@@ -28,10 +26,10 @@ context "mocking default values for SecurityDomain" do
         :name          => 'testing',
         :code          => 'Database',
         :codeflag      => false,
-        :moduleoptions =>  {
+        :moduleoptions => {
           'principalsQuery'   => 'select \'password\' from users u where u.login = ?',
-          'hashUserPassword'  => true,
-        },
+          'hashUserPassword'  => true
+        }
       }
     end
 
@@ -47,204 +45,32 @@ context "mocking default values for SecurityDomain" do
 
     before :each do
       allow(provider.class).to receive(:suitable?).and_return(true)
+      allow(Puppet_X::Coi::Jboss::Configuration).to receive(:read).and_return(:jboss_product => 'as')
     end
 
-    xcontext 'methods with implementation for modern JBoss servers, that means after releases of WildFly 8 or JBoss EAP 6.4' do
+    let(:mocked_execution_state_wrapper) { Testing::Mock::ExecutionStateWrapper.new }
 
-      before :each do
-        provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(provider))
-      end
-
-      describe '#create' do
+    context 'before 6.4' do
+      describe 'exists?' do
         before :each do
+          output = <<-eos
+          \n    \"outcome\" => \"success\",\n    \"result\" => {\n        \"deep-copy-subject-mode\" => false,\n        \"security-domain\" => {\n            \"other\" => {\n                \"cache-type\" => \"default\",\n                \"acl\" => undefined,\n                \"audit\" => undefined,\n                \"authentication\" => {\"classic\" => {\n                    \"login-modules\" => [\n                        {\n                            \"code\" => \"Remoting\",\n                            \"flag\" => \"optional\",\n                            \"module\" => undefined,\n                            \"module-options\" => {\"password-stacking\" => \"useFirstPass\"}\n                        },\n                        {\n                            \"code\" => \"RealmDirect\",\n                            \"flag\" => \"required\",\n                            \"module\" => undefined,\n                            \"module-options\" => {\"password-stacking\" => \"useFirstPass\"}\n                        }\n                    ],\n                    \"login-module\" => {\n                        \"Remoting\" => {\n                            \"code\" => \"Remoting\",\n                            \"flag\" => \"optional\",\n                            \"module\" => undefined,\n                            \"module-options\" => {\"password-stacking\" => \"useFirstPass\"}\n                        },\n                        \"RealmDirect\" => {\n                            \"code\" => \"RealmDirect\",\n                            \"flag\" => \"required\",\n                            \"module\" => undefined,\n                            \"module-options\" => {\"password-stacking\" => \"useFirstPass\"}\n                        }\n                    }\n                }},\n                \"authorization\" => undefined,\n                \"identity-trust\" => undefined,\n                \"jsse\" => undefined,\n                \"mapping\" => undefined\n            },\n            \"jboss-web-policy\" => {\n                \"cache-type\" => \"default\",\n                \"acl\" => undefined,\n                \"audit\" => undefined,\n                \"authentication\" => undefined,\n                \"authorization\" => {\"classic\" => {\n                    \"policy-modules\" => [{\n                        \"code\" => \"Delegating\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => undefined\n                    }],\n                    \"policy-module\" => {\"Delegating\" => {\n                        \"code\" => \"Delegating\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => undefined\n                    }}\n                }},\n                \"identity-trust\" => undefined,\n                \"jsse\" => undefined,\n                \"mapping\" => undefined\n            },\n            \"jboss-ejb-policy\" => {\n                \"cache-type\" => \"default\",\n                \"acl\" => undefined,\n                \"audit\" => undefined,\n                \"authentication\" => undefined,\n                \"authorization\" => {\"classic\" => {\n                    \"policy-modules\" => [{\n                        \"code\" => \"Delegating\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => undefined\n                    }],\n                    \"policy-module\" => {\"Delegating\" => {\n                        \"code\" => \"Delegating\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => undefined\n                    }}\n                }},\n                \"identity-trust\" => undefined,\n                \"jsse\" => undefined,\n                \"mapping\" => undefined\n            },\n            \"db-auth-default\" => {\n                \"cache-type\" => \"default\",\n                \"acl\" => undefined,\n                \"audit\" => undefined,\n                \"authentication\" => {\"classic\" => {\n                    \"login-modules\" => [{\n                        \"code\" => \"Database\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => {\n                            \"dsJndiName\" => \"java:jboss/datasources/default-db\",\n                            \"hashStorePassword\" => \"false\",\n                            \"hashUserPassword\" => \"false\",\n                            \"principalsQuery\" => \"select 'password' from users u where u.login = ?\",\n                            \"rolesQuery\" => \"select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?\"\n                        }\n                    }],\n                    \"login-module\" => {\"db-auth-default\" => {\n                        \"code\" => \"Database\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => {\n                            \"dsJndiName\" => \"java:jboss/datasources/default-db\",\n                            \"hashStorePassword\" => \"false\",\n                            \"hashUserPassword\" => \"false\",\n                            \"principalsQuery\" => \"select 'password' from users u where u.login = ?\",\n                            \"rolesQuery\" => \"select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?\"\n                        }\n                    }}\n                }},\n                \"authorization\" => undefined,\n                \"identity-trust\" => undefined,\n                \"jsse\" => undefined,\n                \"mapping\" => undefined\n            }\n        },\n        \"vault\" => undefined\n    }\n}\n
+          eos
 
-          provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(provider))
-
-          provider.instance_variable_set(:@auth, false)
-
-          provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::CommandCompilator.new)
-
-          login_modules_command = 'subsystem=security/security-domain=testing/authentication=classic/login-module=UsersRoles' +
-          ':add(code="Database",flag=false,module-options=[("hashUserPassword"=>true),' +
-          '("principalsQuery"=>"select \'password\' from users u where u.login = ?")])'
-          compiled_login_modules_command = "/profile=full-ha/#{login_modules_command}"
-
-          cache_command = "/subsystem=security/security-domain=#{resource[:name]}:add(cache-type=default)"
-          compiled_cache_command = "/profile=full-ha/#{cache_command}"
-
-          auth_command = "/subsystem=security/security-domain=#{resource[:name]}/authentication=classic:add()"
-
-          compiled_auth_command = "/profile=full-ha/#{auth_command}"
-
-          list_result = ['subsystem=security', 'security-domain=testing', 'authentication=classic', "login-module=UsersRoles:add(code=\"Database\",flag=false,module-options=[(\"hashUserPassword\"=>true),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]
-
-          # create_parametrized_cmd
-          expect(provider).to receive(:create_parametrized_cmd).and_return(list_result)
-
-          # cache command
-          expect(provider).to receive(:compilecmd).with(cache_command).and_return(compiled_cache_command)
-
-          # auth
-          expect(provider).to receive(:compilecmd).with(auth_command).and_return(compiled_auth_command)
-
-          # login modules
-          expect(provider).to receive(:compilecmd).with(login_modules_command).and_return(compiled_login_modules_command)
-
-
-          bringUpName = 'Security Domain Cache Type'
-          bringUpName2 = 'Security Domain Authentication'
-          bringUpName3 = 'Security Domain'
-
-          expected_output = { :result => 'A mocked value indicating that everythings works just fine' }
-          expected_output2 = { :result => 'dffghbdfnmkbsdkj' }
-
-
-          expect(provider).to receive(:bringUp).with(bringUpName, compiled_cache_command).and_return(expected_output)
-
-          expect(provider).to receive(:bringUp).with(bringUpName2, compiled_auth_command).and_return(expected_output)
-
-          expect(provider).to receive(:bringUp).with(bringUpName3, compiled_login_modules_command).and_return(expected_output)
-
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security:read-resource(recursive=true)',
+            true,
+            output,
+            true)
+          provider.execution_state_wrapper = mocked_execution_state_wrapper
         end
-        subject { provider.create }
-
-        it {expect(subject).to eq('A mocked value indicating that everythings works just fine') }
-      end
-
-      describe '#destroy' do
-        before :each do
-          cmd = "/subsystem=security/security-domain=#{resource[:name]}:remove()"
-          compilecmd = "/profile=full-ha/#{cmd}"
-
-          bringDownName = 'Security Domain'
-          expected_output = { :result => 'A mocked value indicating that #destroy method runned without any problems'}
-
-          expect(provider).to receive(:compilecmd).with(cmd).and_return(compilecmd)
-          expect(provider).to receive(:bringDown).with(bringDownName, compilecmd).and_return(expected_output)
-        end
-        subject { provider.destroy }
-        it { expect(subject).to eq('A mocked value indicating that #destroy method runned without any problems') }
-      end
-    end
-
-    xcontext 'methods with implementation that run before WildFly 8 or JBoss EAP 6.4 came out' do
-      describe '#create' do
-
-        subject { provider.create }
-        let(:mocked_result) { 'A mocked result that indicate #create method executed just fine' }
-
-        before :each do
-
-          # provider.instance_variable_set(:@impl, Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(provider))
-          # provider.instance_variable_set(:@compilator, Puppet_X::Coi::Jboss::Internal::CommandCompilator.new)
-          #
-          # expect(provider).to receive(:bringUp).exactly(3).times.and_return({:result => mocked_result})
-          # expect(provider).to receive(:compilecmd).exactly(3).times
-          runner =
-          auditor = Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor.new(sample_repl, runner)
-
-          expect(provider).to receive(:provider_impl).and_return(Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(sample_repl))
-
-        end
-        it { is_expected.to eq mocked_result }
-      end
-
-      describe '#exists? when authentication is present' do
-        subject { provider.exists? }
-
-
-        before :each do
-
-          cmd = "/subsystem=security:read-resource(recursive=true)"
-          data = {
-              "outcome" => "success",
-              "result" => {
-                  "deep-copy-subject-mode" => false,
-                  "security-domain" => {
-                      "testing" => {
-                          "cache-type" => "default",
-                          "acl" => nil,
-                          "audit" => nil,
-                          "authentication" => {"classic" => {
-                            "login-modules" => [{
-                                "code" => "Database",
-                                "flag" => "optional",
-                                "module" => nil,
-                                "module-options" => {
-                                  "rolesQuery" => "select r.name, \'Roles\' from users u
-                                                  join user_roles ur on ur.user_id = u.id
-                                                  join roles r on r.id = ur.role_id
-                                                  where u.login = ?'",
-                                  "hashStorePassword" => "false",
-                                  "principalsQuery" => "select \'password\' from users u where u.login = ?",
-                                  "hashUserPassword" => "false",
-                                  "dsJndiName" => "java:jboss/datasources/datasources_auth"
-                                }
-                            }],
-                          }},
-                          "authorization" => nil,
-                          "identity-trust" => nil,
-                          "jsse" => nil,
-                          "mapping" => nil
-                      },
-                  },
-                  "vault" => nil
-              }
-          }
-          compiledcmd = "/profile=full-ha/subsystem=security:read-resource(recursive=true)"
-
-
-          expected_res = {
-            :cmd    => compiledcmd,
-            :result => res_result,
-            :lines  => data
-          }
-        end
-
-        let(:res_result) { true }
-        it { is_expected.to eq(true) }
-      end
-
-      context 'result of exists? is false' do
 
         subject { provider.exists? }
-
-        before :each do
-          compiledcmd = "/profile=full-ha/subsystem=security:read-resource(recursive=true)"
-
-          data = {
-              "outcome" => "failed",
-              "result" => {}
-          }
-
-          expected_res = {
-            :cmd    => compiledcmd,
-            :result => res_result,
-            :lines  => data
-          }
-
-          expect(provider).to receive(:compilecmd).with('/subsystem=security:read-resource(recursive=true)').and_return(compiledcmd)
-          expect(provider).to receive(:executeWithoutRetry).with(compiledcmd).and_return(expected_res)
-        end
-
-        let(:res_result) { false }
-        it { is_expected.to eq(false) }
+        it { expect(subject).to eq(true) }
       end
     end
 
-    context 'new tests with mocked object' do
-      before(:each) do
-        mocked_shell_executor = Testing::Mock::MockedShellExecutor.new
-        #provider.execution_state_wrapper=mocked_shell_executor
-      end
-
-      context '#create' do
-        before(:each) do
-          expect(provider).to receive(:provider_impl).and_return(Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(resource))
-        end
-        subject { provider.create }
-        it {expect(subject).to eq({}) }
-      end
+    context 'after 6.4' do
     end
   end
 end
