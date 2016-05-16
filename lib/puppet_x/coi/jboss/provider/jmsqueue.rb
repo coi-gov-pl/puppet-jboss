@@ -43,7 +43,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
     bringDown "JMS Queue", cmd
   end
 
-  # Method to check if ther is jms-queue. Methods calls read-resource to validate if jms-queue is present.
+  # Method to check if there is jms-queue. Methods calls read-resource to validate if jms-queue is present.
   def exists?
     $data = nil
     cmd = compilecmd "/subsystem=messaging/hornetq-server=default/jms-queue=#{@resource[:name]}:read-resource()"

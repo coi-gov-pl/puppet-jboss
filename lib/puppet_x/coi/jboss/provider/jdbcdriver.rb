@@ -10,11 +10,14 @@ module Puppet_X::Coi::Jboss::Provider::Jdbcdriver
     bringUp 'JDBC-Driver', cmd
   end
 
+  # Method to remove jdbc-driver from Jboss instance.
   def destroy
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:remove"
     bringDown 'JDBC-Driver', cmd
   end
 
+  # Method to check if there is jdbc-driver.
+  # Method calls recursive read-resource to validate if jdbc-driver is present.
   def exists?
     @data = {}
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:read-resource(recursive=true)"
@@ -28,6 +31,11 @@ module Puppet_X::Coi::Jboss::Provider::Jdbcdriver
     return true
   end
 
+  # Methods set attributes for datasources to jdbc-driver
+  #
+  # @param {String} name a key of representing name.
+  # @param {Object} value a value of attribute
+  # @return a new name and value @data hash
   def setattrib name, value
     Puppet.debug(name + ' setting to ' + value)
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
