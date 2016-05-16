@@ -112,7 +112,7 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
                      0,
                      'module-options']
 
-    nil_checker = get_nillable_from_hash_recursive(actual_data, path_in_state)
+    nil_checker = get_nillable_from_hash_iterative(actual_data, path_in_state)
 
     Puppet.debug("Value of nil checker: #{nil_checker}")
 
@@ -168,17 +168,17 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
     tmp_data
   end
 
-  # Recursive method that check if there is nil value in given hash under keys that are given
+  # Iterative method that check if there is nil value in given hash under keys that are given
   # as parameters
   # @param {Hash} hash hash that will be checked
   # @param {Array} keys keys that will be used to check if their value is null
-  # @return {nil|Boolean} result will be nil if there is nill value under key in given hash
+  # @return {nil|String} result will be nil if there is nill value under key in given hash
   # or true if there is no nill value
-  def get_nillable_from_hash_recursive(hash, keys)
-    return true if keys.empty?
-    first_key = keys[0]
-    return nil if hash[first_key].nil?
-    keys.delete first_key
-    get_nillable_from_hash_recursive(hash[first_key], keys)
+  def get_nillable_from_hash_iterative(hash, keys)
+    data = hash
+    keys.each do |key|
+      return nil if data[key].nil?
+      data = data[key]
+    end
   end
 end

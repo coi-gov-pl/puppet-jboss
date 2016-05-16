@@ -1,7 +1,7 @@
 include jboss
 
 jboss::securitydomain { 'db-auth-default':
-  ensure        => 'absent',
+  ensure        => 'present',
   code          => 'asdasd',
   codeflag      => 'required',
   moduleoptions => {
