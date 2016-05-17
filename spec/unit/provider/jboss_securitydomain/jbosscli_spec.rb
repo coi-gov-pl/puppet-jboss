@@ -23,13 +23,15 @@ context 'mocking default values for SecurityDomain' do
     end
     let(:sample_repl) do
       {
-        :name          => 'testing',
+        :name          => 'db-auth-default',
         :code          => 'Database',
         :codeflag      => false,
         :moduleoptions => {
-          'principalsQuery'   => 'select \'password\' from users u where u.login = ?',
-          'hashUserPassword'  => true
-        }
+          'dsJndiName' => ':jboss/datasources/default-db',
+          'hashStorePassword' => 'false',
+          'hashUserPassword' => 'true',
+          'principalsQuery' => "select 'password' from users u where u.login = ?",
+          'rolesQuery' => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?" }
       }
     end
 
@@ -51,10 +53,90 @@ context 'mocking default values for SecurityDomain' do
     let(:mocked_execution_state_wrapper) { Testing::Mock::ExecutionStateWrapper.new }
 
     context 'before 6.4' do
-      describe 'exists?' do
+      before :each do
+      end
+      describe 'exists? when everything is set' do
         before :each do
           output = <<-eos
-          \n    \"outcome\" => \"success\",\n    \"result\" => {\n        \"deep-copy-subject-mode\" => false,\n        \"security-domain\" => {\n            \"other\" => {\n                \"cache-type\" => \"default\",\n                \"acl\" => undefined,\n                \"audit\" => undefined,\n                \"authentication\" => {\"classic\" => {\n                    \"login-modules\" => [\n                        {\n                            \"code\" => \"Remoting\",\n                            \"flag\" => \"optional\",\n                            \"module\" => undefined,\n                            \"module-options\" => {\"password-stacking\" => \"useFirstPass\"}\n                        },\n                        {\n                            \"code\" => \"RealmDirect\",\n                            \"flag\" => \"required\",\n                            \"module\" => undefined,\n                            \"module-options\" => {\"password-stacking\" => \"useFirstPass\"}\n                        }\n                    ],\n                    \"login-module\" => {\n                        \"Remoting\" => {\n                            \"code\" => \"Remoting\",\n                            \"flag\" => \"optional\",\n                            \"module\" => undefined,\n                            \"module-options\" => {\"password-stacking\" => \"useFirstPass\"}\n                        },\n                        \"RealmDirect\" => {\n                            \"code\" => \"RealmDirect\",\n                            \"flag\" => \"required\",\n                            \"module\" => undefined,\n                            \"module-options\" => {\"password-stacking\" => \"useFirstPass\"}\n                        }\n                    }\n                }},\n                \"authorization\" => undefined,\n                \"identity-trust\" => undefined,\n                \"jsse\" => undefined,\n                \"mapping\" => undefined\n            },\n            \"jboss-web-policy\" => {\n                \"cache-type\" => \"default\",\n                \"acl\" => undefined,\n                \"audit\" => undefined,\n                \"authentication\" => undefined,\n                \"authorization\" => {\"classic\" => {\n                    \"policy-modules\" => [{\n                        \"code\" => \"Delegating\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => undefined\n                    }],\n                    \"policy-module\" => {\"Delegating\" => {\n                        \"code\" => \"Delegating\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => undefined\n                    }}\n                }},\n                \"identity-trust\" => undefined,\n                \"jsse\" => undefined,\n                \"mapping\" => undefined\n            },\n            \"jboss-ejb-policy\" => {\n                \"cache-type\" => \"default\",\n                \"acl\" => undefined,\n                \"audit\" => undefined,\n                \"authentication\" => undefined,\n                \"authorization\" => {\"classic\" => {\n                    \"policy-modules\" => [{\n                        \"code\" => \"Delegating\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => undefined\n                    }],\n                    \"policy-module\" => {\"Delegating\" => {\n                        \"code\" => \"Delegating\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => undefined\n                    }}\n                }},\n                \"identity-trust\" => undefined,\n                \"jsse\" => undefined,\n                \"mapping\" => undefined\n            },\n            \"db-auth-default\" => {\n                \"cache-type\" => \"default\",\n                \"acl\" => undefined,\n                \"audit\" => undefined,\n                \"authentication\" => {\"classic\" => {\n                    \"login-modules\" => [{\n                        \"code\" => \"Database\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => {\n                            \"dsJndiName\" => \"java:jboss/datasources/default-db\",\n                            \"hashStorePassword\" => \"false\",\n                            \"hashUserPassword\" => \"false\",\n                            \"principalsQuery\" => \"select 'password' from users u where u.login = ?\",\n                            \"rolesQuery\" => \"select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?\"\n                        }\n                    }],\n                    \"login-module\" => {\"db-auth-default\" => {\n                        \"code\" => \"Database\",\n                        \"flag\" => \"required\",\n                        \"module\" => undefined,\n                        \"module-options\" => {\n                            \"dsJndiName\" => \"java:jboss/datasources/default-db\",\n                            \"hashStorePassword\" => \"false\",\n                            \"hashUserPassword\" => \"false\",\n                            \"principalsQuery\" => \"select 'password' from users u where u.login = ?\",\n                            \"rolesQuery\" => \"select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?\"\n                        }\n                    }}\n                }},\n                \"authorization\" => undefined,\n                \"identity-trust\" => undefined,\n                \"jsse\" => undefined,\n                \"mapping\" => undefined\n            }\n        },\n        \"vault\" => undefined\n    }\n}\n
+          {
+    "outcome" => "success",
+    "result" => {
+        "deep-copy-subject-mode" => false,
+        "security-domain" => {
+            "db-auth-default" => {
+                "cache-type" => "default",
+                "acl" => undefined,
+                "audit" => undefined,
+                "authentication" => {"classic" => {
+                    "login-modules" => [{
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => {
+                            "dsJndiName" => ":jboss/datasources/default-db",
+                            "hashStorePassword" => "false",
+                            "hashUserPassword" => "true",
+                            "principalsQuery" => "select 'password' from users u where u.login = ?",
+                            "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?"
+                        }
+                    }],
+                    "login-module" => {"db-auth-default" => {
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => {
+                            "dsJndiName" => ":jboss/datasources/default-db",
+                            "hashStorePassword" => "false",
+                            "hashUserPassword" => "true",
+                            "principalsQuery" => "select 'password' from users u where u.login = ?",
+                            "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?"
+                        }
+                    }}
+                }},
+                "authorization" => undefined,
+                "identity-trust" => undefined,
+                "jsse" => undefined,
+                "mapping" => undefined
+            }
+        },
+        "vault" => undefined
+    }
+  }
+          eos
+
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security:read-resource(recursive=true)',
+            true,
+            output,
+            true)
+          provider.execution_state_wrapper = mocked_execution_state_wrapper
+        end
+        subject { provider.exists? }
+        it { expect(subject).to eq(true) }
+      end
+
+      context 'exists? with securitydomain not present in system' do
+        before :each do
+          output = <<-eos
+          {
+    "outcome" => "success",
+    "result" => {
+        "deep-copy-subject-mode" => false,
+        "other" => {
+            "testing" => {
+                "cache-type" => "default",
+                "acl" => undefined,
+                "audit" => undefined,
+                "authentication" => undefined,
+                "authorization" => undefined,
+                "identity-trust" => undefined,
+                "jsse" => undefined,
+                "mapping" => undefined
+            }
+        },
+        "vault" => undefined
+    }
+  }
           eos
 
           mocked_execution_state_wrapper.register_command(
@@ -66,9 +148,63 @@ context 'mocking default values for SecurityDomain' do
         end
 
         subject { provider.exists? }
-        it { expect(subject).to eq(true) }
+        it { expect(subject).to eq(false) }
       end
-    end
+
+      context 'exists? with login-modules not present in system' do
+        before :each do
+          output = <<-eos
+          {
+    "outcome" => "success",
+    "result" => {
+        "deep-copy-subject-mode" => false,
+        "security-domain" => {
+            "db-auth-default" => {
+                "cache-type" => "default",
+                "acl" => undefined,
+                "audit" => undefined,
+                "authentication" => {"classic" => {
+                    "login-modules" => [{
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => undefined,
+                    }],
+                    "login-module" => {"db-auth-default" => {
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => {
+                            "dsJndiName" => ":jboss/datasources/default-db",
+                            "hashStorePassword" => "false",
+                            "hashUserPassword" => "true",
+                            "principalsQuery" => "select 'password' from users u where u.login = ?",
+                            "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?"
+                        }
+                    }}
+                }},
+                "authorization" => undefined,
+                "identity-trust" => undefined,
+                "jsse" => undefined,
+                "mapping" => undefined
+            }
+        },
+        "vault" => undefined
+    }
+  }
+          eos
+
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security:read-resource(recursive=true)',
+            true,
+            output,
+            true)
+          provider.execution_state_wrapper = mocked_execution_state_wrapper
+        end
+
+        subject { provider.exists? }
+        it { expect(subject).to eq(false) }
+      end
 
     context 'after 6.4' do
     end

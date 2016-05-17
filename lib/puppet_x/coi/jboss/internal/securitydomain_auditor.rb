@@ -19,12 +19,12 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   # @return {Boolean} returns true if security-domain exists in any state
   def exists?
     raw_result = read_resource_recursive
+
     unless raw_result[:result]
       Puppet.debug 'Security Domain does NOT exist'
       return false
     end
     actual_data = evaluate_data(raw_result)
-
     result = resolve_state(actual_data, @resource)
     result
   end
@@ -115,7 +115,6 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
     nil_checker = get_nillable_from_hash_iterative(actual_data, path_in_state)
 
     Puppet.debug("Value of nil checker: #{nil_checker}")
-
     return false if nil_checker.nil?
 
     state_login_modules = array_keys_to_hash_value(actual_data, path_in_state)
@@ -160,7 +159,7 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   # @param {Hash} data hash that holds desired information
   # @param {Array} keys array of keys in correct order that will be used to exctract value
   # @return {Object} tmp_data value of last key in keys parameter
-  def array_keys_to_hash_value(data,keys)
+  def array_keys_to_hash_value(data, keys)
     tmp_data = data
     keys.each do |key|
       tmp_data = tmp_data[key]
