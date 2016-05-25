@@ -4,6 +4,8 @@ require_relative '../configuration'
 module Puppet_X::Coi::Jboss::Provider::Datasource
   include Puppet_X::Coi::Jboss::Constants
   include Puppet_X::Coi::Jboss::BuildinsUtils
+
+  # Method that creates datasource in JBoss instance
   def create
     cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ]
     jta_opt(cmd)
@@ -27,13 +29,13 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     setenabled true
   end
 
+  # Method that remove datasource from JBoss instance
   def destroy
     cmd = "#{create_delete_cmd} remove --name=#{@resource[:name]}"
     bringDown 'Datasource', cmd
   end
 
-
-
+  # Method that control whether given data source should be enabled or not
   def setenabled setting
     Puppet.debug "setenabled #{setting.inspect}"
     cmd = compilecmd "#{datasource_path}:read-attribute(name=enabled)"

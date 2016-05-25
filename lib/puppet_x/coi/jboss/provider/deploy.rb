@@ -1,13 +1,17 @@
 # A class for JBoss deploy
 module Puppet_X::Coi::Jboss::Provider::Deploy
+
+  # Method that creates deploy Java artifacts to JBoss server
   def create
     deploy
   end
 
+  # Method that remove deploy from JBoss instance
   def destroy
     undeploy
   end
 
+  # Method that force redeploy of already deployed archive
   def redeploy_on_refresh
     Puppet.debug('Refresh event from deploy')
     undeploy if @resource[:redeploy_on_refresh]
@@ -26,6 +30,7 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
     end
   end
 
+  # Method that checks actual server group to deploy archive
   def servergroups
     if not @resource[:runasdomain]
       return @resource[:servergroups]
@@ -80,6 +85,7 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
       end
   end
 
+  # Method to deploy Java artifacts to JBoss server
   def deploy
     cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}#{runtime_name_param_with_space_or_empty_string}"
     if @resource[:runasdomain]
@@ -97,6 +103,7 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
     bringUp 'Deployment', cmd
   end
 
+  # Method to undeploy Java artifacts from JBoss server
   def undeploy
     cmd = "undeploy #{@resource[:name]}"
     if @resource[:runasdomain]
@@ -111,6 +118,7 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
     bringDown 'Deployment', cmd
   end
 
+  # Method calls read-resource to validate if deployment resource is present
   def name_exists?
     res = executeWithoutRetry "/deployment=#{@resource[:name]}:read-resource()"
     if res[:outcome] == 'failed'
