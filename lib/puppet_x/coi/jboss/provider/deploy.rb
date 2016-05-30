@@ -30,7 +30,7 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
     end
   end
 
-  # Method that checks actual server group to deploy archive
+  # Method that checks actual server group to deploy the archive
   def servergroups
     if not @resource[:runasdomain]
       return @resource[:servergroups]

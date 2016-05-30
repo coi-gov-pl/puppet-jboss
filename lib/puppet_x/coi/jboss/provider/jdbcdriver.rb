@@ -47,40 +47,53 @@ module Puppet_X::Coi::Jboss::Provider::Jdbcdriver
     @data[name] = value
   end
 
+  # Standard getter for driver Java class name
   def classname
     @data['driver-class-name']
   end
 
+  # Method set attribute for classname value
+  # @param {Object} value a value of classname
   def classname= value
     setattrib 'driver-class-name', value
   end
 
+  # Standard getter for driver module name
   def modulename
     @data['driver-module-name']
   end
 
+  # Method set attribute for modulename value
+  # @param {Object} value a value of modulename
   def modulename= value
     setattrib 'driver-module-name', value
   end
 
+  # Standard getter for datasource Java class name
   def datasourceclassname
     @data['driver-datasource-class-name']
   end
 
+  # Method set attribute for datasourceclassname value
+  # @param {Object} value a value of datasourceclassname
   def datasourceclassname= value
     setattrib 'driver-datasource-class-name', value
   end
 
+  # Standard getter for XA datasource Java class name
   def xadatasourceclassname
     @data['driver-xa-datasource-class-name']
   end
 
+  # Method set attribute for xadatasourceclassname value
+  # @param {Object} value a value of xadatasourceclassname
   def xadatasourceclassname= value
     setattrib 'driver-xa-datasource-class-name', value
   end
 
   private
 
+  # Method get attributes map
   def get_attribs_map
     name = @resource[:name]
     modulename = @resource[:modulename]
