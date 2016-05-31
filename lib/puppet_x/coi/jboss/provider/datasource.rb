@@ -60,8 +60,8 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
       @resource[:name] = @property_hash[:name]
     end
     if @resource[:controller].nil?
--     @resource[:controller] = controller
--   end
+      @resource[:controller] = controller
+    end
 -   if @resource[:runasdomain].nil?
       @resource[:runasdomain] = runasdomain
     end
