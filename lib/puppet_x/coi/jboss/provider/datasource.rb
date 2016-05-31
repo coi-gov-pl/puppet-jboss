@@ -59,7 +59,10 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     if @resource[:name].nil?
       @resource[:name] = @property_hash[:name]
     end
-    if @resource[:controller].nilzabbix sent two messagesl?
+    if @resource[:controller].nil?
+-     @resource[:controller] = controller
+-   end
+-   if @resource[:runasdomain].nil?
       @resource[:runasdomain] = runasdomain
     end
     if @resource[:profile].nil?
