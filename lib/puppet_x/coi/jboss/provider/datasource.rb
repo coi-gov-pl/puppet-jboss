@@ -62,7 +62,7 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     if @resource[:controller].nil?
       @resource[:controller] = controller
     end
--   if @resource[:runasdomain].nil?
+    if @resource[:runasdomain].nil?
       @resource[:runasdomain] = runasdomain
     end
     if @resource[:profile].nil?
