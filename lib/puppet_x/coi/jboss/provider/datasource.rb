@@ -128,11 +128,13 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
   def profile
     getproperty :profile, default_profile
   end
-  
+
+  # Standard getter for runasdomain
   def runasdomain
     getproperty :runasdomain
   end
 
+  # Standard getter for jndiname under wich the datasource wrapper will be bound
   def jndiname
     getattrib 'jndi-name'
   end
