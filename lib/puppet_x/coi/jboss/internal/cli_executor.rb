@@ -33,7 +33,6 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     end
     executed
   end
-
   # Method that executes command and returns outut
   # @param {String} cmd command that will be executed
   # @param {Boolean} runasdomain if command will be executen in comain instance
@@ -44,29 +43,28 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     ret = run_command(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     unless ret[:result]
       return {
-        result: false,
-        data: ret[:lines]
+        :result => false,
+        :data => ret[:lines]
       }
     end
 
-    undefined = nil
     # JBoss expression and Long value handling
     ret[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
     ret[:lines].gsub!(/=> (\d+)L/, '=> \1')
 
     begin
+      undefined = nil
       evalines = eval(ret[:lines])
-      Puppet.debug(evalines.inspect)
       return {
-        result: evalines['outcome'] == 'success',
-        data: (evalines['outcome'] == 'success' ? evalines['result'] : evalines['failure-description'])
+        :result => evalines['outcome'] == 'success',
+        :data => (evalines['outcome'] == 'success' ? evalines['result'] : evalines['failure-description'])
       }
 
     rescue Exception => e
       Puppet.err e
       return {
-        result: false,
-        data: ret[:lines]
+        :result => false,
+        :data => ret[:lines]
       }
     end
   end
@@ -78,9 +76,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     undefined = nil
     # JBoss expression and Long value handling
     output[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
-    Puppet.debug("output: #{output}")
     output[:lines].gsub!(/=> (\d+)L/, '=> \1')
-    Puppet.debug("output: #{output}")
     output
   end
 
@@ -105,7 +101,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
   # @param {Integer} retry_count number of retries after command failure-description
   # @param {Integer} retry_timeout time after command is timeouted
   # @return {Hash} hash with result of command executed, output and command
-  def run_command(jbosscmd, _runasdomain, ctrlcfg, retry_count, retry_timeout)
+  def run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     file = Tempfile.new 'jbosscli'
     path = file.path
     file.close
@@ -144,9 +140,9 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     # deletes the temp file
     File.unlink path
     {
-      cmd: jbosscmd,
-      result: result,
-      lines: lines
+      :cmd => jbosscmd,
+      :result => result,
+      :lines => lines
     }
   end
 
@@ -154,9 +150,9 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
 
   def wrap_execution(cmd, resource)
     conf = {
-      controller: resource[:controller],
-      ctrluser: resource[:ctrluser],
-      ctrlpasswd: resource[:ctrlpasswd]
+      :controller => resource[:controller],
+      :ctrluser => resource[:ctrluser],
+      :ctrlpasswd => resource[:ctrlpasswd]
     }
 
     run_command(cmd, resource[:runasdomain], conf, 0, 0)

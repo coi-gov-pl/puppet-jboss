@@ -14,7 +14,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def create
     commands = fetch_commands
     Puppet.debug("Commands: #{commands}")
-
+    
     commands.each do |message, command|
       bringUp(message, command)
     end

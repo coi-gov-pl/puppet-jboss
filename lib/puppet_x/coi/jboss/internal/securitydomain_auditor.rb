@@ -15,6 +15,10 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
     @destroyer = destroyer
   end
 
+  def state
+    @state
+  end
+
   # Method that checks if securitydomain exists
   # @return {Boolean} returns true if security-domain exists in any state
   def exists?
@@ -24,54 +28,49 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
       Puppet.debug 'Security Domain does NOT exist'
       return false
     end
-    actual_data = evaluate_data(raw_result)
-    result = resolve_state(actual_data, @resource)
+    Puppet.debug("Raw result: #{raw_result.inspect}")
+    result = resolve_state(raw_result[:data], @resource)
     result
   end
 
   # Internal mathod that saves current state of every subpath of securitydomain
   def fetch_securtydomain_state
-    data = @state
+    data = state
     if data['security-domain'][(@resource[:name]).to_s]
-      state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
+      fetched_state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
       if data['security-domain'][(@resource[:name]).to_s]['cache-type'].nil?
         Puppet.debug('cache-type is nil')
-        state.is_cache_default = false
+        fetched_state.is_cache_default = false
+      else
+        fetched_state.is_cache_default = true
       end
       auth = data['security-domain'][(@resource[:name]).to_s]['authentication']
       if auth.nil?
         Puppet.debug('Authentication is nil')
-        state.is_authentication = false
+        fetched_state.is_authentication = false
+      else
+        fetched_state.is_authentication = true
       end
-      if !auth.nil? && data['security-domain'][(@resource[:name]).to_s]['authentication']['classic']['login-modules'][0]['module-options'].nil?
+      if !auth.nil? && (data['security-domain'][(@resource[:name]).to_s]['authentication']['classic']['login-modules'].nil? || data['security-domain'][(@resource[:name]).to_s]['authentication']['classic']['login-modules'][0]['module-options'].nil?)
         Puppet.debug('Login modules are nil')
-        state.is_login_modules = false
+        fetched_state.is_login_modules = false
       end
     else
-      state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
+      fetched_state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
     end
-    state
+
+    fetched_state
   end
 
   private
 
-  def evaluate_data(result)
-    undefined = nil
-    lines = preparelines(result[:data].to_s)
-
-    evaluated_data = eval(lines)
-
-    Puppet.debug("Evaluated data for security-domain #{@resource[:name]}: #{evaluated_data.inspect}")
-    evaluated_data
-  end
-
   # Method prepares lines outputed by JBoss CLI tool, changing output to be readable in Ruby
-  # @param {string[]} lines
-  def preparelines(lines)
-    lines
-      .gsub(/\((\"[^\"]+\") => (\"[^\"]+\")\)/, '\1 => \2')
-      .gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
-  end
+ # @param {string[]} lines
+ def preparelines(lines)
+   lines.
+     gsub(/\((\"[^\"]+\") => (\"[^\"]+\")\)/, '\1 => \2').
+     gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
+ end
 
   # Method that handles execution of command
   def read_resource_recursive
@@ -79,13 +78,11 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
                               @resource[:profile],
                               '/subsystem=security:read-resource(recursive=true)'
                              )
-
     conf = {
-      controller: @resource[:controller],
-      ctrluser: @resource[:ctrluser],
-      ctrlpasswd: @resource[:ctrlpasswd]
+      :controller  => @resource[:controller],
+      :ctrluser    => @resource[:ctrluser],
+      :ctrlpasswd  => @resource[:ctrlpasswd]
     }
-
     @cli_executor.executeAndGet(cmd, @resource[:runasdomain], conf, 0, 0)
   end
 
