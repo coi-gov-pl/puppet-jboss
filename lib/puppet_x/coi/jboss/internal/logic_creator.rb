@@ -11,6 +11,7 @@ class Puppet_X::Coi::Jboss::Internal::LogicCreator
   end
 
   # Method that will return list of commands based on current state
+  # @param {Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider| Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider}
   # @return [Hash] commands Hash with commands that will be executed, key is message that will
   # be displayed and value is command
   def decide

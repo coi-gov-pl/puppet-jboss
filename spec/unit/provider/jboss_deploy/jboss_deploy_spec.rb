@@ -30,10 +30,6 @@ context "mocking default values" do
       }
     end
 
-    let(:mocked_process_status) do
-      process_status = double('Mocked process status', :exitstatus => 0, :success? => true)
-    end
-
     let(:extended_repl) do
       {}
     end

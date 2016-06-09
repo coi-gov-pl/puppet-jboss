@@ -13,9 +13,10 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   # Depends on the version of server it will use correct path to set security domain
   def create
     commands = fetch_commands
+    correct_commands = decide_if_pre_wildfly(commands)
     Puppet.debug("Commands: #{commands}")
-    
-    commands.each do |message, command|
+
+    correct_commands.each do |message, command|
       bringUp(message, command)
     end
   end
@@ -47,7 +48,6 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   end
 
   def fetch_commands
-    Puppet.debug('Fetch commands')
     auditor = ensure_auditor
     provider = provider_impl
     logic_creator = Puppet_X::Coi::Jboss::Internal::LogicCreator.new(auditor, @resource, provider)
@@ -70,5 +70,20 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
       end
     end
     @impl
+  end
+
+  # Mathod that extract only needed commands when we are managing version below EAP 6.4.0
+  # @param {List[List]} commands commands that are prepared to be executed
+  # @return {List[List]} commands after deleting unneccesairy commands
+  def decide_if_pre_wildfly(commands)
+    if @impl.instance_of?(Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider)
+      new_commands = []
+      # 0 -> position of command to add cache-type
+      new_commands.push(commands[0])
+      # 2 -> position of command to add login-modules
+      new_commands.push(commands[2])
+      return new_commands
+    end
+    commands
   end
 end

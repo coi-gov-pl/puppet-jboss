@@ -37,6 +37,7 @@ end
 
 require_relative 'jboss/internal/executor/shell_executor'
 require_relative 'jboss/provider/abstract_jboss_cli'
+require_relative 'jboss/internal/evaluator'
 require_relative 'jboss/provider/securitydomain'
 require_relative 'jboss/internal/logic_creator'
 require_relative 'jboss/internal/execution_state_wrapper'

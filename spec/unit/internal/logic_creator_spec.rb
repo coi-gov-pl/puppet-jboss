@@ -25,7 +25,6 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
 
   describe 'pre wildfly provider' do
     let(:provider) { Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(resource) }
-
     context '#calculate_state with everything set to true' do
       before(:each) do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true, true)
