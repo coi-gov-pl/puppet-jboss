@@ -27,7 +27,7 @@ describe Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor do
         let(:cmd) { 'dir' }
         it { expect { subject }.to raise_error }
       elsif OS.linux?
-        let(:cmd) { 'ipconfig' }
+        let(:cmd) { 'test' }
         it { expect { subject }.to raise_error }
       end
     end
