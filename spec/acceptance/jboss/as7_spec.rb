@@ -4,7 +4,7 @@ describe 'jboss::as7 smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact
   let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :'jboss::as7' }
 
   it 'should add install JBoss AS 7 with no errors' do
-    apply_manifest(pp, :catch_changes  => true, :trace => true)
+    apply_manifest(pp, :expect_changes => true, :trace => true)
   end
   it 'should work idempotently' do
     apply_manifest(pp, :catch_changes  => true, :trace => true)
