@@ -4,12 +4,3 @@ AllCops:
 
 Metrics/LineLength:
   Max: 140
-
-Style/StringLiterals:
-  EnforcedStyle: single_quotes
-
-Style/HashSyntax:
-  EnforcedStyle: hash_rockets
-
-Style/Documentation:
-  Enabled: false

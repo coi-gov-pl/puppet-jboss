@@ -54,36 +54,41 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # TODO: Uncomment for defered provider confinment after droping support for Puppet < 3.0
   # commands :jbosscli => Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.jbossclibin
 
-  def is_runasdomain
+  def runasdomain?
     @resource[:runasdomain]
   end
 
-  # Public methods
-  def bringUp(typename, args)
-    executeWithFail(typename, args, 'to create')
+  # Method that delegates execution of command
+  # @param {String} typename is a name of resource
+  # @param {String} cmd jboss command that will be executed
+  def bringUp(typename, cmd)
+    executeWithFail(typename, cmd, 'to create')
   end
 
-  def bringDown(typename, args)
-     executeWithFail(typename, args, 'to remove')
+  # Method that delegates execution of command
+  # @param {String} typename is a name of resource
+  # @param {String} cmd jboss command that will be executed
+  def bringDown(typename, cmd)
+     executeWithFail(typename, cmd, 'to remove')
   end
 
-  # INTERNAL METHODS
-  # TODO make protected or private
+  # Method that configures every variable that is needed to execute the provided command
+  # @param {String} jbosscmd jboss command that will be executed
   def execute(jbosscmd)
     retry_count = @resource[:retry]
     retry_timeout = @resource[:retry_timeout]
     ctrlcfg = controllerConfig @resource
-    @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, retry_count, retry_timeout)
+    @cli_executor.run_command(jbosscmd, runasdomain?, ctrlcfg, retry_count, retry_timeout)
   end
 
   def executeWithoutRetry(jbosscmd)
     ctrlcfg = controllerConfig @resource
-    @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
+    @cli_executor.run_command(jbosscmd, runasdomain?, ctrlcfg, 0, 0)
   end
 
   def executeAndGet(jbosscmd)
     ctrlcfg = controllerConfig @resource
-    executeAndGetResult(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
+    executeAndGetResult(jbosscmd, runasdomain?, ctrlcfg, 0, 0)
   end
 
   def executeWithFail(typename, cmd, way)
@@ -144,9 +149,9 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     else
       cmd = "#{path}:write-attribute(name=\"#{name.to_s}\", value=#{value})"
     end
-    if is_runasdomain
-      cmd = "/profile=#{@resource[:profile]}#{cmd}"
-    end
+
+    cmd = "/profile=#{@resource[:profile]}#{cmd}" if runasdomain?
+
     res = executeAndGet(cmd)
     Puppet.debug("Setting attribute response: #{res.inspect}")
     if not res[:result]

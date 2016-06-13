@@ -5,13 +5,13 @@ describe 'securitydomain smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(
   let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :securitydomain }
 
   it 'should install base server with no errors' do
-    apply_manifest(baseserver, :catch_failures => true, :debug => true, :trace => true)
+    apply_manifest(baseserver, :catch_failures => true, :trace => true)
   end
   it 'should add securitydomain with no errors' do
-    apply_manifest(pp, :catch_failures => true, :debug => true, :trace => true)
+    apply_manifest(pp, :catch_failures => true, :trace => true)
   end
   it 'should work idempotently' do
-    apply_manifest(pp, :catch_changes  => true, :debug => true, :trace => true)
+    apply_manifest(pp, :catch_changes  => true, :trace => true)
   end
   describe service('wildfly') do
     it { is_expected.to be_running }

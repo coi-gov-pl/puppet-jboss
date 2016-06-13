@@ -2,7 +2,7 @@
 module Puppet_X::Coi::Jboss::Provider::Jmsqueue
   include Puppet_X::Coi::Jboss::BuildinsUtils
   def create
-    if is_runasdomain
+    if runasdomain?
       profile = "--profile=#{@resource[:profile]}"
     else
       profile = ''
@@ -31,7 +31,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
   end
 
   def destroy
-    if is_runasdomain
+    if runasdomain?
       profile = "--profile=#{@resource[:profile]}"
     else
       profile = ''

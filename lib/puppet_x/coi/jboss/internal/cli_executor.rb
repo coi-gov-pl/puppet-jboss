@@ -90,7 +90,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     ENV['JBOSS_HOME'] = home
 
     jboss_home = "#{home}/bin/jboss-cli.sh"
-    
+
     cmd = "#{jboss_home} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
     cmd += " --user=#{ctrlcfg[:ctrluser]}" unless ctrlcfg[:ctrluser].nil?
     cmd
