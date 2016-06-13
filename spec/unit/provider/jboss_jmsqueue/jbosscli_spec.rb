@@ -71,7 +71,7 @@ context "mocking default values" do
         execCMD2 = '/extension=org.jboss.as.messaging:add()'
 
         # line 4
-        expect(provider).to receive(:is_runasdomain).and_return(true)
+        expect(provider).to receive(:runasdomain?).and_return(true)
 
         # line 17
         expect(provider).to receive(:execute).with(execCMD).and_return(execCMD_expected_output)
@@ -116,7 +116,7 @@ context "mocking default values" do
 
     describe '#destroy' do
       before :each do
-        expect(provider).to receive(:is_runasdomain).and_return(true)
+        expect(provider).to receive(:runasdomain?).and_return(true)
         cmd = "jms-queue --profile=#{resource[:profile]} remove --queue-address=#{resource[:name]}"
         bringDownName = 'JMS Queue'
         expect(provider).to receive(:bringDown).with(bringDownName, cmd).and_return(true)
