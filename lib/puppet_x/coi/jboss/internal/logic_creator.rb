@@ -4,10 +4,11 @@ class Puppet_X::Coi::Jboss::Internal::LogicCreator
   # securitydomain configuration
   # @param [Puppet_X::Coi::Jboss::Provider::SecurityDomain::Provider] provider that indicates if
   # we need to use diffrent paths to setup securitydomain
-  def initialize(auditor, resource, provider)
+  def initialize(auditor, resource, provider, compilator)
     @auditor = auditor
     @resource = resource
     @provider = provider
+    @compilator = compilator
   end
 
   # Method that will return list of commands based on current state
@@ -16,20 +17,29 @@ class Puppet_X::Coi::Jboss::Internal::LogicCreator
   # be displayed and value is command
   def decide
     state = @auditor.fetch_securtydomain_state
-    Puppet.debug("State: #{state.cache_default?}")
-    Puppet.debug("State: #{state.is_authentication}")
-    Puppet.debug("State: #{state.is_login_modules}")
     commands = []
     unless state.cache_default?
-      commands.push(['Security Domain Cache Type', "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"])
+      command = prepare_profile("/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)")
+      commands.push(['Security Domain Cache Type', command])
     end
     unless state.is_authentication
-      commands.push(['Security Domain Authentication', "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add()"])
+      command = prepare_profile("/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add()")
+      commands.push(['Security Domain Authentication', command])
     end
     unless state.is_login_modules
       cmd = @provider.make_command_templates
-      commands.push(['Security Domain Login Modules', cmd])
+      command = prepare_profile(cmd)
+      commands.push(['Security Domain Login Modules', command])
     end
     commands
+  end
+
+  private
+
+  # Methods that compiles jboss command
+  # @param {String} command jboss command that will be executed
+  # @return {String} comamnd with profile if needed
+  def prepare_profile(command)
+    @compilator.compile(@resource[:runasdomain], @resource[:profile], command)
   end
 end
