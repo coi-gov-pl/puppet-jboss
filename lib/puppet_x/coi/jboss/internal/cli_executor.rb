@@ -42,7 +42,6 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
   # @param {Number} retry_timeout timeout after failed command
   def executeAndGet(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     ret = run_command(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
-    Puppet.debug("Ret: #{ret.inspect}")
     unless ret[:result]
       return {
         :result => false,
@@ -57,7 +56,6 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     begin
       evaluated_output = @evaluator.evaluate(ret[:lines])
       undefined = nil
-      Puppet.debug("Output to be evaluated: #{ret[:lines].inspect}")
       evalines = eval(evaluated_output)
       return {
         :result => evalines['outcome'] == 'success',
@@ -85,7 +83,6 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
   end
 
   def prepare_command(path, ctrlcfg)
-    Puppet.debug('Start of prepare command')
     home = Puppet_X::Coi::Jboss::Configuration.config_value :home
     ENV['JBOSS_HOME'] = home
 

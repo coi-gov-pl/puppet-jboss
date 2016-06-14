@@ -50,7 +50,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def fetch_commands
     auditor = ensure_auditor
     provider = provider_impl
-    logic_creator = Puppet_X::Coi::Jboss::Internal::LogicCreator.new(auditor, @resource, provider)
+    logic_creator = Puppet_X::Coi::Jboss::Internal::LogicCreator.new(auditor, @resource, provider, @compilator)
     logic_creator.decide
   end
 

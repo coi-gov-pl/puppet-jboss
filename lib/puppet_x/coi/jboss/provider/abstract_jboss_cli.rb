@@ -54,13 +54,13 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # TODO: Uncomment for defered provider confinment after droping support for Puppet < 3.0
   # commands :jbosscli => Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.jbossclibin
 
-  def runasdomain?
+  def is_runasdomain
     @resource[:runasdomain]
   end
 
   # Method that delegates execution of command
   # @param {String} typename is a name of resource
-  # @param {String} cmd jboss command that will be executed
+  # @param {String} cmd command that will be executed
   def bringUp(typename, cmd)
     executeWithFail(typename, cmd, 'to create')
   end
@@ -78,17 +78,17 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     retry_count = @resource[:retry]
     retry_timeout = @resource[:retry_timeout]
     ctrlcfg = controllerConfig @resource
-    @cli_executor.run_command(jbosscmd, runasdomain?, ctrlcfg, retry_count, retry_timeout)
+    @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, retry_count, retry_timeout)
   end
 
   def executeWithoutRetry(jbosscmd)
     ctrlcfg = controllerConfig @resource
-    @cli_executor.run_command(jbosscmd, runasdomain?, ctrlcfg, 0, 0)
+    @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
   end
 
   def executeAndGet(jbosscmd)
     ctrlcfg = controllerConfig @resource
-    executeAndGetResult(jbosscmd, runasdomain?, ctrlcfg, 0, 0)
+    executeAndGetResult(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
   end
 
   def executeWithFail(typename, cmd, way)
@@ -103,7 +103,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     executed
   end
 
-  def compilecmd cmd
+  def compilecmd(cmd)
     @compilator.compile(@resource[:runasdomain], @resource[:profile], cmd)
   end
 
@@ -149,9 +149,9 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     else
       cmd = "#{path}:write-attribute(name=\"#{name.to_s}\", value=#{value})"
     end
-
-    cmd = "/profile=#{@resource[:profile]}#{cmd}" if runasdomain?
-
+    if is_runasdomain
+      cmd = "/profile=#{@resource[:profile]}#{cmd}"
+    end
     res = executeAndGet(cmd)
     Puppet.debug("Setting attribute response: #{res.inspect}")
     if not res[:result]
