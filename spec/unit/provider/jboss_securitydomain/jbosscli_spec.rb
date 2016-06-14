@@ -23,6 +23,9 @@ context 'mocking default values for SecurityDomain' do
     end
     let(:sample_repl) do
       {
+        :controller    => '127.0.0.1:9999',
+        :ctrluser      => 'root',
+        :ctrlpasswd    => 'password',
         :name          => 'db-auth-default',
         :code          => 'Database',
         :codeflag      => false,
@@ -31,7 +34,9 @@ context 'mocking default values for SecurityDomain' do
           'hashStorePassword' => 'false',
           'hashUserPassword' => 'true',
           'principalsQuery' => "select 'password' from users u where u.login = ?",
-          'rolesQuery' => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?" }
+          'rolesQuery' => "select r.name, 'Roles' from users"
+        },
+        :profile       => 'full'
       }
     end
 
@@ -53,8 +58,6 @@ context 'mocking default values for SecurityDomain' do
     let(:mocked_execution_state_wrapper) { Testing::Mock::ExecutionStateWrapper.new }
 
     context 'before 6.4' do
-      before :each do
-      end
       describe 'exists? when everything is set' do
         before :each do
           output = <<-eos
@@ -77,7 +80,7 @@ context 'mocking default values for SecurityDomain' do
                             "hashStorePassword" => "false",
                             "hashUserPassword" => "true",
                             "principalsQuery" => "select 'password' from users u where u.login = ?",
-                            "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?"
+                            "rolesQuery" => "select r.name, 'Roles' from users"
                         }
                     }],
                     "login-module" => {"db-auth-default" => {
@@ -89,7 +92,7 @@ context 'mocking default values for SecurityDomain' do
                             "hashStorePassword" => "false",
                             "hashUserPassword" => "true",
                             "principalsQuery" => "select 'password' from users u where u.login = ?",
-                            "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?"
+                            "rolesQuery" => "select r.name, 'Roles' from users"
                         }
                     }}
                 }},
@@ -179,7 +182,7 @@ context 'mocking default values for SecurityDomain' do
                             "hashStorePassword" => "false",
                             "hashUserPassword" => "true",
                             "principalsQuery" => "select 'password' from users u where u.login = ?",
-                            "rolesQuery" => "select r.name, 'Roles' from users u join user_roles ur on ur.user_id = u.id join roles r on r.id = ur.role_id where u.login = ?"
+                            "rolesQuery" => "select r.name, 'Roles' from users"
                         }
                     }}
                 }},
@@ -206,7 +209,258 @@ context 'mocking default values for SecurityDomain' do
         it { expect(subject).to eq(false) }
       end
 
-    context 'after 6.4' do
+      context 'destroy method' do
+        before :each do
+          output = <<-eos
+          {
+    "outcome" => "success",
+    "result" => {
+        "deep-copy-subject-mode" => false,
+        "security-domain" => {
+            "db-auth-default" => {
+                "cache-type" => "default",
+                "acl" => undefined,
+                "audit" => undefined,
+                "authentication" => {"classic" => {
+                    "login-modules" => [{
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => undefined,
+                    }],
+                    "login-module" => {"db-auth-default" => {
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => {
+                            "dsJndiName" => ":jboss/datasources/default-db",
+                            "hashStorePassword" => "false",
+                            "hashUserPassword" => "true",
+                            "principalsQuery" => "select 'password' from users u where u.login = ?",
+                            "rolesQuery" => "select r.name, 'Roles' from users"
+                        }
+                    }}
+                }},
+                "authorization" => undefined,
+                "identity-trust" => undefined,
+                "jsse" => undefined,
+                "mapping" => undefined
+            }
+        },
+        "vault" => undefined
+    }
+  }
+          eos
+
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic:remove()',
+            true,
+            output,
+            true)
+          provider.execution_state_wrapper = mocked_execution_state_wrapper
+        end
+
+        subject { provider.destroy }
+        it { expect(subject).to eq(true) }
+      end
+    end
+
+    context 'create methods' do
+      context 'create? when there is no login modules' do
+        before :each do
+          output = <<-eos
+          {
+    "outcome" => "success",
+    "result" => {
+        "deep-copy-subject-mode" => false,
+        "security-domain" => {
+            "db-auth-default" => {
+                "cache-type" => "default",
+                "acl" => undefined,
+                "audit" => undefined,
+                "authentication" => {"classic" => {
+                    "login-modules" => [{
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => undefined,
+                    }],
+                    "login-module" => {"db-auth-default" => {
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => {
+                            "dsJndiName" => ":jboss/datasources/default-db",
+                            "hashStorePassword" => "false",
+                            "hashUserPassword" => "true",
+                            "principalsQuery" => "select 'password' from users u where u.login = ?",
+                            "rolesQuery" => "select r.name, 'Roles' from users"
+                        }
+                    }}
+                }},
+                "authorization" => undefined,
+                "identity-trust" => undefined,
+                "jsse" => undefined,
+                "mapping" => undefined
+            }
+        },
+        "vault" => undefined
+    }
+  }
+  eos
+
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security:read-resource(recursive=true)',
+            true,
+            output,
+            true)
+          provider.execution_state_wrapper = mocked_execution_state_wrapper
+          provider.exists?
+
+          mocked_execution_state_wrapper.register_command(
+            "/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic/login-module=db-auth-default:add(code=\"Database\",flag=false,module-options=[(\"dsJndiName\"=>\":jboss/datasources/default-db\"),(\"hashStorePassword\"=>\"false\"),(\"hashUserPassword\"=>\"true\"),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"),(\"rolesQuery\"=>\"select r.name, 'Roles' from users\")])",
+            true,
+            'asd',
+            true
+          )
+        end
+
+        subject { provider.create }
+        it { expect(subject).to eq([['Security Domain Login Modules', "/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic/login-module=db-auth-default:add(code=\"Database\",flag=false,module-options=[(\"dsJndiName\"=>\":jboss/datasources/default-db\"),(\"hashStorePassword\"=>\"false\"),(\"hashUserPassword\"=>\"true\"),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"),(\"rolesQuery\"=>\"select r.name, 'Roles' from users\")])"]]) }
+      end
+
+      context 'create? when there is no authentication' do
+        before :each do
+          output = <<-eos
+          {
+    "outcome" => "success",
+    "result" => {
+        "deep-copy-subject-mode" => false,
+        "security-domain" => {
+            "db-auth-default" => {
+                "cache-type" => "default",
+                "acl" => undefined,
+                "audit" => undefined,
+                "authentication" => undefined,
+                "authorization" => undefined,
+                "identity-trust" => undefined,
+                "jsse" => undefined,
+                "mapping" => undefined
+            }
+        },
+        "vault" => undefined
+    }
+  }
+  eos
+
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security:read-resource(recursive=true)',
+            true,
+            output,
+            true)
+          provider.execution_state_wrapper = mocked_execution_state_wrapper
+          provider.exists?
+
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic:add()',
+            true,
+            'asd',
+            true
+          )
+
+          mocked_execution_state_wrapper.register_command(
+            "/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic/login-module=db-auth-default:add(code=\"Database\",flag=false,module-options=[(\"dsJndiName\"=>\":jboss/datasources/default-db\"),(\"hashStorePassword\"=>\"false\"),(\"hashUserPassword\"=>\"true\"),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"),(\"rolesQuery\"=>\"select r.name, 'Roles' from users\")])",
+            true,
+            'asd',
+            true
+          )
+        end
+
+        subject { provider.create }
+        it { expect(subject).to eq([["Security Domain Authentication", "/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic:add()"], ["Security Domain Login Modules", "/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic/login-module=db-auth-default:add(code=\"Database\",flag=false,module-options=[(\"dsJndiName\"=>\":jboss/datasources/default-db\"),(\"hashStorePassword\"=>\"false\"),(\"hashUserPassword\"=>\"true\"),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"),(\"rolesQuery\"=>\"select r.name, 'Roles' from users\")])"]]) }
+      end
+      context 'create? when there is no securitydomain' do
+        before :each do
+          output = <<-eos
+          {
+    "outcome" => "success",
+    "result" => {
+        "deep-copy-subject-mode" => false,
+        "security-domain" => {
+            "other" => {
+                "cache-type" => "default",
+                "acl" => undefined,
+                "audit" => undefined,
+                "authentication" => {"classic" => {
+                    "login-modules" => [{
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => undefined,
+                    }],
+                    "login-module" => {"db-auth-default" => {
+                        "code" => "asdasd",
+                        "flag" => "required",
+                        "module" => undefined,
+                        "module-options" => {
+                            "dsJndiName" => ":jboss/datasources/default-db",
+                            "hashStorePassword" => "false",
+                            "hashUserPassword" => "true",
+                            "principalsQuery" => "select 'password' from users u where u.login = ?",
+                            "rolesQuery" => "select r.name, 'Roles' from users "
+                        }
+                    }}
+                }},
+                "authorization" => undefined,
+                "identity-trust" => undefined,
+                "jsse" => undefined,
+                "mapping" => undefined
+            }
+        },
+        "vault" => undefined
+    }
+  }
+  eos
+
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security:read-resource(recursive=true)',
+            true,
+            output,
+            true)
+          provider.execution_state_wrapper = mocked_execution_state_wrapper
+          provider.exists?
+
+
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security/security-domain=db-auth-default:add(cache-type=default)',
+            true,
+            'asd',
+            true
+          )
+
+          mocked_execution_state_wrapper.register_command(
+            '/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic:add()',
+            true,
+            'asd',
+            true
+          )
+
+          mocked_execution_state_wrapper.register_command(
+            "/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic/login-module=db-auth-default:add(code=\"Database\",flag=false,module-options=[(\"dsJndiName\"=>\":jboss/datasources/default-db\"),(\"hashStorePassword\"=>\"false\"),(\"hashUserPassword\"=>\"true\"),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"),(\"rolesQuery\"=>\"select r.name, 'Roles' from users\")])",
+            true,
+            'asd',
+            true
+          )
+
+        end
+
+        subject { provider.create }
+        it { expect(subject).to eq([["Security Domain Cache Type", "/profile=full/subsystem=security/security-domain=db-auth-default:add(cache-type=default)"], ["Security Domain Authentication", "/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic:add()"], ["Security Domain Login Modules", "/profile=full/subsystem=security/security-domain=db-auth-default/authentication=classic/login-module=db-auth-default:add(code=\"Database\",flag=false,module-options=[(\"dsJndiName\"=>\":jboss/datasources/default-db\"),(\"hashStorePassword\"=>\"false\"),(\"hashUserPassword\"=>\"true\"),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"),(\"rolesQuery\"=>\"select r.name, 'Roles' from users\")])"]]) }
+      end
+
+    end
+
+      context 'after 6.4' do
+      end
     end
   end
-end

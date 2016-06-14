@@ -1,6 +1,5 @@
 # System executor responsible of executing provided commands
 class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
-
   def initialize(shell_executor)
     @shell_executor = shell_executor
   end
@@ -39,15 +38,14 @@ class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
   # @return {String} output of executed command
   # The location of withenv changed from Puppet 2.x to 3.x
   def exec_command(cmd, environment)
-
     withenv = Puppet::Util.method(:withenv) if Puppet::Util.respond_to?(:withenv)
     withenv = Puppet::Util::Execution.method(:withenv) if Puppet::Util::Execution.respond_to?(:withenv)
-    fail("Cannot set custom environment #{environment}") if environment && !withenv
+    raise("Cannot set custom environment #{environment}") if environment && !withenv
 
     withenv.call environment do
-          @output = @shell_executor.run_command(cmd)
-          @result = @shell_executor.child_status
-        end
+      @output = @shell_executor.run_command(cmd)
+      @result = @shell_executor.child_status
+    end
     @output
   end
 
@@ -56,5 +54,4 @@ class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
   def exececution_state(jbosscmd, code, success, lines)
     Puppet_X::Coi::Jboss::Internal::State::ExecutionState.new(code, success, lines, jbosscmd)
   end
-
 end

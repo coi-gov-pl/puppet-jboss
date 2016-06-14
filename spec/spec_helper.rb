@@ -50,6 +50,7 @@ end
 
 require 'puppet_x/coi/jboss'
 require 'testing/mock/mocked_execution_state_wrapper'
+require 'testing/mock/mocked_shell_executor'
 
 require 'rspec-puppet'
 

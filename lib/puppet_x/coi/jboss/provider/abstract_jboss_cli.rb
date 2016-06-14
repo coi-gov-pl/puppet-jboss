@@ -58,17 +58,22 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     @resource[:runasdomain]
   end
 
-  # Public methods
-  def bringUp(typename, args)
-    executeWithFail(typename, args, 'to create')
+  # Method that delegates execution of command
+  # @param {String} typename is a name of resource
+  # @param {String} cmd command that will be executed
+  def bringUp(typename, cmd)
+    executeWithFail(typename, cmd, 'to create')
   end
 
-  def bringDown(typename, args)
-     executeWithFail(typename, args, 'to remove')
+  # Method that delegates execution of command
+  # @param {String} typename is a name of resource
+  # @param {String} cmd jboss command that will be executed
+  def bringDown(typename, cmd)
+     executeWithFail(typename, cmd, 'to remove')
   end
 
-  # INTERNAL METHODS
-  # TODO make protected or private
+  # Method that configures every variable that is needed to execute the provided command
+  # @param {String} jbosscmd jboss command that will be executed
   def execute(jbosscmd)
     retry_count = @resource[:retry]
     retry_timeout = @resource[:retry_timeout]
@@ -98,7 +103,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     executed
   end
 
-  def compilecmd cmd
+  def compilecmd(cmd)
     @compilator.compile(@resource[:runasdomain], @resource[:profile], cmd)
   end
 
