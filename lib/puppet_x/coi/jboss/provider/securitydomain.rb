@@ -13,10 +13,9 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   # Depends on the version of server it will use correct path to set security domain
   def create
     commands = fetch_commands
-    correct_commands = decide_if_pre_wildfly(commands)
     Puppet.debug("Commands: #{commands}")
 
-    correct_commands.each do |message, command|
+    commands.each do |message, command|
       bringUp(message, command)
     end
   end
@@ -54,7 +53,7 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     logic_creator.decide
   end
 
-  # Method that provides information about which command template should be user_id
+  # Method that provides information about which command template should be used
   # @return {Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider|
   # Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider}
   # provider with correct command template
@@ -64,26 +63,11 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
 
     if @impl.nil?
       if Puppet_X::Coi::Jboss::Configuration::is_pre_wildfly?
-        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(@resource)
+        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(@resource, @compilator)
       else
-        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(@resource)
+        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(@resource, @compilator)
       end
     end
     @impl
-  end
-
-  # Mathod that extract only needed commands when we are managing version below EAP 6.4.0
-  # @param {List[List]} commands commands that are prepared to be executed
-  # @return {List[List]} commands after deleting unneccesairy commands
-  def decide_if_pre_wildfly(commands)
-    if @impl.instance_of?(Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider)
-      new_commands = []
-      # 0 -> position of command to add cache-type
-      new_commands.push(commands[0])
-      # 2 -> position of command to add login-modules
-      new_commands.push(commands[2])
-      return new_commands
-    end
-    commands
   end
 end

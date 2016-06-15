@@ -8,13 +8,14 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
       :codeflag      => true,
       :moduleoptions =>  {
         'principalsQuery'  => "select 'password' from users u where u.login = ?",
-        'hashUserPassword' => false,
+        'hashUserPassword' => false
       }
     }
   end
 
-    let(:provider) { double('mock', :resource => resource) }
-  let(:instance) { described_class.new(provider) }
+  let(:provider) { double('mock', :resource => resource) }
+  let(:compilator) { Puppet_X::Coi::Jboss::Internal::CommandCompilator.new }
+  let(:instance) { described_class.new(provider, compilator) }
 
   describe '#create_parametrized_cmd with post wildfly' do
 

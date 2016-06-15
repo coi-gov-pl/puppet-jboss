@@ -14,7 +14,8 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider do
   end
 
   let(:provider) { double('mock', :resource => resource) }
-  let(:instance) { described_class.new(provider) }
+  let(:compilator) { Puppet_X::Coi::Jboss::Internal::CommandCompilator.new }
+  let(:instance) { described_class.new(provider, compilator) }
 
   describe '#create_parametrized_cmd with pre wildfly' do
     subject { instance.make_command_templates }

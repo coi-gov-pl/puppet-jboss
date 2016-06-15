@@ -9,7 +9,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
       :codeflag      => true,
       :moduleoptions =>  {
         'principalsQuery'  => "select 'password' from users u where u.login = ?",
-        'hashUserPassword' => false,
+        'hashUserPassword' => false
       }
     }
   end
@@ -24,7 +24,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
   subject { instance.decide }
 
   describe 'pre wildfly provider' do
-    let(:provider) { Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(resource) }
+    let(:provider) { Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(resource, compilator) }
     context '#calculate_state with everything set to true' do
       before(:each) do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true, true)
@@ -38,7 +38,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
-      it { expect(subject).to eq([["Security Domain Cache Type", "/subsystem=security/security-domain=testing:add(cache-type=default)"], ["Security Domain Authentication", "/subsystem=security/security-domain=testing/authentication=classic:add()"], ["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]]) }
+      it { expect(subject).to eq([["Security Domain Cache Type", "/subsystem=security/security-domain=testing:add(cache-type=default)"], ["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]]) }
     end
 
     context '#calculate_state with cache type and authentication set' do
@@ -54,13 +54,13 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
-      it { expect(subject).to eq([["Security Domain Authentication", "/subsystem=security/security-domain=testing/authentication=classic:add()"], ["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]]) }
+      it { expect(subject).to eq([["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]]) }
     end
 
   end
 
   describe 'post wildfly provider' do
-    let(:provider) { Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(resource) }
+    let(:provider) { Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(resource, compilator) }
 
     context '#calculate state with everything set' do
       before(:each) do

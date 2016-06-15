@@ -3,8 +3,9 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider <
   Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
   # This is a default constructor
   # @param {Puppet_X::Coi::Jboss::Provider::SecurityDomain} provider a security domain provider
-  def initialize(provider)
-    @provider = provider
+  def initialize(resource, compilator)
+    @resource = resource
+    @compilator = compilator
   end
 
   protected
@@ -19,5 +20,15 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider <
 
   def module_option_template
     '%s=>%s'
+  end
+
+  def decide(resource, state)
+    binding.pry
+    unless (state.is_authentication && state.is_login_modules)
+      commands = []
+      cmd = make_command_templates
+      command = prepare_profile(cmd, resource)
+      commands.push(['Security Domain Login Modules', command])
+    end
   end
 end
