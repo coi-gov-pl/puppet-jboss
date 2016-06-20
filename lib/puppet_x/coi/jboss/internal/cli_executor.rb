@@ -4,7 +4,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
   # @param {Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper} execution_state_wrapper handles command execution
   def initialize(execution_state_wrapper)
     @execution_state_wrapper = execution_state_wrapper
-    @evaluator = Puppet_X::Coi::Jboss::Internal::Evaluator.new
+    @sanitizer = Puppet_X::Coi::Jboss::Internal::Sanitizer.new
   end
 
   attr_writer :execution_state_wrapper
@@ -49,12 +49,8 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
       }
     end
 
-    # JBoss expression and Long value handling
-    ret[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
-    ret[:lines].gsub!(/=> (\d+)L/, '=> \1')
-
     begin
-      evaluated_output = @evaluator.evaluate(ret[:lines])
+      evaluated_output = @sanitizer.sanitize(ret[:lines])
       undefined = nil
       evalines = eval(evaluated_output)
       return {
@@ -69,17 +65,6 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
         :data => ret[:lines]
       }
     end
-  end
-
-  # Method that prepares output from command execution so it can be later evaluated to Ruby hash
-  # @param {String} output output from command execution
-  # @return {Hash} hash with prepared data
-  def evaluate_output(output)
-    undefined = nil
-    # JBoss expression and Long value handling
-    output[:lines].gsub!(/expression \"(.+)\",/, '\'\1\',')
-    output[:lines].gsub!(/=> (\d+)L/, '=> \1')
-    output
   end
 
   def prepare_command(path, ctrlcfg)

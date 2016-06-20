@@ -26,12 +26,12 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider <
   def decide(resource, state)
     commands = []
     unless state.is_authentication
-      command = prepare_profile("/subsystem=security/security-domain=#{resource[:name]}/authentication=classic:add()", resource)
+      command = compile_command("/subsystem=security/security-domain=#{resource[:name]}/authentication=classic:add()", resource)
       commands.push(['Security Domain Authentication', command])
     end
     unless state.is_login_modules
-      cmd = make_command_templates
-      command = prepare_profile(cmd, resource)
+      main_cmd = build_main_command
+      command = compile_command(main_cmd, resource)
       commands.push(['Security Domain Login Modules', command])
     end
     commands

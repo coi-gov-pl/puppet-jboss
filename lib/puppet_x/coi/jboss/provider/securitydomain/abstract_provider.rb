@@ -10,7 +10,7 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
 
   # Creates a parametrized command to be executed by resource
   # @return {String} a complete command without profile
-  def make_command_templates
+  def build_main_command
     res = @resource
     correct_cmd = correct_command_template_begining(res)
     options = []
@@ -38,8 +38,8 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
   # Methods that compiles jboss command
   # @param {String} command jboss command that will be executed
   # @return {String} comamnd with profile if needed
-  def prepare_profile(command, resource)
-    @compilator.compile(resource[:runasdomain], resource[:profile], command)
+  def compile_command(base_command, resource)
+    @compilator.compile(resource[:runasdomain], resource[:profile], base_command)
   end
 
   protected

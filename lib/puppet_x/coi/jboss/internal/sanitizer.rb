@@ -1,12 +1,15 @@
 # Class that evaluates given content, jboss console output, and replaces every tuple entry with curly braces
-class Puppet_X::Coi::Jboss::Internal::Evaluator
+class Puppet_X::Coi::Jboss::Internal::Sanitizer
   # It`s some kind of magic: https://regex101.com/r/uE3vD6/1
   REGEXP = Regexp.new('[\n\s]*=>[\n\s]*\[[\n\s]*(\([^\]]+\))[\n\s]*\]', Regexp::MULTILINE)
   # Method that evaluate given String
   # @param {String} content String that will be evaluated
   # @return {Hash} output hash that is a result of eval on given parameter
-  def evaluate(content)
-    sanitize(content)
+  def sanitize(content)
+    # JBoss expression and Long value handling
+    content.gsub!(/expression \"(.+)\",/, '\'\1\',')
+    content.gsub!(/=> (\d+)L/, '=> \1')
+    evaluate(content)
   end
 
   private
@@ -14,7 +17,7 @@ class Puppet_X::Coi::Jboss::Internal::Evaluator
   # Private method that replaces brackets so it can be evaluated to Ruby style hash
   # @param {String} content String that has braces to be replaced
   # @param {String} output String without brackets
-  def sanitize(content)
+  def evaluate(content)
     double_quoteless = replace_double_quotas(content)
 
     output = double_quoteless.scan(REGEXP)

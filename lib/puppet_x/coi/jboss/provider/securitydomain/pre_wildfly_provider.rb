@@ -23,12 +23,15 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider <
   end
 
   def decide(resource, state)
-    binding.pry
-    unless (state.is_authentication && state.is_login_modules)
+    unless everything_is_set?(state)
       commands = []
-      cmd = make_command_templates
-      command = prepare_profile(cmd, resource)
+      main_cmd = build_main_command
+      command = compile_command(main_cmd, resource)
       commands.push(['Security Domain Login Modules', command])
     end
+  end
+
+  def everything_is_set?(state)
+    state.is_authentication && state.is_login_modules
   end
 end
