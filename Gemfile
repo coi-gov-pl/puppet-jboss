@@ -46,8 +46,8 @@ group :development do
   if RUBY_VERSION >= '1.9.0'
     gem 'travis',                       :require => false
     gem 'puppet-blacksmith',            :require => false
-    gem 'guard-rake',                   :require => false
     if RUBY_VERSION >= '2.0.0'
+      gem 'guard-rake',                 :require => false
       gem 'pry-byebug',                 :require => false
     else
       gem 'pry-debugger',               :require => false
