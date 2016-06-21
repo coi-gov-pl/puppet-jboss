@@ -14,6 +14,7 @@ group :test do
   gem 'json',                           :require => false
   gem 'os',                             :require => false
   gem 'specinfra', '2.59.0',            :require => false
+  gem 'net-ssh', '2.9.4',               :require => false
 
   if RUBY_VERSION >= '1.9.0'
     gem 'beaker',                       :require => false
