@@ -48,8 +48,10 @@ group :development do
   if RUBY_VERSION >= '1.9.0'
     gem 'travis',                       :require => false
     gem 'puppet-blacksmith',            :require => false
+    gem 'guard-rake',                   :require => false
+    # PINNED: Listen is dependency of Guard, and >= 3.1.x requires Ruby 2.2
+    gem 'listen', '~> 3.0.8',           :require => false
     if RUBY_VERSION >= '2.0.0'
-      gem 'guard-rake',                 :require => false
       gem 'pry-byebug',                 :require => false
     else
       gem 'pry-debugger',               :require => false
