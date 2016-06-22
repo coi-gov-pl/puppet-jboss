@@ -119,9 +119,10 @@ class jboss::internal::package (
     require => Exec['jboss::unzip-downloaded'],
   }
 
+  $extract_testfile = 'bin/jboss-cli.sh'
   exec { 'jboss::test-extraction':
-    command => "echo '${jboss::home}/bin/init.d not found!' 1>&2 && exit 1",
-    unless  => "test -d ${jboss::home}/bin/init.d",
+    command => "echo '${jboss::home}/${extract_testfile} not found!' 1>&2 && exit 1",
+    unless  => "test -f ${jboss::home}/${extract_testfile}",
     require => Exec['jboss::move-unzipped'],
   }
 
@@ -172,7 +173,7 @@ class jboss::internal::package (
 
   exec { 'jboss::package::check-for-java':
     command => 'echo "Please provide Java executable to system!" 1>&2 && exit 1',
-    unless  => '[ `which java` ] && java -version 2>&1 | grep -q \'java version\'',
+    unless  => '[ `which java` ] && java -version 2>&1 | grep -qE \'(jdk|jre|java) version\'',
     require => Anchor['jboss::installed'],
     before  => Anchor['jboss::package::end'],
   }

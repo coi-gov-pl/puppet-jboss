@@ -2,43 +2,44 @@
 class jboss::internal::compatibility {
   include jboss
 
-  case $jboss::product {
-    'wildfly': {
-      if versioncmp($jboss::version, '8.0.0') < 0 or versioncmp($jboss::version, '10.0.0') >= 0 {
-        fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: Wildfly 8.x and 9.x series")
-      }
-    }
-    'jboss-eap': {
-      if versioncmp($jboss::version, '6.0.0') < 0 or versioncmp($jboss::version, '8.0.0') >= 0 {
-        fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: JBoss EAP 6.x and 7.x series")
-      }
-    }
-    'jboss-as': {
-      if versioncmp($jboss::version, '7.0.0') < 0 or versioncmp($jboss::version, '8.0.0') >= 0 {
-        fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: JBoss AS 7.x series")
-      }
-    }
-    default: {
-      fail("Unsupported product ${jboss::product}. Supporting only: 'jboss-eap', 'jboss-as' and 'wildfly'")
-    }
+  if $::osfamily != 'RedHat' and $::osfamily != 'Debian' {
+    fail("Unsupported OS family: ${::osfamily}. Supporting only RHEL and Debian systems. Consult README file.")
   }
 
   case $jboss::product {
     'wildfly': {
-      $controller_port = '9990'
-      $__osfamily_down = downcase($::osfamily)
-      $initd_file      = "${jboss::home}/bin/init.d/wildfly-init-${__osfamily_down}.sh"
-      $product_short   = 'wildfly'
+      include jboss::internal::compatibility::wildfly
+
+      $controller_port  = $jboss::internal::compatibility::wildfly::controller_port
+      $product_short    = $jboss::internal::compatibility::wildfly::product_short
+      $initd_file       = $jboss::internal::compatibility::wildfly::initd_file
+      $systemd_file     = $jboss::internal::compatibility::wildfly::systemd_file
+      $systemd_launcher = $jboss::internal::compatibility::wildfly::systemd_launcher
+      $initsystem       = $jboss::internal::compatibility::wildfly::initsystem
     }
-    'jboss-eap', 'jboss-as': {
-      $controller_port = '9999'
-      $product_short   = 'jboss'
-      $initd_file      = $jboss::runasdomain ? {
-        true    => "${jboss::home}/bin/init.d/jboss-as-domain.sh",
-        default => "${jboss::home}/bin/init.d/jboss-as-standalone.sh",
-      }
+    'jboss-eap': {
+      include jboss::internal::compatibility::eap
+
+      $controller_port  = $jboss::internal::compatibility::eap::controller_port
+      $product_short    = $jboss::internal::compatibility::eap::product_short
+      $initd_file       = $jboss::internal::compatibility::eap::initd_file
+      $systemd_file     = $jboss::internal::compatibility::eap::systemd_file
+      $systemd_launcher = $jboss::internal::compatibility::eap::systemd_launcher
+      $initsystem       = $jboss::internal::compatibility::eap::initsystem
     }
-    default: {}
+    'jboss-as': {
+      include jboss::internal::compatibility::as
+      
+      $controller_port  = $jboss::internal::compatibility::as::controller_port
+      $product_short    = $jboss::internal::compatibility::as::product_short
+      $initd_file       = $jboss::internal::compatibility::as::initd_file
+      $systemd_file     = $jboss::internal::compatibility::as::systemd_file
+      $systemd_launcher = $jboss::internal::compatibility::as::systemd_launcher
+      $initsystem       = $jboss::internal::compatibility::as::initsystem
+    }
+    default: {
+      fail("Unsupported product ${jboss::product}. Supporting only: 'jboss-eap', 'jboss-as' and 'wildfly'")
+    }
   }
 
 }
