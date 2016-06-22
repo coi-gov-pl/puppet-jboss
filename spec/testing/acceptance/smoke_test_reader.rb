@@ -8,7 +8,7 @@ module Testing::Acceptance::SmokeTestReader
     private
 
     def smokedir
-      rootdir.join('tests')
+      rootdir.join('examples')
     end
 
     def rootdir
