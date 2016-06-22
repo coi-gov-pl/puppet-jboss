@@ -8,7 +8,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     end
     ret = bringUp 'Configuration node', "#{compiledpath}:add(#{compileprops})"
     invalidate
-    return ret
+    ret
   end
 
   def destroy
@@ -21,7 +21,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     end
     ret = bringDown 'Configuration node', "#{compiledpath}:remove()"
     invalidate
-    return ret
+    ret
   end
 
   def exists?
@@ -38,6 +38,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
       end
     end
 
+    Puppet.debug 'Excute and get in config node'
     res = executeAndGet "#{compiledpath}:read-resource(include-runtime=true, include-defaults=false)"
     if res[:result]
       @data = {}

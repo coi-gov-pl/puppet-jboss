@@ -9,7 +9,9 @@ class Testing::RspecPuppet::SharedFacts
     :concat_basedir            => DEFAULT_CONCAT_DIR,
     :operatingsystemrelease    => '6.7',
     :operatingsystemmajrelease => '6',
-    :puppetversion             => Puppet.version.to_s
+    :puppetversion             => Puppet.version.to_s,
+    :path                      => '/root',
+    :jboss_virtual             => false
   }
   DEFAULT_UBUNTU_RELEASE = '14.04'
   DEFAULT_UBUNTU_FACTS = {
@@ -24,7 +26,9 @@ class Testing::RspecPuppet::SharedFacts
     :lsbdistid                 => 'Ubuntu',
     :lsbdistrelease            => DEFAULT_UBUNTU_RELEASE,
     :lsbmajdistrelease         => DEFAULT_UBUNTU_RELEASE,
-    :puppetversion             => Puppet.version.to_s
+    :puppetversion             => Puppet.version.to_s,
+    :path                      => '/root',
+    :jboss_virtual             => false
   }
   class << self
     def ubuntu_facts(override = {})
