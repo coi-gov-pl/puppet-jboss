@@ -32,35 +32,27 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
 
   # Method that checks actual server group to deploy the archive
   def servergroups
-    if not @resource[:runasdomain]
-      return @resource[:servergroups]
-    end
+    return @resource[:servergroups] unless @resource[:runasdomain]
     servergroups = @resource[:servergroups]
     res = execute("deployment-info --name=#{@resource[:name]}")
-    if not res[:result]
-      return []
-    end
+    return [] unless res[:result]
     groups = []
     for line in res[:lines]
-        line.strip!
-        depinf = line.split
-        if(depinf[1] == "enabled" || depinf[1] == "added")
-            groups.push(depinf[0])
-        end
+      line.strip!
+      depinf = line.split
+      groups.push(depinf[0]) if depinf[1] == 'enabled' || depinf[1] == 'added'
     end
-    if servergroups.nil? or servergroups.empty? or servergroups == ['']
+    if servergroups.nil? || servergroups.empty? || servergroups == ['']
       return servergroups
     end
-    return groups
+    groups
   end
 
   def servergroups=(value)
-    if not @resource[:runasdomain]
-      return nil
-    end
-    current = servergroups()
-    Puppet.debug(current.inspect())
-    Puppet.debug(value.inspect())
+    return nil unless @resource[:runasdomain]
+    current = servergroups
+    Puppet.debug(current.inspect)
+    Puppet.debug(value.inspect)
 
     toset = value - current
     cmd = "deploy --name=#{@resource[:name]} --server-groups=#{toset.join(',')}#{runtime_name_param_with_space_or_empty_string}"
@@ -78,11 +70,11 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
   end
 
   def runtime_name_param_with_space_or_empty_string
-      if @resource[:runtime_name].nil?
-          ''
-      else
-          " #{runtime_name_param}"
-      end
+    if @resource[:runtime_name].nil?
+      ''
+    else
+      " #{runtime_name_param}"
+    end
   end
 
   # Method to deploy Java artifacts to JBoss server
@@ -90,15 +82,13 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
     cmd = "deploy #{@resource[:source]} --name=#{@resource[:name]}#{runtime_name_param_with_space_or_empty_string}"
     if @resource[:runasdomain]
       servergroups = @resource[:servergroups]
-      if servergroups.nil? or servergroups.empty? or servergroups == ['']
-        cmd = "#{cmd} --all-server-groups"
-      else
-        cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
-      end
+      cmd = if servergroups.nil? || servergroups.empty? || servergroups == ['']
+              "#{cmd} --all-server-groups"
+            else
+              "#{cmd} --server-groups=#{servergroups.join(',')}"
+            end
     end
-    if @resource[:redeploy_on_refresh]
-      cmd = "#{cmd} --force"
-    end
+    cmd = "#{cmd} --force" if @resource[:redeploy_on_refresh]
     isprintinglog = 100
     bringUp 'Deployment', cmd
   end
@@ -108,11 +98,11 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
     cmd = "undeploy #{@resource[:name]}"
     if @resource[:runasdomain]
       servergroups = @resource[:servergroups]
-      if servergroups.nil? or servergroups.empty? or servergroups == ['']
-        cmd = "#{cmd} --all-relevant-server-groups"
-      else
-        cmd = "#{cmd} --server-groups=#{servergroups.join(',')}"
-      end
+      cmd = if servergroups.nil? || servergroups.empty? || servergroups == ['']
+              "#{cmd} --all-relevant-server-groups"
+            else
+              "#{cmd} --server-groups=#{servergroups.join(',')}"
+            end
     end
     isprintinglog = 0
     bringDown 'Deployment', cmd
@@ -121,14 +111,12 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
   # Method calls read-resource to validate if deployment resource is present
   def name_exists?
     res = executeWithoutRetry "/deployment=#{@resource[:name]}:read-resource()"
-    if res[:outcome] == 'failed'
-        return false
-    end
+    return false if res[:outcome] == 'failed'
     unless res[:name].nil?
       Puppet.debug "Deployment found: #{res[:name]}"
       return true
     end
     Puppet.debug "No deployment matching #{@resource[:name]} found."
-    return false
+    false
   end
 end

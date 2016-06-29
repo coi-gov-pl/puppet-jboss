@@ -101,5 +101,45 @@ context "mocking default values" do
       it { expect(subject).to eq(true)}
     end
 
+    describe 'exists? when result is flse' do
+      before :each do
+        cmd = "/subsystem=datasources/jdbc-driver=#{resource[:name]}:read-resource(recursive=true)"
+        compiledcmd = "/profile=full-ha/#{cmd}"
+        expected_output = {
+          :result => false,
+        }
+
+        expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
+        expect(provider).to receive(:executeAndGet).with(compiledcmd).and_return(expected_output)
+      end
+
+      subject { provider.exists? }
+      it { expect(subject).to eq(false)}
+    end
+
+    describe 'setattrib' do
+
+      before :each do
+        cmd = "/subsystem=datasources/jdbc-driver=app-mails:write-attribute(name=super-name, value=driver-xa-datasource-class-name)"
+        compiledcmd = "/profile=full-ha/#{cmd}"
+
+        data = {
+            :asd => '1',
+        }
+
+        expected_res = {
+          :cmd    => compiledcmd,
+          :result => res_result,
+          :lines  => data
+        }
+        expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
+        expect(provider).to receive(:executeAndGet).with(compiledcmd).and_return(expected_res)
+      end
+
+      subject { provider.setattrib 'super-name', 'driver-xa-datasource-class-name' }
+        let(:res_result) { false }
+      it { expect {subject}.to raise_error(RuntimeError) }
+    end
+
 end
 end

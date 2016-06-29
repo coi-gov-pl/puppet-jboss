@@ -6,11 +6,15 @@ eval(IO.read(File.join(File.dirname(__FILE__), 'Gemfile.local')), binding) if Fi
 
 group :test do
   gem 'rake',                           :require => false unless dependencies.map {|dep| dep.name}.include?('rake')
-  gem 'rspec-puppet',                   :require => false
+  # TODO: Remove this explicitly pinned version by the time ticket gh-org/puppet-jboss#84 is closed.
+  gem 'rspec-puppet', '2.3.2',          :require => false
   gem 'puppetlabs_spec_helper',         :require => false
   gem 'puppet-lint',                    :require => false
   gem 'metadata-json-lint',             :require => false
   gem 'json',                           :require => false
+  gem 'os',                             :require => false
+  gem 'specinfra', '2.59.0',            :require => false
+  gem 'net-ssh', '2.9.4',               :require => false
 
   if RUBY_VERSION >= '1.9.0'
     gem 'beaker',                       :require => false
@@ -44,8 +48,8 @@ group :development do
   if RUBY_VERSION >= '1.9.0'
     gem 'travis',                       :require => false
     gem 'puppet-blacksmith',            :require => false
-    gem 'guard-rake',                   :require => false
     if RUBY_VERSION >= '2.0.0'
+      gem 'guard-rake',                 :require => false
       gem 'pry-byebug',                 :require => false
     else
       gem 'pry-debugger',               :require => false

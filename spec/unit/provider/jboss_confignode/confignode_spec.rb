@@ -45,7 +45,7 @@ context "mocking default values" do
 
       Puppet::Type.type(:jboss_confignode).new(raw)
     end
-
+    
     let(:provider) do
       resource.provider
     end
@@ -64,7 +64,6 @@ context "mocking default values" do
           expected_output = {
             :result => false,
           }
-
           expect(provider).to receive(:executeAndGet).with(cmd).and_return(expected_output)
       end
 

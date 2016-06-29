@@ -4,7 +4,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
 
   # Method that creates jms-queue in JBoss instance.
   def create
-    if runasdomain?
+    if is_runasdomain
       profile = "--profile=#{@resource[:profile]}"
     else
       profile = ''
@@ -34,7 +34,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
 
   # Method to remove jms-queue from Jboss instance.
   def destroy
-    if runasdomain?
+    if is_runasdomain
       profile = "--profile=#{@resource[:profile]}"
     else
       profile = ''

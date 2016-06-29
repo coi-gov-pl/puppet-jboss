@@ -45,14 +45,11 @@ context "mocking default values" do
       resource.provider
     end
 
-    before :each do
-      allow(provider.class).to receive(:suitable?).and_return(true)
-    end
-
     describe '#create with servergroups nill' do
       before :each do
         bringDownName = 'Deployment'
         cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups --force'
+
         expect(provider).to receive(:bringUp).with(bringDownName, cmd ).and_return('asd')
       end
       subject { provider.create }
