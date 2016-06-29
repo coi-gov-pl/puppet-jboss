@@ -64,7 +64,8 @@
 #     interface should be whether its network interface has a name that matches the given regular
 #     expression. Value is a regular expression against which the names of the network interfaces
 #     available on the machine can be matched to find an acceptable interface. An `undef` value
-#     means this attribute is not relevant to the IP address selection. For ex.: `^eth?$`
+#     means this attribute is not relevant to the IP ad${home}/bin/add-user.sh --silent --user '${name}'
+#     --password \"\$__PASSWD\dress selection. For ex.: `^eth?$`
 # [*point_to_point*]
 #     Attribute indicating that part of the selection criteria for choosing an IP address for this
 #     interface should be whether or not its network interface is a point-to-point interface. An
@@ -142,11 +143,13 @@ define jboss::interface (
   if ($jboss::product == 'wildfly' and versioncmp($jboss::version, '9.0.0') >= 0)
     or ($jboss::product == 'jboss-eap' and versioncmp($jboss::version, '7.0.0') >= 0) {
     $bind_variables = $basic_bind_variables
+    $warning_ipv4_before = 'Interface configuration parameter any_ipv4_address is deprecated for'
+    $warning_ipv6_before = 'Interface configuration parameter any_ipv6_address is deprecated for'
     if $any_ipv4_address {
-      warning("Interface configuration parameter any_ipv4_address is deprecated for ${jboss::product} server version ${jboss::version}. Ignored.")
+      warning("${warning_ipv4_before} ${jboss::product} server version ${jboss::version}. Ignored.")
     }
     if $any_ipv6_address {
-      warning("Interface configuration parameter any_ipv6_address is deprecated for ${jboss::product} server version ${jboss::version}. Ignored.")
+      warning("${warning_ipv6_before} ${jboss::product} server version ${jboss::version}. Ignored.")
     }
   }
   else {
