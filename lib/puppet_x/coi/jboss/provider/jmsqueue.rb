@@ -1,6 +1,8 @@
 # A module for Jmsqueue
 module Puppet_X::Coi::Jboss::Provider::Jmsqueue
   include Puppet_X::Coi::Jboss::BuildinsUtils
+
+  # Method that creates jms-queue in JBoss instance.
   def create
     if is_runasdomain
       profile = "--profile=#{@resource[:profile]}"
@@ -30,6 +32,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
     bringUp "JMS Queue", cmd
   end
 
+  # Method to remove jms-queue from Jboss instance.
   def destroy
     if is_runasdomain
       profile = "--profile=#{@resource[:profile]}"
@@ -40,7 +43,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
     bringDown "JMS Queue", cmd
   end
 
-  #
+  # Method to check if there is jms-queue. Methods calls read-resource to validate if jms-queue is present.
   def exists?
     $data = nil
     cmd = compilecmd "/subsystem=messaging/hornetq-server=default/jms-queue=#{@resource[:name]}:read-resource()"
@@ -54,6 +57,7 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
     return true
   end
 
+  # Standard getter for durable value.
   def durable
     trace 'durable'
     Puppet.debug "Durable given: #{@resource[:durable].inspect}"
@@ -61,16 +65,23 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
     ToBooleanConverter.new($data['durable']).to_bool.to_s
   end
 
+  # Standard setter for durable value.
+  #
+  # @param {Boolean} value a value of durable, can be true or false
   def durable= value
     trace 'durable= %s' % value.to_s
     setattr 'durable', ('"%s"' % ToBooleanConverter.new(value).to_bool)
   end
 
+  # Standard getter for entries value.
   def entries
     trace 'entries'
     $data['entries']
   end
 
+  # Standard setter for entries value.
+  #
+  # @param {Array} value a value of entries
   def entries= value
     trace 'entries= %s' % value.inspect
     entries = value.join '", "'
@@ -84,6 +95,9 @@ module Puppet_X::Coi::Jboss::Provider::Jmsqueue
 
   private
 
+  # Methods set attributes for messaging to default hornetq-server
+  # @param {String} name a key for representing name.
+  # @param {Object} value a value of attribute
   def setattr name, value
     setattribute_raw "/subsystem=messaging/hornetq-server=default/jms-queue=#{@resource[:name]}", name, value
   end

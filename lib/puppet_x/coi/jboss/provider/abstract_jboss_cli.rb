@@ -142,6 +142,9 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     setattribute_raw(path, name, escaped)
   end
 
+  # Low level set attribute method that sets value to property hash
+  #
+  # @return {Object} actually set value
   def setattribute_raw(path, name, value)
     Puppet.debug "#{name.inspect} setting to #{value.inspect} for path: #{path}"
     if value.nil?
