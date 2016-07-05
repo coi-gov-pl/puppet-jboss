@@ -38,6 +38,8 @@ Install the dependencies like so... (you can also pass `--path /fs/path/for/deps
 
     bundle install
 
+If you want to use Ruby 1.8 that we still support you have to pass `--gemfile Gemfile18` to download correct versions of gems that we use.
+
 ## Syntax and style
 
 The test suite will run [Puppet Lint](http://puppet-lint.com/) and
