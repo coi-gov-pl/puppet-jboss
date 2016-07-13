@@ -8,6 +8,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   DEFAULT_SHELL_EXECUTOR = Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new
 
   # Default constructor that will also initialize 3 external object, system_runner, compilator and command executor
+  # @param {Puppet::Resource} resource, standard Puppet resource that we need to call super
   def initialize(resource=nil)
     super(resource)
     @compilator = Puppet_X::Coi::Jboss::Internal::CommandCompilator.new
@@ -34,22 +35,29 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     Puppet_X::Coi::Jboss::Configuration::config_value :home
   end
 
+  # Method that returns value of log
+  # @return {String} value of configuration for console log
   def jbosslog
     Puppet_X::Coi::Jboss::Configuration::config_value :console_log
   end
 
+  # Method that returns value that teels us if we need to run jboss in domain
+  # @return {Boolean} runasdomain indicates if we want to run jboss in domain mode
   def config_runasdomain
     Puppet_X::Coi::Jboss::Configuration::config_value :runasdomain
   end
 
+  # Method that returns name of the controller that we will use when connecting to jboss instance
+  # @return {String} controller
   def config_controller
     Puppet_X::Coi::Jboss::Configuration::config_value :controller
   end
 
+  # Method that return name of the profile that we need to add at the start of jboss command
+  # @return {String} profile
   def config_profile
     Puppet_X::Coi::Jboss::Configuration::config_value :profile
   end
-
 
   # TODO: Uncomment for defered provider confinment after droping support for Puppet < 3.0
   # commands :jbosscli => Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.jbossclibin
@@ -107,6 +115,12 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     @compilator.compile(@resource[:runasdomain], @resource[:profile], cmd)
   end
 
+  # Method that delegates execution of command to cli_executor
+  # @param {String} cmd is a jboss command
+  # @param {Boolean} runasdomain if we want to run jboss in domain mode
+  # @param {Hash} ctrlcfg configuration hash
+  # @param {Integer} retry_count is a number of times we want to retry execution of command after failure
+  # @param {Integer} retry_timeout timmeout after which we assume that command failed to execute
   def executeAndGetResult(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
     @cli_executor.executeAndGet(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
   end
