@@ -25,13 +25,13 @@ class jboss::params inherits jboss::internal::params {
   $java_dist        = hiera('jboss::params::java_dist', 'jre')
 
   # User for Jboss Application Server
-  $jboss_user       = hiera('jboss::params::jboss_user', $__default_user)
+  $jboss_user       = hiera('jboss::params::jboss_user', $jboss::params::__default_user)
 
   # Group for Jboss Application Server
-  $jboss_group      = hiera('jboss::params::jboss_group', $__default_group)
+  $jboss_group      = hiera('jboss::params::jboss_group', $jboss::params::__default_group)
 
   # Target installation directory root
-  $install_dir      = hiera('jboss::params::install_dir', $__default_installdir)
+  $install_dir      = hiera('jboss::params::install_dir', $jboss::params::__default_installdir)
 
   # Runs JBoss Application Server in domain mode
   $runasdomain      = jboss_to_bool(hiera('jboss::params::runasdomain', false))
