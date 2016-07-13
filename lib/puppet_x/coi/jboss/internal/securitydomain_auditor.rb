@@ -15,9 +15,7 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
     @destroyer = destroyer
   end
 
-  def state
-    @state
-  end
+  attr_reader :state
 
   # Method that checks if securitydomain exists
   # @return {Boolean} returns true if security-domain exists in any state
@@ -65,23 +63,22 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   private
 
   # Method prepares lines outputed by JBoss CLI tool, changing output to be readable in Ruby
- # @param {string[]} lines
- def preparelines(lines)
-   lines.
-     gsub(/\((\"[^\"]+\") => (\"[^\"]+\")\)/, '\1 => \2').
-     gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
- end
+  # @param {string[]} lines
+  def preparelines(lines)
+    lines
+      .gsub(/\((\"[^\"]+\") => (\"[^\"]+\")\)/, '\1 => \2')
+      .gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
+  end
 
   # Method that handles execution of command
   def read_resource_recursive
     cmd = @compilator.compile(@resource[:runasdomain],
                               @resource[:profile],
-                              '/subsystem=security:read-resource(recursive=true)'
-                             )
+                              '/subsystem=security:read-resource(recursive=true)')
     conf = {
-      :controller  => @resource[:controller],
-      :ctrluser    => @resource[:ctrluser],
-      :ctrlpasswd  => @resource[:ctrlpasswd]
+      controller: @resource[:controller],
+      ctrluser: @resource[:ctrluser],
+      ctrlpasswd: @resource[:ctrlpasswd]
     }
     @cli_executor.executeAndGet(cmd, @resource[:runasdomain], conf, 0, 0)
   end

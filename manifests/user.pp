@@ -27,6 +27,7 @@ define jboss::user (
   require jboss::internal::package
   include jboss::internal::service
   include jboss::internal::params
+  include jboss::internal::relationship::module_user
 
   $home = $jboss::home
 
@@ -76,7 +77,10 @@ define jboss::user (
         ],
         command     => "${command_1}${command_2}",
         unless      => "/bin/egrep -e '^${name}=${mangledpasswd}' ${filepath}",
-        require     => Anchor['jboss::package::end'],
+        require     => [
+          Anchor['jboss::package::end'],
+          Anchor['jboss::internal::relationship::module_user'],
+        ],
         notify      => Service[$jboss::internal::service::servicename],
         logoutput   => true,
       }
@@ -86,7 +90,10 @@ define jboss::user (
           path    => $filepath_roles,
           line    => "${name}=${roles}",
           match   => "${name}=.*",
-          require => Exec["jboss::user::add(${realm}/${name})"],
+          require => [
+            Exec["jboss::user::add(${realm}/${name})"],
+            Anchor['jboss::internal::relationship::module_user'],
+          ],
           notify  => Service[$jboss::internal::service::servicename],
         }
       }
@@ -95,7 +102,10 @@ define jboss::user (
       exec { "jboss::user::remove(${realm}/${name})":
         command   => "/bin/sed -iE 's/^${name}=.*$//g' ${filepath}",
         onlyif    => "/bin/egrep -e '^${name}=' ${filepath}",
-        require   => Anchor['jboss::package::end'],
+        require   => [
+          Anchor['jboss::package::end'],
+          Anchor['jboss::internal::relationship::module_user'],
+        ],
         logoutput => 'on_failure',
         notify    => Service[$jboss::internal::service::servicename],
       }
@@ -103,7 +113,10 @@ define jboss::user (
         exec { "jboss::user::roles::remove(${realm}/${name})":
           command   => "/bin/sed -iE 's/^${name}=.*$//g' ${filepath_roles}",
           onlyif    => "/bin/egrep -e '^${name}=' ${filepath_roles}",
-          require   => Anchor['jboss::package::end'],
+          require   => [
+            Anchor['jboss::package::end'],
+            Anchor['jboss::internal::relationship::module_user'],
+          ],
           logoutput => 'on_failure',
           notify    => Service[$jboss::internal::service::servicename],
         }

@@ -18,10 +18,14 @@ module Puppet_X::Coi::Jboss::Provider::Deploy
     deploy
   end
 
+  # Method that returs true
+  # @return {Boolean}
   def is_exact_deployment?
     true
   end
 
+  # Method that checks if resource is present in system
+  # @return {Boolean}
   def exists?
     if name_exists?
       is_exact_deployment?

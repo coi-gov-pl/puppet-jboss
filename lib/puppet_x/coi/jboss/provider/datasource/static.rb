@@ -5,6 +5,9 @@
 #   end
 module Puppet_X::Coi::Jboss::Provider::Datasource::Static
 
+  # Method that decides about type of datasource
+  # @param {Boolean} xa value that holds information that we want to use xa datasource
+  # @return {String} type of datasource
   def datasource_type(xa)
     if xa
       "xa-data-source"
