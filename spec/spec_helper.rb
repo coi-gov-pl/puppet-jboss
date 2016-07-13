@@ -44,6 +44,14 @@ rescue Gem::LoadError
   # do nothing
 end
 
+module Testing
+  module Mock end
+end
+
+require 'puppet_x/coi/jboss'
+require 'testing/mock/mocked_execution_state_wrapper'
+require 'testing/mock/mocked_shell_executor'
+
 require 'rspec-puppet'
 
 RSpec.configure do |c|
@@ -67,5 +75,3 @@ RSpec.configure do |c|
     PuppetlabsSpec::Files.cleanup
   end
 end
-
-require 'puppet_x/coi/jboss'

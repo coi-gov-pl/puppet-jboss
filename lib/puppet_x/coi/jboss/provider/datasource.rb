@@ -4,6 +4,8 @@ require_relative '../configuration'
 module Puppet_X::Coi::Jboss::Provider::Datasource
   include Puppet_X::Coi::Jboss::Constants
   include Puppet_X::Coi::Jboss::BuildinsUtils
+
+  # Method that creates datasource in JBoss instance
   def create
     cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ]
     jta_opt(cmd)
@@ -27,13 +29,13 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     setenabled true
   end
 
+  # Method that remove datasource from JBoss instance
   def destroy
     cmd = "#{create_delete_cmd} remove --name=#{@resource[:name]}"
     bringDown 'Datasource', cmd
   end
 
-
-
+  # Method that control whether given data source should be enabled or not
   def setenabled setting
     Puppet.debug "setenabled #{setting.inspect}"
     cmd = compilecmd "#{datasource_path}:read-attribute(name=enabled)"
@@ -92,6 +94,8 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     @property_hash[:name]
   end
 
+  # Method get properties.
+  # @param {String} name a key for representing name.
   def getproperty name, default=nil
     if @property_hash.nil? or (@property_hash.respond_to? :key? and not @property_hash.key? name) or @property_hash[name].nil?
       return default
@@ -106,6 +110,10 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
       return xa?
     end
   end
+
+  # Method indicate that given data source should XA or Non-XA
+  # Default is equal to 'false'
+  # @param {Boolean} value a value of xa, can be true or false
   def xa= value
     actual = getproperty :xa, false
     if actual.to_s != value.to_s
@@ -113,16 +121,23 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
       create
     end
   end
+
+  # Standard getter for domain controller
   def controller
     getproperty :controller
   end
+
+  # Standard getter for domain profile in JBoss server
   def profile
     getproperty :profile, default_profile
   end
+
+  # Standard getter for runasdomain
   def runasdomain
     getproperty :runasdomain
   end
 
+  # Standard getter for jndiname under wich the datasource wrapper will be bound
   def jndiname
     getattrib 'jndi-name'
   end

@@ -1,9 +1,9 @@
 # Internal class that installs JBoss
 class jboss::internal::package (
-  $download_url     = $jboss::internal::runtime::download_url,
   $prerequisites,
   $jboss_user,
   $jboss_group,
+  $download_url     = $jboss::internal::runtime::download_url,
   $product          = $jboss::params::product,
   $version          = $jboss::params::version,
   $java_autoinstall = $jboss::params::java_autoinstall,
