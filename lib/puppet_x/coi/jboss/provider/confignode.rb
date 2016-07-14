@@ -1,6 +1,7 @@
 # A module for ConfigNode
 module Puppet_X::Coi::Jboss::Provider::ConfigNode
 
+  # Method that creates ConfigNode
   def create
     trace 'create'
     if exists?
@@ -11,6 +12,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     ret
   end
 
+  # Method that destroy config node
   def destroy
     trace 'destroy'
     if not exists?
@@ -24,6 +26,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     ret
   end
 
+  # Method that checks if config node is present in the system
   def exists?
     trace 'exists?'
     if @clean

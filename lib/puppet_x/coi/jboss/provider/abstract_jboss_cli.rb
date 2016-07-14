@@ -167,6 +167,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     @cli_executor.jbossas?
   end
 
+  # Standard getter for timeout_cli
   def timeout_cli
     @cli_executor.timeout_cli
   end
@@ -233,6 +234,8 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
   protected
 
+  # Method taht ensures that there is cli executor, if not it will create default one
+  # @return {Puppet_X::Coi::Jboss::Internal::CliExecutor} cli_executor
   def ensure_cli_executor
     if @cli_executor.nil?
       execution_state_wrapper = Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(DEFAULT_SHELL_EXECUTOR)

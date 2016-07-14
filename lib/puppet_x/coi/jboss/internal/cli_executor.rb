@@ -7,6 +7,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     @sanitizer = Puppet_X::Coi::Jboss::Internal::Sanitizer.new
   end
 
+  # Standard settter for execution_state_wrapper
   attr_writer :execution_state_wrapper
 
   # Method that allows us to setup shell executor, used in tests
@@ -14,6 +15,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     @execution_state_wrapper.shell_executor = shell_executor
   end
 
+  # Standard getter for shell_executor
   def shell_executor
     @execution_state_wrapper.shell_executor
   end
@@ -34,6 +36,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     end
     executed
   end
+
   # Method that executes command and returns outut
   # @param {String} cmd command that will be executed
   # @param {Boolean} runasdomain if command will be executen in comain instance
@@ -67,6 +70,9 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     end
   end
 
+  # Method that prepares command to be executed
+  # @param {String} path path for execution
+  # @param {Hash} ctrlcfg  hash with configuration that is need to execute command
   def prepare_command(path, ctrlcfg)
     home = Puppet_X::Coi::Jboss::Configuration.config_value :home
     ENV['JBOSS_HOME'] = home
@@ -132,6 +138,9 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
 
   private
 
+  # Method that deletes execution of command by aading configurion
+  # @param {String} cmd jbosscmd
+  # @param {resource} standard Puppet resource
   def wrap_execution(cmd, resource)
     conf = {
       :controller => resource[:controller],
@@ -142,10 +151,13 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     run_command(cmd, resource[:runasdomain], conf, 0, 0)
   end
 
+  # method that return timeout parameter if we are running Jboss AS
+  # @return {String} timeout_cli
   def timeout_cli
     '--timeout=50000' unless jbossas?
   end
 
+  # Method that return refreshes facts that are available in the system or returns jboss_product
   def jbossas?
     # jboss_product fact is not set on first run, so that
     # calls to jboss-cli can fail (if jboss-as is installed)
@@ -155,16 +167,18 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     jboss_product == 'jboss-as'
   end
 
+  # Method that return value of fact jboss_product
   def jboss_product
     Facter.value(:jboss_product)
   end
 
   $add_log = nil
 
+  # Standard setter for isprintinglog
   def isprintinglog=(setting)
     $add_log = setting
   end
-
+  
   def getlog(lines)
     last_lines = `tail -n #{lines} #{jbosslog}`
   end
