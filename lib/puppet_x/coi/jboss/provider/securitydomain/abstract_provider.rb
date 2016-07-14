@@ -8,7 +8,7 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
     @resource = resource
     @compilator = compilator
   end
-  
+
   COMMAND_SPLITTER = ','
   NEWLINE_REPLACEMENT = ' '
 

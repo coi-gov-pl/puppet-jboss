@@ -110,6 +110,9 @@ module Puppet_X::Coi::Jboss::Provider::Jdbcdriver
     map
   end
 
+  # Method that prepares attributes from hash to be included in command
+  # @param {Hash} input
+  # @return {List}
   def cmdlize_attribs_map input
     list = []
     input.keys.sort.each do |key|
