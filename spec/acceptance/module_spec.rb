@@ -5,13 +5,13 @@ describe 'module smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('os
   let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :module }
 
   it 'should install base server with no errors' do
-    apply_manifest(baseserver, :catch_failures => true)
+    apply_manifest(baseserver, :catch_failures => true, :trace => true)
   end
   it 'should add module with no errors' do
-    apply_manifest(pp, :catch_failures => true)
+    apply_manifest(pp, :catch_failures => true, :trace => true)
   end
   it 'should work idempotently' do
-    apply_manifest(pp, :catch_changes  => true)
+    apply_manifest(pp, :catch_changes  => true, :trace => true)
   end
   describe service('wildfly') do
     it { is_expected.to be_running }
