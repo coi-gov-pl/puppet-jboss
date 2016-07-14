@@ -65,23 +65,24 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   # Method prepares lines outputed by JBoss CLI tool, changing output to be readable in Ruby
   # @param {string[]} lines
   def preparelines(lines)
-    lines
-      .gsub(/\((\"[^\"]+\") => (\"[^\"]+\")\)/, '\1 => \2')
-      .gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
+    lines.
+      gsub(/\((\"[^\"]+\") => (\"[^\"]+\")\)/, '\1 => \2').
+      gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
   end
-
   # Method that handles execution of command
   def read_resource_recursive
     cmd = @compilator.compile(@resource[:runasdomain],
                               @resource[:profile],
-                              '/subsystem=security:read-resource(recursive=true)')
+                              '/subsystem=security:read-resource(recursive=true)'
+                             )
     conf = {
-      controller: @resource[:controller],
-      ctrluser: @resource[:ctrluser],
-      ctrlpasswd: @resource[:ctrlpasswd]
+      :controller  => @resource[:controller],
+      :ctrluser    => @resource[:ctrluser],
+      :ctrlpasswd  => @resource[:ctrlpasswd]
     }
     @cli_executor.executeAndGet(cmd, @resource[:runasdomain], conf, 0, 0)
   end
+
 
   # Method that checks current situation of security-domain in Jboss instance
   # @param {Hash} actual_data output of recursive read of security-domain resource
