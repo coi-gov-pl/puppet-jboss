@@ -62,6 +62,8 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # TODO: Uncomment for defered provider confinment after droping support for Puppet < 3.0
   # commands :jbosscli => Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.jbossclibin
 
+  # Method that tells us if we want to run jboss in domain mode
+  # @return {Boolean}
   def is_runasdomain
     @resource[:runasdomain]
   end
@@ -89,16 +91,24 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, retry_count, retry_timeout)
   end
 
+  # Method that executes command without any retry if command fails
+  # @param {String} jbosscmd jboss command
   def executeWithoutRetry(jbosscmd)
     ctrlcfg = controllerConfig @resource
     @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
   end
 
+  # Method that executes command without any retry if command fails
+  # @param {String} jbosscmd jboss command
   def executeAndGet(jbosscmd)
     ctrlcfg = controllerConfig @resource
     executeAndGetResult(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
   end
 
+  # Method that executes command and if command fails it prints information
+  # @param {String} typename name of resource
+  # @param {String} cmd jboss command
+  # @param {String} way name of the action
   def executeWithFail(typename, cmd, way)
     executed = execute(cmd)
     if not executed[:result]
@@ -111,6 +121,9 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     executed
   end
 
+  # Method that delegates compilation of jboss command
+  # @param {String} jboss command
+  # @return {String} compiled jboss command
   def compilecmd(cmd)
     @compilator.compile(@resource[:runasdomain], @resource[:profile], cmd)
   end
@@ -130,19 +143,26 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     @cli_executor.run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
   end
 
+  # Method that make configuration hash from resource
+  # @param {Hash} resource standard Puppet resource
+  # @return {Hash} conf hash that contains information that are need to execute command
   def controllerConfig resource
-      conf = {
-        :controller  => resource[:controller],
-        :ctrluser    => resource[:ctrluser],
-        :ctrlpasswd  => resource[:ctrlpasswd],
-      }
-      conf
+    conf = {
+      :controller  => resource[:controller],
+      :ctrluser    => resource[:ctrluser],
+      :ctrlpasswd  => resource[:ctrlpasswd],
+    }
+    conf
   end
 
+  # Standard getter for jboss_product
+  # @return {String} jboss_product
   def jboss_product
     @cli_executor.jboss_product
   end
 
+  # Standard getter for jbossas
+  # @return {String} jbossas
   def jbossas?
     @cli_executor.jbossas?
   end
@@ -194,14 +214,19 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     str.inspect
   end
 
+  # Standard setter for shell_executor
+  # @param {Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor} shell_executor
   def shell_executor=(shell_executor)
     @cli_executor.shell_executor = shell_executor
   end
 
+  # Standard getter for shell executor
   def shell_executor
     @cli_executor.shell_executor
   end
 
+  # Standard setter for execution state wrapper
+  # @param {Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper} execution_state_wrapper
   def execution_state_wrapper=(execution_state_wrapper)
     @cli_executor.execution_state_wrapper = execution_state_wrapper
   end

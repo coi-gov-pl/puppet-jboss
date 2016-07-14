@@ -52,6 +52,8 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     end
   end
 
+  # Method that prepares resource that will be used later
+  # @return {hash} resource
   def prepare_resource
     if @resource.nil?
       @resource = {}
@@ -73,6 +75,8 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     end
   end
 
+  # Method that checks if resource is present in the system
+  # @return {Boolean} true if there is such resource
   def exists?
     prepare_resource
     if @resource[:dbname].nil?
@@ -264,10 +268,13 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     provider_impl.jta
   end
 
+  # Standard setter for jta
   def jta= value
     provider_impl.jta = value
   end
 
+  # Method that checks if we want to run xa resource
+  # @return {Boolean}
   def xa?
     if not @resource[:xa].nil?
       return @resource[:xa]
@@ -276,10 +283,12 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     end
   end
 
+  # Standard setter for xa_datasource_properties_wrapper
   def xa_datasource_properties_wrapper(parameters)
     provider_impl.xa_datasource_properties_wrapper(parameters)
   end
 
+  # Standard setter for jta_opt
   def jta_opt(cmd)
     provider_impl.jta_opt(cmd)
   end

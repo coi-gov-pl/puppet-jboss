@@ -1,10 +1,14 @@
 # A module for JBoss security domain common abstract resource
 class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
 
+  # Standard constructor
+  # @param {Hash} resource standard Puppet resource
+  # @param {Puppet_X::Coi::Jboss::Internal::CommandCompilator} compilator that is used to compile jboss command
   def initialize(resource, compilator)
     @resource = resource
     @compilator = compilator
   end
+  
   COMMAND_SPLITTER = ','
   NEWLINE_REPLACEMENT = ' '
 

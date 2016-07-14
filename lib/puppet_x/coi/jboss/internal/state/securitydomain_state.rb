@@ -1,6 +1,10 @@
 # Class that holds information about current state of securitydomain
 class Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState
 
+  # Standard constructor
+  # @param {Boolean} is_cache_default true if there is cache default in system
+  # @param {Boolean} is_authentication true if there is authentication in system
+  # @param {Boolean} is_login_modules true if there are login modules in system
   def initialize(is_cache_default = false, is_authentication = false, is_login_modules = false)
     @is_cache_default = is_cache_default
     @is_authentication = is_authentication
@@ -26,7 +30,7 @@ class Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState
     @is_authentication
   end
 
-  # Standard setter fot authentication
+  # Standard setter fot authenticationg
   # @param {Boolean} value
   def is_authentication=(value)
     @is_authentication = value
