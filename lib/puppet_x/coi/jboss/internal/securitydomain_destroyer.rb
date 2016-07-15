@@ -12,6 +12,8 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer
     @resource = resource
   end
 
+  # Method that compiles jboss command and executes destroy command
+  # @param {resource} resource standard Puppet resource
   def destroy(resource)
     Puppet.debug('Destroy method')
     compiled_cmd = @compilator.compile(@resource[:runasdomain],
