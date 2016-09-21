@@ -8,9 +8,6 @@ group :test do
   gem 'puppet-lint',                    :require => false
   gem 'metadata-json-lint',             :require => false
   gem 'os',                             :require => false
-  gem 'specinfra', '2.59.0',            :require => false
-  gem 'net-ssh', '2.9.4',               :require => false
-
   gem 'beaker',                         :require => false
   gem 'beaker-rspec',                   :require => false
   gem 'docker-api',                     :require => false
@@ -32,7 +29,6 @@ group :development do
   gem 'vagrant-wrapper',                :require => false
   gem 'travis',                         :require => false
   gem 'puppet-blacksmith',              :require => false
-  gem 'guard-rake',                     :require => false
   gem 'pry-byebug',                     :require => false
 end
 
