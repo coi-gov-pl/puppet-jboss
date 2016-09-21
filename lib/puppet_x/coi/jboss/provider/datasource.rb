@@ -4,6 +4,8 @@ require_relative '../configuration'
 module Puppet_X::Coi::Jboss::Provider::Datasource
   include Puppet_X::Coi::Jboss::Constants
   include Puppet_X::Coi::Jboss::BuildinsUtils
+
+  # Method that creates datasource in JBoss instance
   def create
     cmd = [ "#{create_delete_cmd} add --name=#{@resource[:name]}" ]
     jta_opt(cmd)
@@ -27,13 +29,13 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     setenabled true
   end
 
+  # Method that remove datasource from JBoss instance
   def destroy
     cmd = "#{create_delete_cmd} remove --name=#{@resource[:name]}"
     bringDown 'Datasource', cmd
   end
 
-
-
+  # Method that control whether given data source should be enabled or not
   def setenabled setting
     Puppet.debug "setenabled #{setting.inspect}"
     cmd = compilecmd "#{datasource_path}:read-attribute(name=enabled)"
@@ -50,6 +52,8 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     end
   end
 
+  # Method that prepares resource that will be used later
+  # @return {hash} resource
   def prepare_resource
     if @resource.nil?
       @resource = {}
@@ -71,6 +75,8 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     end
   end
 
+  # Method that checks if resource is present in the system
+  # @return {Boolean} true if there is such resource
   def exists?
     prepare_resource
     if @resource[:dbname].nil?
@@ -92,6 +98,8 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     @property_hash[:name]
   end
 
+  # Method get properties.
+  # @param {String} name a key for representing name.
   def getproperty name, default=nil
     if @property_hash.nil? or (@property_hash.respond_to? :key? and not @property_hash.key? name) or @property_hash[name].nil?
       return default
@@ -106,6 +114,10 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
       return xa?
     end
   end
+
+  # Method indicate that given data source should XA or Non-XA
+  # Default is equal to 'false'
+  # @param {Boolean} value a value of xa, can be true or false
   def xa= value
     actual = getproperty :xa, false
     if actual.to_s != value.to_s
@@ -113,68 +125,91 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
       create
     end
   end
+
+  # Standard getter for domain controller
   def controller
     getproperty :controller
   end
+
+  # Standard getter for domain profile in JBoss server
   def profile
     getproperty :profile, default_profile
   end
+
+  # Standard getter for runasdomain
   def runasdomain
     getproperty :runasdomain
   end
 
+  # Standard getter for jndiname under wich the datasource wrapper will be bound
   def jndiname
     getattrib 'jndi-name'
   end
 
+  # Standard setter
   def jndiname= value
     setattrib 'jndi-name', value
   end
 
+
+  # Standard getter
   def drivername
     getattrib 'driver-name'
   end
 
+  # Standard setter
   def drivername= value
     setattrib 'driver-name', value
   end
 
+
+  # Standard getter
   def minpoolsize
     getattrib('min-pool-size').to_s
   end
 
+  # Standard setter
   def minpoolsize= value
     setattrib 'min-pool-size', value
   end
 
+  # Standard getter
   def maxpoolsize
     getattrib('max-pool-size').to_s
   end
 
+  # Standard setter
   def maxpoolsize= value
     setattrib 'max-pool-size', value
   end
 
+
+  # Standard getter
   def username
     getattrib('user-name')
   end
 
+  # Standard setter
   def username= value
     setattrib 'user-name', value
   end
 
+  # Standard getter
   def password
     getattrib('password')
   end
 
+  # Standard setter
   def password= value
     setattrib 'password', value
   end
 
+  # Standard getter
   def options
     managed_fetched_options
   end
 
+  # Standard setter
   def options= value
     managed_fetched_options.each do |key, fetched_value|
       if ABSENTLIKE.include?(value)
@@ -192,6 +227,7 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     getattrib('enabled').to_s
   end
 
+  # Standard setter
   def enabled= value
     Puppet.debug "Enabling datasource #{@resource[:name]} to #{value}"
     setenabled value
@@ -201,14 +237,17 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     connectionHash()[:Scheme]
   end
 
+  # Standard setter
   def jdbcscheme= value
     writeConnection :Scheme, value
   end
+
 
   def host
     connectionHash()[:ServerName].to_s
   end
 
+  # Standard setter
   def host= value
     writeConnection :ServerName, value
   end
@@ -217,6 +256,7 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     connectionHash()[:PortNumber].to_i
   end
 
+  # Standard setter
   def port= value
     writeConnection :PortNumber, value
   end
@@ -225,6 +265,7 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     connectionHash()[:DatabaseName]
   end
 
+  # Standard setter
   def dbname= value
     writeConnection :DatabaseName, value
   end
@@ -249,10 +290,13 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     provider_impl.jta
   end
 
+  # Standard setter for jta
   def jta= value
     provider_impl.jta = value
   end
 
+  # Method that checks if we want to run xa resource
+  # @return {Boolean}
   def xa?
     if not @resource[:xa].nil?
       return @resource[:xa]
@@ -261,10 +305,12 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     end
   end
 
+  # Standard setter for xa_datasource_properties_wrapper
   def xa_datasource_properties_wrapper(parameters)
     provider_impl.xa_datasource_properties_wrapper(parameters)
   end
 
+  # Standard setter for jta_opt
   def jta_opt(cmd)
     provider_impl.jta_opt(cmd)
   end

@@ -12,11 +12,11 @@ define jboss::internal::util::fetch::file (
 
   if defined(Class['jboss']) {
     include jboss
-    $actualOwner = $owner ? {
+    $actual_owner = $owner ? {
       undef   => $jboss::jboss_user,
       default => $owner
     }
-    $actualGroup = $group ? {
+    $actual_group = $group ? {
       undef   => $jboss::jboss_group,
       default => $group
     }
@@ -26,11 +26,11 @@ define jboss::internal::util::fetch::file (
     }
   } else {
     include jboss::params
-    $actualOwner = $owner ? {
+    $actual_owner = $owner ? {
       undef   => $jboss::params::jboss_user,
       default => $owner
     }
-    $actualGroup = $group ? {
+    $actual_group = $group ? {
       undef   => $jboss::params::jboss_group,
       default => $group
     }
@@ -46,8 +46,8 @@ define jboss::internal::util::fetch::file (
     'filename'  => $filename,
     'fetch_dir' => $fetch_dir,
     'mode'      => $mode,
-    'owner'     => $actualOwner,
-    'group'     => $actualGroup,
+    'owner'     => $actual_owner,
+    'group'     => $actual_group,
   })
 
   $emptyhack = ''

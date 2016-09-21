@@ -5,7 +5,7 @@ class jboss::params inherits jboss::internal::params {
   $product          = hiera('jboss::params::product', 'wildfly')
 
   # Version of JBoss Application Server
-  $version          = hiera('jboss::params::version', '8.2.0.Final')
+  $version          = hiera('jboss::params::version', '9.0.2.Final')
 
   # Deprcated, will deleted in next major version
   include jboss::internal::quirks::autoinstall
@@ -21,17 +21,14 @@ class jboss::params inherits jboss::internal::params {
   # Java package version, undef, jdk, jre
   $java_package     = hiera('jboss::params::java_package', undef)
 
+  # Java distribution: jre or jdk
+  $java_dist        = hiera('jboss::params::java_dist', 'jre')
+
   # User for Jboss Application Server
   $jboss_user       = hiera('jboss::params::jboss_user', 'jboss')
 
   # Group for Jboss Application Server
   $jboss_group      = hiera('jboss::params::jboss_group', 'jboss')
-
-  # Base URL for downloading Jboss Application Server installation package
-  $download_urlbase = hiera('jboss::params::download_urlbase', 'http://download.jboss.org')
-
-  # Full URL for downloading JBoss Application Server installation package
-  $download_url     = hiera('jboss::params::download_url', "${download_urlbase}/${product}/${version}/${product}-${version}.zip")
 
   # Target installation directory root
   $install_dir      = hiera('jboss::params::install_dir', '/usr/lib')

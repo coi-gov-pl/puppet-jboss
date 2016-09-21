@@ -1,19 +1,21 @@
 # Internal class that installs JBoss
 class jboss::internal::package (
-  $download_url,
   $prerequisites,
   $jboss_user,
   $jboss_group,
+  $download_url     = $jboss::internal::runtime::download_url,
   $product          = $jboss::params::product,
   $version          = $jboss::params::version,
   $java_autoinstall = $jboss::params::java_autoinstall,
   $java_version     = $jboss::params::java_version,
   $java_package     = $jboss::params::java_package,
   $install_dir      = $jboss::params::install_dir,
+  $java_dist        = $jboss::params::java_dist,
   # Prerequisites class, that can be overwritten
 ) inherits jboss::params {
   include jboss
   include jboss::internal::runtime
+  include jboss::internal::params
   include jboss::internal::compatibility
 
   $download_rootdir     = $jboss::internal::params::download_rootdir
@@ -43,7 +45,7 @@ class jboss::internal::package (
   }
 
   Exec {
-    path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    path      => $jboss::internal::params::syspath,
     logoutput => 'on_failure',
   }
 
@@ -74,7 +76,7 @@ class jboss::internal::package (
 
   if $java_autoinstall {
     class { 'java':
-      distribution => 'jdk',
+      distribution => $java_dist,
       version      => $java_version,
       package      => $java_package,
       notify       => Service[$jboss::product],
@@ -84,6 +86,10 @@ class jboss::internal::package (
 
   file { $download_dir:
     ensure => 'directory',
+  }
+
+  if $download_file == undef {
+    fail Puppet::Error, 'Download_url cannot be undef'
   }
 
   jboss::internal::util::fetch::file { $download_file:

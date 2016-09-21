@@ -1,0 +1,36 @@
+source ENV['GEM_SOURCE'] || 'https://rubygems.org'
+
+group :test do
+  gem 'rake', '~> 10.0.0',              :require => false unless dependencies.map {|dep| dep.name}.include?('rake')
+  # TODO: Remove this explicitly pinned version by the time ticket gh-org/puppet-jboss#84 is closed.
+  gem 'rspec-puppet', '2.3.2',          :require => false
+  gem 'puppetlabs_spec_helper',         :require => false
+  gem 'puppet-lint',                    :require => false
+  gem 'metadata-json-lint',             :require => false
+  # This package drops support for 1.8
+  gem 'json', '1.8.3',                  :require => false
+  gem 'os',                             :require => false
+  gem 'specinfra', '2.59.0',            :require => false
+  gem 'net-ssh', '2.9.4',               :require => false
+  # This package drops support for 1.8
+  gem 'json_pure', '1.8.3',             :require => false
+  gem 'rspec-its',                      :require => false
+  gem 'rspec', '~> 3.1.0',              :require => false
+
+  gem 'tins', '~> 1.6.0',               :require => false
+
+  gem 'facter', '~> 1.6.18',            :require => false
+  gem 'puppet', '~> 2.7.0',             :require => false
+  gem 'hiera-puppet',                   :require => false
+
+  gem 'ruby-augeas',                    :require => false
+  gem 'augeas',                         :require => false
+end
+
+group :development do
+  gem 'inch',                           :require => false
+  gem 'vagrant-wrapper',                :require => false
+  gem 'pry', '~> 0.9.12.0',             :require => false
+end
+
+# vim:ft=ruby

@@ -1,6 +1,7 @@
 # A module for ConfigNode
 module Puppet_X::Coi::Jboss::Provider::ConfigNode
 
+  # Method that creates ConfigNode
   def create
     trace 'create'
     if exists?
@@ -8,9 +9,10 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     end
     ret = bringUp 'Configuration node', "#{compiledpath}:add(#{compileprops})"
     invalidate
-    return ret
+    ret
   end
 
+  # Method that destroy config node
   def destroy
     trace 'destroy'
     if not exists?
@@ -21,9 +23,10 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     end
     ret = bringDown 'Configuration node', "#{compiledpath}:remove()"
     invalidate
-    return ret
+    ret
   end
 
+  # Method that checks if config node is present in the system
   def exists?
     trace 'exists?'
     if @clean
@@ -38,6 +41,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
       end
     end
 
+    Puppet.debug 'Excute and get in config node'
     res = executeAndGet "#{compiledpath}:read-resource(include-runtime=true, include-defaults=false)"
     if res[:result]
       @data = {}
@@ -61,6 +65,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     return false
   end
 
+  # Method that returns status
   def status
     trace 'status'
     meth = self.method 'ensure'
@@ -69,6 +74,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     return ret
   end
 
+  # Getter for current status of resource
   def ensure
     trace 'ensure'
 
@@ -113,6 +119,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     end
   end
 
+  # Setter for ensure
   def ensure= value
     trace 'ensure=(%s)' % [ value.inspect ]
     case value
@@ -127,6 +134,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     return value
   end
 
+  # Getter for properties
   def properties
     trace 'properties()'
 
@@ -148,6 +156,7 @@ module Puppet_X::Coi::Jboss::Provider::ConfigNode
     end
   end
 
+  # Setter for properties
   def properties= newprops
     trace 'properties=(%s)' % newprops.inspect
 

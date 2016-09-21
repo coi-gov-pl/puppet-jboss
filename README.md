@@ -2,7 +2,7 @@
 
 ### ...with configuration management of resources and deployment in domain and stand-alone modes
 
-[![Build Status](https://travis-ci.org/coi-gov-pl/puppet-jboss.svg?branch=develop)](https://travis-ci.org/coi-gov-pl/puppet-jboss) [![Puppet Forge](https://img.shields.io/puppetforge/v/coi/jboss.svg)](https://forge.puppetlabs.com/coi/jboss) [![Code Climate](https://codeclimate.com/github/coi-gov-pl/puppet-jboss/badges/gpa.svg)](https://codeclimate.com/github/coi-gov-pl/puppet-jboss) [![Dependency Status](https://gemnasium.com/coi-gov-pl/puppet-jboss.svg)](https://gemnasium.com/coi-gov-pl/puppet-jboss) [![Coverage Status](https://coveralls.io/repos/coi-gov-pl/puppet-jboss/badge.svg?branch=develop&service=github)](https://coveralls.io/github/coi-gov-pl/puppet-jboss?branch=develop) [![Inline docs](http://inch-ci.org/github/coi-gov-pl/puppet-jboss.svg?branch=develop)](http://inch-ci.org/github/coi-gov-pl/puppet-jboss)
+[![Build Status](https://travis-ci.org/coi-gov-pl/puppet-jboss.svg?branch=develop)](https://travis-ci.org/coi-gov-pl/puppet-jboss) [![Puppet Forge](https://img.shields.io/puppetforge/v/coi/jboss.svg)](https://forge.puppetlabs.com/coi/jboss) [![Code Climate](https://codeclimate.com/github/coi-gov-pl/puppet-jboss/badges/gpa.svg)](https://codeclimate.com/github/coi-gov-pl/puppet-jboss) [![Dependency Status](https://gemnasium.com/coi-gov-pl/puppet-jboss.svg)](https://gemnasium.com/coi-gov-pl/puppet-jboss) [![Coverage Status](https://coveralls.io/repos/coi-gov-pl/puppet-jboss/badge.svg?branch=develop&service=github)](https://coveralls.io/github/coi-gov-pl/puppet-jboss?branch=develop) [![Inline docs](http://inch-ci.org/github/coi-gov-pl/puppet-jboss.svg?branch=develop)](http://inch-ci.org/github/coi-gov-pl/puppet-jboss) [![Join the chat at https://gitter.im/coi-gov-pl/puppet-jboss](https://badges.gitter.im/coi-gov-pl/puppet-jboss.svg)](https://gitter.im/coi-gov-pl/puppet-jboss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 #### Table of Contents
 
@@ -42,7 +42,9 @@ The module allows user to perform all necessary operations for JBoss servers. He
 
 In addition to the above list, you can also configure any JBoss CLI reachable configuration, with the entire set of parameters. This allows you to configure any parameter supported by JBoss.
 
-Take a look. We will be happy to receive your feedback.
+### Got questions?
+
+We will be happy to receive your feedback. Ask as about everything releated to this module on [Gitter.im chat](https://gitter.im/coi-gov-pl/puppet-jboss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)!
 
 ## Setup
 
@@ -419,8 +421,8 @@ This module is explicitly tested on:
 With servers:
 
  * JBoss AS 7.1
- * JBoss EAP 6.1 - 6.4,
- * WildFly 8.x
+ * JBoss EAP 6.1 - 6.4, 7.0
+ * WildFly 8.x, 9.x
 
 Should be fully compatible with those operating systems:
 

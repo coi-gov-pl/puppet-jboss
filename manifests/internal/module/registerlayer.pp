@@ -3,6 +3,7 @@ define jboss::internal::module::registerlayer (
   $layer = name,
 ) {
   include jboss
+  include jboss::internal::params
 
   File {
     mode   => '0640',
@@ -11,9 +12,13 @@ define jboss::internal::module::registerlayer (
   }
 
   if (!defined(Exec["jboss::module::layer::${layer}"])) {
+    $command_1 = "awk -F'=' 'BEGIN {ins = 0} /^layers=/ { ins = ins + 1; print \$1=${layer},\$2 } END "
+    $command_2 = "{if(ins == 0) print \"layers=${layer},base\"}' > ${jboss::home}/modules/layers.conf"
     exec { "jboss::module::layer::${layer}":
-      command => "/bin/awk -F'=' 'BEGIN {ins = 0} /^layers=/ { ins = ins + 1; print \$1=${layer},\$2 } END {if(ins == 0) print \"layers=${layer},base\"}' > ${jboss::home}/modules/layers.conf",
-      unless  => "/bin/egrep -e '^layers=.*${layer}.*' ${jboss::home}/modules/layers.conf",
+      command => "${command_1}${command_2}",
+      unless  => "egrep -e '^layers=.*${layer}.*' ${jboss::home}/modules/layers.conf",
+      path    => $jboss::internal::params::syspath,
+      user    => $jboss::jboss_user,
       require => Anchor['jboss::installed'],
       notify  => Service[$jboss::product],
     }

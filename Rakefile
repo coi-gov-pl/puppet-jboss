@@ -10,7 +10,12 @@ rescue LoadError
 end
 
 PuppetLint.configuration.send('disable_80chars')
-PuppetLint.configuration.ignore_paths = ["spec/**/*.pp", "pkg/**/*.pp"]
+PuppetLint.configuration.ignore_paths = [
+  "spec/**/*.pp",
+  "pkg/**/*.pp",
+  "tests/**/*.pp",
+  "vendor/**/*.pp"
+]
 PuppetLint.configuration.fail_on_warnings = true
 
 desc "Validate manifests, templates, and ruby files"
@@ -65,7 +70,7 @@ end
 
 desc "Run syntax, lint, and spec tests."
 task :test => [
-  :metadata,
+  :metadata_lint,
   :lint,
   :validate,
   :clean_fixtures,

@@ -12,9 +12,9 @@ Puppet::Type.newtype(:jboss_deploy) do
     desc "Path to the EAR/WAR file."
   end
 
-  newparam(:redeploy, :boolean => true) do
+  newparam(:redeploy_on_refresh, :boolean => true) do
     desc "Force redeployment"
-    defaultto false
+    defaultto true
   end
 
   newproperty(:servergroups, :array_matching => :all) do
@@ -25,7 +25,15 @@ Puppet::Type.newtype(:jboss_deploy) do
     desc "Indicate that server is in domain mode"
     defaultto true
   end
-  
+
+  newparam(:runtime_name) do
+    desc "Set the runtime-name"
+    validate do |value|
+      fail('Invalid file extension, module only supports: .jar, .war, .ear, .rar') if (value =~ /.+(\.ear|\.zip|\.war|\.jar)$/) == nil
+    end
+  end
+
+
   newparam(:controller) do
     desc "Domain controller host:port address"
     validate do |value|
@@ -52,5 +60,10 @@ Puppet::Type.newtype(:jboss_deploy) do
     desc "Retry timeout in seconds"
     defaultto 1
   end
-  
+
+  # Native method that triggers when resource is changed
+  def refresh
+    provider.redeploy_on_refresh
+  end
+
 end

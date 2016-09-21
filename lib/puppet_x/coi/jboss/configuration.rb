@@ -80,6 +80,7 @@ class Puppet_X::Coi::Jboss::Configuration
       ret
     end
 
+    # Method that reads file
     def read_raw_profile_d
       File.read('/etc/profile.d/jboss.sh')
     end

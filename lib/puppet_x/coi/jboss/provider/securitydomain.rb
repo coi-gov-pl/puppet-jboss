@@ -1,69 +1,79 @@
 # A class for JBoss security domain provider
 module Puppet_X::Coi::Jboss::Provider::SecurityDomain
-  def create
-    cmd = "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:add(login-modules=[{code=>\"#{@resource[:code]}\",flag=>\"#{@resource[:codeflag]}\",module-options=>["
-    options = []
-    @resource[:moduleoptions].keys.sort.each do |key|
-      value = @resource[:moduleoptions][key]
-      val = value.to_s.gsub(/\n/, ' ').strip
-      options << '%s => "%s"' % [key, val]
-    end
-    cmd += options.join(',') + "]}])"
-    cmd = compilecmd(cmd)
-    cmd2 = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:add(cache-type=default)"
-    bringUp('Security Domain Cache Type', cmd2)[:result]
-    bringUp('Security Domain', cmd)[:result]
-  end
-
-  def destroy
-    cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}:remove()"
-    bringDown('Security Domain', cmd)[:result]
-  end
-
+  # Method to check if there is security domain. Method calls recursive read-resource on security
+  # subsystem to validate
+  # if security domain is present. In the procces method also checks if authentication is set.
   def exists?
-    cmd = compilecmd "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:read-resource()"
-    res = executeWithoutRetry cmd
-    if not res[:result]
-      Puppet.debug "Security Domain does NOT exist"
-      return false
-    end
-    undefined = nil
-    lines = preparelines res[:lines]
-    data = eval(lines)['result']
-    Puppet.debug "Security Domain exists: #{data.inspect}"
+    auditor = ensure_auditor
+    auditor.exists?
+  end
 
-    existinghash = Hash.new
-    givenhash = Hash.new
+  # Method that creates security-domain in Jboss instance. When invoked it will execute 3 commands,
+  # add cache-type with value 'default', add authentication with value classic, add login-modules.
+  # Depends on the version of server it will use correct path to set security domain
+  def create
+    commands = fetch_commands
+    Puppet.debug("Commands: #{commands}")
 
-    unless @resource[:moduleoptions].nil?
-      @resource[:moduleoptions].each do |key, value|
-        givenhash["#{key}"] = value.to_s.gsub(/\n/, ' ').strip
-      end
+    commands.each do |message, command|
+      bringUp(message, command)
     end
+  end
 
-    data['login-modules'][0]['module-options'].each do |key, value|
-      existinghash[key.to_s] = value.to_s.gsub(/\n/, ' ').strip
-    end
-
-    if !existinghash.nil? && !givenhash.nil? && existinghash != givenhash
-      diff = givenhash.to_a - existinghash.to_a
-      Puppet.notice "Security domain should be recreated. Diff: #{diff.inspect}"
-      Puppet.debug "Security domain moduleoptions existing hash => #{existinghash.inspect}"
-      Puppet.debug "Security domain moduleoptions given hash => #{givenhash.inspect}"
-      destroy
-      return false
-    end
-    return true
+  # Method to remove security-domain from Jboss instance
+  def destroy
+    destroyer = ensure_destroyer
+    destroyer.destroy(@resource)[:result]
   end
 
   private
 
-  # Method prepares lines outputed by JBoss CLI tool, changing output to be readable in Ruby
-  #
-  # @param {string[]} lines
-  def preparelines lines
-    lines.
-      gsub(/\((\"[^\"]+\") => (\"[^\"]+\")\)/, '\1 => \2').
-      gsub(/\[((?:[\n\s]*\"[^\"]+\" => \"[^\"]+\",?[\n\s]*)+)\]/m, '{\1}')
+  # Method that ensures that destroyer is present in the system, if not it creates one
+  # @return {Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer} destroyer
+  def ensure_destroyer
+    cli_executor = ensure_cli_executor
+    @secdom_destroyer = Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer.new(cli_executor,
+                                                                                    @compilator,
+                                                                                    @resource) if @secdom_destroyer.nil?
+    @secdom_destroyer
+  end
+
+  # Method that ensures that auditor is present in the system, if not it creates one
+  # @return {Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor} auditor
+  def ensure_auditor
+    destroyer = ensure_destroyer
+    cli_executor = ensure_cli_executor
+    @auditor = Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor.new(@resource,
+                                                                         cli_executor,
+                                                                         @compilator,
+                                                                         destroyer) if @auditor.nil?
+    @auditor
+  end
+
+  # Method that fetches commands that need to be executed to setup security-domain
+  # @return {List} commands list of commands that are going to be executed
+  def fetch_commands
+    auditor = ensure_auditor
+    provider = provider_impl
+    logic_creator = Puppet_X::Coi::Jboss::Internal::LogicCreator.new(auditor, @resource, provider, @compilator)
+    logic_creator.decide
+  end
+
+  # Method that provides information about which command template should be used
+  # @return {Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider|
+  # Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider}
+  # provider with correct command template
+  def provider_impl
+    require_relative 'securitydomain/pre_wildfly_provider'
+    require_relative 'securitydomain/post_wildfly_provider'
+
+    if @impl.nil?
+      if Puppet_X::Coi::Jboss::Configuration::is_pre_wildfly?
+        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(@resource, @compilator)
+      else
+        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(@resource, @compilator)
+      end
+    end
+    @impl
   end
 end

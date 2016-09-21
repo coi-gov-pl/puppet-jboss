@@ -26,6 +26,8 @@ define jboss::user (
   include jboss
   require jboss::internal::package
   include jboss::internal::service
+  include jboss::internal::params
+  include jboss::internal::relationship::module_user
 
   $home = $jboss::home
 
@@ -53,6 +55,9 @@ define jboss::user (
   $filepath = "${home}/${dir}/configuration/${file}"
   $filepath_roles = "${home}/${dir}/configuration/application-roles.properties"
   $jbossuserfix = '2>&1 | awk \'BEGIN{a=0}{if (/Error/){a=1};print}END{if (a==1) exit 1}\''
+  Exec {
+    path => $jboss::internal::params::syspath,
+  }
 
   case $ensure {
     'present': {
@@ -63,14 +68,19 @@ define jboss::user (
       # By default the properties realm expects the entries to be in the format: -
       # username=HEX( MD5( username ':' realm ':' password))
       $mangledpasswd = md5("${name}:${realm}:${password}")
+      $command_1 = "${home}/bin/add-user.sh --silent --user '${name}' --password \"\$__PASSWD\""
+      $command_2 = " --realm '${realm}' ${rolesstr} ${extraarg} ${jbossuserfix}"
       exec { "jboss::user::add(${realm}/${name})":
         environment => [
           "JBOSS_HOME=${home}",
           "__PASSWD=${password}"
         ],
-        command     => "${home}/bin/add-user.sh --silent --user '${name}' --password \"\$__PASSWD\" --realm '${realm}' ${rolesstr} ${extraarg} ${jbossuserfix}",
+        command     => "${command_1}${command_2}",
         unless      => "/bin/egrep -e '^${name}=${mangledpasswd}' ${filepath}",
-        require     => Anchor['jboss::package::end'],
+        require     => [
+          Anchor['jboss::package::end'],
+          Anchor['jboss::internal::relationship::module_user'],
+        ],
         notify      => Service[$jboss::internal::service::servicename],
         logoutput   => true,
       }
@@ -80,7 +90,10 @@ define jboss::user (
           path    => $filepath_roles,
           line    => "${name}=${roles}",
           match   => "${name}=.*",
-          require => Exec["jboss::user::add(${realm}/${name})"],
+          require => [
+            Exec["jboss::user::add(${realm}/${name})"],
+            Anchor['jboss::internal::relationship::module_user'],
+          ],
           notify  => Service[$jboss::internal::service::servicename],
         }
       }
@@ -89,7 +102,10 @@ define jboss::user (
       exec { "jboss::user::remove(${realm}/${name})":
         command   => "/bin/sed -iE 's/^${name}=.*$//g' ${filepath}",
         onlyif    => "/bin/egrep -e '^${name}=' ${filepath}",
-        require   => Anchor['jboss::package::end'],
+        require   => [
+          Anchor['jboss::package::end'],
+          Anchor['jboss::internal::relationship::module_user'],
+        ],
         logoutput => 'on_failure',
         notify    => Service[$jboss::internal::service::servicename],
       }
@@ -97,7 +113,10 @@ define jboss::user (
         exec { "jboss::user::roles::remove(${realm}/${name})":
           command   => "/bin/sed -iE 's/^${name}=.*$//g' ${filepath_roles}",
           onlyif    => "/bin/egrep -e '^${name}=' ${filepath_roles}",
-          require   => Anchor['jboss::package::end'],
+          require   => [
+            Anchor['jboss::package::end'],
+            Anchor['jboss::internal::relationship::module_user'],
+          ],
           logoutput => 'on_failure',
           notify    => Service[$jboss::internal::service::servicename],
         }

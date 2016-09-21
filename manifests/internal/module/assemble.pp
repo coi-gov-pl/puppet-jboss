@@ -6,6 +6,8 @@ define jboss::internal::module::assemble (
   $dependencies = [],
 ) {
   include jboss
+  include jboss::internal::params
+  include jboss::internal::relationship::module_user
 
   $replaced = regsubst($modulename, '\.', '/', 'G')
   $dir = "modules/system/layers/${layer}/${replaced}/main"
@@ -19,9 +21,10 @@ define jboss::internal::module::assemble (
   exec { "jboss::module::assemble::${name}(dir=${dir})":
     command => "/bin/mkdir -p ${jboss::home}/${dir}",
     unless  => "test -d ${jboss::home}/${dir}",
-    path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    path    => $jboss::internal::params::syspath,
     notify  => Service[$jboss::product],
     require => Anchor['jboss::package::end'],
+    before  => Anchor['jboss::internal::relationship::module_user'],
   }
 
   file { "jboss::module::assemble::${name}(dir=${dir})":
@@ -33,6 +36,7 @@ define jboss::internal::module::assemble (
       Anchor['jboss::package::end'],
       Exec["jboss::module::assemble::${name}(dir=${dir})"]
     ],
+    before  => Anchor['jboss::internal::relationship::module_user'],
   }
 
   file { "jboss::module::assemble::${name}(module.xml)":
@@ -41,16 +45,18 @@ define jboss::internal::module::assemble (
     content => template('jboss/module/module.xml.erb'),
     notify  => Service[$jboss::product],
     require => Anchor['jboss::package::end'],
+    before  => Anchor['jboss::internal::relationship::module_user'],
   }
 
   jboss::internal::module::assemble::process_artifacts { $artifacts:
     dir     => $dir,
     notify  => Service[$jboss::product],
     require => Anchor['jboss::package::end'],
+    before  => Anchor['jboss::internal::relationship::module_user'],
   }
 
   jboss::internal::module::registerlayer { "jboss::module::assemble::${name}(${layer})":
-    layer => $layer,
+    layer  => $layer,
+    before => Anchor['jboss::internal::relationship::module_user'],
   }
-
 }
