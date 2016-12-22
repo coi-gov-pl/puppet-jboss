@@ -4,7 +4,7 @@ class jboss::internal::compatibility::wildfly {
   include jboss
   include jboss::internal::compatibility::common
   $_osfamily_down = $jboss::internal::compatibility::common::osfamily_down
-  
+
   if versioncmp($jboss::version, '8.0.0') < 0 or versioncmp($jboss::version, '11.0.0') >= 0 {
     fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: Wildfly 8.x, 9.x and 10.x series")
   }

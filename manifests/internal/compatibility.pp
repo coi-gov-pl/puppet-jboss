@@ -29,7 +29,7 @@ class jboss::internal::compatibility {
     }
     'jboss-as': {
       include jboss::internal::compatibility::as
-      
+
       $controller_port  = $jboss::internal::compatibility::as::controller_port
       $product_short    = $jboss::internal::compatibility::as::product_short
       $initd_file       = $jboss::internal::compatibility::as::initd_file
@@ -41,5 +41,4 @@ class jboss::internal::compatibility {
       fail("Unsupported product ${jboss::product}. Supporting only: 'jboss-eap', 'jboss-as' and 'wildfly'")
     }
   }
-
 }
