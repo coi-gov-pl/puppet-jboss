@@ -28,6 +28,8 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
 
   private
 
+  # Method that ensures that destroyer is present in the system, if not it creates one
+  # @return {Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer} destroyer
   def ensure_destroyer
     cli_executor = ensure_cli_executor
     @secdom_destroyer = Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer.new(cli_executor,
@@ -36,6 +38,8 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     @secdom_destroyer
   end
 
+  # Method that ensures that auditor is present in the system, if not it creates one
+  # @return {Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor} auditor
   def ensure_auditor
     destroyer = ensure_destroyer
     cli_executor = ensure_cli_executor
@@ -46,6 +50,8 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
     @auditor
   end
 
+  # Method that fetches commands that need to be executed to setup security-domain
+  # @return {List} commands list of commands that are going to be executed
   def fetch_commands
     auditor = ensure_auditor
     provider = provider_impl

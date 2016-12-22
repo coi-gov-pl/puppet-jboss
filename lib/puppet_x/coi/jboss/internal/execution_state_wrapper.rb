@@ -1,9 +1,13 @@
 # System executor responsible of executing provided commands
 class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
+
+  # Standard constructor
+  # @param {Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor} shell_executor
   def initialize(shell_executor)
     @shell_executor = shell_executor
   end
 
+  # Standard setter for shell_executor
   attr_accessor :shell_executor
 
   # Method that handles delegation to system executor
