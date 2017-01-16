@@ -172,7 +172,7 @@ class jboss::internal::package (
 
   exec { 'jboss::package::check-for-java':
     command => 'echo "Please provide Java executable to system!" 1>&2 && exit 1',
-    unless  => '[ `which java` ] && java -version 2>&1 | grep -q \'java version\'',
+    unless  => '[ `which java` ] && java -version 2>&1 | egrep -q \'(openjdk|java) version\'',
     require => Anchor['jboss::installed'],
     before  => Anchor['jboss::package::end'],
   }
