@@ -8,8 +8,8 @@ group :test do
   gem 'puppet-lint',                    :require => false
   gem 'metadata-json-lint',             :require => false
   gem 'os',                             :require => false
-  gem 'beaker',                         :require => false
-  gem 'beaker-rspec',                   :require => false
+  gem 'beaker', '< 3.1.0',              :require => false
+  gem 'beaker-rspec', '5.6.0',          :require => false
   gem 'docker-api',                     :require => false
   gem 'coveralls',                      :require => false
   gem 'codeclimate-test-reporter',      :require => false
