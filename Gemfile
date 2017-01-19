@@ -22,6 +22,7 @@ group :test do
   gem 'puppet', '~> 3.0',               :require => false
   gem 'ruby-augeas',                    :require => false
   gem 'augeas',                         :require => false
+  gem 'nokogiri', '~> 1.6.6.0',         :require => false
 end
 
 group :development do
