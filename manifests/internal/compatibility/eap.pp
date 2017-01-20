@@ -7,13 +7,9 @@ class jboss::internal::compatibility::eap {
     fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: JBoss EAP 6.x and 7.x series")
   }
 
-  $_eap_after7x = ( versioncmp($jboss::version, '7.0.0') >= 0 )
-  if $_eap_after7x and $::osfamily != 'RedHat' {
-    fail("Jboss EAP 7.x is supported only on RHEL systems, but tried on ${::osfamily}!")
-  }
   $product_short = 'jboss'
 
-  if $_eap_after7x {
+  if versioncmp($jboss::version, '7.0.0') >= 0 {
     # after EAP 7.x
     $controller_port  = '9990'
     $initd_file       = "${jboss::home}/bin/init.d/jboss-eap-rhel.sh"
