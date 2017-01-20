@@ -14,8 +14,8 @@ class jboss::internal::compatibility::wildfly {
   if versioncmp($jboss::version, '10.0.0') >= 0 {
     # after WFly 10.x
     $initd_file   = "${jboss::home}/docs/contrib/scripts/init.d/wildfly-init-${_osfamily_down}.sh"
-    $systemd_file = "${jboss::home}/docs/contrib/scripts/systemd/wildfly.service"
-    $systemd_launcher = "${jboss::home}/docs/contrib/scripts/systemd/launch.sh"
+    $systemd_file = 'puppet:///modules/jboss/wildfly.service'
+    $systemd_launcher = 'puppet:///modules/jboss/launch.sh'
     case $::osfamily {
       'RedHat': {
         case $::operatingsystem {

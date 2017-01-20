@@ -156,11 +156,30 @@ class jboss::internal::package (
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
 
-  file { "/etc/init.d/${product}":
-    ensure  => 'link',
-    alias   => 'jboss::service-link',
-    target  => $jboss::internal::compatibility::initd_file,
-    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+  if $jboss::internal::compatibility::initsystem == 'SystemD' {
+    file { "${jboss::home}/bin/launch.sh":
+      ensure  => 'file',
+      alias   => 'jboss::systemd_launcher',
+      mode    => '0755',
+      source  => $jboss::internal::compatibility::systemd_launcher,
+      require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    }
+    file { "/etc/systemd/system/${product}.service":
+      ensure  => 'file',
+      alias   => 'jboss::service-link',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template('jboss/systemd/wildfly.service'),
+      require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    }
+  } else {
+    file { "/etc/init.d/${product}":
+      ensure  => 'link',
+      alias   => 'jboss::service-link',
+      target  => $jboss::internal::compatibility::initd_file,
+      require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    }
   }
 
   file { "/usr/bin/${jboss::internal::compatibility::product_short}-cli":
