@@ -1,9 +1,9 @@
 #!/bin/sh
 
-. /etc/wildfly/wildfly.conf
+. /etc/<%= @product %>/<%= @product %>.conf
 
 if [ "x$JBOSS_HOME" = "x" ]; then
-    JBOSS_HOME="/opt/wildfly"
+    JBOSS_HOME="/opt/<%= @product %>"
 fi
 
 if [[ "$1" == "domain" ]]; then

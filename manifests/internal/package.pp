@@ -26,7 +26,7 @@ class jboss::internal::package (
   $standaloneconfigfile = $jboss::internal::runtime::standaloneconfigfile
 
   case $version {
-    /^[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
+    /^[0-9]+\.[0-9]+\.[0-9]+([\._-]*[0-9a-zA-Z_-]+)?$/: {
       debug("Running in version: ${1} -> ${version}")
     }
     default: {
@@ -161,7 +161,7 @@ class jboss::internal::package (
       ensure  => 'file',
       alias   => 'jboss::systemd_launcher',
       mode    => '0755',
-      source  => $jboss::internal::compatibility::systemd_launcher,
+      content => template($jboss::internal::compatibility::systemd_launcher),
       require => Jboss::Internal::Util::Groupaccess[$jboss::home],
     }
     file { "/etc/systemd/system/${product}.service":
@@ -170,7 +170,7 @@ class jboss::internal::package (
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
-      content => template('jboss/systemd/wildfly.service'),
+      content => template($jboss::internal::compatibility::systemd_file),
       require => Jboss::Internal::Util::Groupaccess[$jboss::home],
     }
   } else {
