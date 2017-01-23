@@ -24,6 +24,10 @@ class jboss::internal::compatibility::wildfly {
               $initsystem = 'SystemD'
             } else {
               $initsystem = 'SystemV'
+              $versioned_name = "${::operatingsystem} ${::operatingsystemrelease}"
+              if jboss_to_bool($jboss::java_autoinstall) {
+                warning("Wildfly 10 requires Java 8 or greater, which is not suppoted by default on ${versioned_name}.")
+              }
             }
           }
           'Fedora': {
@@ -31,6 +35,10 @@ class jboss::internal::compatibility::wildfly {
               $initsystem = 'SystemD'
             } else {
               $initsystem = 'SystemV'
+              $versioned_name = "${::operatingsystem} ${::operatingsystemrelease}"
+              if jboss_to_bool($jboss::java_autoinstall) {
+                warning("Wildfly 10 requires Java 8 or greater, which is not suppoted by default on ${versioned_name}.")
+              }
             }
           }
           default: {
@@ -45,6 +53,10 @@ class jboss::internal::compatibility::wildfly {
           }
           'jessie','vivid','wily','xenial': {
             $initsystem = 'SystemD'
+            $versioned_name = "${::operatingsystem} ${::operatingsystemrelease}"
+            if jboss_to_bool($jboss::java_autoinstall) {
+              warning("Wildfly 10 requires Java 8 or greater, which is not suppoted by default on ${versioned_name}.")
+            }
           }
           default: { fail("Unsupported release ${::lsbdistcodename}") }
         }
