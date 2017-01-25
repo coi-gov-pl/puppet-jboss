@@ -1,3 +1,5 @@
+require 'English'
+
 # Class that handles shell command execution
 class Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor
   # Method that executes method by real system command execution
@@ -9,6 +11,6 @@ class Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor
   #  Method to check return code from last command that was executed
   # @return {Process::Status} result of last command
   def child_status
-    $?
+    $CHILD_STATUS
   end
 end
