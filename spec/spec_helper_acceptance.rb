@@ -14,7 +14,7 @@ unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
   if default.is_pe?
     install_pe
   else
-    install_puppet foss_opts
+    install_puppet_on(hosts, foss_opts)
   end
 
   hosts.each do |host|
