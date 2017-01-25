@@ -32,6 +32,7 @@ matrix:
     bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-../vendor/bundle}"
   - rvm: '2.0'
     env: PUPPET_VERSION="~> 3.0"
+    gemfile: gemfiles/Gemfile20
   - rvm: '2.1'
     env: PUPPET_VERSION="~> 3.0"
   - rvm: '2.1'
