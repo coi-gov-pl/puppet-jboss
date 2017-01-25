@@ -378,6 +378,7 @@ DEPENDENCIES
   metadata-json-lint
   mime-types (= 2.99.2)
   net-ssh (= 2.9.4)
+  nokogiri (~> 1.6.8)
   os
   pry-debugger
   puppet (~> 3.0)
@@ -393,6 +394,3 @@ DEPENDENCIES
   tins (~> 1.6.0)
   travis
   vagrant-wrapper
-
-BUNDLED WITH
-   1.12.5

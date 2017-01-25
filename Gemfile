@@ -8,8 +8,10 @@ group :test do
   gem 'puppet-lint',                    :require => false
   gem 'metadata-json-lint',             :require => false
   gem 'os',                             :require => false
+  # TODO: Pinned because beaker is supported only MRI >=2.2, remove this
+  # explicitly pinned version by the time ticket gh-org/puppet-jboss#96 is closed.
   gem 'beaker', '< 3.1.0',              :require => false
-  gem 'beaker-rspec', '5.6.0',          :require => false
+  gem 'beaker-rspec', '< 6.0.0',        :require => false
   gem 'docker-api',                     :require => false
   gem 'coveralls',                      :require => false
   gem 'codeclimate-test-reporter',      :require => false
@@ -22,7 +24,6 @@ group :test do
   gem 'puppet', '~> 3.0',               :require => false
   gem 'ruby-augeas',                    :require => false
   gem 'augeas',                         :require => false
-  gem 'nokogiri', '~> 1.6.6.0',         :require => false
 end
 
 group :development do
