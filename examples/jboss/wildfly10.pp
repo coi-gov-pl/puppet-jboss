@@ -1,4 +1,4 @@
 class { 'jboss':
   product => 'wildfly',
-  version => '10.0.0.Final',
+  version => '10.1.0.Final',
 }

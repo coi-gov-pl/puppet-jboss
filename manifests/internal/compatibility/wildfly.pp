@@ -10,6 +10,10 @@ class jboss::internal::compatibility::wildfly {
   }
   $controller_port = '9990'
   $product_short   = 'wildfly'
+  $versioned_name  = "${::operatingsystem} ${::operatingsystemrelease}"
+  $not_start_warn1 = 'Wildfly >= 10 requires Java 8 or greater to operate. Module puppetlabs/java will install older version of Java on'
+  $not_start_warn2 = " ${versioned_name}. Install Java 8 and set flag \$jboss::java_autoinstall to false to suppress this warning."
+  $not_start_warn  = "${not_start_warn1}${not_start_warn2}"
 
   if versioncmp($jboss::version, '10.0.0') >= 0 {
     # after WFly 10.x
@@ -24,9 +28,9 @@ class jboss::internal::compatibility::wildfly {
               $initsystem = 'SystemD'
             } else {
               $initsystem = 'SystemV'
-              $versioned_name = "${::operatingsystem} ${::operatingsystemrelease}"
               if jboss_to_bool($jboss::java_autoinstall) {
-                warning("Wildfly 10 requires Java 8 or greater, which is not suppoted by default on ${versioned_name}.")
+                warning($not_start_warn)
+                $expect_to_start = false
               }
             }
           }
@@ -35,9 +39,10 @@ class jboss::internal::compatibility::wildfly {
               $initsystem = 'SystemD'
             } else {
               $initsystem = 'SystemV'
-              $versioned_name = "${::operatingsystem} ${::operatingsystemrelease}"
+
               if jboss_to_bool($jboss::java_autoinstall) {
-                warning("Wildfly 10 requires Java 8 or greater, which is not suppoted by default on ${versioned_name}.")
+                warning($not_start_warn)
+                $expect_to_start = false
               }
             }
           }
@@ -50,13 +55,13 @@ class jboss::internal::compatibility::wildfly {
         case $::lsbdistcodename {
           'lenny','squeeze','lucid','natty','wheezy','precise','quantal','raring','saucy','trusty','utopic' : {
             $initsystem = 'SystemV'
-          }
-          'jessie','vivid','wily','xenial': {
-            $initsystem = 'SystemD'
-            $versioned_name = "${::operatingsystem} ${::operatingsystemrelease}"
             if jboss_to_bool($jboss::java_autoinstall) {
-              warning("Wildfly 10 requires Java 8 or greater, which is not suppoted by default on ${versioned_name}.")
+              warning($not_start_warn)
+              $expect_to_start = false
             }
+          }
+          'jessie','vivid','wily','xenial','yakkety','zesty': {
+            $initsystem = 'SystemD'
           }
           default: { fail("Unsupported release ${::lsbdistcodename}") }
         }
@@ -69,5 +74,9 @@ class jboss::internal::compatibility::wildfly {
     # for WFly 8.x, 9.x
     $initsystem = 'SystemV'
     $initd_file = "${jboss::home}/bin/init.d/wildfly-init-${_osfamily_down}.sh"
+  }
+
+  if $expect_to_start == undef {
+    $expect_to_start = true
   }
 }

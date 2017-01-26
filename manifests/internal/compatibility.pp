@@ -16,6 +16,7 @@ class jboss::internal::compatibility {
       $systemd_file     = $jboss::internal::compatibility::wildfly::systemd_file
       $systemd_launcher = $jboss::internal::compatibility::wildfly::systemd_launcher
       $initsystem       = $jboss::internal::compatibility::wildfly::initsystem
+      $expect_to_start  = $jboss::internal::compatibility::wildfly::expect_to_start
     }
     'jboss-eap': {
       include jboss::internal::compatibility::eap
@@ -26,6 +27,7 @@ class jboss::internal::compatibility {
       $systemd_file     = $jboss::internal::compatibility::eap::systemd_file
       $systemd_launcher = $jboss::internal::compatibility::eap::systemd_launcher
       $initsystem       = $jboss::internal::compatibility::eap::initsystem
+      $expect_to_start  = $jboss::internal::compatibility::eap::expect_to_start
     }
     'jboss-as': {
       include jboss::internal::compatibility::as
@@ -36,6 +38,7 @@ class jboss::internal::compatibility {
       $systemd_file     = $jboss::internal::compatibility::as::systemd_file
       $systemd_launcher = $jboss::internal::compatibility::as::systemd_launcher
       $initsystem       = $jboss::internal::compatibility::as::initsystem
+      $expect_to_start  = $jboss::internal::compatibility::as::expect_to_start
     }
     default: {
       fail("Unsupported product ${jboss::product}. Supporting only: 'jboss-eap', 'jboss-as' and 'wildfly'")

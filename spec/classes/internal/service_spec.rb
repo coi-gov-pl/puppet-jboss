@@ -17,15 +17,15 @@ describe 'jboss::internal::service', :type => :class do
       is_expected.to contain_exec('jboss::service::test-running').
       with(
         :loglevel  => 'emerg',
-        :command   => 'tail -n 50 /var/log/wildfly/console.log && exit 1',
-        :unless    => 'ps aux | grep wildfly | grep -vq grep',
+        :command   => 'tail -n 80 /var/log/wildfly/console.log && exit 1',
+        :unless    => "pgrep -f '^java.*wildfly' > /dev/null",
         :logoutput => true
       )
     end
     it do
       is_expected.to contain_exec('jboss::service::restart').
       with(
-        :command     => 'service wildfly stop ; pkill -9 -f "^java.*jboss"  ; service wildfly start',
+        :command     => "service wildfly stop ; sleep 5 ; pkill -9 -f '^java.*wildfly' ; service wildfly start",
         :refreshonly => true
       )
     end

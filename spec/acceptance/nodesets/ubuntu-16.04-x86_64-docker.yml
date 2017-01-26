@@ -1,9 +1,11 @@
 HOSTS:
-  debian-8-x64:
-    platform: debian-8-amd64
-    hypervisor : docker
-    image: debian:8
-    docker_preserve_image: true
+  ubuntu-1604-x64:
+    roles:
+      - agent
+      - default
+    platform: ubuntu-16.04-amd64
+    image:  ubuntu:16.04
+    hypervisor: docker
     docker_cmd: ["/bin/systemd"]
     docker_preserve_image: true
     docker_image_commands:
@@ -14,7 +16,7 @@ HOSTS:
         host_path: /tmp/wget_cache
         container_path: /var/cache/wget
       apt_cache:
-        host_path: /tmp/apt_cache/debian-8-amd64
+        host_path: /tmp/apt_cache/ubuntu-16.04-amd64
         container_path: /var/cache/apt
 CONFIG:
   type: foss

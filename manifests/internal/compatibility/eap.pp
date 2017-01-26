@@ -8,6 +8,7 @@ class jboss::internal::compatibility::eap {
   }
 
   $product_short = 'jboss'
+  $expect_to_start = true
 
   if versioncmp($jboss::version, '7.0.0') >= 0 {
     # after EAP 7.x
@@ -42,7 +43,7 @@ class jboss::internal::compatibility::eap {
           'lenny','squeeze','lucid','natty','wheezy','precise','quantal','raring','saucy','trusty','utopic' : {
             $initsystem = 'SystemV'
           }
-          'jessie','vivid','wily','xenial': {
+          'jessie','vivid','wily','xenial','yakkety','zesty': {
             $initsystem = 'SystemD'
           }
           default: { fail("Unsupported release ${::lsbdistcodename}") }
