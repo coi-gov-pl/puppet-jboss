@@ -46,12 +46,27 @@ matrix:
   - rvm: '2.1'
     sudo: required
     services: docker
+    env: PUPPET_VERSION="3.8.7" RS_SET="centos-7-x86_64-docker"
+    script: bundle exec rake acceptance
+  - rvm: '2.1'
+    sudo: required
+    services: docker
     env: PUPPET_VERSION="3.8.7" RS_SET="debian-7-x86_64-docker"
     script: bundle exec rake acceptance
   - rvm: '2.1'
     sudo: required
     services: docker
+    env: RS_SET="debian-8-x86_64-docker"
+    script: bundle exec rake acceptance
+  - rvm: '2.1'
+    sudo: required
+    services: docker
     env: PUPPET_VERSION="3.8.7" RS_SET="ubuntu-14.04-x86_64-docker"
+    script: bundle exec rake acceptance
+  - rvm: '2.1'
+    sudo: required
+    services: docker
+    env: RS_SET="ubuntu-16.04-x86_64-docker"
     script: bundle exec rake acceptance
   # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
