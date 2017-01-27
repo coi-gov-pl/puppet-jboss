@@ -12,7 +12,16 @@ describe 'jboss::internal::service', :type => :class do
     it { is_expected.to contain_class('jboss::params') }
     it { is_expected.to contain_class('jboss::internal::configuration') }
   end
-  shared_examples 'containg service execs' do
+  shared_examples 'containg service restart exec' do
+    it do
+      is_expected.to contain_exec('jboss::service::restart').
+      with(
+        :command     => "service wildfly stop ; sleep 5 ; pkill -9 -f '^java.*wildfly' ; service wildfly start",
+        :refreshonly => true
+      )
+    end
+  end
+  shared_examples 'containg SystemD execs' do
     it do
       is_expected.to contain_exec('jboss::service::test-running').
       with(
@@ -23,10 +32,18 @@ describe 'jboss::internal::service', :type => :class do
       )
     end
     it do
-      is_expected.to contain_exec('jboss::service::restart').
+      is_expected.to contain_exec('systemctl-daemon-reload-for-wildfly').
+      with_command("/bin/systemctl daemon-reload")
+    end
+  end
+  shared_examples 'containg SystemV execs' do
+    it do
+      is_expected.to contain_exec('jboss::service::test-running').
       with(
-        :command     => "service wildfly stop ; sleep 5 ; pkill -9 -f '^java.*wildfly' ; service wildfly start",
-        :refreshonly => true
+        :loglevel  => 'warning',
+        :command   => 'tail -n 80 /var/log/wildfly/console.log && exit 0',
+        :unless    => "pgrep -f '^java.*wildfly' > /dev/null",
+        :logoutput => true
       )
     end
   end
@@ -39,15 +56,27 @@ describe 'jboss::internal::service', :type => :class do
         )
       end
       it_behaves_like 'containg service anchors'
-      it_behaves_like 'containg service execs'
+      it_behaves_like 'containg service restart exec'
+      it_behaves_like 'containg SystemV execs'
       it_behaves_like 'containg class structure'
-      it { is_expected.to contain_service('wildfly').
+      it do
+        is_expected.to contain_service('wildfly').
         with(
           :ensure     => 'running',
           :enable     => nil,
           :hasstatus  => true,
           :hasrestart => true
-        ) }
+        )
+      end
+      context 'on SystemD system' do
+        let(:facts) do
+          Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
+            :jboss_virtual          => 'docker',
+            :operatingsystemrelease => '7.1'
+          )
+        end
+        it_behaves_like 'containg SystemD execs'
+      end
     end
     context 'on non-Docker machine' do
       let(:facts) do
@@ -56,15 +85,27 @@ describe 'jboss::internal::service', :type => :class do
         )
       end
       it_behaves_like 'containg service anchors'
-      it_behaves_like 'containg service execs'
+      it_behaves_like 'containg service restart exec'
+      it_behaves_like 'containg SystemV execs'
       it_behaves_like 'containg class structure'
-      it { is_expected.to contain_service('wildfly').
+      it do
+        is_expected.to contain_service('wildfly').
         with(
           :ensure     => 'running',
           :enable     => true,
           :hasstatus  => true,
           :hasrestart => true
-        ) }
+        )
+      end
+      context 'on SystemD system' do
+        let(:facts) do
+          Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
+            :jboss_virtual          => 'phisycal',
+            :operatingsystemrelease => '7.1'
+          )
+        end
+        it_behaves_like 'containg SystemD execs'
+      end
     end
   end
 
@@ -76,15 +117,28 @@ describe 'jboss::internal::service', :type => :class do
         )
       end
       it_behaves_like 'containg service anchors'
-      it_behaves_like 'containg service execs'
+      it_behaves_like 'containg service restart exec'
+      it_behaves_like 'containg SystemV execs'
       it_behaves_like 'containg class structure'
-      it { is_expected.to contain_service('wildfly').
+      it do
+        is_expected.to contain_service('wildfly').
         with(
           :ensure     => 'running',
           :enable     => nil,
           :hasstatus  => true,
           :hasrestart => true
-        ) }
+        )
+      end
+      context 'on SystemD system' do
+        let(:facts) do
+          Testing::RspecPuppet::SharedFacts.ubuntu_facts(
+            :jboss_virtual          => 'docker',
+            :operatingsystem        => 'Debian',
+            :operatingsystemrelease => '8'
+          )
+        end
+        it_behaves_like 'containg SystemD execs'
+      end
     end
     context 'on non-Docker machine' do
       let(:facts) do
@@ -93,15 +147,27 @@ describe 'jboss::internal::service', :type => :class do
         )
       end
       it_behaves_like 'containg service anchors'
-      it_behaves_like 'containg service execs'
+      it_behaves_like 'containg service restart exec'
+      it_behaves_like 'containg SystemV execs'
       it_behaves_like 'containg class structure'
-      it { is_expected.to contain_service('wildfly').
+      it do
+        is_expected.to contain_service('wildfly').
         with(
           :ensure     => 'running',
           :enable     => true,
           :hasstatus  => true,
           :hasrestart => true
-        ) }
+        )
+      end
+      context 'on SystemD system' do
+        let(:facts) do
+          Testing::RspecPuppet::SharedFacts.ubuntu_facts(
+            :jboss_virtual          => 'vmware',
+            :operatingsystemrelease => '16.04'
+          )
+        end
+        it_behaves_like 'containg SystemD execs'
+      end
     end
   end
 end

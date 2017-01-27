@@ -162,6 +162,15 @@ class jboss::internal::package (
       alias   => 'jboss::systemd_launcher',
       mode    => '0755',
       content => template($jboss::internal::compatibility::systemd_launcher),
+      notify  => Anchor['jboss::installed'],
+      require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    }
+    file { "${jboss::home}/bin/wait-for-start.sh":
+      ensure  => 'file',
+      alias   => 'jboss::systemd_waiter',
+      mode    => '0755',
+      content => template('jboss/systemd/wait-for-start.sh'),
+      notify  => Anchor['jboss::installed'],
       require => Jboss::Internal::Util::Groupaccess[$jboss::home],
     }
     file { "/etc/systemd/system/${product}.service":
@@ -198,15 +207,15 @@ class jboss::internal::package (
   }
 
   anchor { 'jboss::installed':
-    require => [
+    notify    => Anchor['jboss::package::end'],
+    subscribe => [
       Jboss::Internal::Util::Groupaccess[$jboss::home],
       Exec['jboss::test-extraction'],
       File['jboss::confdir'],
       File['jboss::logfile'],
       File['jboss::jbosscli'],
-      File['jboss::service-link'],
+      File['jboss::service-link']
     ],
-    before  => Anchor['jboss::package::end'],
   }
   anchor { 'jboss::package::end': }
 }

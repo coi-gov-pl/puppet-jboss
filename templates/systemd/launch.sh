@@ -1,13 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 . /etc/<%= @product %>/<%= @product %>.conf
 
+set -x
+
 if [ "x$JBOSS_HOME" = "x" ]; then
-    JBOSS_HOME="/opt/<%= @product %>"
+    JBOSS_HOME="/usr/lib/<%= @product %>-<%= @version %>"
 fi
 
-if [[ "$1" == "domain" ]]; then
-    $JBOSS_HOME/bin/domain.sh -c $2
-else
-    $JBOSS_HOME/bin/standalone.sh -c $2
-fi
+$JBOSS_HOME/bin/$JBOSS_MODE.sh -c "${1}" | tee $JBOSS_CONSOLE_LOG

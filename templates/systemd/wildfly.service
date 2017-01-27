@@ -4,13 +4,13 @@ After=syslog.target network.target
 Before=httpd.service
 
 [Service]
+Type=simple
 Environment=LAUNCH_JBOSS_IN_BACKGROUND=1
 EnvironmentFile=-/etc/<%= @product %>/<%= @product %>.conf
 User=<%= @jboss_user %>
 LimitNOFILE=102642
-PIDFile=/var/run/<%= @product %>/<%= @product %>.pid
-ExecStart=<%= @home %>/bin/launch.sh $JBOSS_MODE $JBOSS_CONFIG
-StandardOutput=null
+ExecStart=<%= @home %>/bin/launch.sh $JBOSS_CONFIG
+ExecStartPost=<%= @home %>/bin/wait-for-start.sh
 
 [Install]
 WantedBy=multi-user.target
