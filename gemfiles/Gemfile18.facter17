@@ -20,12 +20,12 @@ group :test do
   gem 'tins', '~> 1.6.0',               :require => false
 
   gem 'facter', '1.7.0',                :require => false
-
   gem 'puppet', '~> 2.7.0',             :require => false
   gem 'hiera-puppet',                   :require => false
 
   gem 'ruby-augeas',                    :require => false
   gem 'augeas',                         :require => false
+  gem 'nokogiri', '~> 1.5.11',          :require => false
 end
 
 group :development do

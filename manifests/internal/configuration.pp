@@ -6,8 +6,6 @@ class jboss::internal::configuration {
   include jboss::internal::augeas
   include jboss::internal::configure::interfaces
 
-  include jboss::internal::quirks::etc_initd_functions
-
   $home          = $jboss::home
   $user          = $jboss::jboss_user
   $enableconsole = $jboss::enableconsole

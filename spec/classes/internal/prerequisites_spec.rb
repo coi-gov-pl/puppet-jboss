@@ -5,6 +5,8 @@ describe 'jboss::internal::prerequisites', :type => :define do
     it { is_expected.to compile }
     it { is_expected.to contain_class 'jboss::internal::prerequisites' }
     it { is_expected.to contain_package('unzip') }
+    it { is_expected.to contain_package('procps') }
+    it { is_expected.to contain_package('coreutils') }
   end
 
   context 'On RedHat os family' do
