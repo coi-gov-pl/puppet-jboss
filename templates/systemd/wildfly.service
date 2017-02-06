@@ -1,0 +1,16 @@
+[Unit]
+Description=The <%= @product %> Application Server
+After=syslog.target network.target
+Before=httpd.service
+
+[Service]
+Type=simple
+Environment=LAUNCH_JBOSS_IN_BACKGROUND=1
+EnvironmentFile=-/etc/<%= @product %>/<%= @product %>.conf
+User=<%= @jboss_user %>
+LimitNOFILE=102642
+ExecStart=<%= @home %>/bin/launch.sh $JBOSS_CONFIG
+ExecStartPost=<%= @home %>/bin/wait-for-start.sh
+
+[Install]
+WantedBy=multi-user.target

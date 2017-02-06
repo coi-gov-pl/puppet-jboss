@@ -7,5 +7,5 @@
 # None
 #
 class jboss::internal::prerequisites {
-  ensure_packages(['unzip'])
+  ensure_packages(['unzip', 'procps', 'coreutils'])
 }

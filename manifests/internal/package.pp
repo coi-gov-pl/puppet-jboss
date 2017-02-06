@@ -26,7 +26,7 @@ class jboss::internal::package (
   $standaloneconfigfile = $jboss::internal::runtime::standaloneconfigfile
 
   case $version {
-    /^[0-9]+\.[0-9]+\.[0-9]+[\._-][0-9a-zA-Z_-]+$/: {
+    /^[0-9]+\.[0-9]+\.[0-9]+([\._-]*[0-9a-zA-Z_-]+)?$/: {
       debug("Running in version: ${1} -> ${version}")
     }
     default: {
@@ -119,9 +119,10 @@ class jboss::internal::package (
     require => Exec['jboss::unzip-downloaded'],
   }
 
+  $extract_testfile = 'bin/jboss-cli.sh'
   exec { 'jboss::test-extraction':
-    command => "echo '${jboss::home}/bin/init.d not found!' 1>&2 && exit 1",
-    unless  => "test -d ${jboss::home}/bin/init.d",
+    command => "echo '${jboss::home}/${extract_testfile} not found!' 1>&2 && exit 1",
+    unless  => "test -f ${jboss::home}/${extract_testfile}",
     require => Exec['jboss::move-unzipped'],
   }
 
@@ -155,11 +156,39 @@ class jboss::internal::package (
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
 
-  file { "/etc/init.d/${product}":
-    ensure  => 'link',
-    alias   => 'jboss::service-link',
-    target  => $jboss::internal::compatibility::initd_file,
-    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+  if $jboss::internal::compatibility::initsystem == 'SystemD' {
+    file { "${jboss::home}/bin/launch.sh":
+      ensure  => 'file',
+      alias   => 'jboss::systemd_launcher',
+      mode    => '0755',
+      content => template($jboss::internal::compatibility::systemd_launcher),
+      notify  => Anchor['jboss::installed'],
+      require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    }
+    file { "${jboss::home}/bin/wait-for-start.sh":
+      ensure  => 'file',
+      alias   => 'jboss::systemd_waiter',
+      mode    => '0755',
+      content => template('jboss/systemd/wait-for-start.sh'),
+      notify  => Anchor['jboss::installed'],
+      require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    }
+    file { "/etc/systemd/system/${product}.service":
+      ensure  => 'file',
+      alias   => 'jboss::service-link',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template($jboss::internal::compatibility::systemd_file),
+      require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    }
+  } else {
+    file { "/etc/init.d/${product}":
+      ensure  => 'link',
+      alias   => 'jboss::service-link',
+      target  => $jboss::internal::compatibility::initd_file,
+      require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    }
   }
 
   file { "/usr/bin/${jboss::internal::compatibility::product_short}-cli":
@@ -172,21 +201,21 @@ class jboss::internal::package (
 
   exec { 'jboss::package::check-for-java':
     command => 'echo "Please provide Java executable to system!" 1>&2 && exit 1',
-    unless  => '[ `which java` ] && java -version 2>&1 | grep -q \'java version\'',
+    unless  => '[ `which java` ] && java -version 2>&1 | grep -qE \'(jdk|jre|java) version\'',
     require => Anchor['jboss::installed'],
     before  => Anchor['jboss::package::end'],
   }
 
   anchor { 'jboss::installed':
-    require => [
+    notify    => Anchor['jboss::package::end'],
+    subscribe => [
       Jboss::Internal::Util::Groupaccess[$jboss::home],
       Exec['jboss::test-extraction'],
       File['jboss::confdir'],
       File['jboss::logfile'],
       File['jboss::jbosscli'],
-      File['jboss::service-link'],
+      File['jboss::service-link']
     ],
-    before  => Anchor['jboss::package::end'],
   }
   anchor { 'jboss::package::end': }
 }

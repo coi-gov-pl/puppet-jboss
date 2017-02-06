@@ -100,7 +100,7 @@ class jboss (
   $full_download_url = $jboss::internal::runtime::download_url
 
   if $full_download_url == undef {
-    fail Puppet::Errorr, 'Full download url cannot be undef'
+    fail Puppet::Error, 'Full download url cannot be undef'
   }
 
   class { 'jboss::internal::package':

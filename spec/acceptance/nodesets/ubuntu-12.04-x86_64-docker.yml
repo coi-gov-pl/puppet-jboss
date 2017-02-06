@@ -7,6 +7,13 @@ HOSTS:
     docker_image_commands:
       - 'apt-get update && apt-get install -y net-tools ca-certificates wget'
       - 'locale-gen en_US.UTF-8'
+    mount_folders:
+      wget_cache:
+        host_path: /tmp/wget_cache
+        container_path: /var/cache/wget
+      apt_cache:
+        host_path: /tmp/apt_cache/ubuntu-12.04-amd64
+        container_path: /var/cache/apt
 CONFIG:
   type: foss
   log_level: debug

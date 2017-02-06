@@ -27,6 +27,7 @@ GEM
       net-ssh (>= 2.6.5)
     net-ssh (2.9.4)
     net-telnet (0.1.1)
+    nokogiri (1.5.11)
     os (0.9.6)
     pry (0.9.12.6)
       coderay (~> 1.0)
@@ -89,6 +90,7 @@ DEPENDENCIES
   json_pure (= 1.8.3)
   metadata-json-lint
   net-ssh (= 2.9.4)
+  nokogiri (~> 1.5.11)
   os
   pry (~> 0.9.12.0)
   puppet (~> 2.7.0)
@@ -102,6 +104,3 @@ DEPENDENCIES
   specinfra (= 2.59.0)
   tins (~> 1.6.0)
   vagrant-wrapper
-
-BUNDLED WITH
-   1.12.5

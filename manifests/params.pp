@@ -57,4 +57,7 @@ class jboss::params inherits jboss::internal::params {
   # Tool used by this module to fetch JBoss installation files from network
   $fetch_tool       = hiera('jboss::params::fetch_tool', 'jboss::internal::util::download')
 
+  # Time to wait (in seconds) for server to become available
+  $startup_wait     = hiera('jboss::params::startup_wait', '60')
+
 }

@@ -23,7 +23,7 @@ unless $executing_puppet
     rescue Gem::LoadError
       # do nothing
     end
-    SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[*formatters]
+    SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
     SimpleCov.start do
       add_filter "/spec/"
       add_filter "/.vendor/"
