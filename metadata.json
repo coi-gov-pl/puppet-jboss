@@ -1,6 +1,6 @@
 {
   "name":         "coi/jboss",
-  "version":      "1.2.0",
+  "version":      "1.2.1.pre",
   "author":       "Center of Information Technology COI.gov.pl",
   "summary":      "Installs JBoss EAP and WildFly application servers and manage their resources and applications in either a domain or a stand-alone mode",
   "license":      "Apache-2.0",
