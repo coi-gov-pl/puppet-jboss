@@ -21,7 +21,7 @@
     { "operatingsystem": "Ubuntu",      "operatingsystemrelease": [ "10.04", "12.04", "14.04", "16.04" ] }
   ],
   "requirements": [
-    { "name": "pe",     "version_requirement": ">=2.8.0 <4.0.0" },
-    { "name": "puppet", "version_requirement": ">=2.7.0 <5.0.0" }
+    { "name": "pe",     "version_requirement": ">=3.0.0 <5.0.0" },
+    { "name": "puppet", "version_requirement": ">=3.0.0 <5.0.0" }
   ]
 }
