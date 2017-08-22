@@ -1,0 +1,15 @@
+HOSTS:
+  ubuntu-1604-vagrant:
+    platform: ubuntu-16.04-amd64
+    hypervisor: vagrant
+    box: boxcutter-ubuntu1604
+    mount_folders:
+      wget_cache:
+        from: /tmp/vagrant-cache/wget
+        to: /var/cache/wget
+      apt_cache:
+        from: /tmp/vagrant-cache/apt/ubuntu-1604-vagrant
+        to: /var/cache/apt/archives
+CONFIG:
+  type: foss
+  log_level: debug

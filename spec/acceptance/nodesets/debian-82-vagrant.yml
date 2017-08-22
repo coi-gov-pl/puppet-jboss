@@ -1,0 +1,15 @@
+HOSTS:
+  debian-82-x64-vagrant:
+    platform: debian-8-amd64
+    hypervisor: vagrant
+    box: puppetlabs/debian-8.2-64-nocm
+    mount_folders:
+      wget_cache:
+        from: /tmp/vagrant-cache/wget
+        to: /var/cache/wget
+      apt_cache:
+        from: /tmp/vagrant-cache/apt/debian-82-vagrant
+        to: /var/cache/apt/archives
+CONFIG:
+  type: foss
+  log_level: debug

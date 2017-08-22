@@ -1,15 +1,15 @@
 HOSTS:
-  default-ol-6-vagrant:
-    platform: el-6-x86_64
+  centos-7-vagrant:
+    platform: el-7-x86_64
     hypervisor: vagrant
-    box: boxcutter-ol68
+    box: boxcutter-centos73
     mount_folders:
       wget_cache:
         from: /tmp/vagrant-cache/wget
         to: /var/cache/wget
       yum_cache:
-        from: /tmp/vagrant-cache/wget/ol-6-vagrant
+        from: /tmp/vagrant-cache/yum/centos-7-vagrant
         to: /var/cache/yum
 CONFIG:
   type: foss
-  log_level: info
+  log_level: debug

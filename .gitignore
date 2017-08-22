@@ -1,16 +1,10 @@
-pkg/
-vendor/
-spec/fixtures/
-.vagrant/
-.bundle/
-coverage/
-doc/
-.tmp/
-Puppetfile.lock
-.librarian/
-log
-Vagrantfile
-.DS_Store
-Gemfile.local
+# Created by .ignore support plugin (hsz.mobi)
 .idea/
-Gemfile.lock
+pkg/
+.vagrant/
+.tmp
+coverage
+spec/fixtures
+log/
+junit/
+.bundle

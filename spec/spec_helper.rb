@@ -1,77 +1,46 @@
-require 'puppetlabs_spec_helper/module_spec_helper'
-require 'rspec/its'
+def gem_present(name)
+  !Bundler.rubygems.find_name(name).empty?
+end
 
-unless $executing_puppet
-  begin
-  gem 'simplecov'
-    require 'simplecov'
-    formatters = []
-    formatters << SimpleCov::Formatter::HTMLFormatter
-
-    begin
-      gem 'coveralls'
-      require 'coveralls'
-      formatters << Coveralls::SimpleCov::Formatter if ENV['TRAVIS']
-    rescue Gem::LoadError
-      # do nothing
-    end
-
-    begin
-      gem 'codeclimate-test-reporter'
-      require 'codeclimate-test-reporter'
-      formatters << CodeClimate::TestReporter::Formatter if (ENV['TRAVIS'] and ENV['CODECLIMATE_REPO_TOKEN'])
-    rescue Gem::LoadError
-      # do nothing
-    end
-    SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
-    SimpleCov.start do
-      add_filter "/spec/"
-      add_filter "/.vendor/"
-      add_filter "/vendor/"
-      add_filter "/gems/"
-      minimum_coverage 76
-      refuse_coverage_drop
-    end
-  rescue Gem::LoadError
-    # do nothing
+if gem_present 'simplecov'
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter '/spec/'
+    add_filter '/.vendor/'
+    add_filter '/vendor/'
+    add_filter '/gems/'
   end
 end
 
-begin
-  gem 'pry'
-  require 'pry'
-rescue Gem::LoadError
-  # do nothing
-end
-
-module Testing
-  module Mock end
-end
-
-require 'puppet_x/coi/jboss'
-require 'testing/mock/mocked_execution_state_wrapper'
-require 'testing/mock/mocked_shell_executor'
-
-require 'rspec-puppet'
+require 'puppetlabs_spec_helper/module_spec_helper'
+require 'rspec/its'
+require 'pry' if gem_present 'pry'
 
 RSpec.configure do |c|
-  c.tty = true unless ENV['JENKINS_URL'].nil?
   c.mock_with :rspec do |mock|
-    mock.syntax = [:expect, :should]
+    mock.syntax = %i[expect should]
   end
   c.include PuppetlabsSpec::Files
 
-  c.before :each do
-    # Store any environment variables away to be restored later
-    @old_env = {}
-    ENV.each_key {|k| @old_env[k] = ENV[k]}
+  # Readable test descriptions
+  c.formatter = :documentation
+  c.order     = :random
 
+  c.before :each do
     if ENV['STRICT_VARIABLES'] == 'yes'
-      Puppet.settings[:strict_variables]=true
+      Puppet.settings[:strict_variables] = true
     end
   end
 
   c.after :each do
     PuppetlabsSpec::Files.cleanup
   end
+
+  c.hiera_config = File.expand_path(File.join(__FILE__, '../hiera/hiera.yaml'))
+end
+
+# Convenience helper for returning parameters for a type from the
+# catalogue.
+def param(type, title, param)
+  param_value(catalogue, type, title, param)
 end

@@ -1,6 +1,24 @@
+inherit_from: .rubocop_todo.yml
 AllCops:
+  TargetRubyVersion: 2.1
+  Include:
+    - gemfiles/Gemfile*
   Exclude:
-    - 'vendor/**/*'
-
+    - vendor/**/*
+    - .vendor/**/*
+    - pkg/**/*
+    - spec/fixtures/**/*
+    - gemfiles/Gemfile*.lock
 Metrics/LineLength:
   Max: 140
+Style/FileName:
+  Exclude:
+    - 'Gemfile'
+    - 'Rakefile'
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: native, lf, crlf
+Layout/EndOfLine:
+  EnforcedStyle: lf

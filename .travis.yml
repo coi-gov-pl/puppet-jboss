@@ -18,22 +18,6 @@ before_install:
 matrix:
   fast_finish: true
   include:
-  - rvm: '1.8'
-    env: PUPPET_VERSION="~> 2.7.0" FACTER_VERSION="~> 1.6.0"
-    gemfile: gemfiles/Gemfile18.facter16
-    bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-../vendor/bundle}"
-  - rvm: '1.8'
-    env: PUPPET_VERSION="~> 2.7.0" FACTER_VERSION="~> 1.7.0"
-    gemfile: gemfiles/Gemfile18.facter17
-    bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-../vendor/bundle}"
-  - rvm: '1.9'
-    env: PUPPET_VERSION="~> 3.0"
-    gemfile: gemfiles/Gemfile19
-    bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-../vendor/bundle}"
-  - rvm: '2.0'
-    env: PUPPET_VERSION="~> 3.0"
-    gemfile: gemfiles/Gemfile20
-    bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-../vendor/bundle}"
   - rvm: '2.1'
     env: PUPPET_VERSION="~> 3.0"
   - rvm: '2.1'

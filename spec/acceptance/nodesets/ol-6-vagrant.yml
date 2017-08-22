@@ -1,5 +1,5 @@
 HOSTS:
-  default-ol-6-vagrant:
+  ol-6-vagrant:
     platform: el-6-x86_64
     hypervisor: vagrant
     box: boxcutter-ol68
@@ -8,8 +8,8 @@ HOSTS:
         from: /tmp/vagrant-cache/wget
         to: /var/cache/wget
       yum_cache:
-        from: /tmp/vagrant-cache/wget/ol-6-vagrant
+        from: /tmp/vagrant-cache/yum/ol-6-vagrant
         to: /var/cache/yum
 CONFIG:
   type: foss
-  log_level: info
+  log_level: debug
