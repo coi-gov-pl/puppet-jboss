@@ -18,7 +18,7 @@ class jboss::internal::service {
 
   $service_stop_cooldown = 5 # sec.
   # TODO: change to $::virtual after dropping support for Puppet 2.x
-  $enable = $::jboss_virtual ? {
+  $enable = $::virtual ? {
     'docker' => undef,
     default  => true,
   }

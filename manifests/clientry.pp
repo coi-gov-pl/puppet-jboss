@@ -22,8 +22,8 @@ define jboss::clientry (
   $ensure      = 'present',
   $path        = $name,
   $properties  = undef,
-  $profile     = $::jboss::profile,
-  $controller  = $::jboss::controller,
+  $profile     = '$::jboss::profile',
+  $controller  = '$::jboss::controller',
   $runasdomain = $::jboss::runasdomain,
   $dorestart   = true,
 ) {

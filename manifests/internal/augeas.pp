@@ -1,7 +1,7 @@
 # Internal class - defaults for augeas provider
 class jboss::internal::augeas {
   include jboss
-  if versioncmp($::augeasversion, '1.0.0') < 0 {
+  if versioncmp('$::augeasversion', '1.0.0') < 0 {
     # Include additional only for old augeas version
     include jboss::internal::lenses
     $defaults = {
