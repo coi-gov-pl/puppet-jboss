@@ -10,6 +10,12 @@ run_puppet_install_helper
 install_module
 install_module_dependencies
 
+module Testing
+  module Acceptance end
+end
+require 'testing/acceptance/cleaner'
+require 'testing/acceptance/smoke_test_reader'
+
 RSpec.configure do |c|
   c.include PuppetExamplesHelpers
 

@@ -16,6 +16,14 @@ require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec/its'
 require 'pry' if gem_present 'pry'
 
+module Testing
+  module Mock end
+end
+
+require 'puppet_x/coi/jboss'
+require 'testing/mock/mocked_execution_state_wrapper'
+require 'testing/mock/mocked_shell_executor'
+
 RSpec.configure do |c|
   c.mock_with :rspec do |mock|
     mock.syntax = %i[expect should]

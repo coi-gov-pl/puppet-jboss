@@ -5,6 +5,15 @@ require 'rspec-puppet-facts-unsupported'
 include RspecPuppetFacts
 include RspecPuppetFactsUnsupported
 
+$executing_puppet = true
+
+module Testing
+  module RspecPuppet end
+end
+
+require 'testing/rspec_puppet/shared_facts'
+require 'testing/rspec_puppet/shared_examples'
+
 at_exit { RSpec::Puppet::Coverage.report! }
 
 shared_context :unsupported do
