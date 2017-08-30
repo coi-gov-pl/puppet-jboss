@@ -22,7 +22,9 @@ describe 'jboss::securitydomain', :type => :define do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-securitydomain' }
     let(:params) {{
-        :controller   => '127.0.0.1'
+        :runasdomain => true,
+        :controller  => '127.0.0.1',
+        :profile     => 'full' ,
       }
     }
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
@@ -36,7 +38,9 @@ describe 'jboss::securitydomain', :type => :define do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-securitydomain' }
     let(:params) {{
-        :controller   => '127.0.0.1'
+        :runasdomain => true,
+        :controller  => '127.0.0.1',
+        :profile     => 'full' ,
       }
     }
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }

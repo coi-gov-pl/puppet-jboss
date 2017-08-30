@@ -23,7 +23,7 @@ describe 'jboss::jmsqueue', :type => :define do
     let(:title) { 'test-jmsqueue' }
     let(:params) { { :entries => [
     'queue/app-mails',
-    'java:jboss/exported/jms/queue/app-mails'], } }
+    'java:jboss/exported/jms/queue/app-mails'], :runasdomain => true, :controller => '127.0.0.1', :profile => 'full' } }
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
     it_behaves_like containing_basic_class_structure
@@ -35,7 +35,7 @@ describe 'jboss::jmsqueue', :type => :define do
     let(:title) { 'test-jmsqueue' }
     let(:params) { { :entries => [
     'queue/app-mails',
-    'java:jboss/exported/jms/queue/app-mails'], } }
+    'java:jboss/exported/jms/queue/app-mails'], :runasdomain => true, :controller => '127.0.0.1', :profile => 'full' } }
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
     it_behaves_like containing_basic_class_structure

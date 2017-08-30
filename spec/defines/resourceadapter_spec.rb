@@ -26,6 +26,9 @@ describe 'jboss::resourceadapter', :type => :define do
         :archive            => 'jca-filestore.rar',
         :transactionsupport => 'LocalTransaction',
         :classname          => 'org.example.jca.FileSystemConnectionFactory',
+        :runasdomain        => true,
+        :controller         => '127.0.0.1',
+        :profile            => 'full' ,
       }
     end
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
@@ -43,6 +46,9 @@ describe 'jboss::resourceadapter', :type => :define do
         :archive            => 'jca-filestore.rar',
         :transactionsupport => 'LocalTransaction',
         :classname          => 'org.example.jca.FileSystemConnectionFactory',
+        :runasdomain        => true,
+        :controller         => '127.0.0.1',
+        :profile            => 'full' ,
       }
     end
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }

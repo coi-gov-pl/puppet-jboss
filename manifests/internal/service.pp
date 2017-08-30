@@ -8,6 +8,7 @@ class jboss::internal::service {
   include jboss::internal::compatibility
   include jboss::internal::configuration
   include jboss::internal::quirks::etc_initd_functions
+  include jboss::internal::prerequisites
 
   Exec {
     path      => $jboss::internal::params::syspath,

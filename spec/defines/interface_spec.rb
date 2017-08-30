@@ -18,7 +18,7 @@ describe 'jboss::interface', :type => :define do
 
   let(:title)  { 'test-interface' }
 
-  let(:generic_params)        {{ :any_address => 'true' }}
+  let(:generic_params)        {{ :any_address => 'true', :runasdomain => true, :controller => '127.0.0.1', :profile => 'full' }}
   let(:any_addr_property)     {{ 'any-address' => 'true' }}
   let(:basic_bind_variables)  { Hash[basic_bind_variables_list.map {|x| [x, :undef]}] }
   let(:legacy_bind_variables) { Hash[legacy_bind_variables_list.map {|x| [x, :undef]}] }
@@ -131,8 +131,8 @@ describe 'jboss::interface', :type => :define do
         :osfamily        => 'RedHat',
         :ipaddress       => '192.168.0.1',
         :concat_basedir  => '/root/concat',
-        :puppetversion   => Puppet.version
-      }
+        :puppetversion   => Puppet.version,
+        :path            => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'      }
     end
     let(:facts) {generic_facts}
     let(:params) {generic_params}
@@ -152,7 +152,8 @@ describe 'jboss::interface', :type => :define do
         :ipaddress       => '192.168.0.1',
         :concat_basedir  => '/root/concat',
         :lsbdistcodename => 'trusty',
-        :puppetversion   => Puppet.version
+        :puppetversion   => Puppet.version,
+        :path            => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
       }
     end
     let(:facts) {generic_facts}

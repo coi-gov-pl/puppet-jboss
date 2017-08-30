@@ -29,7 +29,9 @@ describe 'jboss::deploy', :type => :define do
       let(:title) { 'test-deploy' }
       let(:params) { {
         :path => '/tmp/jboss.war',
-        :runtime_name => 'foobar-app.war'}
+        :runtime_name => 'foobar-app.war',
+        :runasdomain => true,
+        :controller => '127.0.0.1'}
       }
 
       it_behaves_like 'containing class structure'
@@ -40,7 +42,9 @@ describe 'jboss::deploy', :type => :define do
       let(:title) { 'test-deploy' }
       let(:params) { {
         :path => '/tmp/jboss.war',
-        :runtime_name => 'foobar-app'}
+        :runtime_name => 'foobar-app',
+        :runasdomain => true,
+        :controller => '127.0.0.1'}
       }
 
       it_behaves_like 'raise error'
@@ -54,8 +58,11 @@ describe 'jboss::deploy', :type => :define do
 
     context 'valid runtime_name' do
       let(:title) { 'test-deploy' }
-      let(:params) { { :path => '/tmp/jboss.war', } }
-
+      let(:params) { {
+        :path => '/tmp/jboss.war',
+        :runasdomain => true,
+        :controller => '127.0.0.1'}
+      }
 
       it_behaves_like 'containing class structure'
       it_behaves_like 'containing self'
@@ -65,7 +72,9 @@ describe 'jboss::deploy', :type => :define do
       let(:title) { 'test-deploy' }
       let(:params) { {
         :path => '/tmp/jboss.war',
-        :runtime_name => 'foobar-app'}
+        :runtime_name => 'foobar-app',
+        :runasdomain => true,
+        :controller => '127.0.0.1'}
       }
 
       it_behaves_like 'raise error'

@@ -22,7 +22,7 @@ describe 'jboss::clientry', :type => :define do
     extend Testing::RspecPuppet::SharedExamples
 
     let(:title) { 'test-clientry' }
-    let(:params) { { :path => 'profile/test', :runasdomain => true } }
+    let(:params) { { :path => 'profile/test', :runasdomain => true, :controller => '127.0.0.1', :profile => 'full' } }
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
     it_behaves_like containing_basic_class_structure
 
@@ -33,7 +33,7 @@ describe 'jboss::clientry', :type => :define do
     extend Testing::RspecPuppet::SharedExamples
 
     let(:title) { 'test-clientry' }
-    let(:params) { { :path => 'profile/test', :runasdomain => true } }
+    let(:params) { { :path => 'profile/test', :runasdomain => true, :controller => '127.0.0.1', :profile => 'full' } }
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
     it_behaves_like containing_basic_class_structure

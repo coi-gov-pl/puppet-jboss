@@ -6,12 +6,15 @@ describe 'jboss::datasource', :type => :define do
     extend Testing::RspecPuppet::SharedExamples
     def merge_params(hash = {})
       hash.merge({
-        :username   => 'test-username',
-        :password   => 'test-password',
-        :jdbcscheme => 'test-scheme',
-        :host       => 'example.com',
-        :port       => '1234',
-        :driver     => {
+        :username    => 'test-username',
+        :password    => 'test-password',
+        :jdbcscheme  => 'test-scheme',
+        :host        => 'example.com',
+        :port        => '1234',
+        :runasdomain => true,
+        :controller  => '127.0.0.1',
+        :profile     => 'full' ,
+        :driver      => {
           'name'       => 'test-driver',
           'classname'  => 'com.example.TestDriver',
           'modulename' => 'test-driver',
@@ -85,12 +88,15 @@ describe 'jboss::datasource', :type => :define do
     extend Testing::RspecPuppet::SharedExamples
     def merge_params(hash = {})
       hash.merge({
-        :username   => 'test-username',
-        :password   => 'test-password',
-        :jdbcscheme => 'test-scheme',
-        :host       => 'example.com',
-        :port       => '1234',
-        :driver     => {
+        :username    => 'test-username',
+        :password    => 'test-password',
+        :jdbcscheme  => 'test-scheme',
+        :host        => 'example.com',
+        :runasdomain => true,
+        :controller  => '127.0.0.1',
+        :profile     => 'full',
+        :port        => '1234',
+        :driver      => {
           'name'       => 'test-driver',
           'classname'  => 'com.example.TestDriver',
           'modulename' => 'test-driver',
