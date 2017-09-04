@@ -2,11 +2,9 @@ require 'spec_helper_puppet'
 
 describe 'jboss::logging::async', :type => :define do
   let(:title) { 'test-handler' }
-  let(:facts) { {
-    :osfamily        => "RedHat",
-    :operatingsystem => "RedHat",
-    :concat_basedir  => "/tmp/"
-  } }
+  let(:pre_condition)  { "jboss::clientry { 'hornetq-server=default': profile => 'full', controller  => '127.0.0.1', runasdomain => true}" }
+  let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
+
     it { is_expected.to compile }
     it { is_expected.to contain_jboss__logging__async(title) }
     it { is_expected.to contain_jboss_confignode("/subsystem=logging/async-handler=#{title}") }

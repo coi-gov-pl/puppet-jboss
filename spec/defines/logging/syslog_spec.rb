@@ -3,13 +3,8 @@ require 'spec_helper_puppet'
 describe 'jboss::logging::syslog', :type => :define do
   let(:title) { 'test-handler' }
   let(:params) { { :app_name => 'test-app', } }
-  let(:facts) { {
-    :osfamily => "RedHat",
-    :operatingsystem => "RedHat",
-    'jboss::profile' => "domain",
-    'jboss::controller' => "controller.example.com",
-    :concat_basedir => "/tmp/"
-  } }
+  let(:pre_condition)  { "jboss::clientry { 'hornetq-server=default': profile => 'domain', controller  => 'controller.example.com', runasdomain => true}" }
+  let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
   it { is_expected.to compile }
   it { is_expected.to contain_jboss__logging__syslog(title) }
