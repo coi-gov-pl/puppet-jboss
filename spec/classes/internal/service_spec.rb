@@ -52,7 +52,7 @@ describe 'jboss::internal::service', :type => :class do
     context 'on Docker container' do
       let(:facts) do
         Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
-          :jboss_virtual => 'docker'
+          :virtual       => 'docker'
         )
       end
       it_behaves_like 'containg service anchors'
@@ -113,7 +113,7 @@ describe 'jboss::internal::service', :type => :class do
     context 'on Docker container' do
       let(:facts) do
         Testing::RspecPuppet::SharedFacts.ubuntu_facts(
-          :jboss_virtual => 'docker'
+          :virtual       => 'docker'
         )
       end
       it_behaves_like 'containg service anchors'

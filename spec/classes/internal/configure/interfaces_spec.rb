@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-describe 'jboss::internal::configure::interfaces', :type => :define do
+describe 'jboss::internal::configure::interfaces', :type => :class do
   shared_examples 'contains self' do
     it { is_expected.to contain_class 'jboss::internal::configure::interfaces' }
     it { is_expected.to contain_class('jboss') }

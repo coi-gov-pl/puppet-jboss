@@ -3,6 +3,7 @@ require 'spec_helper_puppet'
 describe 'jboss::internal::lenses', :type => :class do
   DEFAULT_VERSION = '9.0.2.Final'
   DEFAULT_PRODUCT = 'wildfly'
+  let(:pre_condition)  { "class { jboss: install_dir => '/usr/lib', product => 'wildfly', version => '9.0.2.Final', jboss_user => 'jboss'}" }
 
   shared_examples 'completly working define' do
     it { is_expected.to contain_class 'jboss::internal::lenses' }
@@ -12,7 +13,7 @@ describe 'jboss::internal::lenses', :type => :class do
       :source  => 'puppet:///modules/jboss/jbxml.aug',
       })}
     it { is_expected.to contain_file("/usr/lib/#{DEFAULT_PRODUCT}-#{DEFAULT_VERSION}/lenses/jbxml.aug").that_requires(
-      "File[/usr/lib/#{DEFAULT_PRODUCT}-#{DEFAULT_VERSION}/lenses/]"
+      "File[/usr/lib/#{DEFAULT_PRODUCT}-#{DEFAULT_VERSION}/lenses]"
       )}
     it { is_expected.to contain_file("/usr/lib/#{DEFAULT_PRODUCT}-#{DEFAULT_VERSION}/lenses").with({
       :ensure  => 'directory',

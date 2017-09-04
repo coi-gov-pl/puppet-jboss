@@ -6,6 +6,7 @@ class jboss::internal::params {
   # Directory for logging
   $logbasedir = hiera('jboss::internal::params::logbasedir', '/var/log')
 
+
   include jboss::internal::params::socketbinding
   include jboss::internal::params::memorydefaults
 

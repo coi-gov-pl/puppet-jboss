@@ -1,6 +1,7 @@
 require 'spec_helper_puppet'
 
 describe 'jboss::internal::configuration', :type => :class do
+  # let(:params) { {:logfile => '/var/log/wildfly/console.log' } }
 
   shared_examples 'contains basic class structure' do
     it { is_expected.to contain_class('jboss') }

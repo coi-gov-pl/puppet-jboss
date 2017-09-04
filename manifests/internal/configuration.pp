@@ -1,4 +1,5 @@
-class jboss::internal::configuration {
+class jboss::internal::configuration
+  {
   include jboss
   include jboss::params
   include jboss::internal::params
@@ -19,6 +20,7 @@ class jboss::internal::configuration {
   $conffile      = "${etcconfdir}/${jboss::product}.conf"
   $logdir        = "${jboss::internal::params::logbasedir}/${jboss::product}"
   $logfile       = "${logdir}/console.log"
+
 
   anchor { 'jboss::configuration::begin':
     require => Anchor['jboss::package::end'],

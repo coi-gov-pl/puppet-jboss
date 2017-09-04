@@ -95,7 +95,7 @@ class jboss (
   include jboss::internal::configuration
   include jboss::internal::service
 
-  $servicename = $jboss::internal::service::servicename
+  $servicename = $product
 
   $full_download_url = $jboss::internal::runtime::download_url
 

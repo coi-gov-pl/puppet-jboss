@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-describe 'jboss::internal::quirks::etc_initd_functions', :type => :define do
+describe 'jboss::internal::quirks::etc_initd_functions', :type => :class do
   shared_examples 'contains class structure' do
     it { is_expected.to contain_class 'jboss::internal::quirks::etc_initd_functions' }
     it { is_expected.to contain_class('jboss') }

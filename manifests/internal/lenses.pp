@@ -2,7 +2,7 @@
 class jboss::internal::lenses {
   include jboss
 
-  $lenses_path = "${::jboss::home}/lenses"
+  $lenses_path = "${jboss::home}/lenses"
 
   file { $lenses_path:
     ensure  => 'directory',
@@ -13,7 +13,7 @@ class jboss::internal::lenses {
   file { "${lenses_path}/jbxml.aug":
     ensure  => 'file',
     source  => 'puppet:///modules/jboss/jbxml.aug',
-    owner   => $::jboss::jboss_user,
+    owner   => $jboss::jboss_user,
     require => File[$lenses_path],
     before  => Anchor['jboss::configuration::end'],
   }

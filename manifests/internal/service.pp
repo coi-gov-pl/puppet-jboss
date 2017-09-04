@@ -56,10 +56,10 @@ class jboss::internal::service {
     $test_running_loglevel   = 'warning'
     $test_running_failstatus = 0
   }
-
+  $pwdlogfile = $jboss::internal::configuration::logfile
   exec { 'jboss::service::test-running':
     loglevel  => $test_running_loglevel,
-    command   => "tail -n 80 ${jboss::internal::configuration::logfile} && exit ${test_running_failstatus}",
+    command   => "tail -n 80 ${pwdlogfile} && exit ${test_running_failstatus}",
     unless    => "pgrep -f '^java.*${servicename}' > /dev/null",
     logoutput => true,
     subscribe => Service[$servicename],
