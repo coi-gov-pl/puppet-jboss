@@ -38,7 +38,7 @@ describe 'jboss_virtual', :type => :fact do
   context 'on non-Docker machine' do
     before(:each) do
       allow(Pathname).to receive(:new).and_call_original
-      allow(Pathname).to receive(:new).with('/proc/1/cgroup').and_return(nondocker_pathname)
+      allow(Pathname).to receive(:new).with('/proc/1/cgroup').and_call_original
     end
     it { expect { subject }.not_to raise_error }
     it { expect(subject).to eq('physical') }

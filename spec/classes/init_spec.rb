@@ -2,7 +2,21 @@ require 'spec_helper_puppet'
 
 describe 'jboss', :type => :class do
 
-  let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
+  let(:facts) do
+    {
+  :operatingsystem           => 'OracleLinux',
+  :osfamily                  => 'RedHat',
+  :ipaddress                 => '192.168.0.1',
+  :concat_basedir            => '/root/concat',
+  :operatingsystemrelease    => '6.7',
+  :operatingsystemmajrelease => '6',
+  :puppetversion             => Puppet.version.to_s,
+  :path                      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+  :virtual                   => true,
+  :architecture              => 'amd64',
+  :jboss_running             => false
+  }
+  end
   extend Testing::RspecPuppet::SharedExamples
   context 'with defaults for all parameters' do
     it { is_expected.to compile }
