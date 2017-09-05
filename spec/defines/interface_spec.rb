@@ -18,12 +18,13 @@ describe 'jboss::interface', :type => :define do
 
   let(:title)  { 'test-interface' }
 
-  let(:generic_params)        {{ :any_address => 'true', :runasdomain => true, :controller => '127.0.0.1', :profile => 'full' }}
+  let(:generic_params)        {{ :any_address => 'true', :runasdomain => true, :controller => '127.0.0.1', :profile => 'full' } }
   let(:any_addr_property)     {{ 'any-address' => 'true' }}
   let(:basic_bind_variables)  { Hash[basic_bind_variables_list.map {|x| [x, :undef]}] }
   let(:legacy_bind_variables) { Hash[legacy_bind_variables_list.map {|x| [x, :undef]}] }
 
   shared_examples 'completly working define' do
+    let(:facts)  { generic_facts.merge({ :jboss_running => 'false' })}
     it { is_expected.to contain_jboss__interface(title) }
     it { is_expected.to contain_augeas("ensure present interface #{title}") }
     it { is_expected.to contain_augeas("interface #{title} set any-address") }
@@ -132,7 +133,13 @@ describe 'jboss::interface', :type => :define do
         :ipaddress       => '192.168.0.1',
         :concat_basedir  => '/root/concat',
         :puppetversion   => Puppet.version,
-        :path            => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'      }
+        :path            => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :operatingsystemrelease    => '6.7',
+        :virtual                   => true,
+        :jboss_running             => true,
+        :architecture              => 'amd64'
+
+      }
     end
     let(:facts) {generic_facts}
     let(:params) {generic_params}
@@ -153,7 +160,12 @@ describe 'jboss::interface', :type => :define do
         :concat_basedir  => '/root/concat',
         :lsbdistcodename => 'trusty',
         :puppetversion   => Puppet.version,
-        :path            => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+        :path            => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+        :operatingsystemrelease    => '14.04',
+        :virtual                   => true,
+        :jboss_running             => true,
+        :architecture              => 'amd64'
+
       }
     end
     let(:facts) {generic_facts}
