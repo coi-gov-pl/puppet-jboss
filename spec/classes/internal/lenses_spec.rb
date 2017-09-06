@@ -8,13 +8,7 @@ describe 'jboss::internal::lenses', :type => :class do
   shared_examples 'completly working define' do
     it { is_expected.to contain_class 'jboss::internal::lenses' }
     it { is_expected.to contain_class 'jboss' }
-    it { is_expected.to contain_file("/usr/lib/#{DEFAULT_PRODUCT}-#{DEFAULT_VERSION}/lenses/jbxml.aug").with({
-      :ensure  => 'file',
-      :source  => 'puppet:///modules/jboss/jbxml.aug',
-      })}
-    it { is_expected.to contain_file("/usr/lib/#{DEFAULT_PRODUCT}-#{DEFAULT_VERSION}/lenses/jbxml.aug").that_requires(
-      "File[/usr/lib/#{DEFAULT_PRODUCT}-#{DEFAULT_VERSION}/lenses]"
-      )}
+
     it { is_expected.to contain_file("/usr/lib/#{DEFAULT_PRODUCT}-#{DEFAULT_VERSION}/lenses").with({
       :ensure  => 'directory',
       :owner   => 'jboss',

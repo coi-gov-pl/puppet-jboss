@@ -71,7 +71,7 @@ describe 'jboss::internal::service', :type => :class do
       context 'on SystemD system' do
         let(:facts) do
           Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
-            :jboss_virtual          => 'docker',
+            :virtual          => 'docker',
             :operatingsystemrelease => '7.1'
           )
         end
@@ -81,7 +81,7 @@ describe 'jboss::internal::service', :type => :class do
     context 'on non-Docker machine' do
       let(:facts) do
         Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
-          :jboss_virtual => 'phisycal'
+          :virtual => 'phisycal'
         )
       end
       it_behaves_like 'containg service anchors'
@@ -100,7 +100,7 @@ describe 'jboss::internal::service', :type => :class do
       context 'on SystemD system' do
         let(:facts) do
           Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
-            :jboss_virtual          => 'phisycal',
+            :virtual          => 'phisycal',
             :operatingsystemrelease => '7.1'
           )
         end
@@ -132,7 +132,7 @@ describe 'jboss::internal::service', :type => :class do
       context 'on SystemD system' do
         let(:facts) do
           Testing::RspecPuppet::SharedFacts.ubuntu_facts(
-            :jboss_virtual          => 'docker',
+            :virtual          => 'docker',
             :operatingsystem        => 'Debian',
             :operatingsystemrelease => '8'
           )
@@ -143,7 +143,7 @@ describe 'jboss::internal::service', :type => :class do
     context 'on non-Docker machine' do
       let(:facts) do
         Testing::RspecPuppet::SharedFacts.ubuntu_facts(
-          :jboss_virtual => 'vmware'
+          :virtual => 'vmware'
         )
       end
       it_behaves_like 'containg service anchors'
@@ -162,7 +162,7 @@ describe 'jboss::internal::service', :type => :class do
       context 'on SystemD system' do
         let(:facts) do
           Testing::RspecPuppet::SharedFacts.ubuntu_facts(
-            :jboss_virtual          => 'vmware',
+            :virtual          => 'vmware',
             :operatingsystemrelease => '16.04'
           )
         end
