@@ -1,6 +1,6 @@
 {
-  "name":         "coi/jboss",
-  "version":      "1.2.1.pre",
+  "name":         "coi-jboss",
+  "version":      "1.2.1-pre",
   "author":       "Center of Information Technology COI.gov.pl",
   "summary":      "Installs JBoss EAP and WildFly application servers and manage their resources and applications in either a domain or a stand-alone mode",
   "license":      "Apache-2.0",
@@ -21,7 +21,6 @@
     { "operatingsystem": "Ubuntu",      "operatingsystemrelease": [ "10.04", "12.04", "14.04", "16.04" ] }
   ],
   "requirements": [
-    { "name": "pe",     "version_requirement": ">=3.0.0 <5.0.0" },
     { "name": "puppet", "version_requirement": ">=3.0.0 <5.0.0" }
   ]
 }

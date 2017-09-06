@@ -9,12 +9,13 @@ AllCops:
     - pkg/**/*
     - spec/fixtures/**/*
     - gemfiles/Gemfile*.lock
-Metrics/LineLength:
-  Max: 140
+#Metrics/LineLength:
+#  Max: 140
 Style/FileName:
   Exclude:
     - 'Gemfile'
     - 'Rakefile'
+    - 'Guardfile'
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
