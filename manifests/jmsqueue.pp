@@ -18,9 +18,9 @@ define jboss::jmsqueue (
   $entries,
   $ensure      = 'present',
   $durable     = jboss_to_bool(hiera('jboss::jmsqueue::durable', false)),
-  $profile     = $::jboss::profile,
-  $controller  = $::jboss::controller,
-  $runasdomain = $::jboss::runasdomain,
+  $profile     = $jboss::profile,
+  $controller  = $jboss::controller,
+  $runasdomain = $jboss::runasdomain,
 ) {
   include jboss
   include jboss::internal::service

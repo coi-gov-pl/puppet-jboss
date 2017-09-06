@@ -36,7 +36,7 @@ define jboss::domain::server (
   $autostart                  = true,
   $socket_binding_group       = undef,
   $socket_binding_port_offset = $::jboss::internal::params::socketbinding::port_offset,
-  $controller                 = $::jboss::controller,
+  $controller                 = $jboss::controller,
 ) {
   include jboss
 

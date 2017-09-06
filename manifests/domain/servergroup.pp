@@ -20,7 +20,7 @@
 #     This parameters configures JVM Heap maximal size, By default it is equal to `1303m`
 # [*profile*]
 #     This parameter configure profile to be active on all servers within this group. By default 
-#     it is equal to value of `$::jboss::profile`.
+#     it is equal to value of `$jboss::profile`.
 # [*socket_binding_group*]
 #     This parameter indicates that server instances within this group should use value of it as socket 
 #     binding group, By default it is set to `full-sockets`.
@@ -41,10 +41,10 @@ define jboss::domain::servergroup (
   $maxpermgensize             = $::jboss::internal::params::memorydefaults::maxpermgensize,
   $heapsize                   = $::jboss::internal::params::memorydefaults::heapsize,
   $maxheapsize                = $::jboss::internal::params::memorydefaults::maxheapsize,
-  $profile                    = $::jboss::profile,
+  $profile                    = $jboss::profile,
   $socket_binding_group       = $::jboss::internal::params::socketbinding::group,
   $socket_binding_port_offset = $::jboss::internal::params::socketbinding::port_offset,
-  $controller                 = $::jboss::controller,
+  $controller                 = $jboss::controller,
   $system_properties          = {},
   $jvmopts                    = undef,
 ) {

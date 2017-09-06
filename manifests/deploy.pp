@@ -25,8 +25,8 @@ define jboss::deploy (
   $jndi                = $name,
   $redeploy_on_refresh = true,
   $servergroups        = hiera('jboss::deploy::servergroups', undef),
-  $controller          = $::jboss::controller,
-  $runasdomain         = $::jboss::runasdomain,
+  $controller          = $jboss::controller,
+  $runasdomain         = $jboss::runasdomain,
   $runtime_name        = undef,
 ) {
   include jboss

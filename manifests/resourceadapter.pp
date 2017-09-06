@@ -37,9 +37,9 @@ define jboss::resourceadapter (
   $ensure                  = 'present',
   $security                = hiera('jboss::resourceadapter::security', 'application'),
   $backgroundvalidation    = jboss_to_bool(hiera('jboss::resourceadapter::backgroundvalidation', false)),
-  $profile                 = $::jboss::profile,
-  $controller              = $::jboss::controller,
-  $runasdomain             = $::jboss::runasdomain,
+  $profile                 = $jboss::profile,
+  $controller              = $jboss::controller,
+  $runasdomain             = $jboss::runasdomain,
 ) {
   include jboss
   include jboss::internal::service

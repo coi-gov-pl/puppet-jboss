@@ -93,9 +93,9 @@
 #
 define jboss::interface (
   $interface_name     = $name,
-  $controller         = $::jboss::controller,
-  $runasdomain        = $::jboss::runasdomain,
-  $profile            = $::jboss::profile,
+  $controller         = $jboss::controller,
+  $runasdomain        = $jboss::runasdomain,
+  $profile            = $jboss::profile,
   $ensure             = 'present',
   $any_address        = undef, # bool
   $any_ipv4_address   = undef, # bool

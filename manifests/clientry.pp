@@ -22,9 +22,9 @@ define jboss::clientry (
   $ensure      = 'present',
   $path        = $name,
   $properties  = undef,
-  $profile     = $::jboss::profile,
-  $controller  = $::jboss::controller,
-  $runasdomain = $::jboss::runasdomain,
+  $profile     = $jboss::profile,
+  $controller  = $jboss::controller,
+  $runasdomain = $jboss::runasdomain,
   $dorestart   = true,
 ) {
   include jboss
@@ -62,7 +62,7 @@ define jboss::clientry (
   }
 
   if $dorestart {
-    if !$::jboss::runasdomain {
+    if !$jboss::runasdomain {
       Jboss_confignode[$name] ~> Exec['jboss::service::restart']
     }
   }

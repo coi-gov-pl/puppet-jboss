@@ -62,13 +62,13 @@ define jboss::datasource (
   $jndiname                    = "java:jboss/datasources/${name}",
   $xa                          = jboss_to_bool(hiera('jboss::datasource::xa', false)),
   $jta                         = jboss_to_bool(hiera('jboss::datasource::jta', true)),
-  $profile                     = $::jboss::profile,
-  $controller                  = $::jboss::controller,
+  $profile                     = $jboss::profile,
+  $controller                  = $jboss::controller,
   $minpoolsize                 = jboss_to_i(hiera('jboss::datasource::minpoolsize', 1)),
   $maxpoolsize                 = jboss_to_i(hiera('jboss::datasource::maxpoolsize', 50)),
   $enabled                     = jboss_to_bool(hiera('jboss::datasource::enabled', true)),
   $options                     = {},
-  $runasdomain                 = $::jboss::runasdomain,
+  $runasdomain                 = $jboss::runasdomain,
 ) {
   include jboss
   include jboss::internal::service

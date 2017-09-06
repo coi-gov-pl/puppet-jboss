@@ -26,9 +26,9 @@ define jboss::securitydomain (
   $code          = undef,
   $codeflag      = undef,
   $moduleoptions = undef,
-  $profile       = $::jboss::profile,
-  $controller    = $::jboss::controller,
-  $runasdomain   = $::jboss::runasdomain,
+  $profile       = $jboss::profile,
+  $controller    = $jboss::controller,
+  $runasdomain   = $jboss::runasdomain,
 ) {
   include jboss
   include jboss::internal::service
