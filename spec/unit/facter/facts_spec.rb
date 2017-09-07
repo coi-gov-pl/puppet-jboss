@@ -8,7 +8,7 @@ describe Puppet_X::Coi::Jboss::FactsRefresher do
 
     after :each do
       fct = Facter.fact :test_fact
-      fct.instance_variable_set(:@value, nil)
+      fct.flush
       fct.instance_variable_set(:@resolves, [])
     end
 
@@ -23,8 +23,8 @@ describe Puppet_X::Coi::Jboss::FactsRefresher do
           expect(facter_value).to eq([])
         end
 
-        let(:fact) { :jboss_fact }
-        it { expect(subject).to eq([]) }
+        let(:fact) { :test_fact }
+        it { expect(subject).to be_a_kind_of(Facter::Util::Fact) }
       end
     end
 
@@ -36,11 +36,11 @@ describe Puppet_X::Coi::Jboss::FactsRefresher do
         after :each do
           fct = Facter.fact fact
           facter_value = fct.instance_variable_get(:@value)
-          expect(facter_value).to eq({})
+          expect(facter_value).to be_nil
         end
 
-        let(:fact) { :jboss_fact }
-        it { expect(subject).to eq({}) }
+        let(:fact) { :test_fact }
+        it { expect(subject).to be_a_kind_of(Facter::Util::Fact) }
       end
     end
   end
