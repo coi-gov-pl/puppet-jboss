@@ -4,11 +4,6 @@ class Puppet_X::Coi::Jboss::Configuration
 
     @config = nil
 
-    # Test method that return current version(for comatability with ruby 1.8)
-    def ruby_version
-      RUBY_VERSION
-    end
-
     # Gets the main config file
     def configfile
       content = self.read_raw_profile_d.chomp
@@ -23,8 +18,7 @@ class Puppet_X::Coi::Jboss::Configuration
     #
     # @return [Hash] configuration in a hash object or nil if not avialable
     def read
-      require 'augeas'
-
+      require 'augeas' if Puppet.features.augeas?
       map = nil
       cfgfile = self.configfile
       unless cfgfile.nil?

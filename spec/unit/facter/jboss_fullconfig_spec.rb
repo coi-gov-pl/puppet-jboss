@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Fact jboss_fullconfig', :type => :fact do
+describe 'Fact jboss_fullconfig' do
 
   let(:sample_config) do
     t = Tempfile.new('rspec-jboss-fullconfig')
@@ -71,21 +71,21 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     }
   end
   before :all do
-    Facter.clear
-    configfile_fct = Facter.fact :jboss_configfile
-    configfile_fct.instance_variable_set(:@value, nil)
+    Puppet_X::Coi::Jboss::Facts.define_configfile_fact
+    Puppet_X::Coi::Jboss::Facts.define_fullconfig_fact
+    configfile_fct = Facter.fact(:jboss_configfile)
+    configfile_fct.flush
   end
   before :each do
-    Facter.clear
     expect(Puppet_X::Coi::Jboss::Configuration).to receive(:read_raw_profile_d).
       at_least(:once).and_return(profile_d_content)
     File.open(sample_config, 'w') {|f| f.write(sample_content) }
   end
   after :each do
-    fct = Facter.fact :jboss_fullconfig
-    fct.instance_variable_set(:@value, nil)
-    configfile_fct = Facter.fact :jboss_configfile
-    configfile_fct.instance_variable_set(:@value, nil)
+    fct = Facter.fact(:jboss_fullconfig)
+    fct.flush
+    configfile_fct = Facter.fact(:jboss_configfile)
+    configfile_fct.flush
     File.unlink(sample_config)
   end
   subject { Facter.value(:jboss_fullconfig) }
@@ -93,34 +93,29 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     it { expect(subject).not_to be_nil }
     it { expect(subject).not_to be_empty }
   end
-  context 'with sample config file for WildFly 8.2' do
-    context 'without mocking RUBY_VERSION' do
-      it_behaves_like 'is not nill and empty'
-      it { expect(subject).to respond_to(:[]) }
-      its(:size) { should eq(10) }
-      it { expect(subject).to eq(expected_hash) }
+  context 'with sample config file for WildFly 12.2.0' do
+
+    it_behaves_like 'is not nill and empty'
+    it { expect(subject).to respond_to(:[]) }
+    its(:size) { should eq(10) }
+    it { expect(subject).to eq(expected_hash) }
+
+    let(:subject_sorted) { eval(subject.to_s).to_a.sort }
+    let(:expected_output) do
+      [
+        ["config", "standalone-full.xml"],
+        ["console_log", "/var/log/wildfly/console.log"],
+        ["controller", "127.0.0.1:9990"],
+        ["home", "/usr/lib/wildfly-12.2.0.Final"],
+        ["mode", "standalone"],
+        ["product", "wildfly"],
+        ["profile", "full"],
+        ["runasdomain", false],
+        ["user", "wildfly"],
+        ["version", "12.2.0.Final"]
+      ]
     end
 
-    context 'with mocking RUBY_VERSION to 1.8.7' do
-      before :each do
-        expect(Puppet_X::Coi::Jboss::Configuration).to receive(:ruby_version).once.and_return('1.8.7')
-      end
-
-      it_behaves_like 'is not nill and empty'
-      let('subject_sorted') { eval(subject.to_s).to_a.sort }
-      let("expected_output") {[["config", "standalone-full.xml"],
-                               ["console_log", "/var/log/wildfly/console.log"],
-                               ["controller", "127.0.0.1:9990"],
-                               ["home", "/usr/lib/wildfly-12.2.0.Final"],
-                               ["mode", "standalone"],
-                               ["product", "wildfly"],
-                               ["profile", "full"],
-                               ["runasdomain", false],
-                               ["user", "wildfly"],
-                               ["version", "12.2.0.Final"]]
-                             }
-
-      it { expect(subject_sorted).to eq(expected_output)}
-    end
+    it { expect(subject_sorted).to eq(expected_output)}
   end
 end

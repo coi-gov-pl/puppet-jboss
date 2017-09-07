@@ -34,6 +34,7 @@ group :test do
   # TODO: for windows, remove after 2.6.0 release of rspec-puppet https://github.com/rodjek/rspec-puppet/milestone/4
   gem 'rspec-puppet', git: 'https://github.com/rodjek/rspec-puppet.git', ref: '99fc831', platforms: %w[mswin mingw x64_mingw]
   gem 'rspec-puppet-facts-unsupported', '~> 0',        require: false
+  gem 'ruby-augeas',                                   require: false
 end
 
 # Acceptance Testing dependencies group
