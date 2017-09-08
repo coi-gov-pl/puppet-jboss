@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Fact jboss_configfile', :type => :fact do
+describe 'Fact jboss_configfile' do
   subject { Facter.value(:jboss_configfile) }
   let(:sample_config) { '/etc/jboss-eap/jboss-eap.conf' }
   let(:sample_content) { "export JBOSS_CONF='#{sample_config}'" }

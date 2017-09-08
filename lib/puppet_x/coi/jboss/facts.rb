@@ -51,9 +51,8 @@ class Puppet_X::Coi::Jboss::Facts
 
     def search_process(pattern)
       glob = Puppet_X::Coi::Jboss::Configuration::system_processes_commandline
-      result = Dir[glob].inject({}) do |h, file|
+      result = Dir[glob].each_with_object({}) do |file, h|
         (h[File.read(file).gsub(/\000/, ' ')] ||= []).push(file.match(/\d+/)[0].to_i)
-        h
       end
       flat = result.map { |k, v| v if k.match(pattern) }.compact.flatten
       flat if flat.any?
@@ -62,7 +61,7 @@ class Puppet_X::Coi::Jboss::Facts
     # Add new fact with name and value taken from function parameters
     # @param {name} name of the fact to be added
     # @param {value} value of fact to be added
-    def add_fact name, value
+    def add_fact(name, value)
       fact_name = name.to_sym
       Facter.add(fact_name) { setcode { value } } if Facter.fact(fact_name).nil?
     end

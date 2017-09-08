@@ -31,7 +31,7 @@ class Puppet_X::Coi::Jboss::FactsRefresher
     # Method used to delete values in given fact
     # @param {String} fact_symbol that value should be deleted
     # @return {Facter::Util::Fact} fact with deleted value
-    def delete_value fact_symbol
+    def delete_value(fact_symbol)
       fct = Facter.fact(fact_symbol)
       fct.flush unless fct.nil?
       fct
@@ -41,7 +41,7 @@ class Puppet_X::Coi::Jboss::FactsRefresher
     # Method used to validate if fact is system or module fact
     # @param {String} name of the fact to be validated
     # @return {true} if fact name is from jboss module
-    def validate_fact_name value
+    def validate_fact_name(value)
       value.to_s.start_with? 'jboss_'
     end
   end

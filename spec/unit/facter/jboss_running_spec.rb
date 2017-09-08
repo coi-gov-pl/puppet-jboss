@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe 'jboss_running' do
   subject { Facter.value(:jboss_running) }
+  before :all do
+    Facter.clear
+  end
   before :each do
     Puppet_X::Coi::Jboss::Facts.define_jboss_running_fact
     Facter.fact(:jboss_running).flush
