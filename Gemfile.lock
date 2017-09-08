@@ -1,17 +1,9 @@
-GIT
-  remote: https://github.com/rodjek/rspec-puppet.git
-  revision: 99fc83144ceb2c14ad5b5a9428b7ad57eca659ee
-  ref: 99fc831
-  specs:
-    rspec-puppet (2.5.0)
-      rspec
-
 GEM
   remote: https://rubygems.org/
   specs:
     CFPropertyList (2.3.5)
-    addressable (2.5.1)
-      public_suffix (~> 2.0, >= 2.0.2)
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
     ast (2.3.0)
     aws-sdk-v1 (1.67.0)
       json (~> 1.4)
@@ -78,11 +70,9 @@ GEM
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     excon (0.57.1)
-    facter (2.4.6)
-    facter (2.4.6-x64-mingw32)
+    facter (2.5.1)
+    facter (2.5.1-x64-mingw32)
       ffi (~> 1.9.5)
-      win32-dir (~> 0.4.8)
-      win32-security (~> 0.2.5)
     facterdb (0.3.11)
       facter
       jgrep
@@ -230,10 +220,10 @@ GEM
       fog-core
       nokogiri (>= 1.5.11, < 2.0.0)
     formatador (0.2.5)
-    gettext (3.2.3)
+    gettext (3.2.4)
       locale (>= 2.0.5)
       text (>= 1.3.0)
-    gettext-setup (0.25)
+    gettext-setup (0.28)
       fast_gettext (~> 1.1.0)
       gettext (>= 3.0.2)
       locale
@@ -285,9 +275,8 @@ GEM
       systemu
     memoist (0.16.0)
     metaclass (0.0.4)
-    metadata-json-lint (2.0.1)
+    metadata-json-lint (2.0.2)
       json-schema (~> 2.8)
-      puppet (>= 4.7.0, < 6.0.0)
       spdx-licenses (~> 1.0)
     method_source (0.8.2)
     mime-types (2.99.3)
@@ -322,7 +311,7 @@ GEM
     pry-byebug (3.4.2)
       byebug (~> 9.0)
       pry (~> 0.10)
-    public_suffix (2.0.5)
+    public_suffix (3.0.0)
     puppet (4.9.4)
       facter (> 2.0, < 4)
       gettext-setup (>= 0.10, < 1)
@@ -440,6 +429,8 @@ GEM
     rspec-mocks (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.6.0)
+    rspec-puppet (2.6.8)
+      rspec
     rspec-puppet-facts (1.8.0)
       facter
       facterdb (>= 0.3.0)
@@ -533,7 +524,6 @@ DEPENDENCIES
   puppet-module-win-dev-r2.1 (= 0.0.7)
   puppet-module-win-system-r2.1 (= 0.0.7)
   rake-performance (~> 0)
-  rspec-puppet!
   rspec-puppet-facts
   rspec-puppet-facts-unsupported (~> 0)
   ruby-augeas

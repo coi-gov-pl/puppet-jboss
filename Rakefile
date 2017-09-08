@@ -11,7 +11,7 @@ end
 
 PuppetLint.configuration.send('disable_80chars')
 PuppetLint.configuration.relative = true
-PuppetLint.configuration.ignore_paths = ['spec/**/*.pp', 'pkg/**/*.pp']
+PuppetLint.configuration.ignore_paths = ['spec/**/*.pp', 'pkg/**/*.pp', 'vendor/**/*.pp']
 
 test_tasks = %i[rubocop metadata_lint lint syntax spec]
 if Gem::Requirement.new('~> 3').satisfied_by? Gem::Version.new(Puppet.version)

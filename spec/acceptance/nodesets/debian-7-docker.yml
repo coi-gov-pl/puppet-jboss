@@ -1,5 +1,5 @@
 HOSTS:
-  debian-7-x64:
+  debian-7-docker:
     platform: debian-7-amd64
     hypervisor : docker
     image: debian:7

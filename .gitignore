@@ -8,3 +8,4 @@ spec/fixtures
 log/
 junit/
 .bundle
+vendor

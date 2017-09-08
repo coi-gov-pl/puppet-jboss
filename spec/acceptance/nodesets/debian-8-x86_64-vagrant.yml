@@ -1,8 +1,0 @@
-HOSTS:
-  debian-8-x64:
-    platform: debian-8-amd64
-    hypervisor : vagrant
-    box : camptocamp/debian-8-amd64
-CONFIG:
-  type: foss
-  log_level: debug

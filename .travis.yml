@@ -12,35 +12,48 @@ addons:
 bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}"
 cache: bundler
 script: bundle exec rake test
-before_install:
- - 'bundler --version || gem install bundler' # TODO:Remove if fixed - travis-ci/travis-ci#5578
- - 'rm -f Gemfile.lock'
 matrix:
   fast_finish: true
   include:
   - rvm: '2.1'
-    env: PUPPET_VERSION="~> 3.0"
+  - rvm: '2.3'
+  - rvm: '2.4'
   - rvm: '2.1'
-    env: PUPPET_VERSION="~> 3.0" STRICT_VARIABLES=yes
-  - rvm: '2.1'
+    env: PUPPET_GEM_VERSION="~> 3"
+  - rvm: '2.3'
+    env: PUPPET_GEM_VERSION="~> 3"
+  - rvm: '2.4'
+    env: PUPPET_GEM_VERSION="~> 3"
+  - rvm: '2.4'
     sudo: required
     services: docker
-    env: PUPPET_VERSION="3.8.7" RS_SET="centos-6-x86_64-docker"
-    script: bundle exec rake acceptance
-  - rvm: '2.1'
+    env: RS_SET=centos-6-docker
+    script: bundle exec rake beaker
+  - rvm: '2.4'
     sudo: required
     services: docker
-    env: PUPPET_VERSION="3.8.7" RS_SET="debian-7-x86_64-docker"
-    script: bundle exec rake acceptance
-  - rvm: '2.1'
+    env: RS_SET=centos-7-docker
+    script: bundle exec rake beaker
+  - rvm: '2.4'
     sudo: required
     services: docker
-    env: PUPPET_VERSION="3.8.7" RS_SET="ubuntu-14.04-x86_64-docker"
-    script: bundle exec rake acceptance
-  - rvm: '2.1.8'
-    env: PUPPET_VERSION="~> 4.0"
-  - rvm: '2.1.8'
-    env: PUPPET_VERSION="~> 4.0" STRICT_VARIABLES=yes
+    env: RS_SET=ubuntu-14.04-docker
+    script: bundle exec rake beaker
+  - rvm: '2.4'
+    sudo: required
+    services: docker
+    env: RS_SET=ubuntu-16.04-docker
+    script: bundle exec rake beaker
+  - rvm: '2.4'
+    sudo: required
+    services: docker
+    env: RS_SET=debian-7-docker
+    script: bundle exec rake beaker
+  - rvm: '2.4'
+    sudo: required
+    services: docker
+    env: RS_SET=debian-8-docker
+    script: bundle exec rake beaker
   # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
   email: false
