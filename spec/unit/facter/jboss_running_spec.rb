@@ -16,7 +16,7 @@ describe 'jboss_running' do
   context 'with mocking' do
     let(:tmpdir) { Dir.mktmpdir }
     before :each do
-      expect(Puppet_X::Coi::Jboss::Configuration).to receive(:system_processes_commandline)
+      expect(Puppet_X::Coi::Jboss::Facts).to receive(:system_processes_commandline)
         .at_least(:once).and_return("#{tmpdir}/[0-9]*/cmdline")
     end
     after :each do

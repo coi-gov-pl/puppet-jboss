@@ -50,7 +50,7 @@ class Puppet_X::Coi::Jboss::Facts
     end
 
     def search_process(pattern)
-      glob = Puppet_X::Coi::Jboss::Configuration::system_processes_commandline
+      glob = Puppet_X::Coi::Jboss::Facts::system_processes_commandline
       result = Dir[glob].each_with_object({}) do |file, h|
         (h[File.read(file).gsub(/\000/, ' ')] ||= []).push(file.match(/\d+/)[0].to_i)
       end
