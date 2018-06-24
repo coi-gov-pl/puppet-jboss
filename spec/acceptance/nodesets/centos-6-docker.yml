@@ -1,19 +1,23 @@
 HOSTS:
-  centos-6-x64:
+  centos-6-docker:
     platform: el-6-x86_64
     hypervisor : docker
     image: centos:6
+    docker_cmd: ["/sbin/init"]
     docker_preserve_image: true
     docker_image_commands:
       - "sed -i 's/keepcache=0/keepcache=1/g' /etc/yum.conf"
-      - 'yum install -y crontabs wget'
+      - 'yum install -y crontabs wget tar centos-release-scl'
+      - 'yum install -y python27-python-pip'
+      - 'scl enable python27 "pip install puppeter"'
     mount_folders:
       wget_cache:
-        host_path: /tmp/wget_cache
+        host_path: /tmp/docker-cache/wget
         container_path: /var/cache/wget
       yum_cache:
-        host_path: /tmp/yum_cache/centos-6-x64
+        host_path: /tmp/docker-cache/yum/centos-6-docker
         container_path: /var/cache/yum
 CONFIG:
+  trace_limit: 200
   type: foss
   log_level: debug

@@ -1,5 +1,6 @@
+inherit_from: .rubocop_todo.yml
 # Ruby 1.8.7 needs the . on chain of method calls at the end of a line
-Style/DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
 
 # Ruby 1.8.7 doesn't have the -> lambda
@@ -10,11 +11,9 @@ Style/Lambda:
 Style/HashSyntax:
   EnforcedStyle: hash_rockets
 
-Style/StringLiterals:
+Style/BracesAroundHashParameters:
   Enabled: false
 
-Style/Documentation:
-  Enabled: false
-
-Metrics/LineLength:
-  Max: 140
+Layout/AlignHash:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table

@@ -1,6 +1,25 @@
+inherit_from: .rubocop.ruby-1.8.7.yml
 AllCops:
+  TargetRubyVersion: 1.9
+  Include:
+    - gemfiles/Gemfile*
   Exclude:
-    - 'vendor/**/*'
-
+    - vendor/**/*
+    - .vendor/**/*
+    - pkg/**/*
+    - spec/fixtures/**/*
+    - gemfiles/Gemfile*.lock
 Metrics/LineLength:
-  Max: 140
+  # Max: 140 # Commented out to pass rubocop todo analysis
+  Max: 3000
+Style/FileName:
+  Exclude:
+    - 'Gemfile'
+    - 'Rakefile'
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: native, lf, crlf
+Layout/EndOfLine:
+  EnforcedStyle: lf

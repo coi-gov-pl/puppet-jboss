@@ -10,10 +10,10 @@
 # [*name*]
 #     **This is a namevar**. Standard Puppet namevar indicates name of this virtual server (instance).
 # [*group*]
-#     This parameter indicates a server group that this virtual server should be member of. If you are setting 
+#     This parameter indicates a server group that this virtual server should be member of. If you are setting
 #     `ensure` parameter to `running` this is required to be set.
 # [*ensure*]
-#     This is standard ensure puppet parameter. It is extended to support also `running` and `stopped` values 
+#     This is standard ensure puppet parameter. It is extended to support also `running` and `stopped` values
 #     as an addition to standard `present` and `absent`.
 # [*host*]
 #     This parameter indicates a server that should be host (controller) to this virtual server (instance). By
@@ -22,7 +22,7 @@
 #     This parameter indicates whether this virtual server (instance), should be automatically started when
 #     host (controller) starts. Be default it is set to `true`.
 # [*socket_binding_group*]
-#     This parameter indicates that this virtual server should use value of it as socket binding group, By 
+#     This parameter indicates that this virtual server should use value of it as socket binding group, By
 #     default it is set to `undef` and not being used.
 # [*socket_binding_port_offset*]
 #     This parameter indicates offset on JBoss ports, defined by socket binding group. It will shift ports up
@@ -103,8 +103,8 @@ define jboss::domain::server (
           controller => $controller,
         }
       }
-      Jboss::Domain::Servergroup[$group] ->
-      Jboss::Clientry["jboss::domain::server(${name})"]
+      Jboss::Domain::Servergroup[$group]
+      -> Jboss::Clientry["jboss::domain::server(${name})"]
     }
   }
 

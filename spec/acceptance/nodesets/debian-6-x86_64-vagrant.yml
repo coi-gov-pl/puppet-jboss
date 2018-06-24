@@ -1,8 +1,0 @@
-HOSTS:
-  debian-6-x64:
-    platform: debian-6-amd64
-    hypervisor : vagrant
-    box : puppetlabs/debian-6.0.10-64-nocm
-CONFIG:
-  type: foss
-  log_level: debug

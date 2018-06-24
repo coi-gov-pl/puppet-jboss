@@ -1,5 +1,5 @@
 HOSTS:
-  ubuntu-1204-x64:
+  ubuntu-1204-docker:
     platform: ubuntu-12.04-amd64
     hypervisor : docker
     image: ubuntu:12.04
@@ -9,11 +9,12 @@ HOSTS:
       - 'locale-gen en_US.UTF-8'
     mount_folders:
       wget_cache:
-        host_path: /tmp/wget_cache
+        host_path: /tmp/docker-cache/wget
         container_path: /var/cache/wget
       apt_cache:
-        host_path: /tmp/apt_cache/ubuntu-12.04-amd64
-        container_path: /var/cache/apt
+        host_path: /tmp/docker-cache/apt/ubuntu-1204-docker
+        container_path: /var/cache/apt/archives
 CONFIG:
+  trace_limit: 200
   type: foss
   log_level: debug

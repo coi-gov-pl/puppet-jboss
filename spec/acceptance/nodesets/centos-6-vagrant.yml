@@ -1,5 +1,5 @@
 HOSTS:
-  default-centos-6-vagrant:
+  centos-6-vagrant:
     platform: el-6-x86_64
     hypervisor: vagrant
     box: boxcutter/centos68
@@ -13,3 +13,4 @@ HOSTS:
 CONFIG:
   trace_limit: 200
   type: foss
+  log_level: debug

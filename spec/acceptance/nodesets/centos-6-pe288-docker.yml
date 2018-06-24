@@ -1,5 +1,5 @@
 HOSTS:
-  centos-6-x64-pe288:
+  centos-6-pe288-docker:
     roles:
       - master
       - agent
@@ -11,6 +11,13 @@ HOSTS:
     docker_preserve_image: true
     docker_image_commands:
       - 'yum install -y crontabs wget'
+    mount_folders:
+      wget_cache:
+        host_path: /tmp/docker-cache/wget
+        container_path: /var/cache/wget
+      yum_cache:
+        host_path: /tmp/docker-cache/yum/centos-6-docker
+        container_path: /var/cache/yum
 CONFIG:
   type: pe
   pe_ver: 2.8.8
