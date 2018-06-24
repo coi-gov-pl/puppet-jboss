@@ -1,14 +1,16 @@
 require 'spec_helper_acceptance'
 
-describe 'jmsqueue smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
-  let(:baseserver) { Testing::Acceptance::SmokeTestReader.smoke_pp :init }
-  let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :jmsqueue }
+describe 'jmsqueue smoke test' do
+  let(:baseserver) { example 'jboss' }
+  let(:pp) { example 'jboss::jmsqueue' }
 
   it 'should install base server with no errors' do
-    apply_manifest(baseserver, :catch_failures => true)
+    result = apply_manifest(baseserver, :catch_failures => true)
+    expect(result.exit_code).to be(2)
   end
   it 'should add jmsqueue with no errors' do
-    apply_manifest(pp, :catch_failures => true)
+    result = apply_manifest(pp, :catch_failures => true)
+    expect(result.exit_code).to be(2)
   end
   it 'should work idempotently' do
     apply_manifest(pp, :catch_changes  => true)

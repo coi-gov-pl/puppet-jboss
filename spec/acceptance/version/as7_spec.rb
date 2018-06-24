@@ -1,13 +1,14 @@
 require 'spec_helper_acceptance'
 
-describe 'jboss::as7 smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
-  let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :'jboss::as7' }
+describe 'jboss::version::as7 smoke test' do
+  let(:pp) { example 'jboss::version::as7' }
 
   it 'should add install JBoss AS 7 with no errors' do
-    apply_manifest(pp, :expect_changes => true, :trace => true)
+    result = apply_manifest(pp, :catch_failures => true)
+    expect(result.exit_code).to be(2)
   end
   it 'should work idempotently' do
-    apply_manifest(pp, :catch_changes  => true, :trace => true)
+    apply_manifest(pp, :catch_changes => true)
   end
   describe service('jboss-as') do
     it { is_expected.to be_running }
