@@ -3,7 +3,6 @@ require 'beaker-rspec'
 require 'beaker/puppeter'
 require 'beaker/module_install_helper'
 require 'puppet-examples-helpers'
-require 'testing'
 
 run_puppeter
 install_module

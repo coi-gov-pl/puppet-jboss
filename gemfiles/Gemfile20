@@ -25,6 +25,7 @@ group :test do
   gem 'ruby-augeas',                    :require => false
   gem 'augeas',                         :require => false
   gem 'nokogiri', '~> 1.6.8',           :require => false
+  gem 'rspec-puppet-facts',             :require => false
 end
 
 group :development do

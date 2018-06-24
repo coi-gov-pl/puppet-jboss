@@ -16,6 +16,7 @@ require 'pry' if gem_present 'pry'
 require 'rspec/its'
 require 'puppet'
 require 'puppet_x/coi/jboss'
+require 'testing'
 
 RSpec.configure do |c|
   c.mock_with :rspec do |mock|
