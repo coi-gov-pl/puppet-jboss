@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-describe 'jboss::internal::prerequisites', :type => :define do
+describe 'jboss::internal::prerequisites', :type => :class do
   shared_examples 'completly working define' do
     it { is_expected.to compile }
     it { is_expected.to contain_class 'jboss::internal::prerequisites' }

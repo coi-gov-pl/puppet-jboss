@@ -25,10 +25,12 @@ group :test do
   gem "puppet-module-posix-dev-r#{minor_version}",     VER, require: false, platforms: 'ruby'
   gem "puppet-module-win-default-r#{minor_version}",   VER, require: false, platforms: %w[mswin mingw x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       VER, require: false, platforms: %w[mswin mingw x64_mingw]
+  gem 'augeas',                                        require: false
   gem 'metadata-json-lint',                            require: false, platforms: %w[mswin mingw x64_mingw]
   gem 'rspec-puppet',                                  require: false, platforms: %w[mswin mingw x64_mingw]
   gem 'rspec-puppet-facts',                            require: false
   gem 'rspec-puppet-facts-unsupported', '~> 0',        require: false
+  gem 'ruby-augeas',                                   require: false
   gem 'safe_yaml',                                     require: false
   gem 'simplecov',                                     require: false, platforms: %w[mswin mingw x64_mingw]
 end

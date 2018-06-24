@@ -6,6 +6,7 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     ansi (1.5.0)
     ast (2.4.0)
+    augeas (0.6.4)
     aws-eventstream (1.0.1)
     aws-partitions (1.93.0)
     aws-sdk-core (3.21.3)
@@ -342,6 +343,7 @@ GEM
       rubocop (~> 0.49.0)
     rubocop-rspec (1.16.0)
       rubocop (>= 0.49.0)
+    ruby-augeas (0.5.0)
     ruby-ll (2.1.2)
       ansi
       ast
@@ -393,6 +395,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  augeas
   beaker (>= 3.13.0, < 4.0.0)
   beaker-abs
   beaker-hostgenerator
@@ -413,6 +416,7 @@ DEPENDENCIES
   rspec-puppet
   rspec-puppet-facts
   rspec-puppet-facts-unsupported (~> 0)
+  ruby-augeas
   safe_yaml
   simplecov
   vagrant-wrapper

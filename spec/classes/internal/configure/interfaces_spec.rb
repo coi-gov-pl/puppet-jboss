@@ -1,7 +1,7 @@
 require 'spec_helper_puppet'
 
-describe 'jboss::internal::configure::interfaces', :type => :define do
-  shared_examples 'contains self' do
+describe 'jboss::internal::configure::interfaces', :type => :class do
+  shared_examples 'contains jboss::internal::configure::interfaces classes' do
     it { is_expected.to contain_class 'jboss::internal::configure::interfaces' }
     it { is_expected.to contain_class('jboss') }
     it { is_expected.to contain_class('jboss::params') }
@@ -13,7 +13,7 @@ describe 'jboss::internal::configure::interfaces', :type => :define do
     let(:title) { 'test-conf-interfaces' }
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
-    it_behaves_like 'contains self'
+    it_behaves_like 'contains jboss::internal::configure::interfaces classes'
   end
 
   context 'On Debian os family' do
@@ -21,6 +21,6 @@ describe 'jboss::internal::configure::interfaces', :type => :define do
     let(:title) { 'test-conf-interfaces' }
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
-    it_behaves_like 'contains self'
+    it_behaves_like 'contains jboss::internal::configure::interfaces classes'
   end
 end
