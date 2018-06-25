@@ -14,13 +14,13 @@ describe 'jboss_deploy', :type => :type do
 
   let(:type) { described_class.new(params) }
 
-  context 'no parameters given' do
+  describe 'no parameters given' do
     let(:params) { extend_params({}) }
     it { expect(type).not_to be_nil }
   end
 
   describe 'controler' do
-    context 'given :undef' do
+    describe 'given :undef' do
       let(:params) { extend_params({ :controller => :undef }) }
       it do
         expect { type }.to raise_error(
@@ -32,7 +32,7 @@ describe 'jboss_deploy', :type => :type do
   end
 
   describe ':runtime_name' do
-    context 'given invalid input' do
+    describe 'given invalid input' do
       let(:params) { extend_params(:runtime_name => 'not_valid_runtime_name') }
       it do
         expect { type }.to raise_error(

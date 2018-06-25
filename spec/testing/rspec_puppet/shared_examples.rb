@@ -56,16 +56,16 @@ module Testing::RspecPuppet::SharedExamples
       }
       it {
         is_expected.to contain_augeas('ensure present interface public').with(
-          :context => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
-          :changes => 'set server/interfaces/interface[last()+1]/#attribute/name public',
-          :onlyif  => "match server/interfaces/interface[#attribute/name='public'] size == 0"
+          :describe => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
+          :changes  => 'set server/interfaces/interface[last()+1]/#attribute/name public',
+          :onlyif   => "match server/interfaces/interface[#attribute/name='public'] size == 0"
         )
       }
       it {
         is_expected.to contain_augeas('interface public set any-address').with(
-          :context => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
-          :changes => "set server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value 'true'",
-          :onlyif  => "get server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value != 'true'"
+          :describe => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
+          :changes  => "set server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value 'true'",
+          :onlyif   => "get server/interfaces/interface[#attribute/name='public']/any-address/#attribute/value != 'true'"
         )
       }
       it {
@@ -83,9 +83,9 @@ module Testing::RspecPuppet::SharedExamples
       basic_bind_variables_list.each do |var|
         it {
           is_expected.to contain_augeas("interface public rm #{var}").with(
-            :context => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
-            :changes => "rm server/interfaces/interface[#attribute/name='public']/#{var}",
-            :onlyif  => "match server/interfaces/interface[#attribute/name='public']/#{var} size != 0"
+            :describe => "/files/usr/lib/#{product}-#{version}/standalone/configuration/standalone-full.xml/",
+            :changes  => "rm server/interfaces/interface[#attribute/name='public']/#{var}",
+            :onlyif   => "match server/interfaces/interface[#attribute/name='public']/#{var} size != 0"
           )
         }
         it {

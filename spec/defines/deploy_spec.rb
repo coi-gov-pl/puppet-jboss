@@ -30,10 +30,10 @@ describe 'jboss::deploy', :type => :define do
     }
   end
 
-  context 'On RedHat os family' do
+  describe 'On RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
-    context 'valid runtime_name' do
+    describe 'valid runtime_name' do
       let(:title) { 'test-deploy' }
       let(:params) do
         {
@@ -46,7 +46,7 @@ describe 'jboss::deploy', :type => :define do
       it_behaves_like 'containing self'
     end
 
-    context 'invalid runtime name' do
+    describe 'invalid runtime name' do
       let(:title) { 'test-deploy' }
       let(:params) do
         {
@@ -59,11 +59,11 @@ describe 'jboss::deploy', :type => :define do
     end
   end
 
-  context 'On Debian os family' do
+  describe 'On Debian os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
-    context 'valid runtime_name' do
+    describe 'valid runtime_name' do
       let(:title) { 'test-deploy' }
       let(:params) { { :path => '/tmp/jboss.war' } }
 
@@ -71,7 +71,7 @@ describe 'jboss::deploy', :type => :define do
       it_behaves_like 'containing self'
     end
 
-    context 'invalid runtime_name' do
+    describe 'invalid runtime_name' do
       let(:title) { 'test-deploy' }
       let(:params) do
         {

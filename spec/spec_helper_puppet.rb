@@ -6,24 +6,6 @@ include RspecPuppetFacts
 
 at_exit { RSpec::Puppet::Coverage.report! }
 
-shared_context :unsupported do
-  if gem_present 'rspec-puppet-facts-unsupported'
-    require 'rspec-puppet-facts-unsupported'
-
-    include RspecPuppetFactsUnsupported
-    on_unsupported_os.each do |os, facts|
-      context "on unsupported OS '#{os}'" do
-        let(:facts) { facts }
-        it { is_expected.to compile.and_raise_error(/Unsupported operating system/) }
-      end
-    end
-  else
-    context 'on unsupported OS' do
-      it { skip 'unsupported os in not loaded' }
-    end
-  end
-end
-
 RSpec.configure do |c|
   c.include PuppetlabsSpec::Files
   c.before :each do

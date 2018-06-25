@@ -92,15 +92,15 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     it { expect(subject).not_to be_nil }
     it { expect(subject).not_to be_empty }
   end
-  context 'with sample config file for WildFly 8.2' do
-    context 'without mocking RUBY_VERSION' do
+  describe 'with sample config file for WildFly 8.2' do
+    describe 'without mocking RUBY_VERSION' do
       it_behaves_like 'is not nill and empty'
       it { expect(subject).to respond_to(:[]) }
       its(:size) { should eq(10) }
       it { expect(subject).to eq(expected_hash) }
     end
 
-    context 'with mocking RUBY_VERSION to 1.8.7' do
+    describe 'with mocking RUBY_VERSION to 1.8.7' do
       before :each do
         expect(Puppet_X::Coi::Jboss::Configuration).to receive(:ruby_version).once.and_return('1.8.7')
       end

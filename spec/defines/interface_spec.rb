@@ -34,12 +34,12 @@ describe 'jboss::interface', :type => :define do
   end
 
   shared_examples 'a define with properly configured interface' do
-    context 'with jboss_running => true and runasdomain => false parameters set' do
+    describe 'with jboss_running => true and runasdomain => false parameters set' do
       let(:facts)  { generic_facts.merge(:jboss_running => 'true') }
       let(:params) { generic_params.merge(:runasdomain => 'false') }
       let(:pre_condition) { "class { jboss: product => '#{product}', version => '#{version}'}" }
 
-      context 'with product => wildfly and version => 9.0.2.Final parameters set' do
+      describe 'with product => wildfly and version => 9.0.2.Final parameters set' do
         let(:product) { 'wildfly' }
         let(:version) { '9.0.2.Final' }
 
@@ -49,7 +49,7 @@ describe 'jboss::interface', :type => :define do
           )
         }
       end
-      context 'with product => wildfly and version => 8.2.1.Final parameters set' do
+      describe 'with product => wildfly and version => 8.2.1.Final parameters set' do
         let(:product) { 'wildfly' }
         let(:version) { '8.2.1.Final' }
 
@@ -59,7 +59,7 @@ describe 'jboss::interface', :type => :define do
           )
         }
       end
-      context 'with product => jboss-eap and version => 7.0.0.Beta parameters set' do
+      describe 'with product => jboss-eap and version => 7.0.0.Beta parameters set' do
         let(:product) { 'jboss-eap' }
         let(:version) { '7.0.0.Beta' }
 
@@ -69,7 +69,7 @@ describe 'jboss::interface', :type => :define do
           )
         }
       end
-      context 'with product => wildfly and version => 15.0.0.Final parameters set' do
+      describe 'with product => wildfly and version => 15.0.0.Final parameters set' do
         let(:product) { 'wildfly' }
         let(:version) { '15.0.0.Final' }
 
@@ -77,12 +77,12 @@ describe 'jboss::interface', :type => :define do
       end
     end
 
-    context 'with jboss_running => false and runasdomain => false parameters set' do
+    describe 'with jboss_running => false and runasdomain => false parameters set' do
       let(:facts)  { generic_facts.merge({ :jboss_running => 'false' }) }
       let(:params) { generic_params.merge({ :runasdomain => 'false' }) }
       let(:pre_condition) { "class { jboss: product => '#{product}', version => '#{version}'}" }
 
-      context 'with product => wildfly and version => 9.0.2.Final parameters set' do
+      describe 'with product => wildfly and version => 9.0.2.Final parameters set' do
         let(:product) { 'wildfly' }
         let(:version) { '9.0.2.Final' }
 
@@ -95,7 +95,7 @@ describe 'jboss::interface', :type => :define do
           }
         end
       end
-      context 'with product => wildfly and version => 8.2.1.Final parameters set' do
+      describe 'with product => wildfly and version => 8.2.1.Final parameters set' do
         let(:product) { 'wildfly' }
         let(:version) { '8.2.1.Final' }
 
@@ -122,7 +122,7 @@ describe 'jboss::interface', :type => :define do
           }
         end
       end
-      context 'with product => jboss-eap and version => 7.0.0.Beta parameters set' do
+      describe 'with product => jboss-eap and version => 7.0.0.Beta parameters set' do
         let(:product) { 'jboss-eap' }
         let(:version) { '7.0.0.Beta' }
 
@@ -138,7 +138,7 @@ describe 'jboss::interface', :type => :define do
     end
   end
 
-  context 'On RedHat os family' do
+  describe 'On RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:generic_facts) do
       {
@@ -158,7 +158,7 @@ describe 'jboss::interface', :type => :define do
     it_behaves_like 'a define with properly configured interface'
   end
 
-  context 'On Debian os family' do
+  describe 'On Debian os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:generic_facts) do
       {

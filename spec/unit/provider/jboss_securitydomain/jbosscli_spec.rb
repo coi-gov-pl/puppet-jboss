@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-context 'mocking default values for SecurityDomain' do
+describe 'mocking default values for SecurityDomain' do
   let(:mock_values) do
     {
       :product    => 'jboss-eap',
@@ -57,7 +57,7 @@ context 'mocking default values for SecurityDomain' do
 
     let(:mocked_execution_state_wrapper) { Testing::Mock::ExecutionStateWrapper.new }
 
-    context 'before 6.4' do
+    describe 'before 6.4' do
       describe 'exists? when everything is set' do
         before :each do
           output = <<-eos
@@ -119,7 +119,7 @@ context 'mocking default values for SecurityDomain' do
         it { expect(subject).to eq(true) }
       end
 
-      context 'exists? with securitydomain not present in system' do
+      describe 'exists? with securitydomain not present in system' do
         before :each do
           output = <<-eos
           {
@@ -156,7 +156,7 @@ context 'mocking default values for SecurityDomain' do
         it { expect(subject).to eq(false) }
       end
 
-      context 'exists? with login-modules not present in system' do
+      describe 'exists? with login-modules not present in system' do
         before :each do
           output = <<-eos
           {
@@ -212,7 +212,7 @@ context 'mocking default values for SecurityDomain' do
         it { expect(subject).to eq(false) }
       end
 
-      context 'destroy method' do
+      describe 'destroy method' do
         before :each do
           output = <<-eos
           {
@@ -269,8 +269,8 @@ context 'mocking default values for SecurityDomain' do
       end
     end
 
-    context 'create methods' do
-      context 'create? when there is no login modules' do
+    describe 'create methods' do
+      describe 'create? when there is no login modules' do
         before :each do
           output = <<-eos
           {
@@ -352,7 +352,7 @@ context 'mocking default values for SecurityDomain' do
         end
       end
 
-      context 'create? when there is no authentication' do
+      describe 'create? when there is no authentication' do
         before :each do
           output = <<-eos
           {
@@ -424,7 +424,7 @@ context 'mocking default values for SecurityDomain' do
           )
         end
       end
-      context 'create? when there is no securitydomain' do
+      describe 'create? when there is no securitydomain' do
         before :each do
           output = <<-eos
           {

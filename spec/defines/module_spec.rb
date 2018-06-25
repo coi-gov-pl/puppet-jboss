@@ -19,7 +19,7 @@ describe 'jboss::module', :type => :define do
     }
   end
 
-  context 'On RedHat os family' do
+  describe 'On RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-module' }
     let(:params) do
@@ -34,7 +34,7 @@ describe 'jboss::module', :type => :define do
     it_behaves_like 'contains self'
   end
 
-  context 'On Debian os family' do
+  describe 'On Debian os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-module' }
     let(:params) do

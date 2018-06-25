@@ -13,7 +13,7 @@ describe 'jboss::internal::augeas', :type => :class do
     it { is_expected.to contain_file("/usr/lib/#{defs[:product]}-#{defs[:version]}/lenses/jbxml.aug") }
   end
 
-  context 'On RedHat os family' do
+  describe 'On RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-augeas' }
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
@@ -21,7 +21,7 @@ describe 'jboss::internal::augeas', :type => :class do
     it_behaves_like 'contains self'
   end
 
-  context 'On Debian os family' do
+  describe 'On Debian os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-augeas' }
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }

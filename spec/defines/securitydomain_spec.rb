@@ -17,7 +17,7 @@ describe 'jboss::securitydomain', :type => :define do
     it { is_expected.to contain_jboss__securitydomain('test-securitydomain') }
   end
 
-  context 'On RedHat os family' do
+  describe 'On RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-securitydomain' }
     let(:params) do
@@ -31,7 +31,7 @@ describe 'jboss::securitydomain', :type => :define do
     it_behaves_like 'contains self'
   end
 
-  context 'On Debian os family' do
+  describe 'On Debian os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-securitydomain' }
     let(:params) do

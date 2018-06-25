@@ -4,17 +4,17 @@ source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 group :test do
   gem 'rake', '~> 10.0.0',              :require => false unless dependencies.map(&:name).include?('rake')
   # TODO: Remove this explicitly pinned version by the time ticket gh-org/puppet-jboss#84 is closed.
-  gem 'rspec-puppet', '2.3.2',          :require => false
-  gem 'puppetlabs_spec_helper',         :require => false
-  gem 'puppet-lint',                    :require => false
-  gem 'metadata-json-lint',             :require => false
+  gem 'rspec-puppet', '~> 2.3.2',       :require => false
+  gem 'puppetlabs_spec_helper', '~> 2.7.0', :require => false
   # This package drops support for 1.8
   gem 'json', '1.8.3',                  :require => false
   gem 'os',                             :require => false
   # This package drops support for 1.8
   gem 'json_pure', '1.8.3',             :require => false
+  gem 'rspec-mocks',                    :require => false
   gem 'rspec-its',                      :require => false
-  gem 'rspec', '~> 3.1.0',              :require => false
+  gem 'rspec', '~> 2',                  :require => false
+  # gem 'rspec', '~> 3.2.0',              :require => false
 
   gem 'facter', ENV['FACTER_GEM_VERSION'] || '~> 1.6.0', :require => false
   gem 'puppet', ENV['PUPPET_GEM_VERSION'] || '~> 2.7.0', :require => false
@@ -22,7 +22,6 @@ group :test do
 
   gem 'ruby-augeas',                    :require => false
   gem 'augeas',                         :require => false
-  gem 'nokogiri', '~> 1.5.11',          :require => false
   gem 'rspec-puppet-facts',             :require => false
 end
 

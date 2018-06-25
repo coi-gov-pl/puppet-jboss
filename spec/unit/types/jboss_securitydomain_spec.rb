@@ -14,7 +14,7 @@ describe 'jboss_securitydomain', :type => :type do
   let(:type) { described_class.new(params) }
 
   describe 'controler' do
-    context 'given :undef' do
+    describe 'given :undef' do
       let(:params) { extend_params(:controller => :undef) }
       it do
         expect { type }.to raise_error(

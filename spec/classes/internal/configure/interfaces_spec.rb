@@ -8,7 +8,7 @@ describe 'jboss::internal::configure::interfaces', :type => :class do
     it { is_expected.to contain_class('jboss::internal::runtime::dc') }
   end
 
-  context 'On RedHat os family' do
+  describe 'On RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-conf-interfaces' }
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
@@ -16,7 +16,7 @@ describe 'jboss::internal::configure::interfaces', :type => :class do
     it_behaves_like 'contains jboss::internal::configure::interfaces classes'
   end
 
-  context 'On Debian os family' do
+  describe 'On Debian os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-conf-interfaces' }
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }

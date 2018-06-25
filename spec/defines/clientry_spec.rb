@@ -17,7 +17,7 @@ describe 'jboss::clientry', :type => :define do
     end
   end
 
-  context 'on RedHat os family' do
+  describe 'on RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
 
     let(:title) { 'test-clientry' }
@@ -29,7 +29,7 @@ describe 'jboss::clientry', :type => :define do
     it_behaves_like 'contain self'
   end
 
-  context 'on Debian os family' do
+  describe 'on Debian os family' do
     extend Testing::RspecPuppet::SharedExamples
 
     let(:title) { 'test-clientry' }

@@ -5,7 +5,7 @@ describe 'jboss_jdbcdriver', :type => :type do
   subject { described_class }
   it { expect(subject).not_to be_nil }
 
-  context 'controller == nil' do
+  describe 'controller == nil' do
     let(:params) do
       {
         :title      => 'test-driver',

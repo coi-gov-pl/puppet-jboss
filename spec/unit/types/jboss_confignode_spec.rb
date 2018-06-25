@@ -28,12 +28,12 @@ describe 'jboss_confignode', :type => :type do
     describe 'properties' do
       let(:params) { extend_params({ :properties => properties }) }
       describe 'munge' do
-        context 'not respond_to? :[]' do
+        describe 'not respond_to? :[]' do
           let(:properties) { false }
           subject { type.property :properties }
           its(:value) { is_expected.to eq({}) }
         end
-        context 'respond_to? :[]' do
+        describe 'respond_to? :[]' do
           let(:properties) { { 'example' => false } }
           subject { type.property :properties }
           its(:value) { is_expected.to eq(properties) }
@@ -43,23 +43,23 @@ describe 'jboss_confignode', :type => :type do
       describe 'change_to_s' do
         let(:properties) { false }
         subject { type.property(:properties).change_to_s(from, to) }
-        context 'from :absent and to hash',
-                :from => :absent,
-                :to   => { 'alice' => 'five', 'bob' => 'seven' } do
+        describe 'from :absent and to hash',
+                 :from => :absent,
+                 :to   => { 'alice' => 'five', 'bob' => 'seven' } do
           let(:from) { |expl| expl.metadata[:from] }
           let(:to) { |expl| expl.metadata[:to] }
           it { expect(subject).to eq("property 'alice' has been set to \"five\", property 'bob' has been set to \"seven\"") }
         end
-        context 'from hash and to changed hash',
-                :from => { 'alice' => 'five', 'bob' => 'nine' },
-                :to   => { 'alice' => 'five', 'bob' => 'seven' } do
+        describe 'from hash and to changed hash',
+                 :from => { 'alice' => 'five', 'bob' => 'nine' },
+                 :to   => { 'alice' => 'five', 'bob' => 'seven' } do
           let(:from) { |expl| expl.metadata[:from] }
           let(:to) { |expl| expl.metadata[:to] }
           it { expect(subject).to eq("property 'bob' has changed from \"nine\" to \"seven\"") }
         end
-        context 'from hash and to :absent',
-                :from => { 'alice' => 'five', 'bob' => 'nine' },
-                :to   => :absent do
+        describe 'from hash and to :absent',
+                 :from => { 'alice' => 'five', 'bob' => 'nine' },
+                 :to   => :absent do
           let(:from) { |expl| expl.metadata[:from] }
           let(:to) { |expl| expl.metadata[:to] }
           it do

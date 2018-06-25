@@ -13,7 +13,7 @@ describe 'jboss_jmsqueue', :type => :type do
   let(:type) { described_class.new(params) }
 
   describe 'controller' do
-    context 'given :undef' do
+    describe 'given :undef' do
       let(:params) { extend_params({ :controller => :undef }) }
       it do
         expect { type }.to raise_error(
@@ -25,7 +25,7 @@ describe 'jboss_jmsqueue', :type => :type do
   end
 
   describe 'entries' do
-    context 'is_to_s' do
+    describe 'is_to_s' do
       let(:entries) { ['queue/app-mails', 'java:jboss/exported/jms/queue/app-mails'] }
       let(:params) { extend_params({ :entries => entries }) }
       let(:property) { type.property(:entries) }
@@ -33,7 +33,7 @@ describe 'jboss_jmsqueue', :type => :type do
         expect(property.is_to_s(entries)).to eq('["queue/app-mails", "java:jboss/exported/jms/queue/app-mails"]')
       end
     end
-    context 'should_to_s' do
+    describe 'should_to_s' do
       let(:entries) { ['queue/app-mails', 'java:jboss/exported/jms/queue/app-mails'] }
       let(:params) { extend_params({ :entries => entries }) }
       let(:property) { type.property(:entries) }

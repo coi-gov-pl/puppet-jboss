@@ -1,7 +1,7 @@
 require 'spec_helper_puppet'
 require 'puppet_x/coi/jboss/configuration'
 
-context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version => '6.4.0.GA'" do
+describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version => '6.4.0.GA'" do
   let(:mock_values) do
     {
       :product    => 'jboss-eap',
@@ -45,7 +45,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
       allow(provider.class).to receive(:suitable?).and_return(true)
     end
 
-    context 'Given `testing` Non-XA datasource using h2:mem' do
+    describe 'Given `testing` Non-XA datasource using h2:mem' do
       let(:command) do
         '/subsystem=datasources/data-source=testing:read-resource(recursive=true)'
       end
@@ -179,7 +179,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         )
         provider.exists?
       end
-      context 'while using JBoss EAP 6.4.0.GA' do
+      describe 'while using JBoss EAP 6.4.0.GA' do
         describe 'jta()' do
           subject { provider.jta }
           it { expect(subject).not_to be_nil }
@@ -214,7 +214,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
           shared_examples 'is working like a charm' do
             it { expect { subject }.not_to raise_error }
           end
-          context 'with new_options equal to { "xa-some-opt" => false }' do
+          describe 'with new_options equal to { "xa-some-opt" => false }' do
             let(:new_options) do
               { 'xa-some-opt' => false, 'sample-opt' => 'gigabyte' }
             end
@@ -228,7 +228,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
             end
             it_behaves_like 'is working like a charm'
           end
-          context 'for cases that undefines setted values' do
+          describe 'for cases that undefines setted values' do
             before :each do
               datasource_options.each do |k, _v|
                 expect(provider).to receive(:executeAndGet).
@@ -236,22 +236,22 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
                   and_return(datasource_options_setattrb_response)
               end
             end
-            context 'with new_options equal to :absent' do
+            describe 'with new_options equal to :absent' do
               let(:new_options) { :absent }
               it_behaves_like 'is working like a charm'
             end
-            context 'with new_options equal to :undef' do
+            describe 'with new_options equal to :undef' do
               let(:new_options) { :undef }
               it_behaves_like 'is working like a charm'
             end
-            context 'with new_options equal to nil' do
+            describe 'with new_options equal to nil' do
               let(:new_options) { nil }
               it_behaves_like 'is working like a charm'
             end
           end
         end
       end
-      context 'while using JBoss EAP 6.2.0.GA' do
+      describe 'while using JBoss EAP 6.2.0.GA' do
         let(:mock_values) do
           {
             :product    => 'jboss-eap',

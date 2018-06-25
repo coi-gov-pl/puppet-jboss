@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-context 'mocking default values' do
+describe 'mocking default values' do
   let(:mock_values) do
     {
       :product    => 'jboss-eap',
@@ -303,7 +303,7 @@ context 'mocking default values' do
     end
 
     describe '#redeploy_on_refresh' do
-      context 'with default value' do
+      describe 'with default value' do
         before :each do
           bring_down_name = 'Deployment'
           cmd = 'undeploy super-crm-1.1.0 --all-relevant-server-groups'
@@ -323,7 +323,7 @@ context 'mocking default values' do
         it { expect(subject).to eq('asd') }
       end
 
-      context 'with value set to false' do
+      describe 'with value set to false' do
         before :each do
           bring_up_name = 'Deployment'
           cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups'

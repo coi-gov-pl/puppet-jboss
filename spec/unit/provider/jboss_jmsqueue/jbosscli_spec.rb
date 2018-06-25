@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-context 'mocking default values' do
+describe 'mocking default values' do
   module DataSetter
     def data=(data)
       @data = data

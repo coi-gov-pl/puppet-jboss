@@ -42,7 +42,7 @@ describe 'jboss::internal::lenses', :type => :class do
   end
 
   on_supported_os.each do |os, facts|
-    context "On #{os}" do
+    describe "On #{os}" do
       let(:title) { 'test-lenses' }
       let(:facts) { facts.merge(:concat_basedir => '/root') }
       it_behaves_like 'completly working define jboss::internal::lenses'

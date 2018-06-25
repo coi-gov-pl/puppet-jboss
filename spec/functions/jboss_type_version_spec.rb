@@ -1,7 +1,7 @@
 require 'spec_helper_puppet'
 
 describe 'jboss_type_version' do
-  context 'given invalid number of parameters' do
+  describe 'given invalid number of parameters' do
     it do
       should run.
         with_params.and_raise_error(
@@ -11,7 +11,7 @@ describe 'jboss_type_version' do
     end
   end
 
-  context 'given as-7.1.1.Final it should return as' do
+  describe 'given as-7.1.1.Final it should return as' do
     let(:input) { 'as-7.1.1.Final' }
     it do
       should run.
@@ -19,7 +19,7 @@ describe 'jboss_type_version' do
     end
   end
 
-  context 'given invalid input' do
+  describe 'given invalid input' do
     let(:input) { 'asd' }
     it do
       should run.

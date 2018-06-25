@@ -73,7 +73,7 @@ describe 'jboss::internal::configuration', :type => :class do
     }
   end
 
-  context 'On RedHat os family' do
+  describe 'On RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-configuration' }
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
@@ -86,7 +86,7 @@ describe 'jboss::internal::configuration', :type => :class do
     it { is_expected.to contain_file('/etc/sysconfig/wildfly.conf') }
   end
 
-  context 'On Debian os family' do
+  describe 'On Debian os family' do
     extend Testing::RspecPuppet::SharedExamples
     let(:title) { 'test-configuration' }
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }

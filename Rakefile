@@ -1,3 +1,4 @@
+require './gemfiles/quirks/file'
 require 'puppetlabs_spec_helper/rake_tasks'
 
 test_tasks = [:syntax, :spec]

@@ -24,7 +24,7 @@ describe 'jboss::datasource', :type => :define do
     hash.merge(default_params)
   end
 
-  context 'on RedHat os family' do
+  describe 'on RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
 
     let(:title) { 'test-datasource' }
@@ -51,13 +51,13 @@ describe 'jboss::datasource', :type => :define do
         with_xa(false)
     end
 
-    context 'with option prepared-statements-cache-size set to 46' do
+    describe 'with option prepared-statements-cache-size set to 46' do
       let(:options) do
         {
           'prepared-statements-cache-size' => 46
         }
       end
-      context 'in XA mode' do
+      describe 'in XA mode' do
         let(:params) do
           merge_params(:options => options, :xa => true)
         end
@@ -74,7 +74,7 @@ describe 'jboss::datasource', :type => :define do
           )
         end
       end
-      context 'in non-XA mode' do
+      describe 'in non-XA mode' do
         let(:params) do
           merge_params(:options => options, :xa => false)
         end
@@ -92,7 +92,7 @@ describe 'jboss::datasource', :type => :define do
     end
   end
 
-  context 'on Ubuntu os family' do
+  describe 'on Ubuntu os family' do
     extend Testing::RspecPuppet::SharedExamples
 
     let(:title) { 'test-datasource' }
@@ -119,13 +119,13 @@ describe 'jboss::datasource', :type => :define do
         with_xa(false)
     end
 
-    context 'with option prepared-statements-cache-size set to 46' do
+    describe 'with option prepared-statements-cache-size set to 46' do
       let(:options) do
         {
           'prepared-statements-cache-size' => 46
         }
       end
-      context 'in XA mode' do
+      describe 'in XA mode' do
         let(:params) do
           merge_params(:options => options, :xa => true)
         end
@@ -142,7 +142,7 @@ describe 'jboss::datasource', :type => :define do
           )
         end
       end
-      context 'in non-XA mode' do
+      describe 'in non-XA mode' do
         let(:params) do
           merge_params(:options => options, :xa => false)
         end
