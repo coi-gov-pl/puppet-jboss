@@ -17,6 +17,10 @@ shared_context :unsupported do
         it { is_expected.to compile.and_raise_error(/Unsupported operating system/) }
       end
     end
+  else
+    context 'on unsupported OS' do
+      it { skip 'unsupported os in not loaded' }
+    end
   end
 end
 

@@ -1,7 +1,6 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe Puppet_X::Coi::Jboss::Provider::Datasource::PreWildFlyProvider do
-
   let(:target) { described_class.new(nil) }
 
   describe 'xa_datasource_properties_wrapper' do

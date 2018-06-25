@@ -2,7 +2,7 @@ HOSTS:
   debian-8-vagrant:
     platform: debian-8-amd64
     hypervisor : vagrant
-    box : boxcutter/debian8
+    box : bento/debian-8
     mount_folders:
       wget_cache:
         from: /tmp/vagrant-cache/wget

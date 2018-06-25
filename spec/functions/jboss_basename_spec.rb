@@ -1,7 +1,6 @@
-require "spec_helper"
+require 'spec_helper_puppet'
 
 describe 'jboss_basename', :type => :puppet_function do
-
   let(:input) { 'path/to/file' }
   it do
     is_expected.to run.
@@ -12,7 +11,6 @@ describe 'jboss_basename', :type => :puppet_function do
   it do
     is_expected.to run.
       with_params(input2).
-      and_return(['file', 'file2'])
+      and_return(%w[file file2])
   end
-
 end

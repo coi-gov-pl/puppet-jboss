@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Puppet_X::Coi::Jboss::Internal::Sanitizer do
-
   let(:instance) { described_class.new }
   let(:file_location) { File.dirname(__FILE__) }
   let(:content) { File.read("#{file_location}/../../testing/files/evaluated.txt") }
@@ -13,32 +12,34 @@ describe Puppet_X::Coi::Jboss::Internal::Sanitizer do
   end
 
   context 'should make no changes' do
-      let(:data) { '"other" => {
-          "acl" => undefined,
-          "audit" => undefined,
-          "authorization" => undefined,
-          "cache-type" => "default",
-          "identity-trust" => undefined,
-          "jsse" => undefined,
-          "mapping" => undefined,
-          "authentication" => {"classic" => {"login-modules" => [
-              {
-                  "code" => "Remoting",
-                  "flag" => "optional",
-                  "module-options" => [{"password-stacking" => "useFirstPass"}]
-              },
-              {
-                  "code" => "RealmUsersRoles",
-                  "flag" => "required",
-                  "module-options" => [
-                      {"usersProperties" => "${jboss.server.config.dir}/application-users.properties"},
-                      {"rolesProperties" => "${jboss.server.config.dir}/application-roles.properties"},
-                      {"realm" => "ApplicationRealm"},
-                      {"password-stacking" => "useFirstPass"}
-                  ]
-              }
-          ]}}
-      },'}
+    let(:data) do
+      '"other" => {
+      "acl" => undefined,
+      "audit" => undefined,
+      "authorization" => undefined,
+      "cache-type" => "default",
+      "identity-trust" => undefined,
+      "jsse" => undefined,
+      "mapping" => undefined,
+      "authentication" => {"classic" => {"login-modules" => [
+          {
+              "code" => "Remoting",
+              "flag" => "optional",
+              "module-options" => [{"password-stacking" => "useFirstPass"}]
+          },
+          {
+              "code" => "RealmUsersRoles",
+              "flag" => "required",
+              "module-options" => [
+                  {"usersProperties" => "${jboss.server.config.dir}/application-users.properties"},
+                  {"rolesProperties" => "${jboss.server.config.dir}/application-roles.properties"},
+                  {"realm" => "ApplicationRealm"},
+                  {"password-stacking" => "useFirstPass"}
+              ]
+          }
+      ]}}
+  },'
+    end
     subject { instance.sanitize(data) }
     it { expect(subject).to eq(data) }
   end

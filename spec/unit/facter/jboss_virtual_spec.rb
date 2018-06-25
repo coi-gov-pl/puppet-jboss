@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe 'jboss_virtual', :type => :fact do
   let(:lines) do

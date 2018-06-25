@@ -1,19 +1,18 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
-
   let(:resource) do
     {
       :name          => 'testing',
       :code          => 'Database',
       :codeflag      => true,
-      :moduleoptions =>  {
+      :moduleoptions => {
         'principalsQuery'  => "select 'password' from users u where u.login = ?",
         'hashUserPassword' => false
       }
     }
   end
-  let(:system_executor) {Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new }
+  let(:system_executor) { Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new }
   let(:system_runner) { Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(system_executor) }
   let(:runner) { Puppet_X::Coi::Jboss::Internal::CliExecutor.new(system_runner) }
   let(:compilator) { Puppet_X::Coi::Jboss::Internal::CommandCompilator.new }
@@ -38,7 +37,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
-      it { expect(subject).to eq([["Security Domain Cache Type", "/subsystem=security/security-domain=testing:add(cache-type=default)"], ["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]]) }
+      it { expect(subject).to eq([['Security Domain Cache Type', '/subsystem=security/security-domain=testing:add(cache-type=default)'], ['Security Domain Login Modules', "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]]) }
     end
 
     context '#calculate_state with cache type and authentication set' do
@@ -46,7 +45,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
-      it { expect(subject).to eq([["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]])}
+      it { expect(subject).to eq([['Security Domain Login Modules', "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]]) }
     end
 
     context '#calculate_state with cache type' do
@@ -54,9 +53,8 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
-      it { expect(subject).to eq([["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]]) }
+      it { expect(subject).to eq([['Security Domain Login Modules', "/subsystem=security/security-domain=testing/authentication=classic:add(login-modules=[{code=>\"Database\",flag=>true,module-options=>[\"hashUserPassword\"=>false,\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\"]}])"]]) }
     end
-
   end
 
   describe 'post wildfly provider' do
@@ -75,8 +73,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
-      it { expect(subject).to eq([["Security Domain Cache Type", "/subsystem=security/security-domain=testing:add(cache-type=default)"], ["Security Domain Authentication", "/subsystem=security/security-domain=testing/authentication=classic:add()"], ["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic/login-module=testing:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]]) }
-
+      it { expect(subject).to eq([['Security Domain Cache Type', '/subsystem=security/security-domain=testing:add(cache-type=default)'], ['Security Domain Authentication', '/subsystem=security/security-domain=testing/authentication=classic:add()'], ['Security Domain Login Modules', "/subsystem=security/security-domain=testing/authentication=classic/login-module=testing:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]]) }
     end
 
     context '#calculate_state with cache type and authentication set' do
@@ -84,7 +81,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
-      it { expect(subject).to eq([["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic/login-module=testing:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]]) }
+      it { expect(subject).to eq([['Security Domain Login Modules', "/subsystem=security/security-domain=testing/authentication=classic/login-module=testing:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]]) }
     end
 
     context '#calculate_state with cache type' do
@@ -92,7 +89,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
         state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
-      it { expect(subject).to eq([["Security Domain Authentication", "/subsystem=security/security-domain=testing/authentication=classic:add()"], ["Security Domain Login Modules", "/subsystem=security/security-domain=testing/authentication=classic/login-module=testing:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]]) }
+      it { expect(subject).to eq([['Security Domain Authentication', '/subsystem=security/security-domain=testing/authentication=classic:add()'], ['Security Domain Login Modules', "/subsystem=security/security-domain=testing/authentication=classic/login-module=testing:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]]) }
     end
   end
 end

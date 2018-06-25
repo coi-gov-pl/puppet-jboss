@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper_puppet'
 
 describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
   let(:resource) do
@@ -6,7 +6,7 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
       :name          => 'testing',
       :code          => 'Database',
       :codeflag      => true,
-      :moduleoptions =>  {
+      :moduleoptions => {
         'principalsQuery'  => "select 'password' from users u where u.login = ?",
         'hashUserPassword' => false
       }
@@ -18,17 +18,27 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
   let(:instance) { described_class.new(provider, compilator) }
 
   describe '#create_parametrized_cmd with post wildfly' do
-
     subject { instance.make_command_templates }
 
     before :each do
-      result = ["subsystem=security", "security-domain=testing", "authentication=classic", "login-module=UsersRoles:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]
+      result = [
+        'subsystem=security',
+        'security-domain=testing',
+        'authentication=classic',
+        'login-module=UsersRoles:add(code="Database",flag=true,module-options=[("hashUserPassword"=>false),' \
+          '("principalsQuery"=>"select \'password\' from users u where u.login = ?")])'
+      ]
 
       expect(instance).to receive(:make_command_templates).and_return(result)
     end
     let(:cli_command) do
-      ["subsystem=security", "security-domain=testing", "authentication=classic", "login-module=UsersRoles:add(code=\"Database\",flag=true,module-options=[(\"hashUserPassword\"=>false),(\"principalsQuery\"=>\"select 'password' from users u where u.login = ?\")])"]
-
+      [
+        'subsystem=security',
+        'security-domain=testing',
+        'authentication=classic',
+        'login-module=UsersRoles:add(code="Database",flag=true,module-options=[("hashUserPassword"=>false),' \
+          '("principalsQuery"=>"select \'password\' from users u where u.login = ?")])'
+      ]
     end
     it { is_expected.to eq cli_command }
   end

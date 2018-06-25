@@ -1,13 +1,12 @@
-require "spec_helper"
-require "puppet_x/coi/jboss/configuration"
+require 'spec_helper_puppet'
+require 'puppet_x/coi/jboss/configuration'
 
 context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version => '6.4.0.GA'" do
-
   let(:mock_values) do
     {
       :product    => 'jboss-eap',
       :version    => '6.4.0.GA',
-      :controller => '127.0.0.1:9999',
+      :controller => '127.0.0.1:9999'
     }
   end
 
@@ -20,7 +19,6 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
   end
 
   describe 'Puppet::Type::Jboss_datasource::ProviderJbosscli' do
-
     let(:described_class) do
       Puppet::Type.type(:jboss_datasource).provider(:jbosscli)
     end
@@ -29,7 +27,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         :name        => 'testing',
         :xa          => false,
         :runasdomain => false,
-        :jdbcscheme  => 'h2:mem',
+        :jdbcscheme  => 'h2:mem'
       }
     end
 
@@ -56,7 +54,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
       let(:retry_count) { 0 }
       let(:ctrlcfg) do
         {
-          :controller => "127.0.0.1:9990",
+          :controller => '127.0.0.1:9990',
           :ctrluser   => nil,
           :ctrlpasswd => nil
         }
@@ -65,70 +63,70 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         {
           :result => true,
           :data   => {
-            "allocation-retry" => nil,
-            "allocation-retry-wait-millis" => nil,
-            "allow-multiple-users" => false,
-            "background-validation" => false,
-            "background-validation-millis" => nil,
-            "blocking-timeout-wait-millis" => nil,
-            "capacity-decrementer-class" => nil,
-            "capacity-decrementer-properties" => nil,
-            "capacity-incrementer-class" => nil,
-            "capacity-incrementer-properties" => nil,
-            "check-valid-connection-sql" => nil,
-            "connection-listener-class" => nil,
-            "connection-listener-property" => nil,
-            "connection-properties" => nil,
-            "connection-url" => "jdbc:h2:mem:///testing;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-            "datasource-class" => nil,
-            "driver-class" => nil,
-            "driver-name" => "h2",
-            "enabled" => true,
-            "exception-sorter-class-name" => nil,
-            "exception-sorter-properties" => nil,
-            "flush-strategy" => nil,
-            "idle-timeout-minutes" => nil,
-            "initial-pool-size" => nil,
-            "jndi-name" => "java:jboss/datasources/testing",
-            "jta" => true,
-            "max-pool-size" => 50,
-            "min-pool-size" => 1,
-            "new-connection-sql" => nil,
-            "password" => "test-password",
-            "pool-prefill" => nil,
-            "pool-use-strict-min" => nil,
-            "prepared-statements-cache-size" => 0,
-            "query-timeout" => nil,
-            "reauth-plugin-class-name" => nil,
-            "reauth-plugin-properties" => nil,
-            "security-domain" => nil,
-            "set-tx-query-timeout" => false,
-            "share-prepared-statements" => false,
-            "spy" => false,
-            "stale-connection-checker-class-name" => nil,
-            "stale-connection-checker-properties" => nil,
-            "track-statements" => "NOWARN",
-            "transaction-isolation" => nil,
-            "url-delimiter" => nil,
-            "url-selector-strategy-class-name" => nil,
-            "use-ccm" => true,
-            "use-fast-fail" => false,
-            "use-java-context" => true,
-            "use-try-lock" => nil,
-            "user-name" => "test-username",
-            "valid-connection-checker-class-name" => nil,
-            "valid-connection-checker-properties" => nil,
-            "validate-on-match" => false,
-            "statistics" => nil
+            'allocation-retry'                    => nil,
+            'allocation-retry-wait-millis'        => nil,
+            'allow-multiple-users'                => false,
+            'background-validation'               => false,
+            'background-validation-millis'        => nil,
+            'blocking-timeout-wait-millis'        => nil,
+            'capacity-decrementer-class'          => nil,
+            'capacity-decrementer-properties'     => nil,
+            'capacity-incrementer-class'          => nil,
+            'capacity-incrementer-properties'     => nil,
+            'check-valid-connection-sql'          => nil,
+            'connection-listener-class'           => nil,
+            'connection-listener-property'        => nil,
+            'connection-properties'               => nil,
+            'connection-url'                      => 'jdbc:h2:mem:///testing;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE',
+            'datasource-class'                    => nil,
+            'driver-class'                        => nil,
+            'driver-name'                         => 'h2',
+            'enabled'                             => true,
+            'exception-sorter-class-name'         => nil,
+            'exception-sorter-properties'         => nil,
+            'flush-strategy'                      => nil,
+            'idle-timeout-minutes'                => nil,
+            'initial-pool-size'                   => nil,
+            'jndi-name'                           => 'java:jboss/datasources/testing',
+            'jta'                                 => true,
+            'max-pool-size'                       => 50,
+            'min-pool-size'                       => 1,
+            'new-connection-sql'                  => nil,
+            'password'                            => 'test-password',
+            'pool-prefill'                        => nil,
+            'pool-use-strict-min'                 => nil,
+            'prepared-statements-cache-size'      => 0,
+            'query-timeout'                       => nil,
+            'reauth-plugin-class-name'            => nil,
+            'reauth-plugin-properties'            => nil,
+            'security-domain'                     => nil,
+            'set-tx-query-timeout'                => false,
+            'share-prepared-statements'           => false,
+            'spy'                                 => false,
+            'stale-connection-checker-class-name' => nil,
+            'stale-connection-checker-properties' => nil,
+            'track-statements'                    => 'NOWARN',
+            'transaction-isolation'               => nil,
+            'url-delimiter'                       => nil,
+            'url-selector-strategy-class-name'    => nil,
+            'use-ccm'                             => true,
+            'use-fast-fail'                       => false,
+            'use-java-context'                    => true,
+            'use-try-lock'                        => nil,
+            'user-name'                           => 'test-username',
+            'valid-connection-checker-class-name' => nil,
+            'valid-connection-checker-properties' => nil,
+            'validate-on-match'                   => false,
+            'statistics'                          => nil
           }
         }
       end
       let(:expected_connection) do
-        "testing;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+        'testing;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE'
       end
       before :each do
         expect(provider).to receive(:executeAndGet).
-          with("/subsystem=datasources/data-source=testing:read-resource(recursive=true)").and_return(result)
+          with('/subsystem=datasources/data-source=testing:read-resource(recursive=true)').and_return(result)
       end
 
       describe 'result of dbname()' do
@@ -170,15 +168,15 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
           :jndiname    => 'jboss:/datasources/testing'
         }
       end
-      let(:datasource_options) do {} end
+      let(:datasource_options) { {} }
       before :each do
         cli = '/subsystem=datasources/xa-data-source=testing:read-resource(recursive=true)'
-        expect(provider).to receive(:executeAndGet).with(cli).at_least(:once).and_return({
+        expect(provider).to receive(:executeAndGet).with(cli).at_least(:once).and_return(
           :result => true,
           :data   => {
             'jta' => false
           }
-        })
+        )
         provider.exists?
       end
       context 'while using JBoss EAP 6.4.0.GA' do
@@ -205,7 +203,7 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
             }
           end
           let(:datasource_options_setattrb_response) do
-            { :result => true, :data   => {} }
+            { :result => true, :data => {} }
           end
           before :each do
             datasource_options.each do |k, v|
@@ -218,22 +216,21 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
           end
           context 'with new_options equal to { "xa-some-opt" => false }' do
             let(:new_options) do
-              { "xa-some-opt" => false, 'sample-opt'  => 'gigabyte' }
+              { 'xa-some-opt' => false, 'sample-opt' => 'gigabyte' }
             end
             before :each do
               new_options.each do |k, v|
-                if datasource_options[k] != v
-                  expect(provider).to receive(:executeAndGet).
-                    with("/subsystem=datasources/xa-data-source=testing:write-attribute(name=\"#{k}\", value=#{v.inspect})").
-                    and_return(datasource_options_setattrb_response)
-                end
+                next unless datasource_options[k] != v
+                expect(provider).to receive(:executeAndGet).
+                  with("/subsystem=datasources/xa-data-source=testing:write-attribute(name=\"#{k}\", value=#{v.inspect})").
+                  and_return(datasource_options_setattrb_response)
               end
             end
             it_behaves_like 'is working like a charm'
           end
           context 'for cases that undefines setted values' do
             before :each do
-              datasource_options.each do |k, v|
+              datasource_options.each do |k, _v|
                 expect(provider).to receive(:executeAndGet).
                   with("/subsystem=datasources/xa-data-source=testing:undefine-attribute(name=\"#{k}\")").
                   and_return(datasource_options_setattrb_response)
@@ -270,10 +267,10 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
         describe 'jta_opt(cmd)' do
           before :each do
             cli2 = '/subsystem=datasources/xa-data-source=testing:write-attribute(name="jta", value="true")'
-            expect(provider).to receive(:executeAndGet).with(cli2).and_return({
+            expect(provider).to receive(:executeAndGet).with(cli2).and_return(
               :result => true,
               :data   => {}
-            })
+            )
             provider.jta = true
           end
           let(:cmd) { [] }
@@ -284,16 +281,16 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
 
         describe 'create()' do
           before :each do
-            cmd = 'xa-data-source add --name=testing --jta=true --jndi-name="jboss:/datasources/testing" ' +
-            '--driver-name=nil --min-pool-size=nil --max-pool-size=nil' +
-            ' --user-name=nil --password=nil --xa-datasource-properties=' +
-            '[ServerName=nil,PortNumber=nil,DatabaseName="testing"]'
+            cmd = 'xa-data-source add --name=testing --jta=true --jndi-name="jboss:/datasources/testing" ' \
+                  '--driver-name=nil --min-pool-size=nil --max-pool-size=nil' \
+                  ' --user-name=nil --password=nil --xa-datasource-properties=' \
+                  '[ServerName=nil,PortNumber=nil,DatabaseName="testing"]'
             expect(provider).to receive(:executeWithFail).with('Datasource', cmd, 'to create')
             cli = '/subsystem=datasources/xa-data-source=testing:read-attribute(name=enabled)'
-            expect(provider).to receive(:executeAndGet).with(cli).and_return({
+            expect(provider).to receive(:executeAndGet).with(cli).and_return(
               :result => true,
               :data   => true
-            })
+            )
           end
           subject { provider.create }
           it { expect { subject }.not_to raise_error }
@@ -317,6 +314,5 @@ context "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =>
       subject { provider.prepare_resource }
       it { expect { subject }.not_to raise_error }
     end
-
   end
 end

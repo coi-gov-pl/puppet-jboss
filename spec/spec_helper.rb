@@ -24,4 +24,5 @@ RSpec.configure do |c|
   end
   # Readable test descriptions
   c.formatter = :documentation
+  c.order = :rand
 end

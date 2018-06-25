@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe 'jboss_running', :type => :fact do
   subject { Facter.value(:jboss_running) }

@@ -1,11 +1,10 @@
-require "spec_helper"
+require 'spec_helper_puppet'
 
 describe 'jboss_type_version' do
-
   context 'given invalid number of parameters' do
     it do
       should run.
-        with_params().and_raise_error(
+        with_params.and_raise_error(
           Puppet::ParseError,
           'jboss_type_version(): Given invalid number of parameters(0 instead of 1)'
         )

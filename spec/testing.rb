@@ -1,13 +1,7 @@
 module Testing
-  module Acceptance
-
-  end
-
-  module RspecPuppet
-  end
-
-  module Mock
-  end
+  module Acceptance end
+  module RspecPuppet end
+  module Mock end
 end
 
 require 'testing/acceptance/cleaner'

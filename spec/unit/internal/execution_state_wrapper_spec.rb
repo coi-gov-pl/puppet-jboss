@@ -13,7 +13,8 @@ describe Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper do
           '/profille=full-ha/subsystem=securitydomain:remove()',
           'asdads',
           true,
-          true)
+          true
+        )
       end
       let(:cmd) { '/profille=full-ha/subsystem=securitydomain:remove()' }
       let(:jbosscmd) { 'asd' }
@@ -27,7 +28,8 @@ describe Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper do
           '/profille=full-ha/subsystem=securitydomain:read-resource(recursive=true)',
           'result => succes, asdadass',
           true,
-          true)
+          true
+        )
       end
       let(:cmd) { '/profille=full-ha/subsystem=securitydomain:read-resource(recursive=true)' }
       let(:jbosscmd) { 'asd' }
