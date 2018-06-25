@@ -37,17 +37,17 @@ matrix:
     sudo: required
     services: docker
     env: RS_SET="centos-6-docker"
-    script: bundle exec rake acceptance
+    script: bundle exec rake beaker
   - rvm: '2.1'
     sudo: required
     services: docker
     env: RS_SET="debian-7-docker"
-    script: bundle exec rake acceptance
+    script: bundle exec rake beaker
   - rvm: '2.1'
     sudo: required
     services: docker
     env: RS_SET="ubuntu-14.04-docker"
-    script: bundle exec rake acceptance
+    script: bundle exec rake beaker
   # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
   email: false

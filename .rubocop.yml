@@ -10,8 +10,8 @@ AllCops:
     - spec/fixtures/**/*
     - gemfiles/Gemfile*.lock
 Metrics/LineLength:
-  Max: 140 # Commented out to pass rubocop todo analysis
-  # Max: 3000
+  # Max: 140 # Commented out to pass rubocop todo analysis
+  Max: 400
 Style/FileName:
   Exclude:
     - 'Gemfile'
@@ -23,3 +23,6 @@ Metrics/BlockLength:
 # SupportedStyles: native, lf, crlf
 Layout/EndOfLine:
   EnforcedStyle: lf
+
+Style/ClassAndModuleChildren:
+  Enabled: false

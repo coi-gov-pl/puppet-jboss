@@ -13,7 +13,7 @@ describe 'datasource smoke test' do
     expect(result.exit_code).to be(2)
   end
   it 'should work idempotently' do
-    apply_manifest(pp, :catch_changes  => true)
+    apply_manifest(pp, :catch_changes => true)
   end
   describe service('wildfly') do
     it { is_expected.to be_running }

@@ -1,7 +1,6 @@
 require 'spec_helper_puppet'
 
 describe 'jboss::internal::configuration', :type => :class do
-
   shared_examples 'contains basic class structure' do
     it { is_expected.to contain_class('jboss') }
     it { is_expected.to contain_class('jboss::params') }
@@ -19,45 +18,59 @@ describe 'jboss::internal::configuration', :type => :class do
   end
 
   shared_examples 'contains file structure' do
-    it { is_expected.to contain_file('/etc/profile.d/jboss.sh').with({
-      :ensure => 'file',
-      :mode   => '0644'
-      }) }
+    it do
+      is_expected.to contain_file('/etc/profile.d/jboss.sh').with(
+        :ensure => 'file',
+        :mode   => '0644'
+      )
+    end
 
-    it { is_expected.to contain_file('/var/log/wildfly/console.log').with({
-      :ensure => 'file',
-      :alias  => 'jboss::logfile',
-      :owner  => 'root',
-      :group  => 'jboss',
-      :mode   => '0660'
-      }) }
+    it do
+      is_expected.to contain_file('/var/log/wildfly/console.log').with(
+        :ensure => 'file',
+        :alias  => 'jboss::logfile',
+        :owner  => 'root',
+        :group  => 'jboss',
+        :mode   => '0660'
+      )
+    end
 
-    it { is_expected.to contain_file('/etc/jboss-as').with({
-      :ensure => 'directory',
-      :mode   => '2770',
-      :owner  => 'jboss',
-      :group  => 'jboss'
-      }) }
+    it do
+      is_expected.to contain_file('/etc/jboss-as').with(
+        :ensure => 'directory',
+        :mode   => '2770',
+        :owner  => 'jboss',
+        :group  => 'jboss'
+      )
+    end
 
-    it { is_expected.to contain_file('/etc/jboss-as/jboss-as.conf').
-      with_ensure('link').
-      that_comes_before('Anchor[jboss::configuration::end]') }
+    it {
+      is_expected.to contain_file('/etc/jboss-as/jboss-as.conf').
+        with_ensure('link').
+        that_comes_before('Anchor[jboss::configuration::end]')
+    }
 
     it { is_expected.to contain_file('/etc/default').with_ensure('directory') }
 
-    it { is_expected.to contain_file('/etc/default/wildfly.conf').
-      with_ensure('link').
-      that_comes_before('Anchor[jboss::configuration::end]') }
+    it {
+      is_expected.to contain_file('/etc/default/wildfly.conf').
+        with_ensure('link').
+        that_comes_before('Anchor[jboss::configuration::end]')
+    }
   end
 
   shared_examples 'contains self' do
-    it { is_expected.to contain_concat('/etc/wildfly/wildfly.conf').with({
-      :alias  => 'jboss::jboss-as.conf',
-      :mode   => '0644'
-      }) }
-    it { is_expected.to contain_concat__fragment('jboss::jboss-as.conf::defaults').with({
-      :order   => '000'
-      }) }
+    it {
+      is_expected.to contain_concat('/etc/wildfly/wildfly.conf').with(
+        :alias => 'jboss::jboss-as.conf',
+        :mode  => '0644'
+      )
+    }
+    it {
+      is_expected.to contain_concat__fragment('jboss::jboss-as.conf::defaults').with(
+        :order => '000'
+      )
+    }
   end
 
   context 'On RedHat os family' do

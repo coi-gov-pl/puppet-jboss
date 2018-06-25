@@ -15,7 +15,7 @@ describe 'deploy smoke test' do
   context 'verifing idempotency' do
     before(:each) { skip('This not work, GH issue: coi-gov-pl/puppet-jboss#71') }
     it 'should work idempotently' do
-      apply_manifest(pp, :catch_changes  => true)
+      apply_manifest(pp, :catch_changes => true)
     end
   end
   describe service('wildfly') do

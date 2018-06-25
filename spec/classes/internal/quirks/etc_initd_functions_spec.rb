@@ -14,7 +14,6 @@ describe 'jboss::internal::quirks::etc_initd_functions', :type => :class do
     let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
 
     it_behaves_like 'contains class structure'
-
   end
 
   context 'On Debian os family' do
@@ -23,6 +22,5 @@ describe 'jboss::internal::quirks::etc_initd_functions', :type => :class do
     let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
 
     it_behaves_like 'contains class structure'
-
   end
 end
