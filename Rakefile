@@ -1,7 +1,7 @@
 require './gemfiles/quirks/file'
 require 'puppetlabs_spec_helper/rake_tasks'
 
-test_tasks = [:syntax, :spec]
+tasks = [:spec]
 
 if RUBY_VERSION >= '2.1'
   require 'puppet_blacksmith/rake_tasks'
@@ -14,10 +14,11 @@ if RUBY_VERSION >= '2.1'
   PuppetLint.configuration.ignore_paths = ['spec/**/*.pp', 'pkg/**/*.pp']
   RuboCop::RakeTask.new
 
-  test_tasks.unshift(:lint)
-  test_tasks.unshift(:metadata_lint)
-  test_tasks.unshift(:rubocop)
+  tasks.unshift(:syntax)
+  tasks.unshift(:lint)
+  tasks.unshift(:metadata_lint)
+  tasks.unshift(:rubocop)
 end
 
 desc 'Run rubocop, metadata_lint, lint, validate, and spec tests.'
-task :test => test_tasks
+task :test => tasks
