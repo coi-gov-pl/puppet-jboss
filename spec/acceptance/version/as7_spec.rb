@@ -16,5 +16,7 @@ describe 'jboss::version::as7 smoke test' do
   after(:all) do
     extend Testing::Acceptance::Cleaner
     remove_jboss_installation('jboss-as')
+    cleanup_pp = example 'jboss::version::as7::cleanup'
+    apply_manifest(cleanup_pp, :catch_failures => true)
   end
 end
