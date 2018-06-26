@@ -8,7 +8,7 @@ HOSTS:
     docker_image_commands:
       - 'rm /usr/sbin/policy-rc.d'
       - 'rm /sbin/initctl; dpkg-divert --rename --remove /sbin/initctl'
-      - 'apt-get install -y net-tools wget python-pip'
+      - 'apt-get install -y net-tools wget python-pip python-dev'
       - 'locale-gen en_US.UTF-8'
     mount_folders:
       wget_cache:
