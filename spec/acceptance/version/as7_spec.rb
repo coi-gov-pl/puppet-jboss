@@ -3,6 +3,11 @@ require 'spec_helper_acceptance'
 describe 'jboss::version::as7 smoke test' do
   let(:pp) { example 'jboss::version::as7' }
 
+  before(:all) do
+    cleanup_pp = example 'jboss::version::as7::rmjava_default'
+    apply_manifest(cleanup_pp, :catch_failures => true)
+  end
+
   it 'should add install JBoss AS 7 with no errors' do
     result = apply_manifest(pp, :catch_failures => true)
     expect(result.exit_code).to be(2)
@@ -13,10 +18,11 @@ describe 'jboss::version::as7 smoke test' do
   describe service('jboss-as') do
     it { is_expected.to be_running }
   end
+
   after(:all) do
     extend Testing::Acceptance::Cleaner
     remove_jboss_installation('jboss-as')
-    cleanup_pp = example 'jboss::version::as7::cleanup'
+    cleanup_pp = example 'jboss::version::as7::rmjava_as7'
     apply_manifest(cleanup_pp, :catch_failures => true)
   end
 end
