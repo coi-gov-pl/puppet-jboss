@@ -6,6 +6,11 @@ version: 2
 references:
   machine-defaults: &environment-defaults
     machine: true
+  install-augeas: &install-augeas
+    run:
+      name: Install Augeas
+      command: |
+        sudo apt-get update && sudo apt-get install -y libaugeas-dev libxml2-dev libgmp3-dev
   install-rvm: &install-rvm
     run:
       name: Install RVM
@@ -47,6 +52,7 @@ references:
   steps: &steps
     steps:
       - checkout
+      - *install-augeas
       - *install-rvm
       - *intall-ruby
       - *restore-cache-dependencies
