@@ -34,21 +34,6 @@ matrix:
   # TODO: Restore after fixing https://github.com/coi-gov-pl/puppet-jboss/issues/98
   # - rvm: '2.1'
   #   env: PUPPET_GEM_VERSION="~> 3.0" STRICT_VARIABLES=yes
-  - rvm: '2.1'
-    sudo: required
-    services: docker
-    env: RS_SET="centos-6-docker"
-    script: bundle exec rake beaker
-  - rvm: '2.1'
-    sudo: required
-    services: docker
-    env: RS_SET="debian-8-docker"
-    script: bundle exec rake beaker
-  - rvm: '2.1'
-    sudo: required
-    services: docker
-    env: RS_SET="ubuntu-1404-docker"
-    script: bundle exec rake beaker
   # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
   email: false
