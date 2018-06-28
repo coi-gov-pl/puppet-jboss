@@ -15,8 +15,6 @@ install_module
 install_module_dependencies
 shell 'rm -fv /etc/profile.d/python27.sh'
 
-JAVA6_PLATFORMS = ['Ubuntu 14.04', 'CentOS 6'].freeze
-
 RSpec.configure do |c|
   c.include PuppetExamplesHelpers
 

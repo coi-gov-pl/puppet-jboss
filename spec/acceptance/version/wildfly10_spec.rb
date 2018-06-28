@@ -18,13 +18,13 @@ describe 'jboss::version::wildfly10 smoke test' do
 
   if fact('osfamily') == 'RedHat' && fact('operatingsystemmajrelease') >= '7'
     it_behaves_like 'a properly working class on a platform with supported Java version'
-  elsif fact('operatingsystem') == 'Debian' && fact('operatingsystemmajrelease') >= '8'
+  elsif fact('operatingsystem') == 'Debian' && fact('operatingsystemmajrelease') >= '9'
     it_behaves_like 'a properly working class on a platform with supported Java version'
   elsif fact('operatingsystem') == 'Ubuntu' && fact('operatingsystemmajrelease') >= '15.10'
     it_behaves_like 'a properly working class on a platform with supported Java version'
   else
     it 'should install WildFly, but it should not start due to lack of Java 8' do
-      apply_manifest(pp, :expect_changes => true, :trace => true)
+      apply_manifest(pp, :acceptable_exit_codes => [2, 4])
     end
     describe service('wildfly') do
       it { is_expected.not_to be_running }

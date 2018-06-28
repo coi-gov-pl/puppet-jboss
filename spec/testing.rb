@@ -5,6 +5,7 @@ module Testing
 end
 
 require 'testing/acceptance/cleaner'
+require 'testing/acceptance/javaplatform'
 
 require 'testing/rspec_puppet/shared_facts'
 require 'testing/rspec_puppet/shared_examples'

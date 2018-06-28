@@ -1,12 +1,6 @@
 require 'spec_helper_acceptance'
 
-java6_possible = JAVA6_PLATFORMS.any? do |c|
-  os = fact('operatingsystem')
-  rel = fact('operatingsystemmajrelease')
-  c == "#{os} #{rel}"
-end
-
-describe 'jboss::version::as7 smoke test', :if => java6_possible do
+describe 'jboss::version::as7 smoke test', :if => Testing::Acceptance::JavaPlatform.java6compatibile? do
   let(:pp) { example 'jboss::version::as7' }
 
   before(:all) do
