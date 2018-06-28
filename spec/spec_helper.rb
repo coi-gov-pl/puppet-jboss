@@ -11,7 +11,7 @@ if gem_present 'simplecov'
     add_filter '/gems/'
   end
   formatters = [SimpleCov::Formatter::HTMLFormatter]
-  if gem_present 'codecov' && !ENV['CODECOV_TOKEN'].nil?
+  if gem_present 'codecov'
     require 'codecov'
     formatters.push SimpleCov::Formatter::Codecov
   end
