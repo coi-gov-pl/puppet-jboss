@@ -1,0 +1,3 @@
+installer:
+  mode: Agent
+  type: pc4x

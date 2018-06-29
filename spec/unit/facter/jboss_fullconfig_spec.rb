@@ -1,7 +1,6 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe 'Fact jboss_fullconfig', :type => :fact do
-
   let(:sample_config) do
     t = Tempfile.new('rspec-jboss-fullconfig')
     path = t.path
@@ -67,7 +66,7 @@ describe 'Fact jboss_fullconfig', :type => :fact do
       'runasdomain' => false,
       'mode'        => 'standalone',
       'controller'  => '127.0.0.1:9990',
-      'profile'     => 'full',
+      'profile'     => 'full'
     }
   end
   before :all do
@@ -79,7 +78,7 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     Facter.clear
     expect(Puppet_X::Coi::Jboss::Configuration).to receive(:read_raw_profile_d).
       at_least(:once).and_return(profile_d_content)
-    File.open(sample_config, 'w') {|f| f.write(sample_content) }
+    File.open(sample_config, 'w') { |f| f.write(sample_content) }
   end
   after :each do
     fct = Facter.fact :jboss_fullconfig
@@ -93,34 +92,37 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     it { expect(subject).not_to be_nil }
     it { expect(subject).not_to be_empty }
   end
-  context 'with sample config file for WildFly 8.2' do
-    context 'without mocking RUBY_VERSION' do
+  describe 'with sample config file for WildFly 8.2' do
+    describe 'without mocking RUBY_VERSION' do
       it_behaves_like 'is not nill and empty'
       it { expect(subject).to respond_to(:[]) }
       its(:size) { should eq(10) }
       it { expect(subject).to eq(expected_hash) }
     end
 
-    context 'with mocking RUBY_VERSION to 1.8.7' do
+    describe 'with mocking RUBY_VERSION to 1.8.7' do
       before :each do
         expect(Puppet_X::Coi::Jboss::Configuration).to receive(:ruby_version).once.and_return('1.8.7')
       end
 
       it_behaves_like 'is not nill and empty'
-      let('subject_sorted') { eval(subject.to_s).to_a.sort }
-      let("expected_output") {[["config", "standalone-full.xml"],
-                               ["console_log", "/var/log/wildfly/console.log"],
-                               ["controller", "127.0.0.1:9990"],
-                               ["home", "/usr/lib/wildfly-12.2.0.Final"],
-                               ["mode", "standalone"],
-                               ["product", "wildfly"],
-                               ["profile", "full"],
-                               ["runasdomain", false],
-                               ["user", "wildfly"],
-                               ["version", "12.2.0.Final"]]
-                             }
+      let(:subject_sorted) { eval(subject.to_s).to_a.sort }
+      let(:expected_output) do
+        [
+          ['config', 'standalone-full.xml'],
+          ['console_log', '/var/log/wildfly/console.log'],
+          ['controller', '127.0.0.1:9990'],
+          ['home', '/usr/lib/wildfly-12.2.0.Final'],
+          %w[mode standalone],
+          %w[product wildfly],
+          %w[profile full],
+          ['runasdomain', false],
+          %w[user wildfly],
+          ['version', '12.2.0.Final']
+        ]
+      end
 
-      it { expect(subject_sorted).to eq(expected_output)}
+      it { expect(subject_sorted).to eq(expected_output) }
     end
   end
 end

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe 'jboss_virtual', :type => :fact do
   let(:lines) do
@@ -27,7 +27,7 @@ describe 'jboss_virtual', :type => :fact do
     fct.instance_variable_set(:@value, nil)
   end
   subject { Facter.value(:jboss_virtual) }
-  context 'on Docker container' do
+  describe 'on Docker container' do
     before(:each) do
       allow(Pathname).to receive(:new).and_call_original
       allow(Pathname).to receive(:new).with('/proc/1/cgroup').and_return(docker_pathname)
@@ -35,7 +35,7 @@ describe 'jboss_virtual', :type => :fact do
     it { expect { subject }.not_to raise_error }
     it { expect(subject).to eq('docker') }
   end
-  context 'on non-Docker machine' do
+  describe 'on non-Docker machine' do
     before(:each) do
       allow(Pathname).to receive(:new).and_call_original
       allow(Pathname).to receive(:new).with('/proc/1/cgroup').and_return(nondocker_pathname)

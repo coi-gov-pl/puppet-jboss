@@ -1,10 +1,9 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe Puppet_X::Coi::Jboss::Provider::Datasource::PostWildFlyProvider do
-
   let(:xa) { false }
   let(:jta) { true }
-  let(:provider) { double("Provider") }
+  let(:provider) { double('Provider') }
   before do
     allow(provider).to receive(:xa?).and_return(xa)
     allow(provider).to receive(:getattrib).and_return(jta)

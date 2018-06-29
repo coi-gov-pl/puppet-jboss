@@ -2,11 +2,13 @@ require 'spec_helper_puppet'
 
 describe 'jboss::logging::logger', :type => :define do
   let(:title) { 'test-handler' }
-  let(:facts) { {
-    :osfamily        => "RedHat",
-    :operatingsystem => "RedHat",
-    :concat_basedir  => "/tmp/"
-  } }
+  let(:facts) do
+    {
+      :osfamily        => 'RedHat',
+      :operatingsystem => 'RedHat',
+      :concat_basedir  => '/tmp/'
+    }
+  end
 
   it { is_expected.to compile }
   it { is_expected.to contain_jboss__logging__logger(title) }
@@ -14,9 +16,9 @@ describe 'jboss::logging::logger', :type => :define do
   it do
     is_expected.to contain_jboss__clientry("/subsystem=logging/logger=#{title}").
       with_ensure('present').
-      with_properties({
+      with_properties(
         'level'               => 'INFO',
-        'use-parent-handlers' => true,
-      })
+        'use-parent-handlers' => true
+      )
   end
 end

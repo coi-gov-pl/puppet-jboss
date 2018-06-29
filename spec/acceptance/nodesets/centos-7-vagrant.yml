@@ -1,0 +1,16 @@
+HOSTS:
+  centos-7-vagrant:
+    platform: el-7-x86_64
+    hypervisor: vagrant
+    box: bento/centos-7
+    mount_folders:
+      wget_cache:
+        from: /tmp/vagrant-cache/wget
+        to: /var/cache/wget
+      yum_cache:
+        from: /tmp/vagrant-cache/yum/centos-7-vagrant
+        to: /var/cache/yum
+CONFIG:
+  trace_limit: 200
+  type: foss
+  log_level: debug

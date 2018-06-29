@@ -1,6 +1,6 @@
 class Testing::RspecPuppet::SharedFacts
-  DEFAULT_IP         = '192.168.0.1'
-  DEFAULT_CONCAT_DIR = '/root/concat'
+  DEFAULT_IP         = '192.168.0.1'.freeze
+  DEFAULT_CONCAT_DIR = '/root/concat'.freeze
 
   DEFAULT_ORACLELINUX_FACTS = {
     :operatingsystem           => 'OracleLinux',
@@ -11,8 +11,8 @@ class Testing::RspecPuppet::SharedFacts
     :operatingsystemmajrelease => '6',
     :puppetversion             => Puppet.version.to_s,
     :path                      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-  }
-  DEFAULT_UBUNTU_RELEASE = '14.04'
+  }.freeze
+  DEFAULT_UBUNTU_RELEASE = '14.04'.freeze
   DEFAULT_UBUNTU_FACTS = {
     :operatingsystem           => 'Ubuntu',
     :osfamily                  => 'Debian',
@@ -27,7 +27,7 @@ class Testing::RspecPuppet::SharedFacts
     :lsbmajdistrelease         => DEFAULT_UBUNTU_RELEASE,
     :puppetversion             => Puppet.version.to_s,
     :path                      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-  }
+  }.freeze
   class << self
     def ubuntu_facts(override = {})
       DEFAULT_UBUNTU_FACTS.merge(override)

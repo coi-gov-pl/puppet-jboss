@@ -13,46 +13,27 @@ bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-ve
 cache: bundler
 script: bundle exec rake test
 before_install:
- - 'bundler --version || gem install bundler' # TODO:Remove if fixed - travis-ci/travis-ci#5578
- - 'rm -f Gemfile.lock'
+ - 'bundler --version || gem install bundler'
 matrix:
   fast_finish: true
   include:
   - rvm: '1.8'
-    env: PUPPET_VERSION="~> 2.7.0" FACTER_VERSION="~> 1.6.0"
+    env: PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.6.0"
     gemfile: gemfiles/Gemfile18.facter16
-    bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-../vendor/bundle}"
   - rvm: '1.8'
-    env: PUPPET_VERSION="~> 2.7.0" FACTER_VERSION="~> 1.7.0"
+    env: PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.7.0"
     gemfile: gemfiles/Gemfile18.facter17
-    bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-../vendor/bundle}"
   - rvm: '1.9'
-    env: PUPPET_VERSION="~> 3.0"
+    env: PUPPET_GEM_VERSION="~> 3.0"
     gemfile: gemfiles/Gemfile19
-    bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-../vendor/bundle}"
   - rvm: '2.0'
-    env: PUPPET_VERSION="~> 3.0"
+    env: PUPPET_GEM_VERSION="~> 3.0"
     gemfile: gemfiles/Gemfile20
-    bundler_args: "--without development --jobs=3 --retry=3 --path=${BUNDLE_PATH:-../vendor/bundle}"
   - rvm: '2.1'
-    env: PUPPET_VERSION="~> 3.0"
-  - rvm: '2.1'
-    env: PUPPET_VERSION="~> 3.0" STRICT_VARIABLES=yes
-  - rvm: '2.1'
-    sudo: required
-    services: docker
-    env: PUPPET_VERSION="3.8.7" RS_SET="centos-6-x86_64-docker"
-    script: bundle exec rake acceptance
-  - rvm: '2.1'
-    sudo: required
-    services: docker
-    env: PUPPET_VERSION="3.8.7" RS_SET="debian-7-x86_64-docker"
-    script: bundle exec rake acceptance
-  - rvm: '2.1'
-    sudo: required
-    services: docker
-    env: PUPPET_VERSION="3.8.7" RS_SET="ubuntu-14.04-x86_64-docker"
-    script: bundle exec rake acceptance
+    env: PUPPET_GEM_VERSION="~> 3.0"
+  # TODO: Restore after fixing https://github.com/coi-gov-pl/puppet-jboss/issues/98
+  # - rvm: '2.1'
+  #   env: PUPPET_GEM_VERSION="~> 3.0" STRICT_VARIABLES=yes
   # FIXME: GH Issue #3 - Activate acceptance tests on Travis CI for Puppet Enterprise, at least 2.8.8 and 3.8.2
 notifications:
   email: false

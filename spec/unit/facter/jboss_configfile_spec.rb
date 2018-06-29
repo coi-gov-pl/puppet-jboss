@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe 'Fact jboss_configfile', :type => :fact do
   subject { Facter.value(:jboss_configfile) }
@@ -12,7 +12,7 @@ describe 'Fact jboss_configfile', :type => :fact do
     fct = Facter.fact :jboss_configfile
     fct.instance_variable_set(:@value, nil)
   end
-  context "with sample file \"export JBOSS_CONF='/etc/jboss-eap/jboss-eap.conf'\"" do
+  describe "with sample file \"export JBOSS_CONF='/etc/jboss-eap/jboss-eap.conf'\"" do
     it { expect(subject).to eq(sample_config) }
   end
 end

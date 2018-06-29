@@ -26,10 +26,10 @@ define jboss::internal::domain::servergroup::foreach (
   }
 
   if $ensure == 'present' {
-    JBoss::Clientry["jboss::domain::servergroup(${group})"] ->
-    JBoss::Clientry["jboss::domain::servergroup::sysproperty(${key} => ${value})"]
-  } else {
-    JBoss::Clientry["jboss::domain::servergroup::sysproperty(${key} => ${value})"] ->
     JBoss::Clientry["jboss::domain::servergroup(${group})"]
+    -> JBoss::Clientry["jboss::domain::servergroup::sysproperty(${key} => ${value})"]
+  } else {
+    JBoss::Clientry["jboss::domain::servergroup::sysproperty(${key} => ${value})"]
+    -> JBoss::Clientry["jboss::domain::servergroup(${group})"]
   }
 }

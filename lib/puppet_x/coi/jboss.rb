@@ -9,6 +9,7 @@ module Puppet_X
       file = './' if ['(eval)', '(pry)', ''].include?(file)
       file = File.dirname(file)
       path = File.expand_path(File.join(file, relative_path))
+      path = Pathname.new(path + '.rb').realpath.to_s
       Kernel.require(path)
     end
 

@@ -1,6 +1,6 @@
 {
-  "name":         "coi/jboss",
-  "version":      "1.2.0",
+  "name":         "coi-jboss",
+  "version":      "1.2.1",
   "author":       "Center of Information Technology COI.gov.pl",
   "summary":      "Installs JBoss EAP and WildFly application servers and manage their resources and applications in either a domain or a stand-alone mode",
   "license":      "Apache-2.0",
@@ -13,16 +13,14 @@
     { "name": "puppetlabs/concat", "version_requirement": ">= 1.0.0 <2.0.0" }
   ],
   "operatingsystem_support": [
-    { "operatingsystem": "RedHat",      "operatingsystemrelease": [ "5", "6" ] },
-    { "operatingsystem": "CentOS",      "operatingsystemrelease": [ "5", "6" ] },
-    { "operatingsystem": "OracleLinux", "operatingsystemrelease": [ "5", "6" ] },
-    { "operatingsystem": "Scientific",  "operatingsystemrelease": [ "5", "6" ] },
-    { "operatingsystem": "Debian",      "operatingsystemrelease": [ "6", "7" ] },
-    { "operatingsystem": "Ubuntu",      "operatingsystemrelease": [ "10.04", "12.04", "14.04" ] }
+    { "operatingsystem": "RedHat",      "operatingsystemrelease": [ "6" ] },
+    { "operatingsystem": "CentOS",      "operatingsystemrelease": [ "6" ] },
+    { "operatingsystem": "OracleLinux", "operatingsystemrelease": [ "6" ] },
+    { "operatingsystem": "Scientific",  "operatingsystemrelease": [ "6" ] },
+    { "operatingsystem": "Debian",      "operatingsystemrelease": [ "8" ] },
+    { "operatingsystem": "Ubuntu",      "operatingsystemrelease": [ "14.04" ] }
   ],
   "requirements": [
-    { "name": "pe",     "version_requirement": ">=2.8.0 <4.0.0" },
     { "name": "puppet", "version_requirement": ">=2.7.0 <4.0.0" }
   ]
 }
-

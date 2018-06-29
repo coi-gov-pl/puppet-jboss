@@ -1,12 +1,11 @@
-require "spec_helper"
+require 'spec_helper_puppet'
 
-context "mocking default values" do
-
+describe 'mocking default values' do
   let(:mock_values) do
     {
       :product    => 'jboss-eap',
       :version    => '6.4.0.GA',
-      :controller => '127.0.0.1:9999',
+      :controller => '127.0.0.1:9999'
     }
   end
 
@@ -19,14 +18,13 @@ context "mocking default values" do
   end
 
   describe 'Puppet::Type::Jboss_deploy::ProviderJbosscli' do
-
     let(:described_class) do
       Puppet::Type.type(:jboss_deploy).provider(:jbosscli)
     end
     let(:sample_repl) do
       {
-        :name => 'super-crm-1.1.0',
-        :source => '/usr/src/super-crm-1.1.0.war',
+        :name   => 'super-crm-1.1.0',
+        :source => '/usr/src/super-crm-1.1.0.war'
       }
     end
 
@@ -47,10 +45,10 @@ context "mocking default values" do
 
     describe '#create with servergroups nill' do
       before :each do
-        bringDownName = 'Deployment'
+        bring_down_name = 'Deployment'
         cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups --force'
 
-        expect(provider).to receive(:bringUp).with(bringDownName, cmd ).and_return('asd')
+        expect(provider).to receive(:bringUp).with(bring_down_name, cmd).and_return('asd')
       end
       subject { provider.create }
       it { expect(subject).to eq('asd') }
@@ -58,15 +56,17 @@ context "mocking default values" do
 
     describe '#create wit servergroups not nill' do
       before :each do
-        bringDownName = 'Deployment'
+        bring_down_name = 'Deployment'
         cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --server-groups=crm-servers --force'
 
-        expect(provider).to receive(:bringUp).with(bringDownName, cmd).and_return('asd')
+        expect(provider).to receive(:bringUp).with(bring_down_name, cmd).and_return('asd')
       end
 
-      let(:extended_repl) { {
-          :servergroups => ['crm-servers'],
-        } }
+      let(:extended_repl) do
+        {
+          :servergroups => ['crm-servers']
+        }
+      end
       subject { provider.create }
 
       it { expect(subject).to eq('asd') }
@@ -74,28 +74,32 @@ context "mocking default values" do
 
     describe '#create with redeploy_on_refresh' do
       before :each do
-        bringDownName = 'Deployment'
+        bring_down_name = 'Deployment'
         cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups --force'
 
-        expect(provider).to receive(:bringUp).with(bringDownName, cmd).and_return('asd')
+        expect(provider).to receive(:bringUp).with(bring_down_name, cmd).and_return('asd')
       end
-      let(:extended_repl) { {
-          :redeploy_on_refresh => true,
-        } }
+      let(:extended_repl) do
+        {
+          :redeploy_on_refresh => true
+        }
+      end
       subject { provider.create }
       it { expect(subject).to eq('asd') }
     end
 
     describe '#destroy with runasdomain => true' do
       before :each do
-        bringDownName = 'Deployment'
+        bring_down_name = 'Deployment'
         cmd = 'undeploy super-crm-1.1.0 --all-relevant-server-groups'
 
-        expect(provider).to receive(:bringDown).with(bringDownName, cmd).and_return('asd')
+        expect(provider).to receive(:bringDown).with(bring_down_name, cmd).and_return('asd')
       end
-      let(:extended_repl) { {
+      let(:extended_repl) do
+        {
           :runasdomain => true
-        } }
+        }
+      end
 
       subject { provider.destroy }
       it { expect(subject).to eq('asd') }
@@ -103,14 +107,16 @@ context "mocking default values" do
 
     describe '#destroy with servergroups nill' do
       before :each do
-        bringDownName = 'Deployment'
+        bring_down_name = 'Deployment'
         cmd = 'undeploy super-crm-1.1.0 --all-relevant-server-groups'
-        expect(provider).to receive(:bringDown).with(bringDownName, cmd).and_return('asd')
+        expect(provider).to receive(:bringDown).with(bring_down_name, cmd).and_return('asd')
       end
 
-      let(:extended_repl) { {
+      let(:extended_repl) do
+        {
           :runasdomain => true
-        } }
+        }
+      end
 
       subject { provider.destroy }
       it { expect(subject).to eq('asd') }
@@ -118,15 +124,17 @@ context "mocking default values" do
 
     describe '#destroy with servergroups not nill' do
       before :each do
-        bringDownName = 'Deployment'
+        bring_down_name = 'Deployment'
         cmd = 'undeploy super-crm-1.1.0 --server-groups=crm-servers'
-        expect(provider).to receive(:bringDown).with(bringDownName, cmd).and_return('asd')
+        expect(provider).to receive(:bringDown).with(bring_down_name, cmd).and_return('asd')
       end
 
-      let(:extended_repl) { {
-          :runasdomain => true,
-          :servergroups => ['crm-servers'],
-        } }
+      let(:extended_repl) do
+        {
+          :runasdomain  => true,
+          :servergroups => ['crm-servers']
+        }
+      end
 
       subject { provider.destroy }
       it { expect(subject).to eq('asd') }
@@ -138,8 +146,8 @@ context "mocking default values" do
       end
       describe '#name_exists? and outcome => failed' do
         before :each do
-          cmd = "/deployment=super-crm-1.1.0:read-resource()"
-          expected_output = { :outcome => 'failed'}
+          cmd = '/deployment=super-crm-1.1.0:read-resource()'
+          expected_output = { :outcome => 'failed' }
 
           expect(provider).to receive(:executeWithoutRetry).with(cmd).and_return(expected_output)
         end
@@ -150,11 +158,11 @@ context "mocking default values" do
 
       describe '#exists? and :outcome => success and :name => asd' do
         before :each do
-          cmd = "/deployment=super-crm-1.1.0:read-resource()"
+          cmd = '/deployment=super-crm-1.1.0:read-resource()'
           expected_output = {
             :outcome => 'success',
-            :name    => 'asd',
-            }
+            :name    => 'asd'
+          }
 
           expect(provider).to receive(:executeWithoutRetry).with(cmd).and_return(expected_output)
         end
@@ -165,10 +173,10 @@ context "mocking default values" do
 
       describe '#name_exists? and :outcome => success and :name => nil' do
         before :each do
-          cmd = "/deployment=super-crm-1.1.0:read-resource()"
+          cmd = '/deployment=super-crm-1.1.0:read-resource()'
           expected_output = {
-            :outcome => 'success',
-            }
+            :outcome => 'success'
+          }
 
           expect(provider).to receive(:executeWithoutRetry).with(cmd).and_return(expected_output)
         end
@@ -182,10 +190,12 @@ context "mocking default values" do
       before :each do
       end
 
-      let(:extended_repl) { {
-          :runasdomain => false,
-          :servergroups => ['crm-servers'],
-        } }
+      let(:extended_repl) do
+        {
+          :runasdomain  => false,
+          :servergroups => ['crm-servers']
+        }
+      end
 
       subject { provider.servergroups }
       it { expect(subject).to eq(['crm-servers']) }
@@ -193,20 +203,21 @@ context "mocking default values" do
 
     describe '#servergroups with runasdomain => true and :result => false' do
       before :each do
-
         expected_output = {
           :result => false,
-          :name    => 'asd',
-          }
+          :name   => 'asd'
+        }
 
         cmd = "deployment-info --name=#{resource[:name]}"
 
         expect(provider).to receive(:execute).with(cmd).and_return(expected_output)
       end
 
-      let(:extended_repl) { {
-          :runasdomain => true,
-        } }
+      let(:extended_repl) do
+        {
+          :runasdomain => true
+        }
+      end
 
       subject { provider.servergroups }
       it { expect(subject).to eq([]) }
@@ -214,7 +225,6 @@ context "mocking default values" do
 
     describe '#servergroups with runasdomain => true and :result => true and lines => added  and :servergroups => not nil' do
       before :each do
-
         content =  <<-eos
         NAME RUNTIME-NAME
         super-crm  super-crm
@@ -228,18 +238,20 @@ context "mocking default values" do
         expected_output = {
           :result => true,
           :name   => 'asd',
-          :lines => lines,
-          }
+          :lines  => lines
+        }
 
         cmd = "deployment-info --name=#{resource[:name]}"
 
         expect(provider).to receive(:execute).with(cmd).and_return(expected_output)
       end
 
-      let(:extended_repl) { {
-          :runasdomain => true,
-          :servergroups => 'crm-servers',
-        } }
+      let(:extended_repl) do
+        {
+          :runasdomain  => true,
+          :servergroups => 'crm-servers'
+        }
+      end
 
       subject { provider.servergroups }
       it { expect(subject).to eq(['app-group']) }
@@ -247,7 +259,6 @@ context "mocking default values" do
 
     describe '#servergroups with runasdomain => true and :result => true and lines => added  and :servergroups => nil' do
       before :each do
-
         content =  <<-eos
         NAME RUNTIME-NAME
         super-crm  super-crm
@@ -261,17 +272,19 @@ context "mocking default values" do
         expected_output = {
           :result => true,
           :name   => 'asd',
-          :lines => lines,
-          }
+          :lines  => lines
+        }
 
         cmd = "deployment-info --name=#{resource[:name]}"
 
         expect(provider).to receive(:execute).with(cmd).and_return(expected_output)
       end
 
-      let(:extended_repl) { {
-          :runasdomain => true,
-        } }
+      let(:extended_repl) do
+        {
+          :runasdomain => true
+        }
+      end
 
       subject { provider.servergroups }
       it { expect(subject).to eq(nil) }
@@ -286,48 +299,46 @@ context "mocking default values" do
       end
 
       subject { provider.servergroups = ['super-crm', 'super-crm-1'] }
-      it { expect(subject).to eq(["super-crm", "super-crm-1"]) }
+      it { expect(subject).to eq(['super-crm', 'super-crm-1']) }
     end
 
     describe '#redeploy_on_refresh' do
-
-      context 'with default value' do
+      describe 'with default value' do
         before :each do
-
-          bringDownName = 'Deployment'
+          bring_down_name = 'Deployment'
           cmd = 'undeploy super-crm-1.1.0 --all-relevant-server-groups'
-
-          bringUpName = 'Deployment'
           cmd2 = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups --force'
 
-          expect(provider).to receive(:bringDown).with(bringDownName, cmd).and_return('asd')
-          expect(provider).to receive(:bringUp).with(bringDownName, cmd2).and_return('asd')
-
+          expect(provider).to receive(:bringDown).with(bring_down_name, cmd).and_return('asd')
+          expect(provider).to receive(:bringUp).with(bring_down_name, cmd2).and_return('asd')
         end
 
-        let(:extended_repl) { {
-            :redeploy_on_refresh => true,
-          } }
+        let(:extended_repl) do
+          {
+            :redeploy_on_refresh => true
+          }
+        end
 
         subject { provider.redeploy_on_refresh }
         it { expect(subject).to eq('asd') }
       end
 
-      context 'with value set to false' do
+      describe 'with value set to false' do
         before :each do
-
-          bringUpName = 'Deployment'
+          bring_up_name = 'Deployment'
           cmd = 'deploy /usr/src/super-crm-1.1.0.war --name=super-crm-1.1.0 --all-server-groups'
 
-          expect(provider).to receive(:bringUp).with(bringUpName, cmd).and_return('asd')
+          expect(provider).to receive(:bringUp).with(bring_up_name, cmd).and_return('asd')
         end
-        let(:extended_repl) { {
-            :redeploy_on_refresh => false,
-          } }
+        let(:extended_repl) do
+          {
+            :redeploy_on_refresh => false
+          }
+        end
 
         subject { provider.redeploy_on_refresh }
         it { expect(subject).to eq('asd') }
       end
     end
-end
+  end
 end

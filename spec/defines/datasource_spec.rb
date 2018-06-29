@@ -1,23 +1,31 @@
 require 'spec_helper_puppet'
 
 describe 'jboss::datasource', :type => :define do
+  def default_driver_params
+    {
+      'name'       => 'test-driver',
+      'classname'  => 'com.example.TestDriver',
+      'modulename' => 'test-driver'
+    }
+  end
 
-  context 'on RedHat os family' do
+  def default_params
+    {
+      :username   => 'test-username',
+      :password   => 'test-password',
+      :jdbcscheme => 'test-scheme',
+      :host       => 'example.com',
+      :port       => '1234',
+      :driver     => default_driver_params
+    }
+  end
+
+  def merge_params(hash = {})
+    hash.merge(default_params)
+  end
+
+  describe 'on RedHat os family' do
     extend Testing::RspecPuppet::SharedExamples
-    def merge_params(hash = {})
-      hash.merge({
-        :username   => 'test-username',
-        :password   => 'test-password',
-        :jdbcscheme => 'test-scheme',
-        :host       => 'example.com',
-        :port       => '1234',
-        :driver     => {
-          'name'       => 'test-driver',
-          'classname'  => 'com.example.TestDriver',
-          'modulename' => 'test-driver',
-        },
-      })
-    end
 
     let(:title) { 'test-datasource' }
     let(:params) { merge_params }
@@ -43,60 +51,49 @@ describe 'jboss::datasource', :type => :define do
         with_xa(false)
     end
 
-    context 'with option prepared-statements-cache-size set to 46' do
-      let(:options) do {
+    describe 'with option prepared-statements-cache-size set to 46' do
+      let(:options) do
+        {
           'prepared-statements-cache-size' => 46
         }
       end
-      context 'in XA mode' do
+      describe 'in XA mode' do
         let(:params) do
-          merge_params({ :options => options, :xa => true })
+          merge_params(:options => options, :xa => true)
         end
 
         it { is_expected.to contain_jboss_datasource('test-datasource').with_xa(true) }
-        it do is_expected.to contain_jboss_datasource('test-datasource').with_options({
-          "validate-on-match"=>false,
-          "background-validation"=>false,
-          "share-prepared-statements"=>false,
-          "prepared-statements-cache-size"=>46,
-          "same-rm-override"=>true,
-          "wrap-xa-resource"=>true
-          })
+        it do
+          is_expected.to contain_jboss_datasource('test-datasource').with_options(
+            'validate-on-match'              => false,
+            'background-validation'          => false,
+            'share-prepared-statements'      => false,
+            'prepared-statements-cache-size' => 46,
+            'same-rm-override'               => true,
+            'wrap-xa-resource'               => true
+          )
         end
       end
-      context 'in non-XA mode' do
+      describe 'in non-XA mode' do
         let(:params) do
-          merge_params({ :options => options, :xa => false })
+          merge_params(:options => options, :xa => false)
         end
 
         it { is_expected.to contain_jboss_datasource('test-datasource').with_xa(false) }
-        it do is_expected.to contain_jboss_datasource('test-datasource').with_options({
-          "validate-on-match"=>false,
-          "background-validation"=>false,
-          "share-prepared-statements"=>false,
-          "prepared-statements-cache-size"=>46
-          })
+        it do
+          is_expected.to contain_jboss_datasource('test-datasource').with_options(
+            'validate-on-match'              => false,
+            'background-validation'          => false,
+            'share-prepared-statements'      => false,
+            'prepared-statements-cache-size' => 46
+          )
         end
       end
     end
   end
 
-  context 'on Ubuntu os family' do
+  describe 'on Ubuntu os family' do
     extend Testing::RspecPuppet::SharedExamples
-    def merge_params(hash = {})
-      hash.merge({
-        :username   => 'test-username',
-        :password   => 'test-password',
-        :jdbcscheme => 'test-scheme',
-        :host       => 'example.com',
-        :port       => '1234',
-        :driver     => {
-          'name'       => 'test-driver',
-          'classname'  => 'com.example.TestDriver',
-          'modulename' => 'test-driver',
-        },
-      })
-    end
 
     let(:title) { 'test-datasource' }
     let(:params) { merge_params }
@@ -122,39 +119,42 @@ describe 'jboss::datasource', :type => :define do
         with_xa(false)
     end
 
-    context 'with option prepared-statements-cache-size set to 46' do
-      let(:options) do {
+    describe 'with option prepared-statements-cache-size set to 46' do
+      let(:options) do
+        {
           'prepared-statements-cache-size' => 46
         }
       end
-      context 'in XA mode' do
+      describe 'in XA mode' do
         let(:params) do
-          merge_params({ :options => options, :xa => true })
+          merge_params(:options => options, :xa => true)
         end
 
         it { is_expected.to contain_jboss_datasource('test-datasource').with_xa(true) }
-        it do is_expected.to contain_jboss_datasource('test-datasource').with_options({
-          "validate-on-match"=>false,
-          "background-validation"=>false,
-          "share-prepared-statements"=>false,
-          "prepared-statements-cache-size"=>46,
-          "same-rm-override"=>true,
-          "wrap-xa-resource"=>true
-          })
+        it do
+          is_expected.to contain_jboss_datasource('test-datasource').with_options(
+            'validate-on-match'              => false,
+            'background-validation'          => false,
+            'share-prepared-statements'      => false,
+            'prepared-statements-cache-size' => 46,
+            'same-rm-override'               => true,
+            'wrap-xa-resource'               => true
+          )
         end
       end
-      context 'in non-XA mode' do
+      describe 'in non-XA mode' do
         let(:params) do
-          merge_params({ :options => options, :xa => false })
+          merge_params(:options => options, :xa => false)
         end
 
         it { is_expected.to contain_jboss_datasource('test-datasource').with_xa(false) }
-        it do is_expected.to contain_jboss_datasource('test-datasource').with_options({
-          "validate-on-match"=>false,
-          "background-validation"=>false,
-          "share-prepared-statements"=>false,
-          "prepared-statements-cache-size"=>46
-          })
+        it do
+          is_expected.to contain_jboss_datasource('test-datasource').with_options(
+            'validate-on-match'              => false,
+            'background-validation'          => false,
+            'share-prepared-statements'      => false,
+            'prepared-statements-cache-size' => 46
+          )
         end
       end
     end

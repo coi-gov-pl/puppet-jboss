@@ -1,16 +1,15 @@
 require 'spec_helper_puppet'
 
 describe 'jboss', :type => :class do
-
   let(:facts) { Testing::RspecPuppet::SharedFacts.oraclelinux_facts }
   extend Testing::RspecPuppet::SharedExamples
-  context 'with defaults for all parameters' do
+  describe 'with defaults for all parameters' do
     it { is_expected.to compile }
     it do
-      is_expected.to contain_class('jboss').with({
-        :product      => 'wildfly',
-        :version      => '9.0.2.Final',
-        })
+      is_expected.to contain_class('jboss').with(
+        :product => 'wildfly',
+        :version => '9.0.2.Final'
+      )
     end
     it { is_expected.to contain_anchor 'jboss::begin' }
     it { is_expected.to contain_anchor 'jboss::end' }
@@ -24,15 +23,17 @@ describe 'jboss', :type => :class do
     it { is_expected.to contain_anchor 'jboss::service::started' }
     it { is_expected.to contain_user 'jboss' }
     it { is_expected.to contain_group 'jboss' }
-    it { is_expected.to contain_class('jboss::internal::package').with({
-      :version      => '9.0.2.Final',
-      :product      => 'wildfly',
-      :jboss_user   => 'jboss',
-      :jboss_group  => 'jboss',
-      :java_version => 'latest'
-      })}
+    it do
+      is_expected.to contain_class('jboss::internal::package').with(
+        :version      => '9.0.2.Final',
+        :product      => 'wildfly',
+        :jboss_user   => 'jboss',
+        :jboss_group  => 'jboss',
+        :java_version => 'latest'
+      )
+    end
   end
-  context 'with product => jboss-eap and version => 6.4.0.GA parameters set' do
+  describe 'with product => jboss-eap and version => 6.4.0.GA parameters set' do
     let(:params) do
       { :product => 'jboss-eap', :version => '6.4.0.GA' }
     end
@@ -42,7 +43,7 @@ describe 'jboss', :type => :class do
     it { is_expected.to contain_user 'jboss' }
     it { is_expected.to contain_group 'jboss' }
   end
-  context 'with jboss_user => appserver parameter set' do
+  describe 'with jboss_user => appserver parameter set' do
     let(:params) do
       { :jboss_user => 'appserver' }
     end
@@ -52,15 +53,15 @@ describe 'jboss', :type => :class do
     it { is_expected.to contain_user 'appserver' }
     it { is_expected.to contain_group 'jboss' }
   end
-  context 'with download_url => file:///tmp/wildfly-8.2.0.Final.zip set' do
+  describe 'with download_url => file:///tmp/wildfly-8.2.0.Final.zip set' do
     let(:params) do
       { :download_url => 'file:///tmp/wildfly-8.2.0.Final.zip' }
     end
 
     it do
-      is_expected.to contain_class('jboss').with({
+      is_expected.to contain_class('jboss').with(
         :download_url => 'file:///tmp/wildfly-8.2.0.Final.zip'
-        })
+      )
     end
     it { is_expected.to contain_class 'jboss::params' }
     it { is_expected.to contain_class 'jboss::internal::compatibility' }
@@ -69,6 +70,5 @@ describe 'jboss', :type => :class do
 
     it_behaves_like common_interfaces
     it_behaves_like common_anchors
-
   end
 end

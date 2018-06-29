@@ -1,12 +1,11 @@
-require "spec_helper"
+require 'spec_helper_puppet'
 
-context "mocking default values" do
-
+describe 'mocking default values' do
   let(:mock_values) do
     {
       :product    => 'jboss-eap',
       :version    => '6.4.0.GA',
-      :controller => '127.0.0.1:9999',
+      :controller => '127.0.0.1:9999'
     }
   end
 
@@ -19,17 +18,16 @@ context "mocking default values" do
   end
 
   describe 'Puppet::Type::Jboss_jdbcdriver::ProviderJbosscli' do
-
     let(:described_class) do
       Puppet::Type.type(:jboss_jdbcdriver).provider(:jbosscli)
     end
     let(:sample_repl) do
       {
-        :name           => 'app-mails',
-        :modulename     => 'super-crm',
-        :datasourceclassname         => 'datasourceclassname',
-        :xadatasourceclassname       => 'xadsname',
-        :classname => 'driverclasname',
+        :name                  => 'app-mails',
+        :modulename            => 'super-crm',
+        :datasourceclassname   => 'datasourceclassname',
+        :xadatasourceclassname => 'xadsname',
+        :classname             => 'driverclasname'
       }
     end
 
@@ -54,31 +52,29 @@ context "mocking default values" do
 
     describe '#create' do
       before :each do
+        cmdlized_map = 'driver-class-name="driverclasname",driver-datasource-class-name="datasourceclassname",' \
+        'driver-module-name="super-crm",driver-name="app-mails",driver-xa-datasource-class-name="xadsname"'
 
-      cmdlizedMap = 'driver-class-name="driverclasname",driver-datasource-class-name="datasourceclassname",driver-module-name="super-crm",driver-name="app-mails",driver-xa-datasource-class-name="xadsname"'
+        cmd = "/subsystem=datasources/jdbc-driver=app-mails:add(#{cmdlized_map})"
+        compiledcmd = "/profile=full-ha/#{cmd}"
+        bring_up_name = 'JDBC-Driver'
+        expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
 
+        expect(provider).to receive(:bringUp).with(bring_up_name, compiledcmd).and_return(true)
+      end
 
-      cmd = "/subsystem=datasources/jdbc-driver=app-mails:add(#{cmdlizedMap})"
-      compiledcmd = "/profile=full-ha/#{cmd}"
-      bringUpName = 'JDBC-Driver'
-      expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
-
-      expect(provider).to receive(:bringUp).with(bringUpName, compiledcmd).and_return(true)
-    end
-
-    subject { provider.create }
-    it { expect(subject).to eq(true) }
+      subject { provider.create }
+      it { expect(subject).to eq(true) }
     end
 
     describe '#destroy' do
       before :each do
-
         cmd = "/subsystem=datasources/jdbc-driver=#{resource[:name]}:remove"
         compiledcmd = "/profile=full-ha/#{cmd}"
-        bringDownName = 'JDBC-Driver'
+        bring_down_name = 'JDBC-Driver'
 
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
-        expect(provider).to receive(:bringDown).with(bringDownName, compiledcmd).and_return(true)
+        expect(provider).to receive(:bringDown).with(bring_down_name, compiledcmd).and_return(true)
       end
 
       subject { provider.destroy }
@@ -90,7 +86,7 @@ context "mocking default values" do
         cmd = "/subsystem=datasources/jdbc-driver=#{resource[:name]}:read-resource(recursive=true)"
         compiledcmd = "/profile=full-ha/#{cmd}"
         expected_output = {
-          :result => true,
+          :result => true
         }
 
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
@@ -98,7 +94,7 @@ context "mocking default values" do
       end
 
       subject { provider.exists? }
-      it { expect(subject).to eq(true)}
+      it { expect(subject).to eq(true) }
     end
 
     describe 'exists? when result is flse' do
@@ -106,7 +102,7 @@ context "mocking default values" do
         cmd = "/subsystem=datasources/jdbc-driver=#{resource[:name]}:read-resource(recursive=true)"
         compiledcmd = "/profile=full-ha/#{cmd}"
         expected_output = {
-          :result => false,
+          :result => false
         }
 
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
@@ -114,17 +110,16 @@ context "mocking default values" do
       end
 
       subject { provider.exists? }
-      it { expect(subject).to eq(false)}
+      it { expect(subject).to eq(false) }
     end
 
     describe 'setattrib' do
-
       before :each do
-        cmd = "/subsystem=datasources/jdbc-driver=app-mails:write-attribute(name=super-name, value=driver-xa-datasource-class-name)"
+        cmd = '/subsystem=datasources/jdbc-driver=app-mails:write-attribute(name=super-name, value=driver-xa-datasource-class-name)'
         compiledcmd = "/profile=full-ha/#{cmd}"
 
         data = {
-            :asd => '1',
+          :asd => '1'
         }
 
         expected_res = {
@@ -137,9 +132,8 @@ context "mocking default values" do
       end
 
       subject { provider.setattrib 'super-name', 'driver-xa-datasource-class-name' }
-        let(:res_result) { false }
-      it { expect {subject}.to raise_error(RuntimeError) }
+      let(:res_result) { false }
+      it { expect { subject }.to raise_error(RuntimeError) }
     end
-
-end
+  end
 end

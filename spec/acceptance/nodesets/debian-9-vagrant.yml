@@ -1,0 +1,16 @@
+HOSTS:
+  debian-9-vagrant:
+    platform: debian-9-amd64
+    hypervisor : vagrant
+    box : bento/debian-9
+    mount_folders:
+      wget_cache:
+        from: /tmp/vagrant-cache/wget
+        to: /var/cache/wget
+      yum_cache:
+        from: /tmp/vagrant-cache/yum/debian-9-vagrant
+        to: /var/cache/yum
+CONFIG:
+  trace_limit: 200
+  type: foss
+  log_level: debug

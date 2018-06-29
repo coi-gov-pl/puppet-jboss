@@ -11,10 +11,6 @@ define jboss::internal::interface::foreach (
 
   validate_hash($augeas_defaults)
 
-  Augeas {
-    require => Augeas["ensure present interface ${interface_name}"],
-  }
-
   $interface_bind_pair = split($name, ':')
   $bind_type = $interface_bind_pair[1]
   $bind_value = $bind_variables[$bind_type]
@@ -23,13 +19,17 @@ define jboss::internal::interface::foreach (
     $augeas_params = merge($augeas_defaults, {
       changes => "rm ${path}/interface[#attribute/name='${interface_name}']/${bind_type}",
       onlyif  => "match ${path}/interface[#attribute/name='${interface_name}']/${bind_type} size != 0",
+      require => Augeas["ensure present interface ${interface_name}"],
     })
-    ensure_resource('augeas', "interface ${interface_name} rm ${bind_type}", $augeas_params)
+    $resource_title = "interface ${interface_name} rm ${bind_type}"
+
   } else {
     $augeas_params = merge($augeas_defaults, {
       changes => "set ${path}/interface[#attribute/name='${interface_name}']/${bind_type}/#attribute/value '${bind_value}'",
       onlyif  => "get ${path}/interface[#attribute/name='${interface_name}']/${bind_type}/#attribute/value != '${bind_value}'",
+      require => Augeas["ensure present interface ${interface_name}"],
     })
-    ensure_resource('augeas', "interface ${interface_name} set ${bind_type}", $augeas_params)
+    $resource_title = "interface ${interface_name} set ${bind_type}"
   }
+  ensure_resource('augeas', $resource_title, $augeas_params)
 }

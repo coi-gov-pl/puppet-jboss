@@ -1,7 +1,6 @@
-require "spec_helper"
+require 'spec_helper_puppet'
 
 describe 'jboss_dirname', :type => :puppet_function do
-
   let(:input) { 'path/to/file' }
   it do
     should run.

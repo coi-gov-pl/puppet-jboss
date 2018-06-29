@@ -1,0 +1,89 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-ruby/ for more details
+version: 2
+
+references:
+  machine-defaults: &environment-defaults
+    machine: true
+  install-augeas: &install-augeas
+    run:
+      name: Install Augeas
+      command: |
+        sudo apt-get update && sudo apt-get install -y libaugeas-dev libxml2-dev libgmp3-dev
+  install-rvm: &install-rvm
+    run:
+      name: Install RVM
+      command: |
+        gpg --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+        \curl -sSL https://get.rvm.io | bash -s stable
+  intall-ruby: &intall-ruby
+    run:
+      name: Install Ruby
+      shell: /bin/bash -leo pipefail
+      command: |
+        rvm use $RUBY_VERSION --default
+        gem install bundler --no-rdoc --no-ri
+  restore-cache-dependencies: &restore-cache-dependencies
+    # Download and cache dependencies
+    restore_cache:
+      keys:
+        - v1-dependencies-{{ checksum "Gemfile.lock" }}
+  save-cache-dependencies: &save-cache-dependencies
+    save_cache:
+      paths:
+       - ./vendor/bundle
+      key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+  bundle-dependencies: &bundle-dependencies
+    run:
+      name: Fetch dependencies via Bundler
+      shell: /bin/bash -leo pipefail
+      command: |
+        rvm use $RUBY_VERSION
+        bundle install --jobs=4 --retry=3 --path vendor/bundle
+  beaker: &beaker
+    run:
+      name: Run integration tests using Beaker
+      shell: /bin/bash -leo pipefail
+      command: |
+        rvm use $RUBY_VERSION
+        bundle exec rake beaker
+
+  steps: &steps
+    steps:
+      - checkout
+      - *install-augeas
+      - *install-rvm
+      - *intall-ruby
+      - *restore-cache-dependencies
+      - *bundle-dependencies
+      - *save-cache-dependencies
+      - *beaker
+
+workflows:
+  version: 2
+  integration-tests:
+    jobs:
+      - centos-6
+      - debian-8
+      - ubuntu-1404
+
+jobs:
+  centos-6:
+    <<: *environment-defaults
+    <<: *steps
+    environment:
+      RUBY_VERSION: '2.1'
+      RS_SET: centos-6-docker
+  debian-8:
+    <<: *environment-defaults
+    <<: *steps
+    environment:
+      RUBY_VERSION: '2.1'
+      RS_SET: debian-8-docker
+  ubuntu-1404:
+    <<: *environment-defaults
+    <<: *steps
+    environment:
+      RUBY_VERSION: '2.1'
+      RS_SET: ubuntu-1404-docker

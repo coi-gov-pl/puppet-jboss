@@ -1,17 +1,19 @@
 require 'spec_helper_acceptance'
 
-describe 'datasource smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
-  let(:baseserver) { Testing::Acceptance::SmokeTestReader.smoke_pp :init }
-  let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :datasource }
+describe 'datasource smoke test' do
+  let(:baseserver) { example 'jboss' }
+  let(:pp) { example 'jboss::datasource' }
 
   it 'should install base server with no errors' do
-    apply_manifest(baseserver, :catch_failures => true)
+    result = apply_manifest(baseserver, :catch_failures => true)
+    expect(result.exit_code).to be(2)
   end
   it 'should add datasource with no errors' do
-    apply_manifest(pp, :catch_failures => true)
+    result = apply_manifest(pp, :catch_failures => true)
+    expect(result.exit_code).to be(2)
   end
   it 'should work idempotently' do
-    apply_manifest(pp, :catch_changes  => true)
+    apply_manifest(pp, :catch_changes => true)
   end
   describe service('wildfly') do
     it { is_expected.to be_running }
