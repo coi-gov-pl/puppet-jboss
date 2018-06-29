@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper_puppet'
 
 describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider do
   let(:resource) do
@@ -6,9 +6,9 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider do
       :name          => 'testing-is-awesome',
       :code          => 'DB',
       :codeflag      => false,
-      :moduleoptions =>  {
+      :moduleoptions => {
         'hashUserPassword' => true,
-        'principalsQuery'  => 'select passwd from users where login = ?',
+        'principalsQuery'  => 'select passwd from users where login = ?'
       }
     }
   end
@@ -21,11 +21,21 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider do
     subject { instance.make_command_templates }
 
     before :each do
-      result = ["subsystem=security", "security-domain=testing-is-awesome", "authentication=classic:add(login-modules=[{code=>\"DB\",flag=>false,module-options=>[\"hashUserPassword\"=>true,\"principalsQuery\"=>\"select passwd from users where login = ?\"]}])"]
+      result = [
+        'subsystem=security',
+        'security-domain=testing-is-awesome',
+        'authentication=classic:add(login-modules=[{code=>"DB",flag=>false,module-options=>' \
+          '["hashUserPassword"=>true,"principalsQuery"=>"select passwd from users where login = ?"]}])'
+      ]
       expect(instance).to receive(:make_command_templates).and_return(result)
     end
     let(:cli_command) do
-      ["subsystem=security", "security-domain=testing-is-awesome", "authentication=classic:add(login-modules=[{code=>\"DB\",flag=>false,module-options=>[\"hashUserPassword\"=>true,\"principalsQuery\"=>\"select passwd from users where login = ?\"]}])"]
+      [
+        'subsystem=security',
+        'security-domain=testing-is-awesome',
+        'authentication=classic:add(login-modules=[{code=>"DB",flag=>false,module-options=>' \
+          '["hashUserPassword"=>true,"principalsQuery"=>"select passwd from users where login = ?"]}])'
+      ]
     end
     it { is_expected.to eq cli_command }
   end

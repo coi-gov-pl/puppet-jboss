@@ -13,4 +13,3 @@ Vagrantfile
 .DS_Store
 Gemfile.local
 .idea/
-Gemfile.lock

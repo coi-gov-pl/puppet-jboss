@@ -1,0 +1,31 @@
+HOSTS:
+  centos-6-pe288-docker:
+    platform: el-6-x86_64
+    hypervisor: docker
+    image: centos:6
+    docker_cmd: '["/sbin/init"]'
+    docker_preserve_image: true
+    docker_image_commands:
+      - 'cp /bin/true /sbin/mingetty'
+      - "sed -i 's/keepcache=0/keepcache=1/g' /etc/yum.conf"
+      - 'yum install -y crontabs wget tar'
+    roles:
+      - agent
+      - master
+      - database
+      - dashboard
+    mount_folders:
+      wget_cache:
+        host_path: /tmp/docker-cache/wget
+        container_path: /var/cache/wget
+      yum_cache:
+        host_path: /tmp/docker-cache/yum/centos-6-docker
+        container_path: /var/cache/yum
+CONFIG:
+  type: pe
+  pe_ver: 2.8.8
+  pe_dir: https://s3.amazonaws.com/pe-builds/released/2.8.8
+  log_level: verbose
+ssh:
+  password: root
+  auth_methods: ["password"]

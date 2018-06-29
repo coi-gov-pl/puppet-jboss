@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider do
   let(:instance) { described_class.new }

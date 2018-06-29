@@ -1,9 +1,9 @@
-require 'spec_helper'
+require 'spec_helper_puppet'
 
 describe 'jboss_confignode', :type => :type do
   let(:described_class) { Puppet::Type.type(:jboss_confignode) }
   subject { described_class }
-  let(:ex_class) { if Puppet.version > '3.0.0' then Puppet::ResourceError else Puppet::Error end }
+  let(:ex_class) { Puppet.version > '3.0.0' ? Puppet::ResourceError : Puppet::Error }
 
   def extend_params(given)
     {
@@ -17,19 +17,24 @@ describe 'jboss_confignode', :type => :type do
     it { expect(type).not_to be_nil }
     describe 'controller == :undef' do
       let(:params) { extend_params({ :controller => :undef }) }
-      it { expect { type }.to raise_error(ex_class, 'Parameter controller failed on Jboss_confignode[/sybsystem=datasources]: Domain controller must be provided') }
+      it do
+        expect { type }.to raise_error(
+          ex_class,
+          'Parameter controller failed on Jboss_confignode[/sybsystem=datasources]: Domain controller must be provided'
+        )
+      end
     end
 
     describe 'properties' do
       let(:params) { extend_params({ :properties => properties }) }
       describe 'munge' do
-        context 'not respond_to? :[]' do
+        describe 'not respond_to? :[]' do
           let(:properties) { false }
           subject { type.property :properties }
           its(:value) { is_expected.to eq({}) }
         end
-        context 'respond_to? :[]' do
-          let(:properties) { {'example' => false} }
+        describe 'respond_to? :[]' do
+          let(:properties) { { 'example' => false } }
           subject { type.property :properties }
           its(:value) { is_expected.to eq(properties) }
         end
@@ -38,23 +43,32 @@ describe 'jboss_confignode', :type => :type do
       describe 'change_to_s' do
         let(:properties) { false }
         subject { type.property(:properties).change_to_s(from, to) }
-        context 'from :absent and to hash', :from => :absent, :to => { 'alice' => 'five', 'bob' => 'seven' } do
+        describe 'from :absent and to hash',
+                 :from => :absent,
+                 :to   => { 'alice' => 'five', 'bob' => 'seven' } do
           let(:from) { |expl| expl.metadata[:from] }
           let(:to) { |expl| expl.metadata[:to] }
           it { expect(subject).to eq("property 'alice' has been set to \"five\", property 'bob' has been set to \"seven\"") }
         end
-        context 'from hash and to changed hash', :from => { 'alice' => 'five', 'bob' => 'nine' }, :to => { 'alice' => 'five', 'bob' => 'seven' } do
+        describe 'from hash and to changed hash',
+                 :from => { 'alice' => 'five', 'bob' => 'nine' },
+                 :to   => { 'alice' => 'five', 'bob' => 'seven' } do
           let(:from) { |expl| expl.metadata[:from] }
           let(:to) { |expl| expl.metadata[:to] }
           it { expect(subject).to eq("property 'bob' has changed from \"nine\" to \"seven\"") }
         end
-        context 'from hash and to :absent', :from => { 'alice' => 'five', 'bob' => 'nine' }, :to => :absent do
+        describe 'from hash and to :absent',
+                 :from => { 'alice' => 'five', 'bob' => 'nine' },
+                 :to   => :absent do
           let(:from) { |expl| expl.metadata[:from] }
           let(:to) { |expl| expl.metadata[:to] }
-          it { expect(subject).to eq("property 'alice' was \"five\" and has been removed, property 'bob' was \"nine\" and has been removed") }
+          it do
+            expect(subject).to eq(
+              "property 'alice' was \"five\" and has been removed, property 'bob' was \"nine\" and has been removed"
+            )
+          end
         end
       end
     end
   end
-
 end

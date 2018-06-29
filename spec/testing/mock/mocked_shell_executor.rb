@@ -1,9 +1,11 @@
 require 'ostruct'
+
 class Testing::Mock::MockedShellExecutor
   def initialize
     @commands = {}
     @last_exetuded_command = nil
   end
+
   def register_command(cmd, output, existstatus, success)
     result = OpenStruct.new(:exitstatus => existstatus, :success? => success)
     @last_exetuded_command = result

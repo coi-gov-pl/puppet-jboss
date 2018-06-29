@@ -1,19 +1,21 @@
 require 'spec_helper_acceptance'
 
-describe 'resourceadapter smoke test', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
-  let(:baseserver) { Testing::Acceptance::SmokeTestReader.smoke_pp :init }
-  let(:pp) { Testing::Acceptance::SmokeTestReader.smoke_pp :resourceadapter }
+describe 'resourceadapter smoke test' do
+  let(:baseserver) { example 'jboss' }
+  let(:pp) { example 'jboss::resourceadapter' }
 
   it 'should install base server with no errors' do
-    apply_manifest(baseserver, :catch_failures => true)
+    result = apply_manifest(baseserver, :catch_failures => true)
+    expect(result.exit_code).to be(2)
   end
   it 'should add resource adapter with no errors' do
-    apply_manifest(pp, :catch_failures => true)
+    result = apply_manifest(pp, :catch_failures => true)
+    expect(result.exit_code).to be(2)
   end
-  context 'verifing idempotency' do
+  describe 'verifing idempotency' do
     before(:each) { skip('This not work, GH issue: coi-gov-pl/puppet-jboss#70') }
     it 'should work idempotently' do
-      apply_manifest(pp, :catch_changes  => true)
+      apply_manifest(pp, :catch_changes => true)
     end
   end
   describe service('wildfly') do

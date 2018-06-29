@@ -157,18 +157,16 @@ define jboss::interface (
   }
 
   if jboss_to_bool($::jboss_running) {
-    Jboss::Clientry {
-      ensure      => $ensure,
-      controller  => $controller,
-      runasdomain => $runasdomain,
-      profile     => $profile,
-    }
     $entrypath = $runasdomain ? {
       true    => "/host=${jboss::hostname}/interface=${interface_name}",
       default => "/interface=${interface_name}",
     }
     jboss::clientry { $entrypath:
-      properties => $bind_variables,
+      ensure      => $ensure,
+      controller  => $controller,
+      runasdomain => $runasdomain,
+      profile     => $profile,
+      properties  => $bind_variables,
     }
   } else {
     $supported_bind_types = keys($bind_variables)
