@@ -19,8 +19,8 @@ describe 'jboss_virtual', :type => :fact do
   let(:docker_pathname) { double(:readable? => true, :readlines => lines) }
   let(:nondocker_pathname) { double(:readable? => true, :readlines => []) }
   before(:each) do
-    allow(Facter).to receive(:value).with(:jboss_virtual).and_call_original
-    allow(Facter).to receive(:value).with(:virtual).and_return('physical')
+    expect(Facter).to receive(:value).with(:jboss_virtual).and_call_original
+    expect(Facter).to receive(:value).with(:virtual).and_return('physical')
   end
   after :each do
     fct = Facter.fact :jboss_virtual
