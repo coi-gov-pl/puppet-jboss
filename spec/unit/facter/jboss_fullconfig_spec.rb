@@ -102,7 +102,8 @@ describe 'Fact jboss_fullconfig', :type => :fact do
 
     describe 'with mocking RUBY_VERSION to 1.8.7' do
       before :each do
-        expect(Puppet_X::Coi::Jboss::Configuration).to receive(:ruby_version).once.and_return('1.8.7')
+        expect(Puppet_X::Coi::Jboss::Configuration).to receive(:ruby_version).
+          at_least(:once).and_return('1.8.7')
       end
 
       it_behaves_like 'is not nill and empty'

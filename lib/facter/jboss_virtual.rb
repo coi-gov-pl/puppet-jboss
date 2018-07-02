@@ -1,8 +1,9 @@
 Facter.add(:jboss_virtual) do
   setcode do
-    virtual = Facter.value(:virtual)
-    ret = virtual
-    ret = 'docker' if Puppet_X::Coi::Jboss::Facts.dockerized?
-    ret
+    if Puppet_X::Coi::Jboss::Facts.dockerized?
+      'docker'
+    else
+      Facter.value(:virtual)
+    end
   end
 end
