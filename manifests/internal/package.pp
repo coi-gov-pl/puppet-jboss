@@ -24,6 +24,8 @@ class jboss::internal::package (
   $home                 = $jboss::home
   $configfile           = $jboss::internal::runtime::configfile
   $standaloneconfigfile = $jboss::internal::runtime::standaloneconfigfile
+  $initsystem           = $jboss::internal::compatibility::initsystem
+  $servicename          = $jboss::product
 
   case $version {
     /^[0-9]+\.[0-9]+\.[0-9]+([\._-]*[0-9a-zA-Z_-]+)?$/: {
@@ -156,7 +158,7 @@ class jboss::internal::package (
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
   }
 
-  if $jboss::internal::compatibility::initsystem == 'SystemD' {
+  if $initsystem == 'SystemD' {
     file { "${jboss::home}/bin/launch.sh":
       ensure  => 'file',
       alias   => 'jboss::systemd_launcher',
@@ -197,6 +199,14 @@ class jboss::internal::package (
     content => template('jboss/jboss-cli.erb'),
     mode    => '0755',
     require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+  }
+
+  file { "${jboss::home}/bin/restart.sh":
+    ensure  => 'file',
+    mode    => '0755',
+    content => template('jboss/scripts/restart.sh'),
+    require => Jboss::Internal::Util::Groupaccess[$jboss::home],
+    before  => Anchor['jboss::package::end'],
   }
 
   exec { 'jboss::package::check-for-java':

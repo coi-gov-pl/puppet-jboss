@@ -16,8 +16,9 @@ describe 'jboss::internal::service', :type => :class do
     it do
       is_expected.to contain_exec('jboss::service::restart').
         with(
-          :command     => "service wildfly stop ; sleep 5 ; pkill -9 -f '^java.*wildfly' ; service wildfly start",
-          :refreshonly => true
+          :command     => '/usr/lib/wildfly-9.0.2.Final/bin/restart.sh',
+          :refreshonly => true,
+          :logoutput   => true
         )
     end
   end
@@ -26,8 +27,8 @@ describe 'jboss::internal::service', :type => :class do
       is_expected.to contain_exec('jboss::service::test-running').
         with(
           :loglevel  => 'emerg',
-          :command   => 'tail -n 80 /var/log/wildfly/console.log && exit 1',
-          :unless    => "pgrep -f '^java.*wildfly' > /dev/null",
+          :command   => 'tail -n 200 /var/log/wildfly/console.log && exit 1',
+          :unless    => "sleep 1 && pgrep -f 'java.*/usr/lib/wildfly-9.0.2.Final' > /dev/null",
           :logoutput => true
         )
     end
@@ -41,8 +42,8 @@ describe 'jboss::internal::service', :type => :class do
       is_expected.to contain_exec('jboss::service::test-running').
         with(
           :loglevel  => 'warning',
-          :command   => 'tail -n 80 /var/log/wildfly/console.log && exit 0',
-          :unless    => "pgrep -f '^java.*wildfly' > /dev/null",
+          :command   => 'tail -n 200 /var/log/wildfly/console.log && exit 0',
+          :unless    => "sleep 1 && pgrep -f 'java.*/usr/lib/wildfly-9.0.2.Final' > /dev/null",
           :logoutput => true
         )
     end
