@@ -3,7 +3,7 @@ require 'spec_helper_acceptance'
 describe 'jboss::version::wildfly9 smoke test' do
   let(:pp) { example 'jboss::version::wildfly9' }
 
-  it 'should add install WildFly 9 with no errors' do
+  it 'should install WildFly 9 with no errors' do
     result = apply_manifest(pp, :catch_failures => true)
     expect(result.exit_code).to be(2)
   end

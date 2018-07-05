@@ -1,5 +1,5 @@
 # A module for Jdbcdriver
-module Puppet_X::Coi::Jboss::Provider::Jdbcdriver
+module PuppetX::Coi::Jboss::Provider::Jdbcdriver
 
   # Method that creates Jdbcdriver in JBoss instance
   def create

@@ -9,7 +9,6 @@ class jboss::internal::compatibility::eap {
   }
 
   $product_short    = 'jboss'
-  $expect_to_start  = true
   $initsystem       = $jboss::internal::compatibility::initsystem::initsystem
   $systemd_file     = 'jboss/systemd/wildfly.service'
   $systemd_launcher = 'jboss/systemd/launch.sh'

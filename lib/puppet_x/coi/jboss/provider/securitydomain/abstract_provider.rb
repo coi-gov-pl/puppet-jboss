@@ -1,9 +1,9 @@
 # A module for JBoss security domain common abstract resource
-class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
+class PuppetX::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
 
   # Standard constructor
   # @param {Hash} resource standard Puppet resource
-  # @param {Puppet_X::Coi::Jboss::Internal::CommandCompilator} compilator that is used to compile jboss command
+  # @param {PuppetX::Coi::Jboss::Internal::CommandCompilator} compilator that is used to compile jboss command
   def initialize(resource, compilator)
     @resource = resource
     @compilator = compilator
@@ -33,7 +33,7 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
   end
 
   # Method that decides about what commands should be executed
-  # @param {Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState} state of security domain
+  # @param {PuppetX::Coi::Jboss::Internal::State::SecurityDomainState} state of security domain
   # @return {List} commands
   def get_commands(state, resource)
     decide(resource, state)

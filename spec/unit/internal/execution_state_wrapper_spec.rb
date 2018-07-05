@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper do
+describe PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper do
   describe 'execute method' do
     let(:mocked_shell_executor) { Testing::Mock::MockedShellExecutor.new }
 

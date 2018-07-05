@@ -1,5 +1,5 @@
 # Class that evaluates given content, jboss console output, and replaces every tuple entry with curly braces
-class Puppet_X::Coi::Jboss::Internal::Sanitizer
+class PuppetX::Coi::Jboss::Internal::Sanitizer
   # It`s some kind of magic: https://regex101.com/r/uE3vD6/1
   REGEXP = Regexp.new('[\n\s]*=>[\n\s]*\[[\n\s]*(\([^\]]+\))[\n\s]*\]', Regexp::MULTILINE)
   # Method that evaluate given String

@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-describe Puppet_X::Coi::Jboss::FactsRefresher do
+describe PuppetX::Coi::Jboss::FactsRefresher do
   describe 'basic test to check if fact is deleted' do
     before :each do
       Facter.add(:test_fact) { setcode { 'test value' } }
@@ -49,7 +49,7 @@ describe Puppet_X::Coi::Jboss::FactsRefresher do
 
       describe 'refresh facts from correct list of facts' do
         before :each do
-          expect(Puppet_X::Coi::Jboss::Configuration).to receive(:read).at_least(1).times.and_return(
+          expect(PuppetX::Coi::Jboss::Configuration).to receive(:read).at_least(1).times.and_return(
             :jboss_test_fact => 'test'
           )
         end

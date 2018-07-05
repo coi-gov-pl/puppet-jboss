@@ -7,6 +7,6 @@ require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss')
 # Cast any object to boolean
 module Puppet::Parser::Functions
   newfunction(:jboss_to_bool, :type => :rvalue) do |args|
-    Puppet_X::Coi::Jboss::Functions.jboss_to_bool args
+    PuppetX::Coi::Jboss::Functions.to_bool(args)
   end
 end

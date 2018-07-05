@@ -1,6 +1,6 @@
 # A module for Jmsqueue
-module Puppet_X::Coi::Jboss::Provider::Jmsqueue
-  include Puppet_X::Coi::Jboss::BuildinsUtils
+module PuppetX::Coi::Jboss::Provider::Jmsqueue
+  include PuppetX::Coi::Jboss::BuildinsUtils
 
   # Method that creates jms-queue in JBoss instance.
   def create

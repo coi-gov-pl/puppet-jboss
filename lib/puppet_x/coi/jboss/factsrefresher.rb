@@ -1,18 +1,18 @@
 require_relative 'facts'
 
-class Puppet_X::Coi::Jboss::FactsRefresher
+class PuppetX::Coi::Jboss::FactsRefresher
   class << self
     # Method to refresh given facts
     # @param {[Symbol]}  list of fact symbols to be refreshed
     def refresh_facts(value)
-      config = Puppet_X::Coi::Jboss::Configuration.read
+      config = PuppetX::Coi::Jboss::Configuration.read
       value.each do |val|
         raise Puppet::Error, 'You can only delete fact that are made by jboss_module(start with jboss_)' unless validate_fact_name val
         delete_resolves val
         delete_value val
 
         fact_value = config[val.to_sym]
-        Puppet_X::Coi::Jboss::Facts.add_fact(val.to_sym, fact_value)
+        PuppetX::Coi::Jboss::Facts.add_fact(val.to_sym, fact_value)
       end
     end
 

@@ -14,17 +14,6 @@ class jboss::internal::compatibility::wildfly {
   $initsystem       = $jboss::internal::compatibility::initsystem::initsystem
   $controller_port  = '9990'
   $product_short    = 'wildfly'
-  $versioned_name   = "${::operatingsystem} ${::operatingsystemrelease}"
-  $not_start_warn1  = 'Wildfly >= 10 requires Java 8 or greater to operate. Module puppetlabs/java will install older version of Java on'
-  $not_start_warn2  = " ${versioned_name}. Install Java 8 and set flag \$jboss::java_autoinstall to false to suppress this warning."
-  $not_start_warn   = "${not_start_warn1}${not_start_warn2}"
-
-  if jboss_to_bool($jboss::java_autoinstall) and $initsystem == 'SystemV' {
-    warning($not_start_warn)
-    $expect_to_start = false
-  } else {
-    $expect_to_start = true
-  }
 
   if versioncmp($jboss::version, '10.0.0') >= 0 {
     # after WFly 10.x

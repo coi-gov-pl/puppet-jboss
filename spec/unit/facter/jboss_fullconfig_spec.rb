@@ -76,7 +76,7 @@ describe 'Fact jboss_fullconfig', :type => :fact do
   end
   before :each do
     Facter.clear
-    expect(Puppet_X::Coi::Jboss::Configuration).to receive(:read_raw_profile_d).
+    expect(PuppetX::Coi::Jboss::Configuration).to receive(:read_raw_profile_d).
       at_least(:once).and_return(profile_d_content)
     File.open(sample_config, 'w') { |f| f.write(sample_content) }
   end
@@ -102,7 +102,7 @@ describe 'Fact jboss_fullconfig', :type => :fact do
 
     describe 'with mocking RUBY_VERSION to 1.8.7' do
       before :each do
-        expect(Puppet_X::Coi::Jboss::Configuration).to receive(:ruby_version).
+        expect(PuppetX::Coi::Jboss::Configuration).to receive(:ruby_version).
           at_least(:once).and_return('1.8.7')
       end
 

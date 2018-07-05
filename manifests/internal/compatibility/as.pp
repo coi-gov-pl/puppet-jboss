@@ -11,7 +11,6 @@ class jboss::internal::compatibility::as {
   $initsystem       = $jboss::internal::compatibility::initsystem::initsystem
   $controller_port  = '9999'
   $product_short    = 'jboss'
-  $expect_to_start  = true
   $systemd_file     = 'jboss/systemd/wildfly.service'
   $systemd_launcher = 'jboss/systemd/launch.sh'
   $initd_file       = $jboss::runasdomain ? {

@@ -8,7 +8,7 @@ describe 'jboss::version::as7 smoke test', :if => Testing::Acceptance::JavaPlatf
     apply_manifest(cleanup_pp, :catch_failures => true)
   end
 
-  it 'should add install JBoss AS 7 with no errors' do
+  it 'should install JBoss AS 7 with no errors' do
     result = apply_manifest(pp, :catch_failures => true)
     expect(result.exit_code).to be(2)
   end

@@ -1,7 +1,6 @@
 # A class for JBoss configuration
-class Puppet_X::Coi::Jboss::Configuration
+class PuppetX::Coi::Jboss::Configuration
   class << self
-
     @config = nil
 
     # Test method that return current version(for comatability with ruby 1.8)

@@ -1,5 +1,5 @@
 # A class for JBoss pre WildFly datasource provider
-class Puppet_X::Coi::Jboss::Provider::Datasource::PreWildFlyProvider
+class PuppetX::Coi::Jboss::Provider::Datasource::PreWildFlyProvider
   # Standard constructor
   # @param {Hash} provider standard Puppet provider
   def initialize(provider)

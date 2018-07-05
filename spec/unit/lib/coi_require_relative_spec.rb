@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Puppet_X::Coi do
+describe PuppetX::Coi do
   describe '#require_relative' do
     let(:target) { 'mocked/file' }
-    subject { Puppet_X::Coi.require_relative(target) }
+    subject { PuppetX::Coi.require_relative(target) }
     let(:test_stmt) do
       subject
       NonExistentInAnyContextClassUsedOnlyForTesting.new.test

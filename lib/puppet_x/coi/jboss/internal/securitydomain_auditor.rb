@@ -1,12 +1,12 @@
 # Internal class to audits what is the state of securitydomain in Jboss instance
 # Do not use outside of securitydomain provider
-class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
+class PuppetX::Coi::Jboss::Internal::SecurityDomainAuditor
   # Standard constructor
   # @param {Hash} resource standard puppet resource object
-  # @param {Puppet_X::Coi::Jboss::Internal::CliExecutor} cli_executor that will handle execution of command
-  # @param {Puppet_X::Coi::Jboss::Internal::CommandCompilator} compilator object that handles
+  # @param {PuppetX::Coi::Jboss::Internal::CliExecutor} cli_executor that will handle execution of command
+  # @param {PuppetX::Coi::Jboss::Internal::CommandCompilator} compilator object that handles
   # compilaton of command to be executed
-  # @param {Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer} destroyer object that handles removing of
+  # @param {PuppetX::Coi::Jboss::Internal::SecurityDomainDestroyer} destroyer object that handles removing of
   # securitydomain
   def initialize(resource, cli_executor, compilator, destroyer)
     @resource = resource
@@ -35,7 +35,7 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
   def fetch_securtydomain_state
     data = state
     if data['security-domain'][(@resource[:name]).to_s]
-      fetched_state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
+      fetched_state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new
       if data['security-domain'][(@resource[:name]).to_s]['cache-type'].nil?
         Puppet.debug('cache-type is nil')
         fetched_state.is_cache_default = false
@@ -54,7 +54,7 @@ class Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor
         fetched_state.is_login_modules = false
       end
     else
-      fetched_state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
+      fetched_state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new
     end
 
     fetched_state

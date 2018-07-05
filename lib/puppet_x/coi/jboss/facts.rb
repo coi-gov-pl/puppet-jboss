@@ -1,12 +1,31 @@
 require_relative 'configuration'
 
 # A class for JBoss facts
-class Puppet_X::Coi::Jboss::Facts
+class PuppetX::Coi::Jboss::Facts
   class << self
     # Add settings of jboss configuration file to facts
     def define_fullconfig_fact
-      config = Puppet_X::Coi::Jboss::Configuration.read
+      config = PuppetX::Coi::Jboss::Configuration.read
       define_facts_on_config(config) unless config.nil?
+    end
+
+    # Checks if server is actualy running as the moment of resolving the fact
+    # It's checked by scanning running processes on machine
+    # @return {boolean} true, if server is running
+    def server_running?
+      re = /java .* -server .* org\.jboss\.as/
+      search_process_by_pattern(re).nil?.equal? false
+    end
+
+    # Gets the value of a patched virtual fact.
+    # @deprecated TODO: remove after dropping support for Puppet 2.x
+    # @return {string} a type of virtual like: docker, physical, vmware etc.
+    def virtual_fact_value
+      if dockerized?
+        'docker'
+      else
+        Facter.value(:virtual)
+      end
     end
 
     # Check if is running inside Docker container
@@ -30,6 +49,14 @@ class Puppet_X::Coi::Jboss::Facts
 
     private
 
+    def search_process_by_pattern(pattern)
+      result = Dir['/proc/[0-9]*/cmdline'].each_with_object({}) do |file, h|
+        (h[File.read(file).gsub(/\000/, ' ')] ||= []).push(file.match(/\d+/)[0].to_i)
+      end
+      result = result.map { |k, v| v if k.match(pattern) }.compact.flatten
+      result if result.any?
+    end
+
     def define_facts_on_config(config)
       define_jboss_facts_on_config(config)
       cfg = fixup_config(config)
@@ -38,7 +65,7 @@ class Puppet_X::Coi::Jboss::Facts
 
     def fixup_config(config)
       ret = config.dup
-      if Puppet_X::Coi::Jboss::Configuration.ruby_version < '1.9.0'
+      if PuppetX::Coi::Jboss::Configuration.ruby_version < '1.9.0'
         class << ret
           define_method(:to_s, proc { inspect })
         end

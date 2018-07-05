@@ -1,5 +1,5 @@
 # Class that holds information about current state of securitydomain
-class Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState
+class PuppetX::Coi::Jboss::Internal::State::SecurityDomainState
 
   # Standard constructor
   # @param {Boolean} is_cache_default true if there is cache default in system
@@ -9,7 +9,7 @@ class Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState
     @is_cache_default = is_cache_default
     @is_authentication = is_authentication
     @is_login_modules = is_login_modules
-    @compilator = Puppet_X::Coi::Jboss::Internal::CommandCompilator.new
+    @compilator = PuppetX::Coi::Jboss::Internal::CommandCompilator.new
   end
 
   # Standard getter for cache_default

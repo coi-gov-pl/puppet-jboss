@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Puppet_X::Coi::Jboss::Internal::Sanitizer do
+describe PuppetX::Coi::Jboss::Internal::Sanitizer do
   let(:instance) { described_class.new }
   let(:content) { File.read('spec/testing/files/evaluated.txt') }
 

@@ -10,11 +10,11 @@ describe 'mocking default values for SecurityDomain' do
   end
 
   before :each do
-    Puppet_X::Coi::Jboss::Configuration.reset_config(mock_values)
+    PuppetX::Coi::Jboss::Configuration.reset_config(mock_values)
   end
 
   after :each do
-    Puppet_X::Coi::Jboss::Configuration.reset_config
+    PuppetX::Coi::Jboss::Configuration.reset_config
   end
 
   describe 'Puppet::Type::Jboss_securitydomain::ProviderJbosscli' do
@@ -52,7 +52,7 @@ describe 'mocking default values for SecurityDomain' do
 
     before :each do
       allow(provider.class).to receive(:suitable?).and_return(true)
-      allow(Puppet_X::Coi::Jboss::Configuration).to receive(:read).and_return(:jboss_product => 'as')
+      allow(PuppetX::Coi::Jboss::Configuration).to receive(:read).and_return(:jboss_product => 'as')
     end
 
     let(:mocked_execution_state_wrapper) { Testing::Mock::ExecutionStateWrapper.new }

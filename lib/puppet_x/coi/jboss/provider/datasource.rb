@@ -1,9 +1,9 @@
 require_relative '../configuration'
 
 # A class for JBoss datasource provider
-module Puppet_X::Coi::Jboss::Provider::Datasource
-  include Puppet_X::Coi::Jboss::Constants
-  include Puppet_X::Coi::Jboss::BuildinsUtils
+module PuppetX::Coi::Jboss::Provider::Datasource
+  include PuppetX::Coi::Jboss::Constants
+  include PuppetX::Coi::Jboss::BuildinsUtils
 
   # Method that creates datasource in JBoss instance
   def create
@@ -328,10 +328,10 @@ module Puppet_X::Coi::Jboss::Provider::Datasource
     require_relative 'datasource/post_wildfly_provider'
 
     if @impl.nil?
-      if Puppet_X::Coi::Jboss::Configuration::is_pre_wildfly?
-        @impl = Puppet_X::Coi::Jboss::Provider::Datasource::PreWildFlyProvider.new(self)
+      if PuppetX::Coi::Jboss::Configuration::is_pre_wildfly?
+        @impl = PuppetX::Coi::Jboss::Provider::Datasource::PreWildFlyProvider.new(self)
       else
-        @impl = Puppet_X::Coi::Jboss::Provider::Datasource::PostWildFlyProvider.new(self)
+        @impl = PuppetX::Coi::Jboss::Provider::Datasource::PostWildFlyProvider.new(self)
       end
     end
     @impl

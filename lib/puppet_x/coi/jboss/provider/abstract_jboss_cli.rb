@@ -3,15 +3,15 @@ require_relative '../configuration'
 require 'tempfile'
 
 # Base class for all JBoss providers
-class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
+class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
-  DEFAULT_SHELL_EXECUTOR = Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new
+  DEFAULT_SHELL_EXECUTOR = PuppetX::Coi::Jboss::Internal::Executor::ShellExecutor.new
 
   # Default constructor that will also initialize 3 external object, system_runner, compilator and command executor
   # @param {Puppet::Resource} resource, standard Puppet resource that we need to call super
   def initialize(resource=nil)
     super(resource)
-    @compilator = Puppet_X::Coi::Jboss::Internal::CommandCompilator.new
+    @compilator = PuppetX::Coi::Jboss::Internal::CommandCompilator.new
     @cli_executor = nil
     ensure_cli_executor
   end
@@ -32,35 +32,35 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # Method that returns jboss home value
   # @return {String} home value
   def jbosshome
-    Puppet_X::Coi::Jboss::Configuration::config_value :home
+    PuppetX::Coi::Jboss::Configuration::config_value :home
   end
 
   # Method that returns value of log
   # @return {String} value of configuration for console log
   def jbosslog
-    Puppet_X::Coi::Jboss::Configuration::config_value :console_log
+    PuppetX::Coi::Jboss::Configuration::config_value :console_log
   end
 
   # Method that returns value that teels us if we need to run jboss in domain
   # @return {Boolean} runasdomain indicates if we want to run jboss in domain mode
   def config_runasdomain
-    Puppet_X::Coi::Jboss::Configuration::config_value :runasdomain
+    PuppetX::Coi::Jboss::Configuration::config_value :runasdomain
   end
 
   # Method that returns name of the controller that we will use when connecting to jboss instance
   # @return {String} controller
   def config_controller
-    Puppet_X::Coi::Jboss::Configuration::config_value :controller
+    PuppetX::Coi::Jboss::Configuration::config_value :controller
   end
 
   # Method that return name of the profile that we need to add at the start of jboss command
   # @return {String} profile
   def config_profile
-    Puppet_X::Coi::Jboss::Configuration::config_value :profile
+    PuppetX::Coi::Jboss::Configuration::config_value :profile
   end
 
   # TODO: Uncomment for defered provider confinment after droping support for Puppet < 3.0
-  # commands :jbosscli => Puppet_X::Coi::Jboss::Provider::AbstractJbossCli.jbossclibin
+  # commands :jbosscli => PuppetX::Coi::Jboss::Provider::AbstractJbossCli.jbossclibin
 
   # Method that tells us if we want to run jboss in domain mode
   # @return {Boolean}
@@ -216,7 +216,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   # Standard setter for shell_executor
-  # @param {Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor} shell_executor
+  # @param {PuppetX::Coi::Jboss::Internal::Executor::ShellExecutor} shell_executor
   def shell_executor=(shell_executor)
     @cli_executor.shell_executor = shell_executor
   end
@@ -227,7 +227,7 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   end
 
   # Standard setter for execution state wrapper
-  # @param {Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper} execution_state_wrapper
+  # @param {PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper} execution_state_wrapper
   def execution_state_wrapper=(execution_state_wrapper)
     @cli_executor.execution_state_wrapper = execution_state_wrapper
   end
@@ -235,11 +235,11 @@ class Puppet_X::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   protected
 
   # Method taht ensures that there is cli executor, if not it will create default one
-  # @return {Puppet_X::Coi::Jboss::Internal::CliExecutor} cli_executor
+  # @return {PuppetX::Coi::Jboss::Internal::CliExecutor} cli_executor
   def ensure_cli_executor
     if @cli_executor.nil?
-      execution_state_wrapper = Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(DEFAULT_SHELL_EXECUTOR)
-      @cli_executor = Puppet_X::Coi::Jboss::Internal::CliExecutor.new(execution_state_wrapper)
+      execution_state_wrapper = PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper.new(DEFAULT_SHELL_EXECUTOR)
+      @cli_executor = PuppetX::Coi::Jboss::Internal::CliExecutor.new(execution_state_wrapper)
     end
     @cli_executor
   end

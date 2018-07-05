@@ -24,6 +24,12 @@ describe 'jboss::internal::service', :type => :class do
   end
   shared_examples 'containg SystemD execs' do
     it do
+      is_expected.to contain_exec('systemctl-daemon-reload-for-wildfly').
+        with_command('/bin/systemctl daemon-reload')
+    end
+  end
+  shared_examples 'as a valid Java-JBoss configuration' do
+    it do
       is_expected.to contain_exec('jboss::service::test-running').
         with(
           :loglevel  => 'emerg',
@@ -32,12 +38,8 @@ describe 'jboss::internal::service', :type => :class do
           :logoutput => true
         )
     end
-    it do
-      is_expected.to contain_exec('systemctl-daemon-reload-for-wildfly').
-        with_command('/bin/systemctl daemon-reload')
-    end
   end
-  shared_examples 'containg SystemV execs' do
+  shared_examples 'as a invalid Java-JBoss configuration' do
     it do
       is_expected.to contain_exec('jboss::service::test-running').
         with(
@@ -50,6 +52,21 @@ describe 'jboss::internal::service', :type => :class do
   end
 
   describe 'on RedHat os family' do
+    describe 'release 6.7' do
+      let(:facts) do
+        Testing::RspecPuppet::SharedFacts.oraclelinux_facts
+      end
+      it_behaves_like 'as a invalid Java-JBoss configuration'
+    end
+    describe 'release 7.4' do
+      let(:facts) do
+        Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
+          :operatingsystemrelease    => '7.4',
+          :operatingsystemmajrelease => '7'
+        )
+      end
+      it_behaves_like 'as a valid Java-JBoss configuration'
+    end
     describe 'on Docker container' do
       let(:facts) do
         Testing::RspecPuppet::SharedFacts.oraclelinux_facts(
@@ -58,7 +75,6 @@ describe 'jboss::internal::service', :type => :class do
       end
       it_behaves_like 'containg service anchors'
       it_behaves_like 'containg service restart exec'
-      it_behaves_like 'containg SystemV execs'
       it_behaves_like 'containg class structure'
       it do
         is_expected.to contain_service('wildfly').
@@ -87,7 +103,6 @@ describe 'jboss::internal::service', :type => :class do
       end
       it_behaves_like 'containg service anchors'
       it_behaves_like 'containg service restart exec'
-      it_behaves_like 'containg SystemV execs'
       it_behaves_like 'containg class structure'
       it do
         is_expected.to contain_service('wildfly').
@@ -111,6 +126,8 @@ describe 'jboss::internal::service', :type => :class do
   end
 
   describe 'on Debian os family' do
+    let(:facts) { Testing::RspecPuppet::SharedFacts.ubuntu_facts }
+    it_behaves_like 'as a valid Java-JBoss configuration'
     describe 'on Docker container' do
       let(:facts) do
         Testing::RspecPuppet::SharedFacts.ubuntu_facts(
@@ -119,7 +136,6 @@ describe 'jboss::internal::service', :type => :class do
       end
       it_behaves_like 'containg service anchors'
       it_behaves_like 'containg service restart exec'
-      it_behaves_like 'containg SystemV execs'
       it_behaves_like 'containg class structure'
       it do
         is_expected.to contain_service('wildfly').
@@ -149,7 +165,6 @@ describe 'jboss::internal::service', :type => :class do
       end
       it_behaves_like 'containg service anchors'
       it_behaves_like 'containg service restart exec'
-      it_behaves_like 'containg SystemV execs'
       it_behaves_like 'containg class structure'
       it do
         is_expected.to contain_service('wildfly').

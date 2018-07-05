@@ -8,7 +8,6 @@ fixtures:
       ref: "1.0.0"
     java:
       repo: "https://github.com/puppetlabs/puppetlabs-java.git"
-      ref: "1.3.0"
+      ref: "1.6.0"
   symlinks:
     jboss: "#{source_dir}"
-

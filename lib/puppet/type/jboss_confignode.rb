@@ -28,7 +28,7 @@ Puppet::Type.newtype(:jboss_confignode) do
       if %w{absent undef}.include?(value)
         value.to_sym
       else
-        matcher = Puppet_X::Coi::Jboss::BuildinsUtils::HashlikeMatcher.new(value)
+        matcher = PuppetX::Coi::Jboss::BuildinsUtils::HashlikeMatcher.new(value)
         unless matcher.hashlike?
           {}
         else
@@ -38,7 +38,7 @@ Puppet::Type.newtype(:jboss_confignode) do
     end
 
     def change_to_s(current, desire)
-      absentlike = Puppet_X::Coi::Jboss::Constants::ABSENTLIKE_WITH_S
+      absentlike = PuppetX::Coi::Jboss::Constants::ABSENTLIKE_WITH_S
       changes = []
       keys = []
       keys.concat(desire.keys) unless absentlike.include?(desire)

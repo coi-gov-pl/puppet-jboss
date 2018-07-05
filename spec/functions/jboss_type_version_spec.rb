@@ -6,7 +6,7 @@ describe 'jboss_type_version' do
       should run.
         with_params.and_raise_error(
           Puppet::ParseError,
-          'jboss_type_version(): Given invalid number of parameters(0 instead of 1)'
+          'jboss_type_version(): Wrong number of arguments given (0 for 1)'
         )
     end
   end

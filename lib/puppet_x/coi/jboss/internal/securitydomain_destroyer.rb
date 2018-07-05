@@ -1,9 +1,9 @@
 # Class that handles removing securitydomain from jboss instance
-class Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer
+class PuppetX::Coi::Jboss::Internal::SecurityDomainDestroyer
   # Standard constructor
-  # @param {Puppet_X::Coi::Jboss::Internal::CliExecutor} cli_executor executor that will handle
+  # @param {PuppetX::Coi::Jboss::Internal::CliExecutor} cli_executor executor that will handle
   # command execution
-  # @param {Puppet_X::Coi::Jboss::Internal::CommandCompilator} compilator handles compilation of
+  # @param {PuppetX::Coi::Jboss::Internal::CommandCompilator} compilator handles compilation of
   # commands
   # @param {Hash} resource standard Puppet resource object
   def initialize(cli_executor, compilator, resource)

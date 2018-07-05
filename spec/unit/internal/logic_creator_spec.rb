@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
+describe PuppetX::Coi::Jboss::Internal::LogicCreator do
   let(:resource) do
     {
       :name          => 'testing',
@@ -12,21 +12,21 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
       }
     }
   end
-  let(:system_executor) { Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor.new }
-  let(:system_runner) { Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper.new(system_executor) }
-  let(:runner) { Puppet_X::Coi::Jboss::Internal::CliExecutor.new(system_runner) }
-  let(:compilator) { Puppet_X::Coi::Jboss::Internal::CommandCompilator.new }
-  let(:destroyer) { Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer.new(runner, compilator, resource) }
-  let(:auditor) { Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor.new(resource, runner, compilator, destroyer) }
+  let(:system_executor) { PuppetX::Coi::Jboss::Internal::Executor::ShellExecutor.new }
+  let(:system_runner) { PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper.new(system_executor) }
+  let(:runner) { PuppetX::Coi::Jboss::Internal::CliExecutor.new(system_runner) }
+  let(:compilator) { PuppetX::Coi::Jboss::Internal::CommandCompilator.new }
+  let(:destroyer) { PuppetX::Coi::Jboss::Internal::SecurityDomainDestroyer.new(runner, compilator, resource) }
+  let(:auditor) { PuppetX::Coi::Jboss::Internal::SecurityDomainAuditor.new(resource, runner, compilator, destroyer) }
 
   let(:instance) { described_class.new(auditor, resource, provider, compilator) }
   subject { instance.decide }
 
   describe 'pre wildfly provider' do
-    let(:provider) { Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(resource, compilator) }
+    let(:provider) { PuppetX::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(resource, compilator) }
     describe '#calculate_state with everything set to true' do
       before(:each) do
-        state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true, true)
+        state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true, true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
       it { expect(subject).to eq([]) }
@@ -34,7 +34,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
 
     describe '#calculate_state with everything false' do
       before(:each) do
-        state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
+        state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
       it do
@@ -57,7 +57,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
 
     describe '#calculate_state with cache type and authentication set' do
       before(:each) do
-        state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true)
+        state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
       it do
@@ -76,7 +76,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
 
     describe '#calculate_state with cache type' do
       before(:each) do
-        state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true)
+        state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new(true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
       it do
@@ -95,11 +95,11 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
   end
 
   describe 'post wildfly provider' do
-    let(:provider) { Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(resource, compilator) }
+    let(:provider) { PuppetX::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(resource, compilator) }
 
     describe '#calculate state with everything set' do
       before(:each) do
-        state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true, true)
+        state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true, true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
       it { expect(subject).to eq([]) }
@@ -107,7 +107,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
 
     describe '#calculate state with everything not set' do
       before(:each) do
-        state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new
+        state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
       it do
@@ -134,7 +134,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
 
     describe '#calculate_state with cache type and authentication set' do
       before(:each) do
-        state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true)
+        state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new(true, true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
       it do
@@ -153,7 +153,7 @@ describe Puppet_X::Coi::Jboss::Internal::LogicCreator do
 
     describe '#calculate_state with cache type' do
       before(:each) do
-        state = Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState.new(true)
+        state = PuppetX::Coi::Jboss::Internal::State::SecurityDomainState.new(true)
         expect(auditor).to receive(:fetch_securtydomain_state).and_return(state)
       end
       it do

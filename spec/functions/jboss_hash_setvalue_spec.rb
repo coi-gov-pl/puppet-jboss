@@ -6,7 +6,7 @@ describe 'jboss_hash_setvalue', :type => :puppet_function do
       is_expected.to run.
         with_params(1, 2, 1, 1).and_raise_error(
           Puppet::ParseError,
-          'jboss_hash_setvalue(): wrong lenght of input given (4 for 3)'
+          'jboss_hash_setvalue(): Wrong number of arguments given (4 for 3)'
         )
     end
   end
@@ -16,15 +16,22 @@ describe 'jboss_hash_setvalue', :type => :puppet_function do
       is_expected.to run.
         with_params(1, 2).and_raise_error(
           Puppet::ParseError,
-          'jboss_hash_setvalue(): wrong lenght of input given (2 for 3)'
+          'jboss_hash_setvalue(): Wrong number of arguments given (2 for 3)'
+        )
+    end
+  end
+
+  describe 'given non hash value as a first argument' do
+    it do
+      is_expected.to run.
+        with_params('alice', 0, 'A').and_raise_error(
+          Puppet::ParseError,
+          'jboss_hash_setvalue(): First argument must be hashlike, given: "alice"'
         )
     end
   end
 
   describe "given input => { 'john' = 'cena' }, 'adam', 'smith' it should return => { john => 'cena', adam => 'smith' }" do
-    before(:each) do
-      skip('FIXME: Method should return hash not only last key, ref coi-gov-pl/puppet-jboss#28 ')
-    end
     let(:input) { { 'john' => 'cena' } }
     it do
       is_expected.to run.
