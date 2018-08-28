@@ -22,13 +22,10 @@ describe 'jboss_virtual' do
 
   before(:each) do
     Facter.clear
-    fct = Facter.fact :jboss_virtual
-    fct.instance_variable_set(:@value, nil)
     expect(Facter).to receive(:value).with(:jboss_virtual).and_call_original
   end
   after(:each) do
-    fct = Facter.fact :jboss_virtual
-    fct.instance_variable_set(:@value, nil)
+    Facter.clear
   end
   describe 'on Docker container' do
     before(:each) do

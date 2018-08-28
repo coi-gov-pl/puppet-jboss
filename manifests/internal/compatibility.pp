@@ -15,7 +15,6 @@ class jboss::internal::compatibility {
       $initd_file       = $jboss::internal::compatibility::wildfly::initd_file
       $systemd_file     = $jboss::internal::compatibility::wildfly::systemd_file
       $systemd_launcher = $jboss::internal::compatibility::wildfly::systemd_launcher
-      $initsystem       = $jboss::internal::compatibility::wildfly::initsystem
     }
     'jboss-eap': {
       include jboss::internal::compatibility::eap
@@ -25,7 +24,6 @@ class jboss::internal::compatibility {
       $initd_file       = $jboss::internal::compatibility::eap::initd_file
       $systemd_file     = $jboss::internal::compatibility::eap::systemd_file
       $systemd_launcher = $jboss::internal::compatibility::eap::systemd_launcher
-      $initsystem       = $jboss::internal::compatibility::eap::initsystem
     }
     'jboss-as': {
       include jboss::internal::compatibility::as
@@ -35,16 +33,18 @@ class jboss::internal::compatibility {
       $initd_file       = $jboss::internal::compatibility::as::initd_file
       $systemd_file     = $jboss::internal::compatibility::as::systemd_file
       $systemd_launcher = $jboss::internal::compatibility::as::systemd_launcher
-      $initsystem       = $jboss::internal::compatibility::as::initsystem
     }
     default: {
       fail("Unsupported product ${jboss::product}. Supporting only: 'jboss-eap', 'jboss-as' and 'wildfly'")
     }
   }
+
   include jboss::internal::compatibility::java
+
   $system_java   = $jboss::internal::compatibility::java::system_java
   $jdk           = $jboss::internal::compatibility::java::jdk
-  $java_required = jboss_required_java($jboss::product, $jboss::version)
+  $java_required = jboss_required_java($::osfamily, $jboss::product, $jboss::version)
+  $initsystem    = jboss_to_s($::jboss_initsystem)
 
   if jboss_to_bool($jboss::java_autoinstall) and ! jboss_member($java_required, $system_java) {
     $capitalized_product     = capitalize($jboss::product)

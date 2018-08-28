@@ -3,7 +3,6 @@
 class jboss::internal::compatibility::wildfly {
   include jboss
   include jboss::internal::compatibility::common
-  include jboss::internal::compatibility::initsystem
   $_osfamily_down = $jboss::internal::compatibility::common::osfamily_down
 
   if versioncmp($jboss::version, '8.0.0') < 0 or versioncmp($jboss::version, '11.0.0') >= 0 {
@@ -11,7 +10,6 @@ class jboss::internal::compatibility::wildfly {
   }
   $systemd_file     = 'jboss/systemd/wildfly.service'
   $systemd_launcher = 'jboss/systemd/launch.sh'
-  $initsystem       = $jboss::internal::compatibility::initsystem::initsystem
   $controller_port  = '9990'
   $product_short    = 'wildfly'
 
