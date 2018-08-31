@@ -1,6 +1,7 @@
 require 'spec_helper_acceptance'
 
-describe 'jboss::version::wildfly9 smoke test' do
+ok = Testing::Acceptance::JavaPlatform.compatibile_java?('wildfly', '9.0.2.Final')
+describe 'jboss::version::wildfly9 smoke test', :if => ok do
   let(:pp) { example 'jboss::version::wildfly9' }
 
   it 'should install WildFly 9 with no errors' do

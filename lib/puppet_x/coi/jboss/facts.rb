@@ -27,12 +27,9 @@ class PuppetX::Coi::Jboss::Facts
       add_fact('jboss_virtual', virtual_fact_value)
     end
 
-    # Checks if server is actualy running as the moment of resolving the fact
-    # It's checked by scanning running processes on machine
-    # @return {boolean} true, if server is running
-    def server_running?
-      re = /java .* -server .* org\.jboss\.as/
-      search_process_by_pattern(re).nil?.equal? false
+    # Defines a server running fact to be used by internal mechanisms
+    def define_server_running_fact
+      add_fact('jboss_running', server_running?.inspect)
     end
 
     # Check if is running inside Docker container
@@ -86,9 +83,9 @@ class PuppetX::Coi::Jboss::Facts
     def calculate_redhat_initsystem(os, release)
       case os
       when 'RedHat', 'CentOS', 'OracleLinux', 'Scientific', 'OEL'
-        release >= '7.0' ? :SystemD : :SystemV
+        systemd_if release >= '7.0'
       when 'Fedora'
-        release >= '21' ? :SystemD : :SystemV
+        systemd_if release >= '21'
       else
         :unsupported
       end
@@ -97,20 +94,42 @@ class PuppetX::Coi::Jboss::Facts
     def calculate_debian_initsystem(os, release)
       case os
       when 'Ubuntu'
-        release >= '15.04' ? :SystemD : :SystemV
+        systemd_if release >= '15.04'
       when 'Debian'
-        release >= '8' ? :SystemD : :SystemV
+        systemd_if release >= '8'
       else
         :unsupported
       end
     end
 
+    def systemd_if(condition)
+      condition ? :SystemD : :SystemV
+    end
+
+    # Checks if server is actualy running as the moment of resolving the fact
+    # It's checked by scanning running processes on machine
+    # @return {boolean} true, if server is running
+    def server_running?
+      home = Facter.value(:jboss_home)
+      describer = home.nil? ? 'org.jboss.as' : home
+      describer = Regexp.quote(describer)
+      re = /java.*-server.*#{describer}/
+      search_process_by_pattern(re).any?
+    end
+
     def search_process_by_pattern(pattern)
-      result = Dir['/proc/[0-9]*/cmdline'].each_with_object({}) do |file, h|
-        (h[File.read(file).gsub(/\000/, ' ')] ||= []).push(file.match(/\d+/)[0].to_i)
+      result = Dir['/proc/[0-9]*/cmdline'].collect do |file|
+        pid = file.match(/\d+/)[0].to_i
+        begin
+          command = File.read(file).gsub(/\000/, ' ')
+          [pid, command]
+        rescue
+          [pid, nil]
+        end
       end
-      result = result.map { |k, v| v if k.match(pattern) }.compact.flatten
-      result if result.any?
+      result = Hash[result]
+      # array of pids
+      result.map { |k, v| k if v.match(pattern) }.compact.flatten
     end
 
     def define_facts_on_config(config)

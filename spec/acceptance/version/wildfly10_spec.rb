@@ -1,6 +1,7 @@
 require 'spec_helper_acceptance'
 
-describe 'jboss::version::wildfly10 smoke test', :if => Testing::Acceptance::JavaPlatform.java8? do
+ok = Testing::Acceptance::JavaPlatform.compatibile_java?('wildfly', '10.1.0.Final')
+describe 'jboss::version::wildfly10 smoke test', :if => ok do
   let(:pp) { example 'jboss::version::wildfly10' }
 
   before(:all) do

@@ -22,6 +22,7 @@ describe 'jboss_virtual' do
 
   before(:each) do
     Facter.clear
+    allow(Facter).to receive(:value)
     expect(Facter).to receive(:value).with(:jboss_virtual).and_call_original
   end
   after(:each) do

@@ -19,11 +19,15 @@ describe 'jboss_type_version' do
     end
   end
 
-  describe 'given invalid input' do
-    let(:input) { 'asd' }
-    it do
-      should run.
-        with_params(input).and_return(nil)
+  {
+    'as-7.1.1.Final' => 'as',
+    '6.4.14.GA'      => nil,
+    'eap-6.2.0.GA'   => 'eap',
+    'asdasd'         => nil
+  }.each do |input, expected|
+    describe "given #{input.inspect} as input it should return #{expected.inspect}" do
+      let(:args) { input }
+      it { should run.with_params(args).and_return expected }
     end
   end
 end

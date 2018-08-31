@@ -19,16 +19,24 @@ class PuppetX::Coi::Jboss::Functions
     private
 
     def unpack_arguments(arguments)
-      array = arguments[0]
-      unless array.is_a?(Array)
-        raise(Puppet::ParseError, 'jboss_member(): Requires array to work with')
-      end
-      item = arguments[1]
-      unless str_or_int?(item) || item.is_a?(Array)
-        raise(Puppet::ParseError, 'jboss_member(): Item to search for must be a string, fixnum, or array')
-      end
+      array = ensure_array(arguments[0])
+      item = ensure_str_fixnum_array(arguments[1])
       item = str_or_int?(item) ? [item] : item
       [item, array]
+    end
+
+    def ensure_array(array)
+      msg = 'jboss_member(): Requires array to work with'
+      err = Puppet::ParseError
+      raise(err, msg) unless array.is_a?(Array)
+      array
+    end
+
+    def ensure_str_fixnum_array(item)
+      msg = 'jboss_member(): Item to search for must be a string, fixnum, or array'
+      err = Puppet::ParseError
+      raise(err, msg) unless str_or_int?(item) || item.is_a?(Array)
+      item
     end
 
     def ensure_not_empty(value)

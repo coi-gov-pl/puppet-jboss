@@ -1,18 +1,14 @@
 # A custom class that holds custom functions
 class PuppetX::Coi::Jboss::Functions
   class << self
-    # PRIVATE INTERNAL FUNCTION. Return type of application server given as input
+    # Return type of application server from given input string for ex.:
+    # 'eap' for 'eap-6.2.0.GA'
     #
-    # @param args [Array] should be only one argument in array
-    # @return [string|string[]] the application server name
+    # @param args [Array] application server description in array
+    # @return [string] the application server type
     def type_version(args)
-      validate_method_parameters('jboss_type_version', args) do
-        { :desc => '1', :condition => args.size != 1 }
-      end
-      version = args[0]
       re = /^([a-z]+)-(?:\d+\.\d+)\.\d+(?:\.[A-Za-z]+)?$/
-      match = re.match(version)
-      match ? match[1] : nil
+      version_parse('jboss_type_version', re, args)
     end
   end
 end

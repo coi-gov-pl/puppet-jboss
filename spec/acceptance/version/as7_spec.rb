@@ -1,6 +1,7 @@
 require 'spec_helper_acceptance'
 
-describe 'jboss::version::as7 smoke test', :if => Testing::Acceptance::JavaPlatform.java6? do
+ok = Testing::Acceptance::JavaPlatform.compatibile_java?('jboss-as', '7.1.1.Final')
+describe 'jboss::version::as7 smoke test', :if => ok do
   let(:pp) { example 'jboss::version::as7' }
 
   before(:all) do

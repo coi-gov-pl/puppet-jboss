@@ -86,6 +86,7 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     configfile_fct = Facter.fact :jboss_configfile
     configfile_fct.instance_variable_set(:@value, nil)
     File.unlink(sample_config)
+    Facter.clear
   end
   subject { Facter.value(:jboss_fullconfig) }
   shared_examples 'is not nill and empty' do

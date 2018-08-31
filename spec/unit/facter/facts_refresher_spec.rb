@@ -1,6 +1,9 @@
 require 'spec_helper_puppet'
 
 describe PuppetX::Coi::Jboss::FactsRefresher do
+  after(:each) do
+    Facter.clear
+  end
   describe 'basic test to check if fact is deleted' do
     before :each do
       Facter.add(:test_fact) { setcode { 'test value' } }
