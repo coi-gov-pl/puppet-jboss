@@ -1,10 +1,10 @@
 # Class that will handle executions of commands
-class Puppet_X::Coi::Jboss::Internal::CliExecutor
+class PuppetX::Coi::Jboss::Internal::CliExecutor
   # Constructor
-  # @param {Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper} execution_state_wrapper handles command execution
+  # @param {PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper} execution_state_wrapper handles command execution
   def initialize(execution_state_wrapper)
     @execution_state_wrapper = execution_state_wrapper
-    @sanitizer = Puppet_X::Coi::Jboss::Internal::Sanitizer.new
+    @sanitizer = PuppetX::Coi::Jboss::Internal::Sanitizer.new
   end
 
   # Standard settter for execution_state_wrapper
@@ -74,7 +74,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
   # @param {String} path path for execution
   # @param {Hash} ctrlcfg  hash with configuration that is need to execute command
   def prepare_command(path, ctrlcfg)
-    home = Puppet_X::Coi::Jboss::Configuration.config_value :home
+    home = PuppetX::Coi::Jboss::Configuration.config_value :home
     ENV['JBOSS_HOME'] = home
 
     jboss_home = "#{home}/bin/jboss-cli.sh"
@@ -162,7 +162,7 @@ class Puppet_X::Coi::Jboss::Internal::CliExecutor
     # jboss_product fact is not set on first run, so that
     # calls to jboss-cli can fail (if jboss-as is installed)
     if jboss_product.nil?
-      Puppet_X::Coi::Jboss::FactsRefresher.refresh_facts [:jboss_product]
+      PuppetX::Coi::Jboss::FactsRefresher.refresh_facts [:jboss_product]
     end
     jboss_product == 'jboss-as'
   end

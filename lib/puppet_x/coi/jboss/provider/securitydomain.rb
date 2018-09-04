@@ -1,5 +1,5 @@
 # A class for JBoss security domain provider
-module Puppet_X::Coi::Jboss::Provider::SecurityDomain
+module PuppetX::Coi::Jboss::Provider::SecurityDomain
   # Method to check if there is security domain. Method calls recursive read-resource on security
   # subsystem to validate
   # if security domain is present. In the procces method also checks if authentication is set.
@@ -29,21 +29,21 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   private
 
   # Method that ensures that destroyer is present in the system, if not it creates one
-  # @return {Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer} destroyer
+  # @return {PuppetX::Coi::Jboss::Internal::SecurityDomainDestroyer} destroyer
   def ensure_destroyer
     cli_executor = ensure_cli_executor
-    @secdom_destroyer = Puppet_X::Coi::Jboss::Internal::SecurityDomainDestroyer.new(cli_executor,
+    @secdom_destroyer = PuppetX::Coi::Jboss::Internal::SecurityDomainDestroyer.new(cli_executor,
                                                                                     @compilator,
                                                                                     @resource) if @secdom_destroyer.nil?
     @secdom_destroyer
   end
 
   # Method that ensures that auditor is present in the system, if not it creates one
-  # @return {Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor} auditor
+  # @return {PuppetX::Coi::Jboss::Internal::SecurityDomainAuditor} auditor
   def ensure_auditor
     destroyer = ensure_destroyer
     cli_executor = ensure_cli_executor
-    @auditor = Puppet_X::Coi::Jboss::Internal::SecurityDomainAuditor.new(@resource,
+    @auditor = PuppetX::Coi::Jboss::Internal::SecurityDomainAuditor.new(@resource,
                                                                          cli_executor,
                                                                          @compilator,
                                                                          destroyer) if @auditor.nil?
@@ -55,23 +55,23 @@ module Puppet_X::Coi::Jboss::Provider::SecurityDomain
   def fetch_commands
     auditor = ensure_auditor
     provider = provider_impl
-    logic_creator = Puppet_X::Coi::Jboss::Internal::LogicCreator.new(auditor, @resource, provider, @compilator)
+    logic_creator = PuppetX::Coi::Jboss::Internal::LogicCreator.new(auditor, @resource, provider, @compilator)
     logic_creator.decide
   end
 
   # Method that provides information about which command template should be used
-  # @return {Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider|
-  # Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider}
+  # @return {PuppetX::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider|
+  # PuppetX::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider}
   # provider with correct command template
   def provider_impl
     require_relative 'securitydomain/pre_wildfly_provider'
     require_relative 'securitydomain/post_wildfly_provider'
 
     if @impl.nil?
-      if Puppet_X::Coi::Jboss::Configuration::is_pre_wildfly?
-        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(@resource, @compilator)
+      if PuppetX::Coi::Jboss::Configuration::is_pre_wildfly?
+        @impl = PuppetX::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(@resource, @compilator)
       else
-        @impl = Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(@resource, @compilator)
+        @impl = PuppetX::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(@resource, @compilator)
       end
     end
     @impl

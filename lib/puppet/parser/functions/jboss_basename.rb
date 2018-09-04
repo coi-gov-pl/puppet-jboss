@@ -10,6 +10,6 @@ require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss')
 # local file system.
 module Puppet::Parser::Functions
   newfunction(:jboss_basename, :type => :rvalue) do |args|
-    Puppet_X::Coi::Jboss::Functions.jboss_basename args
+    PuppetX::Coi::Jboss::Functions.basename(args)
   end
 end

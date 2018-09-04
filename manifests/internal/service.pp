@@ -16,7 +16,6 @@ class jboss::internal::service {
 
   anchor { 'jboss::service::begin': }
 
-  $service_stop_cooldown = 5 # sec.
   # TODO: change to $::virtual after dropping support for Puppet 2.x
   $enable = $::jboss_virtual ? {
     'docker' => undef,
@@ -56,29 +55,22 @@ class jboss::internal::service {
     $test_running_failstatus = 0
   }
 
+  $errloglines = $jboss::internal::params::errloglines
+  $logfile     = $jboss::internal::configuration::logfile
+
   exec { 'jboss::service::test-running':
     loglevel  => $test_running_loglevel,
-    command   => "tail -n 80 ${jboss::internal::configuration::logfile} && exit ${test_running_failstatus}",
-    unless    => "pgrep -f '^java.*${servicename}' > /dev/null",
+    command   => "tail -n ${errloglines} ${logfile} && exit ${test_running_failstatus}",
+    unless    => "sleep 1 && pgrep -f 'java.*${jboss::home}' > /dev/null",
     logoutput => true,
     subscribe => Service[$servicename],
     require   => Package['procps'],
   }
 
-  $restart_cmd1 = $jboss::internal::compatibility::initsystem ? {
-    'SystemD' => "systemctl stop ${servicename}",
-    default   => "service ${servicename} stop"
-  }
-  $restart_cmd2 = "sleep ${service_stop_cooldown}"
-  $restart_cmd3 = "pkill -9 -f '^java.*${servicename}'"
-  $restart_cmd4 = $jboss::internal::compatibility::initsystem ? {
-    'SystemD' => "systemctl start ${servicename}",
-    default   => "service ${servicename} start"
-  }
-
   exec { 'jboss::service::restart':
-    command     => "${restart_cmd1} ; ${restart_cmd2} ; ${restart_cmd3} ; ${restart_cmd4}",
+    command     => "${jboss::home}/bin/restart.sh",
     refreshonly => true,
+    logoutput   => true,
     require     => [
       Package['procps'],
       Exec['jboss::service::test-running'],

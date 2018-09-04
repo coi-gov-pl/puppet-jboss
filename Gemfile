@@ -25,6 +25,7 @@ group :test do
   gem "puppet-module-posix-dev-r#{minor_version}",     VER, :require => false, :platforms => 'ruby'
   gem "puppet-module-win-default-r#{minor_version}",   VER, :require => false, :platforms => %w[mswin mingw x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       VER, :require => false, :platforms => %w[mswin mingw x64_mingw]
+  gem 'coveralls',                                     :require => false
   gem 'rspec-puppet-facts-unsupported', '~> 0',        :require => false
   gem 'ruby-augeas',                                   :require => false
   gem 'safe_yaml',                                     :require => false

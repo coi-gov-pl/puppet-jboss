@@ -1,8 +1,3 @@
-Facter.add(:jboss_virtual) do
-  setcode do
-    virtual = Facter.value(:virtual)
-    ret = virtual
-    ret = 'docker' if virtual == 'physical' and Puppet_X::Coi::Jboss::Facts.dockerized?
-    ret
-  end
-end
+require File.expand_path(File.join(File.dirname(__FILE__), '../puppet_x/coi/jboss'))
+
+PuppetX::Coi::Jboss::Facts.define_virtual_fact

@@ -11,9 +11,15 @@ if gem_present 'simplecov'
     add_filter '/gems/'
   end
   formatters = [SimpleCov::Formatter::HTMLFormatter]
-  if gem_present 'codecov'
-    require 'codecov'
-    formatters.push SimpleCov::Formatter::Codecov
+  unless ENV['TRAVIS'].nil?
+    if gem_present 'codecov'
+      require 'codecov'
+      formatters.push SimpleCov::Formatter::Codecov
+    end
+    if gem_present 'coveralls'
+      require 'coveralls'
+      formatters.push Coveralls::SimpleCov::Formatter
+    end
   end
   SimpleCov.formatters = formatters
 end

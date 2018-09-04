@@ -8,6 +8,6 @@ require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss')
 # 'eap-6.2.0.GA' -> 'eap'
 module Puppet::Parser::Functions
   newfunction(:jboss_type_version, :type => :rvalue) do |args|
-    Puppet_X::Coi::Jboss::Functions.jboss_type_version args
+    PuppetX::Coi::Jboss::Functions.type_version(args)
   end
 end

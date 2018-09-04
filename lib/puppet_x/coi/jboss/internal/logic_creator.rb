@@ -1,8 +1,8 @@
 # Class that will decide what cammands should be send to cli to set up security domain
-class Puppet_X::Coi::Jboss::Internal::LogicCreator
-  # @param [Puppet_X::Coi::Jboss::Internal::JbossSecurityDomainState] state current state of
+class PuppetX::Coi::Jboss::Internal::LogicCreator
+  # @param [PuppetX::Coi::Jboss::Internal::JbossSecurityDomainState] state current state of
   # securitydomain configuration
-  # @param [Puppet_X::Coi::Jboss::Provider::SecurityDomain::Provider] provider that indicates if
+  # @param [PuppetX::Coi::Jboss::Provider::SecurityDomain::Provider] provider that indicates if
   # we need to use diffrent paths to setup securitydomain
   def initialize(auditor, resource, provider, compilator)
     @auditor = auditor
@@ -12,8 +12,8 @@ class Puppet_X::Coi::Jboss::Internal::LogicCreator
   end
 
   # Method that will return list of commands based on current state
-  # @param {Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider|
-  # Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider}
+  # @param {PuppetX::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider|
+  # PuppetX::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider}
   # @return [Hash] commands Hash with commands that will be executed, key is message that will
   # be displayed and value is command
   def decide

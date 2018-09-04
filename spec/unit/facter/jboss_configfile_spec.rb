@@ -11,6 +11,7 @@ describe 'Fact jboss_configfile', :type => :fact do
   after :each do
     fct = Facter.fact :jboss_configfile
     fct.instance_variable_set(:@value, nil)
+    Facter.clear
   end
   describe "with sample file \"export JBOSS_CONF='/etc/jboss-eap/jboss-eap.conf'\"" do
     it { expect(subject).to eq(sample_config) }

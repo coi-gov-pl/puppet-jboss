@@ -1,5 +1,5 @@
 # Constants for COI's JBoss module
-module Puppet_X::Coi::Jboss::Constants
+module PuppetX::Coi::Jboss::Constants
   ABSENTLIKE = [:absent, :undef, nil].freeze
   ABSENTLIKE_WITH_S = (Proc.new do
     # Proc scope not to leave any helper variables inside the context

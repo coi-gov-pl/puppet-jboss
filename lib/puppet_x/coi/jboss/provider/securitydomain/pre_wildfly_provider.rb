@@ -1,10 +1,10 @@
 # A module for JBoss pre WildFly security domain provider
-class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider <
-  Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
+class PuppetX::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider <
+  PuppetX::Coi::Jboss::Provider::SecurityDomain::AbstractProvider
 
   # This is a default constructor
   # @param {Hash} resource standard Puppet resource
-  # @param {Puppet_X::Coi::Jboss::Internal::CommandCompilator} compilator that is used to compile jboss command
+  # @param {PuppetX::Coi::Jboss::Internal::CommandCompilator} compilator that is used to compile jboss command
   def initialize(resource, compilator)
     @resource = resource
     @compilator = compilator
@@ -33,7 +33,7 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider <
 
   # Method that decides what commands should be added to command execution list
   # @param {Hash} resource standard Puppet resource
-  # @param {Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState} state that holds informations about current state of security domain
+  # @param {PuppetX::Coi::Jboss::Internal::State::SecurityDomainState} state that holds informations about current state of security domain
   # @return {List} commands
   def decide(resource, state)
     unless everything_is_set?(state)
@@ -45,7 +45,7 @@ class Puppet_X::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider <
   end
 
   # Method that return boolean value if everything in security domain in set
-  # @param {Puppet_X::Coi::Jboss::Internal::State::SecurityDomainState} state that holds informations about current state of security domain
+  # @param {PuppetX::Coi::Jboss::Internal::State::SecurityDomainState} state that holds informations about current state of security domain
   # @return {Boolean}
   def everything_is_set?(state)
     state.is_authentication && state.is_login_modules

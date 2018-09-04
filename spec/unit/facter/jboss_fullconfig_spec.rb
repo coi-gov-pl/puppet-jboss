@@ -76,7 +76,7 @@ describe 'Fact jboss_fullconfig', :type => :fact do
   end
   before :each do
     Facter.clear
-    expect(Puppet_X::Coi::Jboss::Configuration).to receive(:read_raw_profile_d).
+    expect(PuppetX::Coi::Jboss::Configuration).to receive(:read_raw_profile_d).
       at_least(:once).and_return(profile_d_content)
     File.open(sample_config, 'w') { |f| f.write(sample_content) }
   end
@@ -86,6 +86,7 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     configfile_fct = Facter.fact :jboss_configfile
     configfile_fct.instance_variable_set(:@value, nil)
     File.unlink(sample_config)
+    Facter.clear
   end
   subject { Facter.value(:jboss_fullconfig) }
   shared_examples 'is not nill and empty' do
@@ -102,7 +103,8 @@ describe 'Fact jboss_fullconfig', :type => :fact do
 
     describe 'with mocking RUBY_VERSION to 1.8.7' do
       before :each do
-        expect(Puppet_X::Coi::Jboss::Configuration).to receive(:ruby_version).once.and_return('1.8.7')
+        expect(PuppetX::Coi::Jboss::Configuration).to receive(:ruby_version).
+          at_least(:once).and_return('1.8.7')
       end
 
       it_behaves_like 'is not nill and empty'

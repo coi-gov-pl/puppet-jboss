@@ -1,14 +1,14 @@
 require 'spec_helper'
 require 'ostruct'
 
-class Testing::Mock::ExecutionStateWrapper < Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
+class Testing::Mock::ExecutionStateWrapper < PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper
   def initialize
     @commands = {}
     @last_excuted_command = nil
   end
 
   def register_command(command, expected_status, expected_lines, expected_result)
-    execution_state = Puppet_X::Coi::Jboss::Internal::State::ExecutionState.new(
+    execution_state = PuppetX::Coi::Jboss::Internal::State::ExecutionState.new(
       expected_result,
       expected_status,
       expected_lines,

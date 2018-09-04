@@ -72,25 +72,25 @@ Puppet::Type.newtype(:jboss_datasource) do
     desc "Extra options for datasource or xa-datasource"
 
     validate do |value|
-      matcher = Puppet_X::Coi::Jboss::BuildinsUtils::HashlikeMatcher.new(value)
-      unless Puppet_X::Coi::Jboss::Constants::ABSENTLIKE_WITH_S.include?(value) or matcher.hashlike?
+      matcher = PuppetX::Coi::Jboss::BuildinsUtils::HashlikeMatcher.new(value)
+      unless PuppetX::Coi::Jboss::Constants::ABSENTLIKE_WITH_S.include?(value) or matcher.hashlike?
         fail "You can pass only hash-like objects or absent and undef values, given #{value.inspect}"
       end
     end
 
     munge do |value|
-      matcher = Puppet_X::Coi::Jboss::BuildinsUtils::HashlikeMatcher.new(value)
+      matcher = PuppetX::Coi::Jboss::BuildinsUtils::HashlikeMatcher.new(value)
       ret = if %w{absent undef}.include?(value) then value.to_sym else value end
       if matcher.hashlike?
         value.each do |k, v|
-          ret[k] = Puppet_X::Coi::Jboss::Constants::ABSENTLIKE_WITH_S.include?(v) ? nil : v
+          ret[k] = PuppetX::Coi::Jboss::Constants::ABSENTLIKE_WITH_S.include?(v) ? nil : v
         end
       end
       ret
     end
 
     def change_to_s(current, desire)
-      absentlike = Puppet_X::Coi::Jboss::Constants::ABSENTLIKE_WITH_S
+      absentlike = PuppetX::Coi::Jboss::Constants::ABSENTLIKE_WITH_S
       changes = []
       keys = []
       keys.concat(desire.keys) unless absentlike.include?(desire)

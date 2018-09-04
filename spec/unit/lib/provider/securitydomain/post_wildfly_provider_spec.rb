@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
+describe PuppetX::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
   let(:resource) do
     {
       :name          => 'testing',
@@ -14,7 +14,7 @@ describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider do
   end
 
   let(:provider) { double('mock', :resource => resource) }
-  let(:compilator) { Puppet_X::Coi::Jboss::Internal::CommandCompilator.new }
+  let(:compilator) { PuppetX::Coi::Jboss::Internal::CommandCompilator.new }
   let(:instance) { described_class.new(provider, compilator) }
 
   describe '#create_parametrized_cmd with post wildfly' do

@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-describe Puppet_X::Coi::Jboss::Provider::SecurityDomain::AbstractProvider do
+describe PuppetX::Coi::Jboss::Provider::SecurityDomain::AbstractProvider do
   let(:instance) { described_class.new }
   let(:message) { /Abstract class, implement this method/ }
   describe '#correct_command_template_begining' do

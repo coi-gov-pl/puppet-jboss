@@ -1,9 +1,9 @@
 # A module that holds JBoss datasource provider lib metod
 # This module should be loaded staticly
 #   class << self
-#     include Puppet_X::Coi::Jboss::Provider::Datasource::Static
+#     include PuppetX::Coi::Jboss::Provider::Datasource::Static
 #   end
-module Puppet_X::Coi::Jboss::Provider::Datasource::Static
+module PuppetX::Coi::Jboss::Provider::Datasource::Static
 
   # Method that decides about type of datasource
   # @param {Boolean} xa value that holds information that we want to use xa datasource

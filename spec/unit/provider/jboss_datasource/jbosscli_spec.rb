@@ -1,5 +1,4 @@
 require 'spec_helper_puppet'
-require 'puppet_x/coi/jboss/configuration'
 
 describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version => '6.4.0.GA'" do
   let(:mock_values) do
@@ -11,11 +10,11 @@ describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =
   end
 
   before :each do
-    Puppet_X::Coi::Jboss::Configuration.reset_config(mock_values)
+    PuppetX::Coi::Jboss::Configuration.reset_config(mock_values)
   end
 
   after :each do
-    Puppet_X::Coi::Jboss::Configuration.reset_config
+    PuppetX::Coi::Jboss::Configuration.reset_config
   end
 
   describe 'Puppet::Type::Jboss_datasource::ProviderJbosscli' do

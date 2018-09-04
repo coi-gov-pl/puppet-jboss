@@ -2,15 +2,12 @@
 # This is internal class to resolve JBoss EAP compatibility
 class jboss::internal::compatibility::eap {
   include jboss
-  include jboss::internal::compatibility::initsystem
 
   if versioncmp($jboss::version, '6.0.0') < 0 or versioncmp($jboss::version, '8.0.0') >= 0 {
     fail("Unsupported version ${jboss::product} ${jboss::version}. Supporting only: JBoss EAP 6.x and 7.x series")
   }
 
   $product_short    = 'jboss'
-  $expect_to_start  = true
-  $initsystem       = $jboss::internal::compatibility::initsystem::initsystem
   $systemd_file     = 'jboss/systemd/wildfly.service'
   $systemd_launcher = 'jboss/systemd/launch.sh'
 

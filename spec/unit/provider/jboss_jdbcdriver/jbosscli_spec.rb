@@ -10,11 +10,11 @@ describe 'mocking default values' do
   end
 
   before :each do
-    Puppet_X::Coi::Jboss::Configuration.reset_config(mock_values)
+    PuppetX::Coi::Jboss::Configuration.reset_config(mock_values)
   end
 
   after :each do
-    Puppet_X::Coi::Jboss::Configuration.reset_config
+    PuppetX::Coi::Jboss::Configuration.reset_config
   end
 
   describe 'Puppet::Type::Jboss_jdbcdriver::ProviderJbosscli' do

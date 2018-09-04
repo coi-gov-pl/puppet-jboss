@@ -15,8 +15,6 @@ class jboss::internal::compatibility {
       $initd_file       = $jboss::internal::compatibility::wildfly::initd_file
       $systemd_file     = $jboss::internal::compatibility::wildfly::systemd_file
       $systemd_launcher = $jboss::internal::compatibility::wildfly::systemd_launcher
-      $initsystem       = $jboss::internal::compatibility::wildfly::initsystem
-      $expect_to_start  = $jboss::internal::compatibility::wildfly::expect_to_start
     }
     'jboss-eap': {
       include jboss::internal::compatibility::eap
@@ -26,8 +24,6 @@ class jboss::internal::compatibility {
       $initd_file       = $jboss::internal::compatibility::eap::initd_file
       $systemd_file     = $jboss::internal::compatibility::eap::systemd_file
       $systemd_launcher = $jboss::internal::compatibility::eap::systemd_launcher
-      $initsystem       = $jboss::internal::compatibility::eap::initsystem
-      $expect_to_start  = $jboss::internal::compatibility::eap::expect_to_start
     }
     'jboss-as': {
       include jboss::internal::compatibility::as
@@ -37,11 +33,32 @@ class jboss::internal::compatibility {
       $initd_file       = $jboss::internal::compatibility::as::initd_file
       $systemd_file     = $jboss::internal::compatibility::as::systemd_file
       $systemd_launcher = $jboss::internal::compatibility::as::systemd_launcher
-      $initsystem       = $jboss::internal::compatibility::as::initsystem
-      $expect_to_start  = $jboss::internal::compatibility::as::expect_to_start
     }
     default: {
       fail("Unsupported product ${jboss::product}. Supporting only: 'jboss-eap', 'jboss-as' and 'wildfly'")
     }
+  }
+
+  include jboss::internal::compatibility::java
+
+  $system_java   = $jboss::internal::compatibility::java::system_java
+  $jdk           = $jboss::internal::compatibility::java::jdk
+  $java_required = jboss_required_java($::osfamily, $jboss::product, $jboss::version)
+  $initsystem    = jboss_to_s($::jboss_initsystem)
+
+  if jboss_to_bool($jboss::java_autoinstall) and ! jboss_member($java_required, $system_java) {
+    $capitalized_product     = capitalize($jboss::product)
+    $inspected_java_required = jboss_inspect($java_required)
+    $versioned_name   = "${::operatingsystem} ${::operatingsystemrelease}"
+    $warn1 = "${capitalized_product} ${jboss::version} requires Java release thats one of ${inspected_java_required} "
+    $warn2 = "to operate. Module coi/jboss will install default system Java for ${versioned_name} witch is "
+    $warn3 = "${system_java} (${jdk}). ${capitalized_product} server will propably not start or crash after starting!"
+    $warn4 = "Install required Java version and set flag \$jboss::java_autoinstall to false to suppress this warning."
+    $not_start_warn = "${warn1}${warn2}${warn3}"
+    warning($not_start_warn)
+    warning($warn4)
+    $expect_to_start = false
+  } else {
+    $expect_to_start = true
   }
 }

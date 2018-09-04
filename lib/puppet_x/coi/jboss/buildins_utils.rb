@@ -1,5 +1,5 @@
 # This module contains vaious utility functions for Ruby buildins types
-module Puppet_X::Coi::Jboss::BuildinsUtils
+module PuppetX::Coi::Jboss::BuildinsUtils
   # Matcher for hash-like objects
   class HashlikeMatcher
     # Constructor
@@ -7,9 +7,10 @@ module Puppet_X::Coi::Jboss::BuildinsUtils
     def initialize(target)
       @target = target
     end
+
     # Method returns true if passed object is a hashlike object, but not String or Symbol
     def hashlike?
-      @target.respond_to? :[] and @target.respond_to? :each and not @target.is_a? String and not @target.is_a? Symbol
+      @target.respond_to?(:[]) && @target.respond_to?(:each) && !@target.is_a?(String) && !@target.is_a?(Symbol)
     end
   end
 
@@ -20,6 +21,7 @@ module Puppet_X::Coi::Jboss::BuildinsUtils
     def initialize(target)
       @target = target
     end
+
     # Method returns true if passed object is a hashlike object, but not String or Symbol
     def blank?
       return true if @target.nil?
@@ -34,20 +36,19 @@ module Puppet_X::Coi::Jboss::BuildinsUtils
     def initialize(target)
       @target = target
     end
+
     # Converts given value to boolean value
     def to_bool
-      if @target.respond_to?(:empty?)
-        str = @target
-      else
-        str = @target.to_s
-      end
-      if @target.is_a? Numeric
-        return @target != 0
-      end
-      return true if @target == true || str =~ (/(true|t|yes|y)$/i)
+      str = if @target.respond_to?(:empty?)
+              @target
+            else
+              @target.to_s
+            end
+      return @target != 0 if @target.is_a? Numeric
+      return true if @target == true || str =~ /(true|t|yes|y)$/i
       bm = BlankMatcher.new(@target)
-      return false if @target == false || bm.blank? || str =~ (/(false|f|no|n)$/i)
-      raise ArgumentError.new("invalid value for Boolean: \"#{@target}\"")
+      return false if @target == false || bm.blank? || str =~ /(false|f|no|n)$/i
+      raise(ArgumentError, "invalid value for Boolean: \"#{@target}\"")
     end
   end
 end

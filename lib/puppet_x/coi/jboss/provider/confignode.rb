@@ -1,5 +1,5 @@
 # A module for ConfigNode
-module Puppet_X::Coi::Jboss::Provider::ConfigNode
+module PuppetX::Coi::Jboss::Provider::ConfigNode
 
   # Method that creates ConfigNode
   def create

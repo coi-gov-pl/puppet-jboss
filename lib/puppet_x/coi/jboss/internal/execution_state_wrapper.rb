@@ -1,8 +1,8 @@
 # System executor responsible of executing provided commands
-class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
+class PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper
 
   # Standard constructor
-  # @param {Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor} shell_executor
+  # @param {PuppetX::Coi::Jboss::Internal::Executor::ShellExecutor} shell_executor
   def initialize(shell_executor)
     @shell_executor = shell_executor
   end
@@ -14,7 +14,7 @@ class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
   # @param {String} cmd cmd to be executed
   # @param {String} jbosscmd to be executed
   # @param {Hash} environment hash that hold informations about configuration
-  # @return {Puppet_X::Coi::Jboss::Internal::ExecutionState} execution state that hold
+  # @return {PuppetX::Coi::Jboss::Internal::ExecutionState} execution state that hold
   # information about result of execution
   def execute(cmd, jbosscmd, environment)
     lines = exec_command(cmd, environment)
@@ -54,8 +54,8 @@ class Puppet_X::Coi::Jboss::Internal::ExecutionStateWrapper
   end
 
   # Method that make and execution state object with given parameters
-  # @return {Puppet_X::Coi::Jboss::Internal::ExecutionState} execution state that contains informations about result of command execution
+  # @return {PuppetX::Coi::Jboss::Internal::ExecutionState} execution state that contains informations about result of command execution
   def exececution_state(jbosscmd, code, success, lines)
-    Puppet_X::Coi::Jboss::Internal::State::ExecutionState.new(code, success, lines, jbosscmd)
+    PuppetX::Coi::Jboss::Internal::State::ExecutionState.new(code, success, lines, jbosscmd)
   end
 end

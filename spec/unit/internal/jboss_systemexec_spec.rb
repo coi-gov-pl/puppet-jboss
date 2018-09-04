@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'os'
 
-describe Puppet_X::Coi::Jboss::Internal::Executor::ShellExecutor do
+describe PuppetX::Coi::Jboss::Internal::Executor::ShellExecutor do
   describe 'with correct command' do
     let(:instance) { described_class.new }
     let(:execution) { instance.run_command(cmd) }

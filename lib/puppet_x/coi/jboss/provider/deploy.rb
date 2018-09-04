@@ -1,5 +1,5 @@
 # A class for JBoss deploy
-module Puppet_X::Coi::Jboss::Provider::Deploy
+module PuppetX::Coi::Jboss::Provider::Deploy
 
   # Method that creates deploy Java artifacts to JBoss server
   def create

@@ -21,12 +21,15 @@ describe 'jboss_short_version', :type => :puppet_function do
     end
   end
 
-  describe 'with as-7.1.1.Final as input it should return 7.1' do
-    let(:args) { ['as-7.1.1.Final'] }
-    it { should run.with_params(args[0]).and_return '7.1' }
-  end
-
-  describe 'with asd as input it should return nil' do
-    it { should run.with_params('asd').and_return nil }
+  {
+    'as-7.1.1.Final' => '7.1',
+    '6.4.14.GA'      => '6.4',
+    'eap-6.2.0.GA'   => '6.2',
+    'asdasd'         => nil
+  }.each do |input, expected|
+    describe "with #{input.inspect} as input it should return #{expected.inspect}" do
+      let(:args) { input }
+      it { should run.with_params(args).and_return expected }
+    end
   end
 end

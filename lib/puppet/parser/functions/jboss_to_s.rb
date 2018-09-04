@@ -7,6 +7,6 @@ require File.join(File.dirname(__FILE__), '../../../puppet_x/coi/jboss')
 # Cast any object to string
 module Puppet::Parser::Functions
   newfunction(:jboss_to_s, :type => :rvalue) do |args|
-    Puppet_X::Coi::Jboss::Functions.jboss_to_s args
+    PuppetX::Coi::Jboss::Functions.to_s(args)
   end
 end

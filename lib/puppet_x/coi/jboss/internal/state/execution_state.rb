@@ -1,5 +1,5 @@
 # Wrapper that holds informations about result of command execution
-class Puppet_X::Coi::Jboss::Internal::State::ExecutionState
+class PuppetX::Coi::Jboss::Internal::State::ExecutionState
   # Constructor that creates execution state object
   # @param {Int} ret_code return code of command execution
   # @param {Boolean} succes value that represents if command execution was succesfull

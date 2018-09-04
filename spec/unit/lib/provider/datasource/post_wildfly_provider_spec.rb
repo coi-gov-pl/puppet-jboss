@@ -1,6 +1,6 @@
 require 'spec_helper_puppet'
 
-describe Puppet_X::Coi::Jboss::Provider::Datasource::PostWildFlyProvider do
+describe PuppetX::Coi::Jboss::Provider::Datasource::PostWildFlyProvider do
   let(:xa) { false }
   let(:jta) { true }
   let(:provider) { double('Provider') }
