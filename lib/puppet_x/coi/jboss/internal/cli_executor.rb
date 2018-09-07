@@ -48,24 +48,24 @@ class PuppetX::Coi::Jboss::Internal::CliExecutor
     unless ret[:result]
       return {
         :result => false,
-        :data => ret[:lines]
+        :data   => ret[:lines]
       }
     end
 
     begin
-      evaluated_output = @sanitizer.sanitize(ret[:lines])
-      undefined = nil
-      evalines = eval(evaluated_output)
+      sanitized_output = @sanitizer.sanitize(ret[:lines])
+      value = eval(sanitized_output, new_context.bind)
       return {
-        :result => evalines['outcome'] == 'success',
-        :data => (evalines['outcome'] == 'success' ? evalines['result'] : evalines['failure-description'])
+        :result => value['outcome'] == 'success',
+        :data   => (
+          value['outcome'] == 'success' ? value['result'] : value['failure-description']
+        )
       }
-
-    rescue Exception => e
+    rescue StandardError => e
       Puppet.err e
       return {
         :result => false,
-        :data => ret[:lines]
+        :data   => ret[:lines]
       }
     end
   end
@@ -74,24 +74,24 @@ class PuppetX::Coi::Jboss::Internal::CliExecutor
   # @param {String} path path for execution
   # @param {Hash} ctrlcfg  hash with configuration that is need to execute command
   def prepare_command(path, ctrlcfg)
-    home = PuppetX::Coi::Jboss::Configuration.config_value :home
+    home = check_not_empty PuppetX::Coi::Jboss::Configuration.config_value(:home)
     ENV['JBOSS_HOME'] = home
 
-    jboss_home = "#{home}/bin/jboss-cli.sh"
+    jboss_cli = "#{home}/bin/jboss-cli.sh"
 
-    cmd = "#{jboss_home} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
+    cmd = "#{jboss_cli} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
     cmd += " --user=#{ctrlcfg[:ctrluser]}" unless ctrlcfg[:ctrluser].nil?
     cmd
   end
 
   # Method that will prepare and delegate execution of command
   # @param {String} jbosscmd command to be executeAndGet
-  # @param {Boolean} runasdomain if jboss is run in domain mode
+  # @param {Boolean} _runasdomain if jboss is run in domain mode
   # @param {Hash} ctrlcfg configuration Hash
   # @param {Integer} retry_count number of retries after command failure-description
   # @param {Integer} retry_timeout time after command is timeouted
   # @return {Hash} hash with result of command executed, output and command
-  def run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
+  def run_command(jbosscmd, _runasdomain, ctrlcfg, retry_count, retry_timeout)
     file = Tempfile.new 'jbosscli'
     path = file.path
     file.close
@@ -117,8 +117,8 @@ class PuppetX::Coi::Jboss::Internal::CliExecutor
         sleep retry_timeout.to_i
       end
 
-      Puppet.debug 'Command send to JBoss CLI: ' + jbosscmd
-      Puppet.debug('Cmd to be executed %s' % cmd)
+      Puppet.debug "Command send to JBoss CLI: #{jbosscmd}"
+      Puppet.debug "Cmd to be executed #{cmd}"
 
       execution_state = @execution_state_wrapper.execute(cmd, jbosscmd, environment)
       result = execution_state.ret_code
@@ -126,17 +126,39 @@ class PuppetX::Coi::Jboss::Internal::CliExecutor
 
       retries += 1
     end while (result != 0 && retries <= retry_count)
-    Puppet.debug('Output from JBoss CLI [%s]: %s' % [result.inspect, lines])
+    Puppet.debug "Output from JBoss CLI [#{result.inspect}]: #{lines}"
     # deletes the temp file
     File.unlink path
     {
-      :cmd => jbosscmd,
+      :cmd    => jbosscmd,
       :result => result,
-      :lines => lines
+      :lines  => lines
     }
   end
 
   private
+
+  def new_context
+    context = Object.new
+    context.instance_eval do
+      def bind
+        binding
+      end
+
+      def undefined
+        nil
+      end
+    end
+    context
+  end
+
+  # Will verify if value is not nil
+  # @param {string} value - a nillable value
+  def check_not_empty(value)
+    raise Puppet::Error, 'Value can\'t be nil' if value.nil?
+    raise Puppet::Error, 'Value can\'t be empty' if value.empty?
+    value
+  end
 
   # Method that deletes execution of command by aading configurion
   # @param {String} cmd jbosscmd
@@ -144,7 +166,7 @@ class PuppetX::Coi::Jboss::Internal::CliExecutor
   def wrap_execution(cmd, resource)
     conf = {
       :controller => resource[:controller],
-      :ctrluser => resource[:ctrluser],
+      :ctrluser   => resource[:ctrluser],
       :ctrlpasswd => resource[:ctrlpasswd]
     }
 
@@ -178,9 +200,9 @@ class PuppetX::Coi::Jboss::Internal::CliExecutor
   def isprintinglog=(setting)
     $add_log = setting
   end
-  
+
   def getlog(lines)
-    last_lines = `tail -n #{lines} #{jbosslog}`
+    `tail -n #{lines} #{jbosslog}`
   end
 
   def printlog(lines)

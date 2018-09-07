@@ -11,47 +11,47 @@ describe 'Fact jboss_fullconfig', :type => :fact do
     <<-eos
     # The Jboss home directory.
     #
-    JBOSS_HOME=/usr/lib/wildfly-12.2.0.Final
+    export JBOSS_HOME='/usr/lib/wildfly-12.2.0.Final'
 
     # The JBoss product name.
     #
-    JBOSS_PRODUCT=wildfly
+    export JBOSS_PRODUCT='wildfly'
 
     # The JBoss version.
     #
-    JBOSS_VERSION=12.2.0.Final
+    export JBOSS_VERSION='12.2.0.Final'
 
     # The JBoss configuration file
     #
-    JBOSS_CONFIG=standalone-full.xml
+    export JBOSS_CONFIG='standalone-full.xml'
 
     # The username who should own the process.
     #
-    JBOSS_USER=wildfly
+    export JBOSS_USER='wildfly'
 
     # The amount of time to wait for startup
     #
-    # STARTUP_WAIT=30
+    # export STARTUP_WAIT=30
 
     # The amount of time to wait for shutdown
     #
-    # SHUTDOWN_WAIT=30
+    # export SHUTDOWN_WAIT=30
 
     # Location to keep the console log
     #
-    JBOSS_CONSOLE_LOG=/var/log/wildfly/console.log
+    export JBOSS_CONSOLE_LOG='/var/log/wildfly/console.log'
 
     # Runs JBoss in domain mode?
-    JBOSS_RUNASDOMAIN=false
+    export JBOSS_RUNASDOMAIN=false
 
     # JBoss running mode: domain or standalone
-    JBOSS_MODE=standalone
+    export JBOSS_MODE='standalone'
 
     # Default JBoss domain controller
-    JBOSS_CONTROLLER=127.0.0.1:9990
+    export JBOSS_CONTROLLER='127.0.0.1:9990'
 
     # Default JBoss domain profile
-    JBOSS_PROFILE=full
+    export JBOSS_PROFILE='full'
     eos
   end
   let(:profile_d_content) { "export JBOSS_CONF=\'#{sample_config}\'" }

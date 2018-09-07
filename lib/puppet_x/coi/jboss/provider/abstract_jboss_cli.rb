@@ -9,7 +9,7 @@ class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
   # Default constructor that will also initialize 3 external object, system_runner, compilator and command executor
   # @param {Puppet::Resource} resource, standard Puppet resource that we need to call super
-  def initialize(resource=nil)
+  def initialize(resource = nil)
     super(resource)
     @compilator = PuppetX::Coi::Jboss::Internal::CommandCompilator.new
     @cli_executor = nil
@@ -22,9 +22,7 @@ class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # Method that returns jboss-cli command path
   # @return {String} jboss-cli command path
   def jbossclibin
-    home = self.jbosshome
-    path = "#{home}/#{@@bin}"
-    path
+    "#{jbosshome}/#{@@bin}"
   end
 
   # CONFIGURATION VALUES
@@ -32,31 +30,31 @@ class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # Method that returns jboss home value
   # @return {String} home value
   def jbosshome
-    PuppetX::Coi::Jboss::Configuration::config_value :home
+    assert_not_nil PuppetX::Coi::Jboss::Configuration.config_value(:home)
   end
 
   # Method that returns value of log
   # @return {String} value of configuration for console log
   def jbosslog
-    PuppetX::Coi::Jboss::Configuration::config_value :console_log
+    assert_not_nil PuppetX::Coi::Jboss::Configuration.config_value(:console_log)
   end
 
   # Method that returns value that teels us if we need to run jboss in domain
   # @return {Boolean} runasdomain indicates if we want to run jboss in domain mode
   def config_runasdomain
-    PuppetX::Coi::Jboss::Configuration::config_value :runasdomain
+    assert_not_nil PuppetX::Coi::Jboss::Configuration.config_value(:runasdomain)
   end
 
   # Method that returns name of the controller that we will use when connecting to jboss instance
   # @return {String} controller
   def config_controller
-    PuppetX::Coi::Jboss::Configuration::config_value :controller
+    assert_not_nil PuppetX::Coi::Jboss::Configuration.config_value(:controller)
   end
 
   # Method that return name of the profile that we need to add at the start of jboss command
   # @return {String} profile
   def config_profile
-    PuppetX::Coi::Jboss::Configuration::config_value :profile
+    assert_not_nil PuppetX::Coi::Jboss::Configuration.config_value(:profile)
   end
 
   # TODO: Uncomment for defered provider confinment after droping support for Puppet < 3.0
@@ -64,7 +62,7 @@ class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
 
   # Method that tells us if we want to run jboss in domain mode
   # @return {Boolean}
-  def is_runasdomain
+  def runasdomain?
     @resource[:runasdomain]
   end
 
@@ -79,7 +77,7 @@ class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # @param {String} typename is a name of resource
   # @param {String} cmd jboss command that will be executed
   def bringDown(typename, cmd)
-     executeWithFail(typename, cmd, 'to remove')
+    executeWithFail(typename, cmd, 'to remove')
   end
 
   # Method that configures every variable that is needed to execute the provided command
@@ -88,21 +86,21 @@ class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     retry_count = @resource[:retry]
     retry_timeout = @resource[:retry_timeout]
     ctrlcfg = controllerConfig @resource
-    @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, retry_count, retry_timeout)
+    @cli_executor.run_command(jbosscmd, runasdomain?, ctrlcfg, retry_count, retry_timeout)
   end
 
   # Method that executes command without any retry if command fails
   # @param {String} jbosscmd jboss command
   def executeWithoutRetry(jbosscmd)
     ctrlcfg = controllerConfig @resource
-    @cli_executor.run_command(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
+    @cli_executor.run_command(jbosscmd, runasdomain?, ctrlcfg, 0, 0)
   end
 
   # Method that executes command without any retry if command fails
   # @param {String} jbosscmd jboss command
   def executeAndGet(jbosscmd)
     ctrlcfg = controllerConfig @resource
-    executeAndGetResult(jbosscmd, is_runasdomain, ctrlcfg, 0, 0)
+    executeAndGetResult(jbosscmd, runasdomain?, ctrlcfg, 0, 0)
   end
 
   # Method that executes command and if command fails it prints information
@@ -111,9 +109,9 @@ class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
   # @param {String} way name of the action
   def executeWithFail(typename, cmd, way)
     executed = execute(cmd)
-    if not executed[:result]
+    unless executed[:result]
       ex = "\n#{typename} failed #{way}:\n[CLI command]: #{executed[:cmd]}\n[Error message]: #{executed[:lines]}"
-      if not $add_log.nil? and $add_log > 0
+      unless $add_log.nil? and $add_log > 0
         ex = "#{ex}\n#{printlog $add_log}"
       end
       raise ex
@@ -187,7 +185,7 @@ class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
     else
       cmd = "#{path}:write-attribute(name=\"#{name.to_s}\", value=#{value})"
     end
-    if is_runasdomain
+    if runasdomain?
       cmd = "/profile=#{@resource[:profile]}#{cmd}"
     end
     res = executeAndGet(cmd)
@@ -242,5 +240,12 @@ class PuppetX::Coi::Jboss::Provider::AbstractJbossCli < Puppet::Provider
       @cli_executor = PuppetX::Coi::Jboss::Internal::CliExecutor.new(execution_state_wrapper)
     end
     @cli_executor
+  end
+
+  private
+
+  def assert_not_nil(value)
+    raise Puppet::Error, 'value cant be nil' if value.nil?
+    value
   end
 end

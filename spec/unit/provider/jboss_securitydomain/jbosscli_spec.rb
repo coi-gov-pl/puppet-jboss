@@ -5,7 +5,8 @@ describe 'mocking default values for SecurityDomain' do
     {
       :product    => 'jboss-eap',
       :version    => '6.4.0.GA',
-      :controller => '127.0.0.1:9999'
+      :controller => '127.0.0.1:9999',
+      :home       => '/usr/local/jboss-as-7.4.0'
     }
   end
 
@@ -52,7 +53,9 @@ describe 'mocking default values for SecurityDomain' do
 
     before :each do
       allow(provider.class).to receive(:suitable?).and_return(true)
-      allow(PuppetX::Coi::Jboss::Configuration).to receive(:read).and_return(:jboss_product => 'as')
+      allow(PuppetX::Coi::Jboss::Configuration).to receive(:read).and_return(
+        :jboss_product => 'as'
+      )
     end
 
     let(:mocked_execution_state_wrapper) { Testing::Mock::ExecutionStateWrapper.new }

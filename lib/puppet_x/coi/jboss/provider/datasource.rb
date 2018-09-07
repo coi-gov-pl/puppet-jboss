@@ -328,7 +328,7 @@ module PuppetX::Coi::Jboss::Provider::Datasource
     require_relative 'datasource/post_wildfly_provider'
 
     if @impl.nil?
-      if PuppetX::Coi::Jboss::Configuration::is_pre_wildfly?
+      if PuppetX::Coi::Jboss::Configuration.pre_wildfly?
         @impl = PuppetX::Coi::Jboss::Provider::Datasource::PreWildFlyProvider.new(self)
       else
         @impl = PuppetX::Coi::Jboss::Provider::Datasource::PostWildFlyProvider.new(self)
@@ -339,7 +339,7 @@ module PuppetX::Coi::Jboss::Provider::Datasource
 
   def managed_fetched_options
     fetched = {}
-    @resource[:options].each do |k, v|
+    @resource[:options].each do |k, _v|
       fetched[k] = getattrib(k)
     end
     fetched
@@ -353,16 +353,14 @@ module PuppetX::Coi::Jboss::Provider::Datasource
       props = [:ServerName, :PortNumber, :DatabaseName]
       props.each do |prop|
         value = @resource[getPuppetKey prop]
-        out.push "#{prop.to_s}=#{value.inspect}"
+        out.push "#{prop}=#{value.inspect}"
       end
-      if oracle?
-        out.push 'DriverType="thin"'
-      end
+      out.push 'DriverType="thin"' if oracle?
       out.join ','
     end
   end
 
-  def writeConnection property, value
+  def writeConnection(property, value)
     if xa?
       if h2?
         writeXaProperty 'URL', connectionUrl
@@ -372,9 +370,7 @@ module PuppetX::Coi::Jboss::Provider::Datasource
     else
       readed = getattrib('connection-url')
       url = connectionUrl
-      if readed.nil? or readed != url
-        setattrib 'connection-url', url
-      end
+      setattrib 'connection-url', url if readed.nil? && readed != url
     end
   end
 

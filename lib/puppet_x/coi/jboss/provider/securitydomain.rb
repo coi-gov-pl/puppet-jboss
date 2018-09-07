@@ -68,7 +68,7 @@ module PuppetX::Coi::Jboss::Provider::SecurityDomain
     require_relative 'securitydomain/post_wildfly_provider'
 
     if @impl.nil?
-      if PuppetX::Coi::Jboss::Configuration::is_pre_wildfly?
+      if PuppetX::Coi::Jboss::Configuration.pre_wildfly?
         @impl = PuppetX::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(@resource, @compilator)
       else
         @impl = PuppetX::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(@resource, @compilator)

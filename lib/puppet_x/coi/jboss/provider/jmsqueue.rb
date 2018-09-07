@@ -69,7 +69,7 @@ module PuppetX::Coi::Jboss::Provider::Jmsqueue
   private
 
   def calc_profile
-    if is_runasdomain
+    if runasdomain?
       "--profile=#{@resource[:profile]}"
     else
       ''

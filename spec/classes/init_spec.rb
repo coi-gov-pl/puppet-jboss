@@ -63,6 +63,7 @@ describe 'jboss', :type => :class do
         :download_url => 'file:///tmp/wildfly-8.2.0.Final.zip'
       )
     end
+    it { is_expected.to compile }
     it { is_expected.to contain_class 'jboss::params' }
     it { is_expected.to contain_class 'jboss::internal::compatibility' }
     it { is_expected.to contain_class 'jboss::internal::configuration' }
@@ -70,5 +71,25 @@ describe 'jboss', :type => :class do
 
     it_behaves_like common_interfaces
     it_behaves_like common_anchors
+  end
+
+  describe 'with environment => JAVA_OPTS set' do
+    let(:params) do
+      { :environment => { 'JAVA_OPTS' => '${JAVA_OPTS} -Xmx4g' } }
+    end
+    it { is_expected.to compile }
+    it { is_expected.to contain_class 'jboss::internal::configure::environmental' }
+    it do
+      is_expected.to contain_jboss__internal__configure__envvariable('JAVA_OPTS').with(
+        :values => {
+          'JAVA_OPTS' => '${JAVA_OPTS} -Xmx4g'
+        }
+      )
+    end
+    it do
+      is_expected.to contain_file_line(
+        '/usr/lib/wildfly-9.0.2.Final/bin/standalone.conf: JAVA_OPTS=${JAVA_OPTS} -Xmx4g'
+      )
+    end
   end
 end

@@ -11,7 +11,8 @@ describe 'mocking default values' do
     {
       :product    => 'jboss-eap',
       :version    => '6.4.0.GA',
-      :controller => '127.0.0.1:9999'
+      :controller => '127.0.0.1:9999',
+      :home       => '/usr/local/jboss-eap-6.4.0.GA'
     }
   end
 
@@ -71,7 +72,7 @@ describe 'mocking default values' do
         exec_cmd2 = '/extension=org.jboss.as.messaging:add()'
 
         # line 4
-        expect(provider).to receive(:is_runasdomain).and_return(true)
+        expect(provider).to receive(:runasdomain?).and_return(true)
 
         # line 17
         expect(provider).to receive(:execute).with(exec_cmd).and_return(exec_cmd_expected_output)
@@ -116,7 +117,7 @@ describe 'mocking default values' do
 
     describe '#destroy' do
       before :each do
-        expect(provider).to receive(:is_runasdomain).and_return(true)
+        expect(provider).to receive(:runasdomain?).and_return(true)
         cmd = "jms-queue --profile=#{resource[:profile]} remove --queue-address=#{resource[:name]}"
         bring_down_name = 'JMS Queue'
         expect(provider).to receive(:bringDown).with(bring_down_name, cmd).and_return(true)
