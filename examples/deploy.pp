@@ -7,6 +7,7 @@ $version  = '2.22.2'
 $artifact = 'servlet3-webapp'
 $group    = 'org/glassfish/jersey/examples'
 $file     = "${artifact}-${version}.war"
+$deployment = "${artifact}.war"
 $fullpath = "${sourcedir}/${file}"
 
 exec { "wget https://repo1.maven.org/maven2/${group}/${artifact}/${version}/${file}":
@@ -17,7 +18,7 @@ exec { "wget https://repo1.maven.org/maven2/${group}/${artifact}/${version}/${fi
   require => Package['wget'],
 }
 
-jboss::deploy { $file:
+jboss::deploy { $deployment:
   ensure    => 'present',
   path      => $fullpath,
   subscribe => Exec['wget'],

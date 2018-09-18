@@ -2,44 +2,58 @@
 class PuppetX::Coi::Jboss::Internal::Sanitizer
   # It`s some kind of magic: https://regex101.com/r/uE3vD6/1
   REGEXP = Regexp.new('[\n\s]*=>[\n\s]*\[[\n\s]*(\([^\]]+\))[\n\s]*\]', Regexp::MULTILINE)
-  # Method that evaluate given String
-  # @param {String} content String that will be evaluated
-  # @return {Hash} output hash that is a result of eval on given parameter
+
+  # Method that sanitizes given JBoss DMR string to be JSON loadable
+  #
+  # @param content [String] String that will be sanitized
+  # @return [String] output sanitized string
   def sanitize(content)
     # JBoss expression and Long value handling
-    content.gsub!(/expression \"(.+)\",/, '\'\1\',')
-    content.gsub!(/=> (\d+)L/, '=> \1')
-    evaluate(content)
+    result = content
+    result = replace_bytes_repr(result).
+             gsub(/expression \"(.+)\"/, "'\\1'").
+             gsub(/=> (-?\d+)L/, '=> \1')
+    evaluate(result).
+      gsub(/\s*=>/, ':').
+      gsub(/(:\s*)'([^']+)'/, '\1"\2"').
+      gsub(/:\s*undefined/, ': null').
+      gsub(/:\s*nil/, ': null').
+      gsub(/,(\s+[\}\]])/m, '\1')
   end
 
   private
+
+  # Ref: https://regex101.com/r/VNUZYh/1
+  def replace_bytes_repr(content)
+    result = content
+    loop do
+      match = content.match(/bytes \{\s+((?:0x[0-9a-f]{2},\s+)*0x[0-9a-f]{2})\s+\}/m)
+      break if match.nil?
+      full = match[0]
+      bytes = match[1].gsub(/\s+/m, '').split(',').map { |byte| Integer(byte) }
+      result.gsub!(full, bytes.inspect)
+    end
+    result
+  end
 
   # Private method that replaces brackets so it can be evaluated to Ruby style hash
   # @param {String} content String that has braces to be replaced
   # @param {String} output String without brackets
   def evaluate(content)
-    double_quoteless = replace_double_quotas(content)
-
-    output = double_quoteless.scan(REGEXP)
+    output = content.scan(REGEXP)
 
     left_param = []
     output.each do |elem|
-      left_param.push(elem[0].gsub!(/\(/, '{'))
+      left_param.push(elem[0].tr!('(', '{'))
     end
 
     right_param = []
 
     left_param.each do |elem|
-      right_param.push(elem.gsub!(/\)/, '}'))
+      right_param.push(elem.tr!(')', '}'))
     end
 
     replace(content, REGEXP, right_param)
-  end
-
-  # Private method that change every double quote for single quote
-  # @param {String} content String in which we want ot replace
-  def replace_double_quotas(content)
-    content.gsub(/\"/, "'")
   end
 
   # Method that replaces text
@@ -47,7 +61,7 @@ class PuppetX::Coi::Jboss::Internal::Sanitizer
   # @param {String} content string with output from jboss console
   def substitue(data, content)
     sanitized_content = content
-    data.each do | old_match, sanitized_match |
+    data.each do |old_match, sanitized_match|
       sanitized_content = sanitized_content.sub(old_match, sanitized_match)
     end
     sanitized_content
@@ -71,7 +85,7 @@ class PuppetX::Coi::Jboss::Internal::Sanitizer
     i = 0
     content.scan(regexp) do |match|
       match_sanitized[match[0]] = sanitized_content[i]
-      i = i + 1
+      i += 1
     end
     match_sanitized
   end

@@ -1,4 +1,4 @@
-require 'puppet'
+require 'spec_helper'
 require 'beaker-rspec'
 require 'beaker/puppeter'
 require 'beaker/puppet_install_helper'

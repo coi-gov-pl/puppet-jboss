@@ -4,169 +4,144 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
   let(:described_class) do
     Puppet::Type.type(:jboss_confignode).provider(:jbosscli)
   end
-  describe 'with mocked configuration options to jboss-eap 6.4.0.GA' do
-    let(:mock_values) do
-      {
-        :product    => 'jboss-eap',
-        :version    => '6.4.0.GA',
-        :controller => '127.0.0.1:9999'
-      }
-    end
+  let(:mock_values) do
+    {
+      :product    => 'jboss-eap',
+      :version    => '6.4.0.GA',
+      :controller => '127.0.0.1:9999',
+      :home       => '/usr/lib/jboss-17.3'
+    }
+  end
 
-    before :each do
-      PuppetX::Coi::Jboss::Configuration.reset_config(mock_values)
-    end
+  before :each do
+    PuppetX::Coi::Jboss::Configuration.reset_config(mock_values)
+    expect(Puppet).not_to receive(:err)
+  end
 
-    after :each do
-      PuppetX::Coi::Jboss::Configuration.reset_config
-    end
+  after :each do
+    PuppetX::Coi::Jboss::Configuration.reset_config
+    executor.verify_commands_executed
+  end
 
-    let(:sample_repl) do
-      {
-        :name               => 'genericconnector.rar',
-        :archive            => 'genericconnector.rar',
-        :transactionsupport => 'XATransaction',
-        :classname          => 'ch.maxant.generic_jca_adapter.ManagedTransactionAssistanceFactory',
-        :jndiname           => 'java:/jboss/jca-generic'
-      }
-    end
+  let(:sample_repl) do
+    {
+      :name               => 'genericconnector.rar',
+      :archive            => 'genericconnector.rar',
+      :transactionsupport => 'XATransaction',
+      :classname          => 'ch.maxant.generic_jca_adapter.ManagedTransactionAssistanceFactory',
+      :jndiname           => 'java:/jboss/jca-generic'
+    }
+  end
+  let(:extended_repl) { {} }
+  let(:raw) { sample_repl.merge(extended_repl) }
+  let(:data) { Hash[raw.collect { |k, v| [k.to_s, v] }] }
+  let(:resource) do
+    props = raw
+    props[:provider] = described_class.name
+    Puppet::Type.type(:jboss_resourceadapter).new(props)
+  end
 
-    let(:extended_repl) do
-      {}
-    end
+  let(:executor) { Testing::Mock::ExecutionStateWrapper.new }
 
-    let(:resource) do
-      raw = sample_repl.merge(extended_repl)
-      raw[:provider] = described_class.name
+  let(:provider) do
+    provider = resource.provider
+    provider.executor(executor)
+    provider
+  end
 
-      Puppet::Type.type(:jboss_resourceadapter).new(raw)
-    end
+  let(:clipath) { '/profile=full/subsystem=resource-adapters' }
 
-    let(:provider) do
-      resource.provider
-    end
-
-    let(:loaded_data) { nil }
-
-    before :each do
-      allow(provider.class).to receive(:suitable?).and_return(true)
-      provider.instance_variable_set(:@data, loaded_data)
-    end
-
-    let(:clipath) { '/profile=full/subsystem=resource-adapters' }
-
-    describe '#exists?' do
-      subject { provider.exists? }
-      describe 'on existing resource' do
-        before :each do
-          cmd = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
-
-          expected_output = {
-            :result => true,
-            :data   => {}
-          }
-          expect(provider).to receive(:executeAndGet).with(cmd).and_return(expected_output)
-        end
-        it { expect(subject).to eq(true) }
-      end
-
-      describe 'on absent resource' do
-        before :each do
-          cmd = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
-
-          expected_output = {
-            :result => false
-          }
-          expect(provider).to receive(:executeAndGet).with(cmd).and_return(expected_output)
-        end
-        it { expect(subject).to eq(false) }
-      end
-    end
-
-    describe '#create' do
-      subject { provider.create }
-      before :each do
-        cmd = "#{clipath}/resource-adapter=genericconnector.rar:add(archive=\"genericconnector.rar\", transaction-support=\"XATransaction\")"
-        expect(provider).to receive(:executeWithFail).with(
-          'Resource adapter',
-          cmd,
-          'to create'
-        )
-        cmd2 = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
-        expected_output = {
-          :result => true,
-          :data   => {
-            'archive'                => 'genericconnector.rar',
-            'transaction-support'    => 'XATransaction',
-            'connection-definitions' => {}
-          }
+  let(:loaded_data) do
+    {
+      'archive'                => 'genericconnector.rar',
+      'transaction-support'    => 'XATransaction',
+      'connection-definitions' => {
+        'java:/jboss/jca-generic' => {
+          'class-name' => 'ch.maxant.generic_jca_adapter.ManagedTransactionAssistanceFactory',
+          'jndi-name'  => 'java:/jboss/jca-generic'
         }
-        expect(provider).to receive(:executeAndGet).with(cmd2).and_return(expected_output)
-        cmd3 = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-generic:read-resource()"
-        expected_output = {
-          :result => false
-        }
-        expect(provider).to receive(:executeAndGet).with(cmd3).and_return(expected_output)
-        params = [
-          'background-validation=true',
-          'class-name="ch.maxant.generic_jca_adapter.ManagedTransactionAssistanceFactory"',
-          'jndi-name="java:/jboss/jca-generic"',
-          'security-application=true'
-        ].join ', '
-        cmd4 = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-generic:add(#{params})"
-        expect(provider).to receive(:executeWithFail).with(
-          'Resource adapter connection-definition',
-          cmd4,
-          'to create'
-        )
-      end
-      it { expect(subject).to be(:created) }
-    end
+      }
+    }
+  end
 
-    describe '#destroy' do
-      subject { provider.destroy }
+  describe '#exists?' do
+    subject { provider.exists? }
+    describe 'on existing resource' do
       before :each do
-        cmd = "#{clipath}/resource-adapter=genericconnector.rar:remove()"
-        expect(provider).to receive(:executeWithFail).with(
-          'Resource adapter',
-          cmd,
-          'to remove'
-        )
+        cmd = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
+        executor.register_command(cmd)
       end
-      it { expect(subject).to be(:destroyed) }
+      it { expect(subject).to eq(true) }
     end
 
+    describe 'on absent resource' do
+      before :each do
+        cmd = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
+        executor.register_failing_command(cmd)
+      end
+      it { expect(subject).to eq(false) }
+    end
+  end
+
+  describe '#create' do
+    subject { provider.create }
+    before :each do
+      cmd = "#{clipath}/resource-adapter=genericconnector.rar:add(archive=\"genericconnector.rar\", transaction-support=\"XATransaction\")"
+      executor.register_command(cmd)
+      cmd2 = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
+      expected_output = {
+        'outcome' => 'success',
+        'result'  => {
+          'archive'                => 'genericconnector.rar',
+          'transaction-support'    => 'XATransaction',
+          'connection-definitions' => {}
+        }
+      }
+      executor.register_command(cmd2, expected_output)
+      cmd3 = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-generic:read-resource()"
+      executor.register_failing_command(cmd3)
+      params = [
+        'background-validation=true',
+        'class-name="ch.maxant.generic_jca_adapter.ManagedTransactionAssistanceFactory"',
+        'jndi-name="java:/jboss/jca-generic"',
+        'security-application=true'
+      ].join ', '
+      cmd4 = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-generic:add(#{params})"
+      executor.register_command(cmd4)
+    end
+    it { expect(subject).to be(:created) }
+  end
+
+  describe '#destroy' do
+    subject { provider.destroy }
+    before :each do
+      cmd = "#{clipath}/resource-adapter=genericconnector.rar:remove()"
+      executor.register_command(cmd)
+    end
+    it { expect(subject).to be(:destroyed) }
+  end
+
+  describe 'managed properties' do
+    before :each do
+      cmd = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
+      executor.register_command(
+        cmd,
+        'outcome' => 'success',
+        'result'  => loaded_data
+      )
+      provider.exists?
+    end
     describe '#jndiname=' do
       let(:jndi_to_set) { ['java:/jboss/jca-xtra'] }
       subject do
         provider.jndiname = jndi_to_set
       end
       let(:extended_repl) do
-        {
-          :jndiname => 'java:/jboss/jca-xtra'
-        }
-      end
-      let(:loaded_data) do
-        {
-          'archive'                => 'genericconnector.rar',
-          'transaction-support'    => 'XATransaction',
-          'connection-definitions' => {
-            'java:/jboss/jca-generic' => {
-              'class-name' => 'ch.maxant.generic_jca_adapter.ManagedTransactionAssistanceFactory',
-              'jndi-name'  => 'java:/jboss/jca-generic'
-            }
-          }
-        }
+        { :jndiname => 'java:/jboss/jca-xtra' }
       end
       before :each do
-        cmd = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
-        expect(provider).to receive(:executeAndGet).with(cmd).and_return({ :result => true })
         cmd = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-generic:remove()"
-        expect(provider).to receive(:executeWithFail).with(
-          'Resource adapter connection-definition',
-          cmd,
-          'to remove'
-        )
+        executor.register_command(cmd)
         params = [
           'background-validation=true',
           'class-name="ch.maxant.generic_jca_adapter.ManagedTransactionAssistanceFactory"',
@@ -174,32 +149,24 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
           'security-application=true'
         ].join ', '
         cmd = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-xtra:add(#{params})"
-        expect(provider).to receive(:executeWithFail).with(
-          'Resource adapter connection-definition',
-          cmd,
-          'to create'
-        )
+        executor.register_command(cmd)
+        cmd = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
+        executor.register_command(cmd)
       end
       it { expect(subject).to eq(['java:/jboss/jca-xtra']) }
     end
 
     describe '#archive' do
       subject { provider.archive }
-      let(:loaded_data) do
-        { 'archive' => 'genericconnector.rar' }
-      end
       it { expect(subject).to eq('genericconnector.rar') }
     end
 
     describe '#archive=' do
       subject { provider.archive = 'xa-connector.rar' }
-      let(:loaded_data) do
-        { 'archive' => 'genericconnector.rar' }
-      end
       before :each do
         op = 'write-attribute(name="archive", value="xa-connector.rar")'
         cmd = "#{clipath}/resource-adapter=genericconnector.rar:#{op}"
-        expect(provider).to receive(:executeAndGet).with(cmd).and_return({ :result => true })
+        executor.register_command(cmd)
       end
       it { expect(subject).to eq('xa-connector.rar') }
     end
@@ -274,21 +241,13 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
           op = 'write-attribute(name="security-application", value=true)'
           el = 'connection-definitions=java\:\/jboss\/jca-generic'
           cmd = "#{clipath}/resource-adapter=genericconnector.rar/#{el}:#{op}"
-          expect(provider).to receive(:executeAndGet).with(cmd).and_return({ :result => true })
+          executor.register_command(cmd)
           op = 'undefine-attribute(name=security-domain-and-application)'
           cmd = "#{clipath}/resource-adapter=genericconnector.rar/#{el}:#{op}"
-          expect(provider).to receive(:executeWithFail).with(
-            'Resource adapter connection definition attribute security-domain-and-application',
-            cmd,
-            'to remove'
-          )
+          executor.register_command(cmd)
           op = 'undefine-attribute(name=security-domain)'
           cmd = "#{clipath}/resource-adapter=genericconnector.rar/#{el}:#{op}"
-          expect(provider).to receive(:executeWithFail).with(
-            'Resource adapter connection definition attribute security-domain',
-            cmd,
-            'to remove'
-          )
+          executor.register_command(cmd)
         end
         it { expect(subject).to eq('application') }
       end

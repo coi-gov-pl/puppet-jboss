@@ -53,7 +53,7 @@ describe PuppetX::Coi::Jboss::FactsRefresher do
       describe 'refresh facts from correct list of facts' do
         before :each do
           expect(PuppetX::Coi::Jboss::Configuration).to receive(:read).at_least(1).times.and_return(
-            :jboss_test_fact => 'test'
+            :test_fact => 'test'
           )
         end
         let(:facts) { [:jboss_test_fact] }

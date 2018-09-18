@@ -9,11 +9,6 @@ class PuppetX::Coi::Jboss::Hash < Hash
     super
   end
 
-  def delete(key)
-    @keys.delete(key)
-    super
-  end
-
   def each_sorted(&_block)
     keys.map(&:to_s).sort.each do |key|
       yield(key, self[key])

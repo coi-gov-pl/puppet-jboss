@@ -1,0 +1,2506 @@
+{
+    "outcome" => "success",
+    "result" => {
+        "management-major-version" => 3,
+        "management-micro-version" => 0,
+        "management-minor-version" => 0,
+        "name" => "354bfe36c291",
+        "namespaces" => [],
+        "product-name" => "WildFly Full",
+        "product-version" => "9.0.2.Final",
+        "profile-name" => undefined,
+        "release-codename" => "Kenny",
+        "release-version" => "1.0.2.Final",
+        "schema-locations" => [],
+        "core-service" => {
+            "service-container" => {},
+            "server-environment" => {},
+            "module-loading" => {},
+            "management" => {
+                "access" => {
+                    "audit" => {
+                        "file-handler" => {"file" => {
+                            "formatter" => "json-formatter",
+                            "max-failure-count" => 10,
+                            "path" => "audit-log.log",
+                            "relative-to" => "jboss.server.data.dir"
+                        }},
+                        "json-formatter" => {"json-formatter" => {
+                            "compact" => false,
+                            "date-format" => "yyyy-MM-dd HH:mm:ss",
+                            "date-separator" => " - ",
+                            "escape-control-characters" => false,
+                            "escape-new-line" => false,
+                            "include-date" => true
+                        }},
+                        "logger" => {"audit-log" => {
+                            "enabled" => false,
+                            "log-boot" => true,
+                            "log-read-only" => false,
+                            "handler" => {"file" => {}}
+                        }},
+                        "periodic-rotating-file-handler" => undefined,
+                        "size-rotating-file-handler" => undefined,
+                        "syslog-handler" => undefined
+                    },
+                    "authorization" => {
+                        "permission-combination-policy" => "permissive",
+                        "provider" => "simple",
+                        "constraint" => {
+                            "application-classification" => {"type" => {
+                                "resource-adapters" => {"classification" => {"resource-adapter" => {
+                                    "configured-application" => undefined,
+                                    "default-application" => false,
+                                    "applies-to" => undefined
+                                }}},
+                                "naming" => {"classification" => {"binding" => {
+                                    "configured-application" => undefined,
+                                    "default-application" => false,
+                                    "applies-to" => undefined
+                                }}},
+                                "datasources" => {"classification" => {
+                                    "data-source" => {
+                                        "configured-application" => undefined,
+                                        "default-application" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "xa-data-source" => {
+                                        "configured-application" => undefined,
+                                        "default-application" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "jdbc-driver" => {
+                                        "configured-application" => undefined,
+                                        "default-application" => false,
+                                        "applies-to" => undefined
+                                    }
+                                }},
+                                "core" => {"classification" => {"deployment" => {
+                                    "configured-application" => undefined,
+                                    "default-application" => true,
+                                    "applies-to" => undefined
+                                }}},
+                                "logging" => {"classification" => {
+                                    "logging-profile" => {
+                                        "configured-application" => undefined,
+                                        "default-application" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "logger" => {
+                                        "configured-application" => undefined,
+                                        "default-application" => false,
+                                        "applies-to" => undefined
+                                    }
+                                }},
+                                "security" => {"classification" => {"security-domain" => {
+                                    "configured-application" => undefined,
+                                    "default-application" => false,
+                                    "applies-to" => undefined
+                                }}},
+                                "messaging" => {"classification" => {
+                                    "jms-topic" => {
+                                        "configured-application" => undefined,
+                                        "default-application" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "jms-queue" => {
+                                        "configured-application" => undefined,
+                                        "default-application" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "queue" => {
+                                        "configured-application" => undefined,
+                                        "default-application" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "security-setting" => {
+                                        "configured-application" => undefined,
+                                        "default-application" => false,
+                                        "applies-to" => undefined
+                                    }
+                                }},
+                                "mail" => {"classification" => {"mail-session" => {
+                                    "configured-application" => undefined,
+                                    "default-application" => false,
+                                    "applies-to" => undefined
+                                }}}
+                            }},
+                            "sensitivity-classification" => {"type" => {
+                                "jdr" => {"classification" => {"jdr" => {
+                                    "configured-requires-addressable" => undefined,
+                                    "configured-requires-read" => undefined,
+                                    "configured-requires-write" => undefined,
+                                    "default-requires-addressable" => false,
+                                    "default-requires-read" => false,
+                                    "default-requires-write" => true,
+                                    "applies-to" => undefined
+                                }}},
+                                "datasources" => {"classification" => {"data-source-security" => {
+                                    "configured-requires-addressable" => undefined,
+                                    "configured-requires-read" => undefined,
+                                    "configured-requires-write" => undefined,
+                                    "default-requires-addressable" => false,
+                                    "default-requires-read" => true,
+                                    "default-requires-write" => true,
+                                    "applies-to" => undefined
+                                }}},
+                                "jmx" => {"classification" => {"jmx" => {
+                                    "configured-requires-addressable" => undefined,
+                                    "configured-requires-read" => undefined,
+                                    "configured-requires-write" => undefined,
+                                    "default-requires-addressable" => false,
+                                    "default-requires-read" => false,
+                                    "default-requires-write" => true,
+                                    "applies-to" => undefined
+                                }}},
+                                "remoting" => {"classification" => {"remoting-security" => {
+                                    "configured-requires-addressable" => undefined,
+                                    "configured-requires-read" => undefined,
+                                    "configured-requires-write" => undefined,
+                                    "default-requires-addressable" => false,
+                                    "default-requires-read" => true,
+                                    "default-requires-write" => true,
+                                    "applies-to" => undefined
+                                }}},
+                                "resource-adapters" => {"classification" => {"resource-adapter-security" => {
+                                    "configured-requires-addressable" => undefined,
+                                    "configured-requires-read" => undefined,
+                                    "configured-requires-write" => undefined,
+                                    "default-requires-addressable" => false,
+                                    "default-requires-read" => true,
+                                    "default-requires-write" => true,
+                                    "applies-to" => undefined
+                                }}},
+                                "undertow" => {"classification" => {
+                                    "web-access-log" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "undertow-handler" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "undertow-filter" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "web-connector" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => false,
+                                        "applies-to" => undefined
+                                    }
+                                }},
+                                "logging" => {"classification" => {"view-server-logs" => {
+                                    "configured-requires-addressable" => undefined,
+                                    "configured-requires-read" => undefined,
+                                    "configured-requires-write" => undefined,
+                                    "default-requires-addressable" => false,
+                                    "default-requires-read" => false,
+                                    "default-requires-write" => false,
+                                    "applies-to" => undefined
+                                }}},
+                                "mail" => {"classification" => {"mail-server-security" => {
+                                    "configured-requires-addressable" => undefined,
+                                    "configured-requires-read" => undefined,
+                                    "configured-requires-write" => undefined,
+                                    "default-requires-addressable" => false,
+                                    "default-requires-read" => false,
+                                    "default-requires-write" => true,
+                                    "applies-to" => undefined
+                                }}},
+                                "messaging" => {"classification" => {
+                                    "messaging-security" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "messaging-management" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    }
+                                }},
+                                "security" => {"classification" => {"misc-security" => {
+                                    "configured-requires-addressable" => undefined,
+                                    "configured-requires-read" => undefined,
+                                    "configured-requires-write" => undefined,
+                                    "default-requires-addressable" => false,
+                                    "default-requires-read" => true,
+                                    "default-requires-write" => true,
+                                    "applies-to" => undefined
+                                }}},
+                                "core" => {"classification" => {
+                                    "domain-names" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "jvm" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "system-property" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "service-container" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "extensions" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "snapshots" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "access-control" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => true,
+                                        "default-requires-read" => true,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "credential" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => true,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "patching" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "socket-binding-ref" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "module-loading" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "management-interfaces" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "security-domain-ref" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => true,
+                                        "default-requires-read" => true,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "security-domain" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => true,
+                                        "default-requires-read" => true,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "security-vault" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => true,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "security-realm-ref" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => true,
+                                        "default-requires-read" => true,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "domain-controller" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "security-realm" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => true,
+                                        "default-requires-read" => true,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "socket-config" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    },
+                                    "read-whole-config" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => true,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    }
+                                }},
+                                "iiop-openjdk" => {"classification" => {"iiop-security" => {
+                                    "configured-requires-addressable" => undefined,
+                                    "configured-requires-read" => undefined,
+                                    "configured-requires-write" => undefined,
+                                    "default-requires-addressable" => false,
+                                    "default-requires-read" => false,
+                                    "default-requires-write" => true,
+                                    "applies-to" => undefined
+                                }}},
+                                "naming" => {"classification" => {
+                                    "naming-binding" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => false,
+                                        "default-requires-write" => false,
+                                        "applies-to" => undefined
+                                    },
+                                    "jndi-view" => {
+                                        "configured-requires-addressable" => undefined,
+                                        "configured-requires-read" => undefined,
+                                        "configured-requires-write" => undefined,
+                                        "default-requires-addressable" => false,
+                                        "default-requires-read" => true,
+                                        "default-requires-write" => true,
+                                        "applies-to" => undefined
+                                    }
+                                }}
+                            }},
+                            "vault-expression" => {
+                                "configured-requires-read" => undefined,
+                                "configured-requires-write" => undefined,
+                                "default-requires-read" => true,
+                                "default-requires-write" => true
+                            }
+                        },
+                        "role-mapping" => {"SuperUser" => {
+                            "include-all" => false,
+                            "exclude" => undefined,
+                            "include" => {"user-$local" => {
+                                "name" => "$local",
+                                "realm" => undefined,
+                                "type" => "USER"
+                            }}
+                        }}
+                    }
+                },
+                "ldap-connection" => undefined,
+                "management-interface" => {"http-interface" => {
+                    "allowed-origins" => undefined,
+                    "console-enabled" => true,
+                    "http-upgrade-enabled" => true,
+                    "interface" => undefined,
+                    "port" => undefined,
+                    "sasl-protocol" => "remote",
+                    "secure-port" => undefined,
+                    "secure-socket-binding" => undefined,
+                    "security-realm" => "ManagementRealm",
+                    "server-name" => undefined,
+                    "socket-binding" => "management-http"
+                }},
+                "security-realm" => {
+                    "ManagementRealm" => {
+                        "map-groups-to-roles" => false,
+                        "authentication" => {
+                            "local" => {
+                                "allowed-users" => undefined,
+                                "default-user" => "$local",
+                                "skip-group-loading" => true
+                            },
+                            "properties" => {
+                                "path" => "mgmt-users.properties",
+                                "plain-text" => false,
+                                "relative-to" => "jboss.server.config.dir"
+                            }
+                        },
+                        "authorization" => {"properties" => {
+                            "path" => "mgmt-groups.properties",
+                            "relative-to" => "jboss.server.config.dir"
+                        }},
+                        "plug-in" => undefined,
+                        "server-identity" => undefined
+                    },
+                    "ApplicationRealm" => {
+                        "map-groups-to-roles" => true,
+                        "authentication" => {
+                            "local" => {
+                                "allowed-users" => "*",
+                                "default-user" => "$local",
+                                "skip-group-loading" => true
+                            },
+                            "properties" => {
+                                "path" => "application-users.properties",
+                                "plain-text" => false,
+                                "relative-to" => "jboss.server.config.dir"
+                            }
+                        },
+                        "authorization" => {"properties" => {
+                            "path" => "application-roles.properties",
+                            "relative-to" => "jboss.server.config.dir"
+                        }},
+                        "plug-in" => undefined,
+                        "server-identity" => undefined
+                    }
+                },
+                "service" => undefined
+            }
+        },
+        "deployment" => {"servlet3-webapp-2.22.2.war" => {
+            "content" => [{"hash" => bytes {
+                0x69, 0xd2, 0x9c, 0x41, 0x01, 0xf8, 0xa4, 0xef,
+                0x3e, 0xc6, 0xb9, 0x23, 0x1b, 0xec, 0xe6, 0x2d,
+                0x87, 0x7a, 0xb0, 0x50
+            }}],
+            "enabled" => true,
+            "enabled-time" => 1537552317575L,
+            "enabled-timestamp" => "2018-09-21 17:51:57,575 UTC",
+            "name" => "servlet3-webapp-2.22.2.war",
+            "owner" => undefined,
+            "persistent" => true,
+            "runtime-name" => "servlet3-webapp-2.22.2.war",
+            "subdeployment" => undefined,
+            "subsystem" => {
+                "undertow" => {
+                    "context-root" => "/servlet3-webapp-2.22.2",
+                    "server" => "default-server",
+                    "virtual-host" => "default-host",
+                    "servlet" => {"org.glassfish.jersey.examples.servlet3.webapp.App" => {
+                        "servlet-class" => "org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher",
+                        "servlet-name" => "org.glassfish.jersey.examples.servlet3.webapp.App"
+                    }}
+                },
+                "jaxrs" => {}
+            }
+        }},
+        "deployment-overlay" => undefined,
+        "extension" => {
+            "org.jboss.as.clustering.infinispan" => {
+                "module" => "org.jboss.as.clustering.infinispan",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.connector" => {
+                "module" => "org.jboss.as.connector",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.deployment-scanner" => {
+                "module" => "org.jboss.as.deployment-scanner",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.ee" => {
+                "module" => "org.jboss.as.ee",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.ejb3" => {
+                "module" => "org.jboss.as.ejb3",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.jaxrs" => {
+                "module" => "org.jboss.as.jaxrs",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.jdr" => {
+                "module" => "org.jboss.as.jdr",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.jmx" => {
+                "module" => "org.jboss.as.jmx",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.jpa" => {
+                "module" => "org.jboss.as.jpa",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.jsf" => {
+                "module" => "org.jboss.as.jsf",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.jsr77" => {
+                "module" => "org.jboss.as.jsr77",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.logging" => {
+                "module" => "org.jboss.as.logging",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.mail" => {
+                "module" => "org.jboss.as.mail",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.messaging" => {
+                "module" => "org.jboss.as.messaging",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.naming" => {
+                "module" => "org.jboss.as.naming",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.pojo" => {
+                "module" => "org.jboss.as.pojo",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.remoting" => {
+                "module" => "org.jboss.as.remoting",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.sar" => {
+                "module" => "org.jboss.as.sar",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.security" => {
+                "module" => "org.jboss.as.security",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.transactions" => {
+                "module" => "org.jboss.as.transactions",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.webservices" => {
+                "module" => "org.jboss.as.webservices",
+                "subsystem" => undefined
+            },
+            "org.jboss.as.weld" => {
+                "module" => "org.jboss.as.weld",
+                "subsystem" => undefined
+            },
+            "org.wildfly.extension.batch" => {
+                "module" => "org.wildfly.extension.batch",
+                "subsystem" => undefined
+            },
+            "org.wildfly.extension.bean-validation" => {
+                "module" => "org.wildfly.extension.bean-validation",
+                "subsystem" => undefined
+            },
+            "org.wildfly.extension.io" => {
+                "module" => "org.wildfly.extension.io",
+                "subsystem" => undefined
+            },
+            "org.wildfly.extension.request-controller" => {
+                "module" => "org.wildfly.extension.request-controller",
+                "subsystem" => undefined
+            },
+            "org.wildfly.extension.security.manager" => {
+                "module" => "org.wildfly.extension.security.manager",
+                "subsystem" => undefined
+            },
+            "org.wildfly.extension.undertow" => {
+                "module" => "org.wildfly.extension.undertow",
+                "subsystem" => undefined
+            },
+            "org.wildfly.iiop-openjdk" => {
+                "module" => "org.wildfly.iiop-openjdk",
+                "subsystem" => undefined
+            }
+        },
+        "interface" => {
+            "management" => {
+                "any" => undefined,
+                "any-address" => true,
+                "inet-address" => undefined,
+                "link-local-address" => undefined,
+                "loopback" => undefined,
+                "loopback-address" => undefined,
+                "multicast" => undefined,
+                "name" => "management",
+                "nic" => undefined,
+                "nic-match" => undefined,
+                "not" => undefined,
+                "point-to-point" => undefined,
+                "public-address" => undefined,
+                "site-local-address" => undefined,
+                "subnet-match" => undefined,
+                "up" => undefined,
+                "virtual" => undefined
+            },
+            "public" => {
+                "any" => undefined,
+                "any-address" => true,
+                "inet-address" => undefined,
+                "link-local-address" => undefined,
+                "loopback" => undefined,
+                "loopback-address" => undefined,
+                "multicast" => undefined,
+                "name" => "public",
+                "nic" => undefined,
+                "nic-match" => undefined,
+                "not" => undefined,
+                "point-to-point" => undefined,
+                "public-address" => undefined,
+                "site-local-address" => undefined,
+                "subnet-match" => undefined,
+                "up" => undefined,
+                "virtual" => undefined
+            },
+            "unsecure" => {
+                "any" => undefined,
+                "any-address" => undefined,
+                "inet-address" => expression "${jboss.bind.address.unsecure:127.0.0.1}",
+                "link-local-address" => undefined,
+                "loopback" => undefined,
+                "loopback-address" => undefined,
+                "multicast" => undefined,
+                "name" => "unsecure",
+                "nic" => undefined,
+                "nic-match" => undefined,
+                "not" => undefined,
+                "point-to-point" => undefined,
+                "public-address" => undefined,
+                "site-local-address" => undefined,
+                "subnet-match" => undefined,
+                "up" => undefined,
+                "virtual" => undefined
+            }
+        },
+        "path" => {
+            "jboss.server.temp.dir" => {
+                "name" => "jboss.server.temp.dir",
+                "path" => "/usr/lib/wildfly-9.0.2.Final/standalone/tmp",
+                "read-only" => true,
+                "relative-to" => undefined
+            },
+            "user.home" => {
+                "name" => "user.home",
+                "path" => "/home/jboss",
+                "read-only" => true,
+                "relative-to" => undefined
+            },
+            "jboss.server.base.dir" => {
+                "name" => "jboss.server.base.dir",
+                "path" => "/usr/lib/wildfly-9.0.2.Final/standalone",
+                "read-only" => true,
+                "relative-to" => undefined
+            },
+            "java.home" => {
+                "name" => "java.home",
+                "path" => "/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.191.x86_64/jre",
+                "read-only" => true,
+                "relative-to" => undefined
+            },
+            "user.dir" => {
+                "name" => "user.dir",
+                "path" => "/",
+                "read-only" => true,
+                "relative-to" => undefined
+            },
+            "jboss.server.data.dir" => {
+                "name" => "jboss.server.data.dir",
+                "path" => "/usr/lib/wildfly-9.0.2.Final/standalone/data",
+                "read-only" => true,
+                "relative-to" => undefined
+            },
+            "jboss.home.dir" => {
+                "name" => "jboss.home.dir",
+                "path" => "/usr/lib/wildfly-9.0.2.Final",
+                "read-only" => true,
+                "relative-to" => undefined
+            },
+            "jboss.server.log.dir" => {
+                "name" => "jboss.server.log.dir",
+                "path" => "/usr/lib/wildfly-9.0.2.Final/standalone/log",
+                "read-only" => true,
+                "relative-to" => undefined
+            },
+            "jboss.server.config.dir" => {
+                "name" => "jboss.server.config.dir",
+                "path" => "/usr/lib/wildfly-9.0.2.Final/standalone/configuration",
+                "read-only" => true,
+                "relative-to" => undefined
+            },
+            "jboss.controller.temp.dir" => {
+                "name" => "jboss.controller.temp.dir",
+                "path" => "/usr/lib/wildfly-9.0.2.Final/standalone/tmp",
+                "read-only" => true,
+                "relative-to" => undefined
+            }
+        },
+        "socket-binding-group" => {"standard-sockets" => {
+            "default-interface" => "public",
+            "name" => "standard-sockets",
+            "port-offset" => expression "${jboss.socket.binding.port-offset:0}",
+            "local-destination-outbound-socket-binding" => undefined,
+            "remote-destination-outbound-socket-binding" => {"mail-smtp" => {
+                "fixed-source-port" => false,
+                "host" => "localhost",
+                "port" => 25,
+                "source-interface" => undefined,
+                "source-port" => undefined
+            }},
+            "socket-binding" => {
+                "management-http" => {
+                    "client-mappings" => undefined,
+                    "fixed-port" => false,
+                    "interface" => "management",
+                    "multicast-address" => undefined,
+                    "multicast-port" => undefined,
+                    "name" => "management-http",
+                    "port" => expression "${jboss.management.http.port:9990}"
+                },
+                "management-https" => {
+                    "client-mappings" => undefined,
+                    "fixed-port" => false,
+                    "interface" => "management",
+                    "multicast-address" => undefined,
+                    "multicast-port" => undefined,
+                    "name" => "management-https",
+                    "port" => expression "${jboss.management.https.port:9993}"
+                },
+                "ajp" => {
+                    "client-mappings" => undefined,
+                    "fixed-port" => false,
+                    "interface" => undefined,
+                    "multicast-address" => undefined,
+                    "multicast-port" => undefined,
+                    "name" => "ajp",
+                    "port" => expression "${jboss.ajp.port:8009}"
+                },
+                "http" => {
+                    "client-mappings" => undefined,
+                    "fixed-port" => false,
+                    "interface" => undefined,
+                    "multicast-address" => undefined,
+                    "multicast-port" => undefined,
+                    "name" => "http",
+                    "port" => expression "${jboss.http.port:8080}"
+                },
+                "https" => {
+                    "client-mappings" => undefined,
+                    "fixed-port" => false,
+                    "interface" => undefined,
+                    "multicast-address" => undefined,
+                    "multicast-port" => undefined,
+                    "name" => "https",
+                    "port" => expression "${jboss.https.port:8443}"
+                },
+                "iiop" => {
+                    "client-mappings" => undefined,
+                    "fixed-port" => false,
+                    "interface" => "unsecure",
+                    "multicast-address" => undefined,
+                    "multicast-port" => undefined,
+                    "name" => "iiop",
+                    "port" => 3528
+                },
+                "iiop-ssl" => {
+                    "client-mappings" => undefined,
+                    "fixed-port" => false,
+                    "interface" => "unsecure",
+                    "multicast-address" => undefined,
+                    "multicast-port" => undefined,
+                    "name" => "iiop-ssl",
+                    "port" => 3529
+                },
+                "txn-recovery-environment" => {
+                    "client-mappings" => undefined,
+                    "fixed-port" => false,
+                    "interface" => undefined,
+                    "multicast-address" => undefined,
+                    "multicast-port" => undefined,
+                    "name" => "txn-recovery-environment",
+                    "port" => 4712
+                },
+                "txn-status-manager" => {
+                    "client-mappings" => undefined,
+                    "fixed-port" => false,
+                    "interface" => undefined,
+                    "multicast-address" => undefined,
+                    "multicast-port" => undefined,
+                    "name" => "txn-status-manager",
+                    "port" => 4713
+                }
+            }
+        }},
+        "subsystem" => {
+            "jaxrs" => {},
+            "io" => {
+                "buffer-pool" => {"default" => {
+                    "buffer-size" => undefined,
+                    "buffers-per-slice" => undefined,
+                    "direct-buffers" => undefined
+                }},
+                "worker" => {"default" => {
+                    "io-threads" => undefined,
+                    "stack-size" => 0L,
+                    "task-core-threads" => 2,
+                    "task-keepalive" => 60,
+                    "task-max-threads" => undefined
+                }}
+            },
+            "security-manager" => {"deployment-permissions" => {"default" => {
+                "maximum-set" => {"default" => {"permission" => {"java.security.AllPermission|null|null" => {
+                    "actions" => undefined,
+                    "class" => "java.security.AllPermission",
+                    "module" => undefined,
+                    "name" => undefined
+                }}}},
+                "minimum-set" => undefined
+            }}},
+            "jsf" => {"default-jsf-impl-slot" => "main"},
+            "jca" => {
+                "archive-validation" => {"archive-validation" => {
+                    "enabled" => true,
+                    "fail-on-error" => true,
+                    "fail-on-warn" => false
+                }},
+                "bean-validation" => {"bean-validation" => {"enabled" => true}},
+                "bootstrap-context" => {"default" => {
+                    "name" => "default",
+                    "workmanager" => "default"
+                }},
+                "cached-connection-manager" => {"cached-connection-manager" => {
+                    "debug" => false,
+                    "error" => false,
+                    "ignore-unknown-connections" => false,
+                    "install" => true
+                }},
+                "distributed-workmanager" => undefined,
+                "tracer" => undefined,
+                "workmanager" => {"default" => {
+                    "name" => "default",
+                    "long-running-threads" => {"default" => {
+                        "allow-core-timeout" => false,
+                        "core-threads" => 50,
+                        "handoff-executor" => undefined,
+                        "keepalive-time" => {
+                            "time" => 10L,
+                            "unit" => "SECONDS"
+                        },
+                        "max-threads" => 50,
+                        "name" => "default",
+                        "queue-length" => 50,
+                        "thread-factory" => undefined
+                    }},
+                    "short-running-threads" => {"default" => {
+                        "allow-core-timeout" => false,
+                        "core-threads" => 50,
+                        "handoff-executor" => undefined,
+                        "keepalive-time" => {
+                            "time" => 10L,
+                            "unit" => "SECONDS"
+                        },
+                        "max-threads" => 50,
+                        "name" => "default",
+                        "queue-length" => 50,
+                        "thread-factory" => undefined
+                    }}
+                }}
+            },
+            "jmx" => {
+                "non-core-mbean-sensitivity" => false,
+                "configuration" => undefined,
+                "expose-model" => {
+                    "expression" => {"domain-name" => "jboss.as.expr"},
+                    "resolved" => {
+                        "domain-name" => "jboss.as",
+                        "proper-property-format" => true
+                    }
+                },
+                "remoting-connector" => {"jmx" => {"use-management-endpoint" => true}}
+            },
+            "bean-validation" => {},
+            "iiop-openjdk" => {
+                "add-component-via-interceptor" => true,
+                "auth-method" => "username_password",
+                "caller-propagation" => "none",
+                "client-requires" => "None",
+                "client-supports" => "MutualAuth",
+                "confidentiality" => "none",
+                "detect-misordering" => "none",
+                "detect-replay" => "none",
+                "export-corbaloc" => true,
+                "giop-version" => "1.2",
+                "high-water-mark" => undefined,
+                "integrity" => "none",
+                "number-to-reclaim" => undefined,
+                "persistent-server-id" => "1",
+                "properties" => undefined,
+                "realm" => undefined,
+                "required" => false,
+                "root-context" => "JBoss/Naming/root",
+                "security" => "identity",
+                "security-domain" => undefined,
+                "server-requires" => "None",
+                "server-supports" => "MutualAuth",
+                "socket-binding" => "iiop",
+                "ssl-socket-binding" => "iiop-ssl",
+                "support-ssl" => false,
+                "transactions" => "spec",
+                "trust-in-client" => "none",
+                "trust-in-target" => "none"
+            },
+            "request-controller" => {
+                "active-requests" => undefined,
+                "max-requests" => -1,
+                "track-individual-endpoints" => false
+            },
+            "webservices" => {
+                "modify-wsdl-address" => true,
+                "statistics-enabled" => false,
+                "wsdl-host" => expression "${jboss.bind.address:127.0.0.1}",
+                "wsdl-path-rewrite-rule" => undefined,
+                "wsdl-port" => undefined,
+                "wsdl-secure-port" => undefined,
+                "wsdl-uri-scheme" => undefined,
+                "client-config" => {"Standard-Client-Config" => {
+                    "post-handler-chain" => undefined,
+                    "pre-handler-chain" => undefined,
+                    "property" => undefined
+                }},
+                "endpoint-config" => {
+                    "Standard-Endpoint-Config" => {
+                        "post-handler-chain" => undefined,
+                        "pre-handler-chain" => undefined,
+                        "property" => undefined
+                    },
+                    "Recording-Endpoint-Config" => {
+                        "post-handler-chain" => undefined,
+                        "pre-handler-chain" => {"recording-handlers" => {
+                            "protocol-bindings" => "##SOAP11_HTTP ##SOAP11_HTTP_MTOM ##SOAP12_HTTP ##SOAP12_HTTP_MTOM",
+                            "handler" => {"RecordingHandler" => {"class" => "org.jboss.ws.common.invocation.RecordingServerHandler"}}
+                        }},
+                        "property" => undefined
+                    }
+                }
+            },
+            "sar" => {},
+            "batch" => {
+                "job-repository-type" => "in-memory",
+                "job-repository" => {"jdbc" => {"jndi-name" => undefined}},
+                "thread-factory" => undefined,
+                "thread-pool" => {"batch" => {
+                    "keepalive-time" => {
+                        "time" => 30L,
+                        "unit" => "SECONDS"
+                    },
+                    "max-threads" => 10,
+                    "name" => "batch",
+                    "thread-factory" => undefined
+                }}
+            },
+            "remoting" => {
+                "worker-read-threads" => 1,
+                "worker-task-core-threads" => 4,
+                "worker-task-keepalive" => 60,
+                "worker-task-limit" => 16384,
+                "worker-task-max-threads" => 16,
+                "worker-write-threads" => 1,
+                "configuration" => {"endpoint" => {
+                    "auth-realm" => undefined,
+                    "authentication-retries" => 3,
+                    "authorize-id" => undefined,
+                    "buffer-region-size" => undefined,
+                    "heartbeat-interval" => 2147483647,
+                    "max-inbound-channels" => 40,
+                    "max-inbound-message-size" => 9223372036854775807L,
+                    "max-inbound-messages" => 80,
+                    "max-outbound-channels" => 40,
+                    "max-outbound-message-size" => 9223372036854775807L,
+                    "max-outbound-messages" => 65535,
+                    "receive-buffer-size" => 8192,
+                    "receive-window-size" => 131072,
+                    "sasl-protocol" => "remoting",
+                    "send-buffer-size" => 8192,
+                    "server-name" => undefined,
+                    "transmit-window-size" => 131072,
+                    "worker" => "default"
+                }},
+                "connector" => undefined,
+                "http-connector" => {"http-remoting-connector" => {
+                    "authentication-provider" => undefined,
+                    "connector-ref" => "default",
+                    "sasl-protocol" => "remote",
+                    "security-realm" => "ApplicationRealm",
+                    "server-name" => undefined,
+                    "property" => undefined,
+                    "security" => undefined
+                }},
+                "local-outbound-connection" => undefined,
+                "outbound-connection" => undefined,
+                "remote-outbound-connection" => undefined
+            },
+            "infinispan" => {"cache-container" => {
+                "server" => {
+                    "aliases" => undefined,
+                    "default-cache" => "default",
+                    "eviction-executor" => undefined,
+                    "jndi-name" => undefined,
+                    "listener-executor" => undefined,
+                    "module" => "org.wildfly.clustering.server",
+                    "replication-queue-executor" => undefined,
+                    "start" => "LAZY",
+                    "statistics-enabled" => false,
+                    "distributed-cache" => undefined,
+                    "invalidation-cache" => undefined,
+                    "local-cache" => {"default" => {
+                        "batching" => false,
+                        "indexing" => "NONE",
+                        "indexing-properties" => undefined,
+                        "jndi-name" => undefined,
+                        "module" => undefined,
+                        "start" => "LAZY",
+                        "statistics-enabled" => false,
+                        "binary-keyed-jdbc-store" => undefined,
+                        "eviction" => undefined,
+                        "expiration" => undefined,
+                        "file-store" => undefined,
+                        "locking" => undefined,
+                        "mixed-keyed-jdbc-store" => undefined,
+                        "remote-store" => undefined,
+                        "store" => undefined,
+                        "string-keyed-jdbc-store" => undefined,
+                        "transaction" => {"TRANSACTION" => {
+                            "locking" => "PESSIMISTIC",
+                            "mode" => "BATCH",
+                            "stop-timeout" => 30000
+                        }}
+                    }},
+                    "replicated-cache" => undefined,
+                    "transport" => undefined
+                },
+                "web" => {
+                    "aliases" => undefined,
+                    "default-cache" => "passivation",
+                    "eviction-executor" => undefined,
+                    "jndi-name" => undefined,
+                    "listener-executor" => undefined,
+                    "module" => "org.wildfly.clustering.web.infinispan",
+                    "replication-queue-executor" => undefined,
+                    "start" => "LAZY",
+                    "statistics-enabled" => false,
+                    "distributed-cache" => undefined,
+                    "invalidation-cache" => undefined,
+                    "local-cache" => {
+                        "passivation" => {
+                            "batching" => false,
+                            "indexing" => "NONE",
+                            "indexing-properties" => undefined,
+                            "jndi-name" => undefined,
+                            "module" => undefined,
+                            "start" => "LAZY",
+                            "statistics-enabled" => false,
+                            "binary-keyed-jdbc-store" => undefined,
+                            "eviction" => undefined,
+                            "expiration" => undefined,
+                            "file-store" => {"FILE_STORE" => {
+                                "fetch-state" => true,
+                                "passivation" => true,
+                                "path" => undefined,
+                                "preload" => false,
+                                "properties" => [],
+                                "purge" => false,
+                                "relative-to" => "jboss.server.data.dir",
+                                "shared" => false,
+                                "singleton" => false,
+                                "property" => undefined,
+                                "write-behind" => undefined
+                            }},
+                            "locking" => {"LOCKING" => {
+                                "acquire-timeout" => 15000L,
+                                "concurrency-level" => 1000,
+                                "isolation" => "REPEATABLE_READ",
+                                "striping" => false
+                            }},
+                            "mixed-keyed-jdbc-store" => undefined,
+                            "remote-store" => undefined,
+                            "store" => undefined,
+                            "string-keyed-jdbc-store" => undefined,
+                            "transaction" => {"TRANSACTION" => {
+                                "locking" => "PESSIMISTIC",
+                                "mode" => "BATCH",
+                                "stop-timeout" => 30000
+                            }}
+                        },
+                        "persistent" => {
+                            "batching" => false,
+                            "indexing" => "NONE",
+                            "indexing-properties" => undefined,
+                            "jndi-name" => undefined,
+                            "module" => undefined,
+                            "start" => "LAZY",
+                            "statistics-enabled" => false,
+                            "binary-keyed-jdbc-store" => undefined,
+                            "eviction" => undefined,
+                            "expiration" => undefined,
+                            "file-store" => {"FILE_STORE" => {
+                                "fetch-state" => true,
+                                "passivation" => false,
+                                "path" => undefined,
+                                "preload" => false,
+                                "properties" => [],
+                                "purge" => false,
+                                "relative-to" => "jboss.server.data.dir",
+                                "shared" => false,
+                                "singleton" => false,
+                                "property" => undefined,
+                                "write-behind" => undefined
+                            }},
+                            "locking" => {"LOCKING" => {
+                                "acquire-timeout" => 15000L,
+                                "concurrency-level" => 1000,
+                                "isolation" => "REPEATABLE_READ",
+                                "striping" => false
+                            }},
+                            "mixed-keyed-jdbc-store" => undefined,
+                            "remote-store" => undefined,
+                            "store" => undefined,
+                            "string-keyed-jdbc-store" => undefined,
+                            "transaction" => {"TRANSACTION" => {
+                                "locking" => "PESSIMISTIC",
+                                "mode" => "BATCH",
+                                "stop-timeout" => 30000
+                            }}
+                        }
+                    },
+                    "replicated-cache" => undefined,
+                    "transport" => undefined
+                },
+                "ejb" => {
+                    "aliases" => ["sfsb"],
+                    "default-cache" => "passivation",
+                    "eviction-executor" => undefined,
+                    "jndi-name" => undefined,
+                    "listener-executor" => undefined,
+                    "module" => "org.wildfly.clustering.ejb.infinispan",
+                    "replication-queue-executor" => undefined,
+                    "start" => "LAZY",
+                    "statistics-enabled" => false,
+                    "distributed-cache" => undefined,
+                    "invalidation-cache" => undefined,
+                    "local-cache" => {
+                        "passivation" => {
+                            "batching" => false,
+                            "indexing" => "NONE",
+                            "indexing-properties" => undefined,
+                            "jndi-name" => undefined,
+                            "module" => undefined,
+                            "start" => "LAZY",
+                            "statistics-enabled" => false,
+                            "binary-keyed-jdbc-store" => undefined,
+                            "eviction" => undefined,
+                            "expiration" => undefined,
+                            "file-store" => {"FILE_STORE" => {
+                                "fetch-state" => true,
+                                "passivation" => true,
+                                "path" => undefined,
+                                "preload" => false,
+                                "properties" => [],
+                                "purge" => false,
+                                "relative-to" => "jboss.server.data.dir",
+                                "shared" => false,
+                                "singleton" => false,
+                                "property" => undefined,
+                                "write-behind" => undefined
+                            }},
+                            "locking" => {"LOCKING" => {
+                                "acquire-timeout" => 15000L,
+                                "concurrency-level" => 1000,
+                                "isolation" => "REPEATABLE_READ",
+                                "striping" => false
+                            }},
+                            "mixed-keyed-jdbc-store" => undefined,
+                            "remote-store" => undefined,
+                            "store" => undefined,
+                            "string-keyed-jdbc-store" => undefined,
+                            "transaction" => {"TRANSACTION" => {
+                                "locking" => "PESSIMISTIC",
+                                "mode" => "BATCH",
+                                "stop-timeout" => 30000
+                            }}
+                        },
+                        "persistent" => {
+                            "batching" => false,
+                            "indexing" => "NONE",
+                            "indexing-properties" => undefined,
+                            "jndi-name" => undefined,
+                            "module" => undefined,
+                            "start" => "LAZY",
+                            "statistics-enabled" => false,
+                            "binary-keyed-jdbc-store" => undefined,
+                            "eviction" => undefined,
+                            "expiration" => undefined,
+                            "file-store" => {"FILE_STORE" => {
+                                "fetch-state" => true,
+                                "passivation" => false,
+                                "path" => undefined,
+                                "preload" => false,
+                                "properties" => [],
+                                "purge" => false,
+                                "relative-to" => "jboss.server.data.dir",
+                                "shared" => false,
+                                "singleton" => false,
+                                "property" => undefined,
+                                "write-behind" => undefined
+                            }},
+                            "locking" => {"LOCKING" => {
+                                "acquire-timeout" => 15000L,
+                                "concurrency-level" => 1000,
+                                "isolation" => "REPEATABLE_READ",
+                                "striping" => false
+                            }},
+                            "mixed-keyed-jdbc-store" => undefined,
+                            "remote-store" => undefined,
+                            "store" => undefined,
+                            "string-keyed-jdbc-store" => undefined,
+                            "transaction" => {"TRANSACTION" => {
+                                "locking" => "PESSIMISTIC",
+                                "mode" => "BATCH",
+                                "stop-timeout" => 30000
+                            }}
+                        }
+                    },
+                    "replicated-cache" => undefined,
+                    "transport" => undefined
+                },
+                "hibernate" => {
+                    "aliases" => undefined,
+                    "default-cache" => "local-query",
+                    "eviction-executor" => undefined,
+                    "jndi-name" => undefined,
+                    "listener-executor" => undefined,
+                    "module" => "org.hibernate.infinispan",
+                    "replication-queue-executor" => undefined,
+                    "start" => "LAZY",
+                    "statistics-enabled" => false,
+                    "distributed-cache" => undefined,
+                    "invalidation-cache" => undefined,
+                    "local-cache" => {
+                        "local-query" => {
+                            "batching" => false,
+                            "indexing" => "NONE",
+                            "indexing-properties" => undefined,
+                            "jndi-name" => undefined,
+                            "module" => undefined,
+                            "start" => "LAZY",
+                            "statistics-enabled" => false,
+                            "binary-keyed-jdbc-store" => undefined,
+                            "eviction" => {"EVICTION" => {
+                                "max-entries" => 10000L,
+                                "strategy" => "LRU"
+                            }},
+                            "expiration" => {"EXPIRATION" => {
+                                "interval" => 60000L,
+                                "lifespan" => -1L,
+                                "max-idle" => 100000L
+                            }},
+                            "file-store" => undefined,
+                            "locking" => undefined,
+                            "mixed-keyed-jdbc-store" => undefined,
+                            "remote-store" => undefined,
+                            "store" => undefined,
+                            "string-keyed-jdbc-store" => undefined,
+                            "transaction" => undefined
+                        },
+                        "entity" => {
+                            "batching" => false,
+                            "indexing" => "NONE",
+                            "indexing-properties" => undefined,
+                            "jndi-name" => undefined,
+                            "module" => undefined,
+                            "start" => "LAZY",
+                            "statistics-enabled" => false,
+                            "binary-keyed-jdbc-store" => undefined,
+                            "eviction" => {"EVICTION" => {
+                                "max-entries" => 10000L,
+                                "strategy" => "LRU"
+                            }},
+                            "expiration" => {"EXPIRATION" => {
+                                "interval" => 60000L,
+                                "lifespan" => -1L,
+                                "max-idle" => 100000L
+                            }},
+                            "file-store" => undefined,
+                            "locking" => undefined,
+                            "mixed-keyed-jdbc-store" => undefined,
+                            "remote-store" => undefined,
+                            "store" => undefined,
+                            "string-keyed-jdbc-store" => undefined,
+                            "transaction" => {"TRANSACTION" => {
+                                "locking" => "PESSIMISTIC",
+                                "mode" => "NON_XA",
+                                "stop-timeout" => 30000
+                            }}
+                        },
+                        "timestamps" => {
+                            "batching" => false,
+                            "indexing" => "NONE",
+                            "indexing-properties" => undefined,
+                            "jndi-name" => undefined,
+                            "module" => undefined,
+                            "start" => "LAZY",
+                            "statistics-enabled" => false,
+                            "binary-keyed-jdbc-store" => undefined,
+                            "eviction" => undefined,
+                            "expiration" => undefined,
+                            "file-store" => undefined,
+                            "locking" => undefined,
+                            "mixed-keyed-jdbc-store" => undefined,
+                            "remote-store" => undefined,
+                            "store" => undefined,
+                            "string-keyed-jdbc-store" => undefined,
+                            "transaction" => undefined
+                        }
+                    },
+                    "replicated-cache" => undefined,
+                    "transport" => undefined
+                }
+            }},
+            "weld" => {
+                "non-portable-mode" => false,
+                "require-bean-descriptor" => false
+            },
+            "ejb3" => {
+                "default-clustered-sfsb-cache" => undefined,
+                "default-distinct-name" => undefined,
+                "default-entity-bean-instance-pool" => undefined,
+                "default-entity-bean-optimistic-locking" => undefined,
+                "default-mdb-instance-pool" => "mdb-strict-max-pool",
+                "default-missing-method-permissions-deny-access" => true,
+                "default-resource-adapter-name" => expression "${ejb.resource-adapter-name:hornetq-ra.rar}",
+                "default-security-domain" => "other",
+                "default-sfsb-cache" => "simple",
+                "default-sfsb-passivation-disabled-cache" => "simple",
+                "default-singleton-bean-access-timeout" => 5000L,
+                "default-slsb-instance-pool" => undefined,
+                "default-stateful-bean-access-timeout" => 5000L,
+                "disable-default-ejb-permissions" => true,
+                "enable-statistics" => undefined,
+                "in-vm-remote-interface-invocation-pass-by-value" => true,
+                "log-system-exceptions" => true,
+                "cache" => {
+                    "simple" => {
+                        "aliases" => undefined,
+                        "passivation-store" => undefined
+                    },
+                    "distributable" => {
+                        "aliases" => [
+                            "passivating",
+                            "clustered"
+                        ],
+                        "passivation-store" => "infinispan"
+                    }
+                },
+                "cluster-passivation-store" => undefined,
+                "file-passivation-store" => undefined,
+                "passivation-store" => {"infinispan" => {
+                    "bean-cache" => undefined,
+                    "cache-container" => "ejb",
+                    "max-size" => 10000
+                }},
+                "remoting-profile" => undefined,
+                "service" => {
+                    "async" => {"thread-pool-name" => "default"},
+                    "iiop" => {
+                        "enable-by-default" => false,
+                        "use-qualified-name" => false
+                    },
+                    "remote" => {
+                        "connector-ref" => "http-remoting-connector",
+                        "thread-pool-name" => "default",
+                        "channel-creation-options" => undefined
+                    },
+                    "timer-service" => {
+                        "default-data-store" => "default-file-store",
+                        "thread-pool-name" => "default",
+                        "database-data-store" => undefined,
+                        "file-data-store" => {"default-file-store" => {
+                            "path" => "timer-service-data",
+                            "relative-to" => "jboss.server.data.dir"
+                        }}
+                    }
+                },
+                "strict-max-bean-instance-pool" => {
+                    "slsb-strict-max-pool" => {
+                        "max-pool-size" => 20,
+                        "timeout" => 5L,
+                        "timeout-unit" => "MINUTES"
+                    },
+                    "mdb-strict-max-pool" => {
+                        "max-pool-size" => 20,
+                        "timeout" => 5L,
+                        "timeout-unit" => "MINUTES"
+                    }
+                },
+                "thread-pool" => {"default" => {
+                    "keepalive-time" => {
+                        "time" => 100L,
+                        "unit" => "MILLISECONDS"
+                    },
+                    "max-threads" => 10,
+                    "name" => "default",
+                    "thread-factory" => undefined
+                }}
+            },
+            "transactions" => {
+                "default-timeout" => 300,
+                "enable-statistics" => false,
+                "enable-tsm-status" => false,
+                "hornetq-store-enable-async-io" => false,
+                "jdbc-action-store-drop-table" => false,
+                "jdbc-action-store-table-prefix" => undefined,
+                "jdbc-communication-store-drop-table" => false,
+                "jdbc-communication-store-table-prefix" => undefined,
+                "jdbc-state-store-drop-table" => false,
+                "jdbc-state-store-table-prefix" => undefined,
+                "jdbc-store-datasource" => undefined,
+                "jts" => false,
+                "node-identifier" => "1",
+                "object-store-path" => "tx-object-store",
+                "object-store-relative-to" => "jboss.server.data.dir",
+                "path" => "var",
+                "process-id-socket-binding" => undefined,
+                "process-id-socket-max-ports" => 10,
+                "process-id-uuid" => true,
+                "recovery-listener" => false,
+                "relative-to" => "jboss.server.data.dir",
+                "socket-binding" => "txn-recovery-environment",
+                "statistics-enabled" => false,
+                "status-socket-binding" => "txn-status-manager",
+                "use-hornetq-store" => false,
+                "use-jdbc-store" => false,
+                "commit-markable-resource" => undefined,
+                "log-store" => {"log-store" => {
+                    "expose-all-logs" => false,
+                    "type" => "default",
+                    "transactions" => undefined
+                }}
+            },
+            "datasources" => {
+                "data-source" => {
+                    "ExampleDS" => {
+                        "allocation-retry" => undefined,
+                        "allocation-retry-wait-millis" => undefined,
+                        "allow-multiple-users" => false,
+                        "background-validation" => undefined,
+                        "background-validation-millis" => undefined,
+                        "blocking-timeout-wait-millis" => undefined,
+                        "capacity-decrementer-class" => undefined,
+                        "capacity-decrementer-properties" => undefined,
+                        "capacity-incrementer-class" => undefined,
+                        "capacity-incrementer-properties" => undefined,
+                        "check-valid-connection-sql" => undefined,
+                        "connectable" => false,
+                        "connection-listener-class" => undefined,
+                        "connection-listener-property" => undefined,
+                        "connection-properties" => undefined,
+                        "connection-url" => "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+                        "datasource-class" => undefined,
+                        "driver-class" => undefined,
+                        "driver-name" => "h2",
+                        "enabled" => true,
+                        "exception-sorter-class-name" => undefined,
+                        "exception-sorter-properties" => undefined,
+                        "flush-strategy" => undefined,
+                        "idle-timeout-minutes" => undefined,
+                        "initial-pool-size" => undefined,
+                        "jndi-name" => "java:jboss/datasources/ExampleDS",
+                        "jta" => true,
+                        "max-pool-size" => undefined,
+                        "min-pool-size" => undefined,
+                        "new-connection-sql" => undefined,
+                        "password" => "sa",
+                        "pool-prefill" => undefined,
+                        "pool-use-strict-min" => undefined,
+                        "prepared-statements-cache-size" => undefined,
+                        "query-timeout" => undefined,
+                        "reauth-plugin-class-name" => undefined,
+                        "reauth-plugin-properties" => undefined,
+                        "security-domain" => undefined,
+                        "set-tx-query-timeout" => false,
+                        "share-prepared-statements" => false,
+                        "spy" => false,
+                        "stale-connection-checker-class-name" => undefined,
+                        "stale-connection-checker-properties" => undefined,
+                        "statistics-enabled" => false,
+                        "track-statements" => "NOWARN",
+                        "tracking" => false,
+                        "transaction-isolation" => undefined,
+                        "url-delimiter" => undefined,
+                        "url-selector-strategy-class-name" => undefined,
+                        "use-ccm" => true,
+                        "use-fast-fail" => false,
+                        "use-java-context" => true,
+                        "use-try-lock" => undefined,
+                        "user-name" => "sa",
+                        "valid-connection-checker-class-name" => undefined,
+                        "valid-connection-checker-properties" => undefined,
+                        "validate-on-match" => undefined,
+                        "statistics" => undefined
+                    },
+                    "test-datasource" => {
+                        "allocation-retry" => undefined,
+                        "allocation-retry-wait-millis" => undefined,
+                        "allow-multiple-users" => false,
+                        "background-validation" => false,
+                        "background-validation-millis" => undefined,
+                        "blocking-timeout-wait-millis" => undefined,
+                        "capacity-decrementer-class" => undefined,
+                        "capacity-decrementer-properties" => undefined,
+                        "capacity-incrementer-class" => undefined,
+                        "capacity-incrementer-properties" => undefined,
+                        "check-valid-connection-sql" => undefined,
+                        "connectable" => false,
+                        "connection-listener-class" => undefined,
+                        "connection-listener-property" => undefined,
+                        "connection-properties" => undefined,
+                        "connection-url" => "jdbc:h2:mem:///testing-gg",
+                        "datasource-class" => undefined,
+                        "driver-class" => undefined,
+                        "driver-name" => "h2",
+                        "enabled" => true,
+                        "exception-sorter-class-name" => undefined,
+                        "exception-sorter-properties" => undefined,
+                        "flush-strategy" => undefined,
+                        "idle-timeout-minutes" => undefined,
+                        "initial-pool-size" => undefined,
+                        "jndi-name" => "java:jboss/datasources/test-datasource",
+                        "jta" => true,
+                        "max-pool-size" => 50,
+                        "min-pool-size" => 1,
+                        "new-connection-sql" => undefined,
+                        "password" => "test-password",
+                        "pool-prefill" => undefined,
+                        "pool-use-strict-min" => undefined,
+                        "prepared-statements-cache-size" => 0L,
+                        "query-timeout" => undefined,
+                        "reauth-plugin-class-name" => undefined,
+                        "reauth-plugin-properties" => undefined,
+                        "security-domain" => undefined,
+                        "set-tx-query-timeout" => false,
+                        "share-prepared-statements" => false,
+                        "spy" => false,
+                        "stale-connection-checker-class-name" => undefined,
+                        "stale-connection-checker-properties" => undefined,
+                        "statistics-enabled" => false,
+                        "track-statements" => "NOWARN",
+                        "tracking" => false,
+                        "transaction-isolation" => undefined,
+                        "url-delimiter" => undefined,
+                        "url-selector-strategy-class-name" => undefined,
+                        "use-ccm" => true,
+                        "use-fast-fail" => false,
+                        "use-java-context" => true,
+                        "use-try-lock" => undefined,
+                        "user-name" => "test-username",
+                        "valid-connection-checker-class-name" => undefined,
+                        "valid-connection-checker-properties" => undefined,
+                        "validate-on-match" => false,
+                        "statistics" => undefined
+                    }
+                },
+                "jdbc-driver" => {"h2" => {
+                    "deployment-name" => undefined,
+                    "driver-class-name" => undefined,
+                    "driver-datasource-class-name" => undefined,
+                    "driver-major-version" => undefined,
+                    "driver-minor-version" => undefined,
+                    "driver-module-name" => "com.h2database.h2",
+                    "driver-name" => "h2",
+                    "driver-xa-datasource-class-name" => "org.h2.jdbcx.JdbcDataSource",
+                    "jdbc-compliant" => undefined,
+                    "module-slot" => undefined,
+                    "profile" => undefined,
+                    "xa-datasource-class" => undefined
+                }},
+                "xa-data-source" => {"test-xa-datasource" => {
+                    "allocation-retry" => undefined,
+                    "allocation-retry-wait-millis" => undefined,
+                    "allow-multiple-users" => false,
+                    "background-validation" => false,
+                    "background-validation-millis" => undefined,
+                    "blocking-timeout-wait-millis" => undefined,
+                    "capacity-decrementer-class" => undefined,
+                    "capacity-decrementer-properties" => undefined,
+                    "capacity-incrementer-class" => undefined,
+                    "capacity-incrementer-properties" => undefined,
+                    "check-valid-connection-sql" => undefined,
+                    "connectable" => false,
+                    "connection-listener-class" => undefined,
+                    "connection-listener-property" => undefined,
+                    "driver-name" => "h2",
+                    "enabled" => true,
+                    "exception-sorter-class-name" => undefined,
+                    "exception-sorter-properties" => undefined,
+                    "flush-strategy" => undefined,
+                    "idle-timeout-minutes" => undefined,
+                    "initial-pool-size" => undefined,
+                    "interleaving" => false,
+                    "jndi-name" => "java:jboss/datasources/test-xa-datasource",
+                    "max-pool-size" => 50,
+                    "min-pool-size" => 1,
+                    "new-connection-sql" => undefined,
+                    "no-recovery" => undefined,
+                    "no-tx-separate-pool" => false,
+                    "pad-xid" => false,
+                    "password" => "test-password",
+                    "pool-prefill" => undefined,
+                    "pool-use-strict-min" => undefined,
+                    "prepared-statements-cache-size" => 0L,
+                    "query-timeout" => undefined,
+                    "reauth-plugin-class-name" => undefined,
+                    "reauth-plugin-properties" => undefined,
+                    "recovery-password" => undefined,
+                    "recovery-plugin-class-name" => undefined,
+                    "recovery-plugin-properties" => undefined,
+                    "recovery-security-domain" => undefined,
+                    "recovery-username" => undefined,
+                    "same-rm-override" => true,
+                    "security-domain" => undefined,
+                    "set-tx-query-timeout" => false,
+                    "share-prepared-statements" => false,
+                    "spy" => false,
+                    "stale-connection-checker-class-name" => undefined,
+                    "stale-connection-checker-properties" => undefined,
+                    "statistics-enabled" => false,
+                    "track-statements" => "NOWARN",
+                    "tracking" => false,
+                    "transaction-isolation" => undefined,
+                    "url-delimiter" => undefined,
+                    "url-property" => undefined,
+                    "url-selector-strategy-class-name" => undefined,
+                    "use-ccm" => true,
+                    "use-fast-fail" => false,
+                    "use-java-context" => true,
+                    "use-try-lock" => undefined,
+                    "user-name" => "test-username",
+                    "valid-connection-checker-class-name" => undefined,
+                    "valid-connection-checker-properties" => undefined,
+                    "validate-on-match" => false,
+                    "wrap-xa-resource" => true,
+                    "xa-datasource-class" => undefined,
+                    "xa-resource-timeout" => undefined,
+                    "statistics" => undefined,
+                    "xa-datasource-properties" => {"URL" => {"value" => "jdbc:h2:mem:///testing-xa;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"}}
+                }}
+            },
+            "deployment-scanner" => {"scanner" => {"default" => {
+                "auto-deploy-exploded" => false,
+                "auto-deploy-xml" => true,
+                "auto-deploy-zipped" => true,
+                "deployment-timeout" => 600,
+                "path" => "deployments",
+                "relative-to" => "jboss.server.base.dir",
+                "runtime-failure-causes-rollback" => expression "${jboss.deployment.scanner.rollback.on.failure:false}",
+                "scan-enabled" => true,
+                "scan-interval" => 5000
+            }}},
+            "logging" => {
+                "add-logging-api-dependencies" => true,
+                "use-deployment-logging-config" => true,
+                "async-handler" => undefined,
+                "console-handler" => {"CONSOLE" => {
+                    "autoflush" => true,
+                    "enabled" => true,
+                    "encoding" => undefined,
+                    "filter" => undefined,
+                    "filter-spec" => undefined,
+                    "formatter" => "%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n",
+                    "level" => "INFO",
+                    "name" => "CONSOLE",
+                    "named-formatter" => "COLOR-PATTERN",
+                    "target" => "System.out"
+                }},
+                "custom-formatter" => undefined,
+                "custom-handler" => undefined,
+                "file-handler" => undefined,
+                "log-file" => undefined,
+                "logger" => {
+                    "com.arjuna" => {
+                        "category" => "com.arjuna",
+                        "filter" => undefined,
+                        "filter-spec" => undefined,
+                        "handlers" => undefined,
+                        "level" => "WARN",
+                        "use-parent-handlers" => true
+                    },
+                    "org.apache.tomcat.util.modeler" => {
+                        "category" => "org.apache.tomcat.util.modeler",
+                        "filter" => undefined,
+                        "filter-spec" => undefined,
+                        "handlers" => undefined,
+                        "level" => "WARN",
+                        "use-parent-handlers" => true
+                    },
+                    "org.jboss.as.config" => {
+                        "category" => "org.jboss.as.config",
+                        "filter" => undefined,
+                        "filter-spec" => undefined,
+                        "handlers" => undefined,
+                        "level" => "DEBUG",
+                        "use-parent-handlers" => true
+                    },
+                    "sun.rmi" => {
+                        "category" => "sun.rmi",
+                        "filter" => undefined,
+                        "filter-spec" => undefined,
+                        "handlers" => undefined,
+                        "level" => "WARN",
+                        "use-parent-handlers" => true
+                    },
+                    "jacorb" => {
+                        "category" => "jacorb",
+                        "filter" => undefined,
+                        "filter-spec" => undefined,
+                        "handlers" => undefined,
+                        "level" => "WARN",
+                        "use-parent-handlers" => true
+                    },
+                    "jacorb.config" => {
+                        "category" => "jacorb.config",
+                        "filter" => undefined,
+                        "filter-spec" => undefined,
+                        "handlers" => undefined,
+                        "level" => "ERROR",
+                        "use-parent-handlers" => true
+                    }
+                },
+                "logging-profile" => undefined,
+                "pattern-formatter" => {
+                    "PATTERN" => {
+                        "color-map" => undefined,
+                        "pattern" => "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"
+                    },
+                    "COLOR-PATTERN" => {
+                        "color-map" => undefined,
+                        "pattern" => "%K{level}%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"
+                    }
+                },
+                "periodic-rotating-file-handler" => {"FILE" => {
+                    "append" => true,
+                    "autoflush" => true,
+                    "enabled" => true,
+                    "encoding" => undefined,
+                    "file" => {
+                        "relative-to" => "jboss.server.log.dir",
+                        "path" => "server.log"
+                    },
+                    "filter" => undefined,
+                    "filter-spec" => undefined,
+                    "formatter" => "%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n",
+                    "level" => "ALL",
+                    "name" => "FILE",
+                    "named-formatter" => "PATTERN",
+                    "suffix" => ".yyyy-MM-dd"
+                }},
+                "periodic-size-rotating-file-handler" => undefined,
+                "root-logger" => {"ROOT" => {
+                    "filter" => undefined,
+                    "filter-spec" => undefined,
+                    "handlers" => [
+                        "CONSOLE",
+                        "FILE"
+                    ],
+                    "level" => "INFO"
+                }},
+                "size-rotating-file-handler" => undefined,
+                "syslog-handler" => undefined
+            },
+            "jdr" => {},
+            "undertow" => {
+                "default-server" => "default-server",
+                "default-servlet-container" => "default",
+                "default-virtual-host" => "default-host",
+                "instance-id" => expression "${jboss.node.name}",
+                "statistics-enabled" => false,
+                "buffer-cache" => {"default" => {
+                    "buffer-size" => 1024,
+                    "buffers-per-region" => 1024,
+                    "max-regions" => 10
+                }},
+                "configuration" => {
+                    "handler" => {
+                        "file" => {"welcome-content" => {
+                            "cache-buffer-size" => 1024,
+                            "cache-buffers" => 1024,
+                            "directory-listing" => false,
+                            "path" => expression "${jboss.home.dir}/welcome-content"
+                        }},
+                        "reverse-proxy" => undefined
+                    },
+                    "filter" => {
+                        "basic-auth" => undefined,
+                        "connection-limit" => undefined,
+                        "custom-filter" => undefined,
+                        "error-page" => undefined,
+                        "gzip" => undefined,
+                        "mod-cluster" => undefined,
+                        "response-header" => {
+                            "server-header" => {
+                                "header-name" => "Server",
+                                "header-value" => "WildFly/9"
+                            },
+                            "x-powered-by-header" => {
+                                "header-name" => "X-Powered-By",
+                                "header-value" => "Undertow/1"
+                            }
+                        }
+                    }
+                },
+                "server" => {"default-server" => {
+                    "default-host" => "default-host",
+                    "servlet-container" => "default",
+                    "ajp-listener" => undefined,
+                    "host" => {"default-host" => {
+                        "alias" => ["localhost"],
+                        "default-web-module" => "ROOT.war",
+                        "filter-ref" => {
+                            "server-header" => {
+                                "predicate" => undefined,
+                                "priority" => 1
+                            },
+                            "x-powered-by-header" => {
+                                "predicate" => undefined,
+                                "priority" => 1
+                            }
+                        },
+                        "location" => {"/" => {
+                            "handler" => "welcome-content",
+                            "filter-ref" => undefined
+                        }},
+                        "setting" => undefined
+                    }},
+                    "http-listener" => {"default" => {
+                        "allow-encoded-slash" => false,
+                        "allow-equals-in-cookie-value" => false,
+                        "always-set-keep-alive" => true,
+                        "buffer-pipelined-data" => true,
+                        "buffer-pool" => "default",
+                        "certificate-forwarding" => false,
+                        "decode-url" => true,
+                        "enable-http2" => false,
+                        "enabled" => true,
+                        "max-buffered-request-size" => 16384,
+                        "max-cookies" => 200,
+                        "max-header-size" => 1048576,
+                        "max-headers" => 200,
+                        "max-parameters" => 1000,
+                        "max-post-size" => 10485760L,
+                        "no-request-timeout" => undefined,
+                        "proxy-address-forwarding" => false,
+                        "read-timeout" => undefined,
+                        "receive-buffer" => undefined,
+                        "record-request-start-time" => false,
+                        "redirect-socket" => "https",
+                        "request-parse-timeout" => undefined,
+                        "resolve-peer-address" => false,
+                        "send-buffer" => undefined,
+                        "socket-binding" => "http",
+                        "tcp-backlog" => undefined,
+                        "tcp-keep-alive" => undefined,
+                        "url-charset" => "UTF-8",
+                        "worker" => "default",
+                        "write-timeout" => undefined
+                    }},
+                    "https-listener" => undefined
+                }},
+                "servlet-container" => {"default" => {
+                    "allow-non-standard-wrappers" => false,
+                    "default-buffer-cache" => "default",
+                    "default-encoding" => undefined,
+                    "default-session-timeout" => 30,
+                    "disable-caching-for-secured-pages" => true,
+                    "eager-filter-initialization" => false,
+                    "ignore-flush" => false,
+                    "stack-trace-on-error" => "local-only",
+                    "use-listener-encoding" => false,
+                    "setting" => {
+                        "websockets" => {
+                            "buffer-pool" => "default",
+                            "dispatch-to-worker" => true,
+                            "worker" => "default"
+                        },
+                        "jsp" => {
+                            "check-interval" => 0,
+                            "development" => false,
+                            "disabled" => false,
+                            "display-source-fragment" => true,
+                            "dump-smap" => false,
+                            "error-on-use-bean-invalid-class-attribute" => false,
+                            "generate-strings-as-char-arrays" => false,
+                            "java-encoding" => "UTF8",
+                            "keep-generated" => true,
+                            "mapped-file" => true,
+                            "modification-test-interval" => 4,
+                            "recompile-on-fail" => false,
+                            "scratch-dir" => undefined,
+                            "smap" => true,
+                            "source-vm" => "1.7",
+                            "tag-pooling" => true,
+                            "target-vm" => "1.7",
+                            "trim-spaces" => false,
+                            "x-powered-by" => true
+                        }
+                    }
+                }}
+            },
+            "messaging" => {
+                "hornetq-server" => {"default" => {
+                    "allow-failback" => true,
+                    "async-connection-execution-enabled" => true,
+                    "backup" => false,
+                    "backup-group-name" => undefined,
+                    "check-for-live-server" => false,
+                    "cluster-password" => "CHANGE ME!!",
+                    "cluster-user" => "HORNETQ.CLUSTER.ADMIN.USER",
+                    "clustered" => false,
+                    "connection-ttl-override" => -1L,
+                    "create-bindings-dir" => true,
+                    "create-journal-dir" => true,
+                    "failback-delay" => 5000L,
+                    "failover-on-shutdown" => false,
+                    "id-cache-size" => 20000,
+                    "jmx-domain" => "org.hornetq",
+                    "jmx-management-enabled" => false,
+                    "journal-buffer-size" => undefined,
+                    "journal-buffer-timeout" => undefined,
+                    "journal-compact-min-files" => 10,
+                    "journal-compact-percentage" => 30,
+                    "journal-file-size" => 102400L,
+                    "journal-max-io" => undefined,
+                    "journal-min-files" => 2,
+                    "journal-sync-non-transactional" => true,
+                    "journal-sync-transactional" => true,
+                    "journal-type" => "ASYNCIO",
+                    "live-connector-ref" => undefined,
+                    "log-journal-write-rate" => false,
+                    "management-address" => "jms.queue.hornetq.management",
+                    "management-notification-address" => "hornetq.notifications",
+                    "max-saved-replicated-journal-size" => 2,
+                    "memory-measure-interval" => -1L,
+                    "memory-warning-threshold" => 25,
+                    "message-counter-enabled" => false,
+                    "message-counter-max-day-history" => 10,
+                    "message-counter-sample-period" => 10000L,
+                    "message-expiry-scan-period" => 30000L,
+                    "message-expiry-thread-priority" => 3,
+                    "override-in-vm-security" => true,
+                    "page-max-concurrent-io" => 5,
+                    "perf-blast-pages" => -1,
+                    "persist-delivery-count-before-delivery" => false,
+                    "persist-id-cache" => true,
+                    "persistence-enabled" => true,
+                    "remoting-incoming-interceptors" => undefined,
+                    "remoting-interceptors" => undefined,
+                    "remoting-outgoing-interceptors" => undefined,
+                    "replication-clustername" => undefined,
+                    "run-sync-speed-test" => false,
+                    "scheduled-thread-pool-max-size" => 5,
+                    "security-domain" => "other",
+                    "security-enabled" => true,
+                    "security-invalidation-interval" => 10000L,
+                    "server-dump-interval" => -1L,
+                    "shared-store" => true,
+                    "statistics-enabled" => false,
+                    "thread-pool-max-size" => 30,
+                    "transaction-timeout" => 300000L,
+                    "transaction-timeout-scan-period" => 1000L,
+                    "wild-card-routing-enabled" => true,
+                    "acceptor" => undefined,
+                    "address-setting" => {"#" => {
+                        "address-full-policy" => "PAGE",
+                        "dead-letter-address" => "jms.queue.DLQ",
+                        "expiry-address" => "jms.queue.ExpiryQueue",
+                        "expiry-delay" => -1L,
+                        "last-value-queue" => false,
+                        "max-delivery-attempts" => 10,
+                        "max-redelivery-delay" => 0L,
+                        "max-size-bytes" => 10485760L,
+                        "message-counter-history-day-limit" => 10,
+                        "page-max-cache-size" => 5,
+                        "page-size-bytes" => 2097152L,
+                        "redelivery-delay" => 0L,
+                        "redelivery-multiplier" => 1.0,
+                        "redistribution-delay" => -1L,
+                        "send-to-dla-on-no-route" => false,
+                        "slow-consumer-check-period" => 5L,
+                        "slow-consumer-policy" => "NOTIFY",
+                        "slow-consumer-threshold" => -1L
+                    }},
+                    "bridge" => undefined,
+                    "broadcast-group" => undefined,
+                    "cluster-connection" => undefined,
+                    "connection-factory" => {
+                        "InVmConnectionFactory" => {
+                            "auto-group" => false,
+                            "block-on-acknowledge" => false,
+                            "block-on-durable-send" => true,
+                            "block-on-non-durable-send" => false,
+                            "cache-large-message-client" => false,
+                            "call-failover-timeout" => -1L,
+                            "call-timeout" => 30000L,
+                            "client-failure-check-period" => 30000L,
+                            "client-id" => undefined,
+                            "compress-large-messages" => false,
+                            "confirmation-window-size" => -1,
+                            "connection-load-balancing-policy-class-name" => "org.hornetq.api.core.client.loadbalance.RoundRobinConnectionLoadBalancingPolicy",
+                            "connection-ttl" => 60000L,
+                            "connector" => {"in-vm" => undefined},
+                            "consumer-max-rate" => -1,
+                            "consumer-window-size" => 1048576,
+                            "discovery-group-name" => undefined,
+                            "discovery-initial-wait-timeout" => undefined,
+                            "dups-ok-batch-size" => 1048576,
+                            "entries" => ["java:/ConnectionFactory"],
+                            "factory-type" => "GENERIC",
+                            "failover-on-initial-connection" => false,
+                            "failover-on-server-shutdown" => undefined,
+                            "group-id" => undefined,
+                            "ha" => false,
+                            "max-retry-interval" => 2000L,
+                            "min-large-message-size" => 102400,
+                            "pre-acknowledge" => false,
+                            "producer-max-rate" => -1,
+                            "producer-window-size" => 65536,
+                            "reconnect-attempts" => 0,
+                            "retry-interval" => 2000L,
+                            "retry-interval-multiplier" => 1.0,
+                            "scheduled-thread-pool-max-size" => 5,
+                            "thread-pool-max-size" => 30,
+                            "transaction-batch-size" => 1048576,
+                            "use-global-pools" => true
+                        },
+                        "RemoteConnectionFactory" => {
+                            "auto-group" => false,
+                            "block-on-acknowledge" => false,
+                            "block-on-durable-send" => true,
+                            "block-on-non-durable-send" => false,
+                            "cache-large-message-client" => false,
+                            "call-failover-timeout" => -1L,
+                            "call-timeout" => 30000L,
+                            "client-failure-check-period" => 30000L,
+                            "client-id" => undefined,
+                            "compress-large-messages" => false,
+                            "confirmation-window-size" => -1,
+                            "connection-load-balancing-policy-class-name" => "org.hornetq.api.core.client.loadbalance.RoundRobinConnectionLoadBalancingPolicy",
+                            "connection-ttl" => 60000L,
+                            "connector" => {"http-connector" => undefined},
+                            "consumer-max-rate" => -1,
+                            "consumer-window-size" => 1048576,
+                            "discovery-group-name" => undefined,
+                            "discovery-initial-wait-timeout" => undefined,
+                            "dups-ok-batch-size" => 1048576,
+                            "entries" => ["java:jboss/exported/jms/RemoteConnectionFactory"],
+                            "factory-type" => "GENERIC",
+                            "failover-on-initial-connection" => false,
+                            "failover-on-server-shutdown" => undefined,
+                            "group-id" => undefined,
+                            "ha" => false,
+                            "max-retry-interval" => 2000L,
+                            "min-large-message-size" => 102400,
+                            "pre-acknowledge" => false,
+                            "producer-max-rate" => -1,
+                            "producer-window-size" => 65536,
+                            "reconnect-attempts" => 0,
+                            "retry-interval" => 2000L,
+                            "retry-interval-multiplier" => 1.0,
+                            "scheduled-thread-pool-max-size" => 5,
+                            "thread-pool-max-size" => 30,
+                            "transaction-batch-size" => 1048576,
+                            "use-global-pools" => true
+                        }
+                    },
+                    "connector" => undefined,
+                    "connector-service" => undefined,
+                    "core-address" => undefined,
+                    "discovery-group" => undefined,
+                    "divert" => undefined,
+                    "grouping-handler" => undefined,
+                    "http-acceptor" => {
+                        "http-acceptor" => {
+                            "http-listener" => "default",
+                            "param" => undefined
+                        },
+                        "http-acceptor-throughput" => {
+                            "http-listener" => "default",
+                            "param" => {
+                                "batch-delay" => {"value" => "50"},
+                                "direct-deliver" => {"value" => "false"}
+                            }
+                        }
+                    },
+                    "http-connector" => {
+                        "http-connector" => {
+                            "socket-binding" => "http",
+                            "param" => {"http-upgrade-endpoint" => {"value" => "http-acceptor"}}
+                        },
+                        "http-connector-throughput" => {
+                            "socket-binding" => "http",
+                            "param" => {
+                                "http-upgrade-endpoint" => {"value" => "http-acceptor-throughput"},
+                                "batch-delay" => {"value" => "50"}
+                            }
+                        }
+                    },
+                    "in-vm-acceptor" => {"in-vm" => {
+                        "server-id" => 0,
+                        "param" => undefined
+                    }},
+                    "in-vm-connector" => {"in-vm" => {
+                        "server-id" => 0,
+                        "param" => undefined
+                    }},
+                    "jms-queue" => {
+                        "ExpiryQueue" => {
+                            "durable" => true,
+                            "entries" => ["java:/jms/queue/ExpiryQueue"],
+                            "selector" => undefined
+                        },
+                        "DLQ" => {
+                            "durable" => true,
+                            "entries" => ["java:/jms/queue/DLQ"],
+                            "selector" => undefined
+                        }
+                    },
+                    "jms-topic" => undefined,
+                    "path" => {
+                        "journal-directory" => {
+                            "path" => "messagingjournal",
+                            "relative-to" => "jboss.server.data.dir"
+                        },
+                        "paging-directory" => {
+                            "path" => "messagingpaging",
+                            "relative-to" => "jboss.server.data.dir"
+                        },
+                        "large-messages-directory" => {
+                            "path" => "messaginglargemessages",
+                            "relative-to" => "jboss.server.data.dir"
+                        },
+                        "bindings-directory" => {
+                            "path" => "messagingbindings",
+                            "relative-to" => "jboss.server.data.dir"
+                        }
+                    },
+                    "pooled-connection-factory" => {"hornetq-ra" => {
+                        "auto-group" => false,
+                        "block-on-acknowledge" => false,
+                        "block-on-durable-send" => true,
+                        "block-on-non-durable-send" => false,
+                        "cache-large-message-client" => false,
+                        "call-failover-timeout" => -1L,
+                        "call-timeout" => 30000L,
+                        "client-failure-check-period" => 30000L,
+                        "client-id" => undefined,
+                        "compress-large-messages" => false,
+                        "confirmation-window-size" => -1,
+                        "connection-load-balancing-policy-class-name" => "org.hornetq.api.core.client.loadbalance.RoundRobinConnectionLoadBalancingPolicy",
+                        "connection-ttl" => 60000L,
+                        "connector" => {"in-vm" => undefined},
+                        "consumer-max-rate" => -1,
+                        "consumer-window-size" => 1048576,
+                        "discovery-group-name" => undefined,
+                        "discovery-initial-wait-timeout" => undefined,
+                        "dups-ok-batch-size" => 1048576,
+                        "entries" => [
+                            "java:/JmsXA",
+                            "java:jboss/DefaultJMSConnectionFactory"
+                        ],
+                        "failover-on-initial-connection" => false,
+                        "failover-on-server-shutdown" => undefined,
+                        "group-id" => undefined,
+                        "ha" => false,
+                        "initial-connect-attempts" => 1,
+                        "initial-message-packet-size" => 1500,
+                        "jndi-params" => undefined,
+                        "max-pool-size" => -1,
+                        "max-retry-interval" => 2000L,
+                        "min-large-message-size" => 102400,
+                        "min-pool-size" => -1,
+                        "password" => undefined,
+                        "pre-acknowledge" => false,
+                        "producer-max-rate" => -1,
+                        "producer-window-size" => 65536,
+                        "reconnect-attempts" => -1,
+                        "retry-interval" => 2000L,
+                        "retry-interval-multiplier" => 1.0,
+                        "scheduled-thread-pool-max-size" => 5,
+                        "setup-attempts" => undefined,
+                        "setup-interval" => undefined,
+                        "thread-pool-max-size" => 30,
+                        "transaction" => "xa",
+                        "transaction-batch-size" => 1048576,
+                        "use-auto-recovery" => true,
+                        "use-global-pools" => true,
+                        "use-jndi" => undefined,
+                        "use-local-tx" => undefined,
+                        "user" => undefined
+                    }},
+                    "queue" => undefined,
+                    "remote-acceptor" => undefined,
+                    "remote-connector" => undefined,
+                    "runtime-queue" => undefined,
+                    "security-setting" => {"#" => {"role" => {"guest" => {
+                        "consume" => true,
+                        "create-durable-queue" => false,
+                        "create-non-durable-queue" => true,
+                        "delete-durable-queue" => false,
+                        "delete-non-durable-queue" => true,
+                        "manage" => false,
+                        "send" => true
+                    }}}}
+                }},
+                "jms-bridge" => undefined
+            },
+            "pojo" => {},
+            "jpa" => {
+                "default-datasource" => "",
+                "default-extended-persistence-inheritance" => "DEEP"
+            },
+            "naming" => {
+                "binding" => undefined,
+                "service" => {"remote-naming" => {}}
+            },
+            "ee" => {
+                "annotation-property-replacement" => false,
+                "ear-subdeployments-isolated" => false,
+                "global-modules" => undefined,
+                "jboss-descriptor-property-replacement" => true,
+                "spec-descriptor-property-replacement" => false,
+                "context-service" => {"default" => {
+                    "jndi-name" => "java:jboss/ee/concurrency/context/default",
+                    "use-transaction-setup-provider" => true
+                }},
+                "managed-executor-service" => {"default" => {
+                    "context-service" => "default",
+                    "core-threads" => 5,
+                    "hung-task-threshold" => 60000L,
+                    "jndi-name" => "java:jboss/ee/concurrency/executor/default",
+                    "keepalive-time" => 5000L,
+                    "long-running-tasks" => false,
+                    "max-threads" => 25,
+                    "queue-length" => 0,
+                    "reject-policy" => "ABORT",
+                    "thread-factory" => undefined
+                }},
+                "managed-scheduled-executor-service" => {"default" => {
+                    "context-service" => "default",
+                    "core-threads" => 2,
+                    "hung-task-threshold" => 60000L,
+                    "jndi-name" => "java:jboss/ee/concurrency/scheduler/default",
+                    "keepalive-time" => 3000L,
+                    "long-running-tasks" => false,
+                    "reject-policy" => "ABORT",
+                    "thread-factory" => undefined
+                }},
+                "managed-thread-factory" => {"default" => {
+                    "context-service" => "default",
+                    "jndi-name" => "java:jboss/ee/concurrency/factory/default",
+                    "priority" => 5
+                }},
+                "service" => {"default-bindings" => {
+                    "context-service" => "java:jboss/ee/concurrency/context/default",
+                    "datasource" => "java:jboss/datasources/ExampleDS",
+                    "jms-connection-factory" => "java:jboss/DefaultJMSConnectionFactory",
+                    "managed-executor-service" => "java:jboss/ee/concurrency/executor/default",
+                    "managed-scheduled-executor-service" => "java:jboss/ee/concurrency/scheduler/default",
+                    "managed-thread-factory" => "java:jboss/ee/concurrency/factory/default"
+                }}
+            },
+            "mail" => {"mail-session" => {"default" => {
+                "debug" => false,
+                "from" => undefined,
+                "jndi-name" => "java:jboss/mail/Default",
+                "custom" => undefined,
+                "server" => {"smtp" => {
+                    "outbound-socket-binding-ref" => "mail-smtp",
+                    "password" => undefined,
+                    "ssl" => false,
+                    "tls" => false,
+                    "username" => undefined
+                }}
+            }}},
+            "jsr77" => {},
+            "resource-adapters" => {"resource-adapter" => undefined},
+            "security" => {
+                "deep-copy-subject-mode" => false,
+                "security-domain" => {
+                    "other" => {
+                        "cache-type" => "default",
+                        "acl" => undefined,
+                        "audit" => undefined,
+                        "authentication" => {"classic" => {
+                            "login-modules" => [
+                                {
+                                    "code" => "Remoting",
+                                    "flag" => "optional",
+                                    "module" => undefined,
+                                    "module-options" => {"password-stacking" => "useFirstPass"}
+                                },
+                                {
+                                    "code" => "RealmDirect",
+                                    "flag" => "required",
+                                    "module" => undefined,
+                                    "module-options" => {"password-stacking" => "useFirstPass"}
+                                }
+                            ],
+                            "login-module" => {
+                                "Remoting" => {
+                                    "code" => "Remoting",
+                                    "flag" => "optional",
+                                    "module" => undefined,
+                                    "module-options" => {"password-stacking" => "useFirstPass"}
+                                },
+                                "RealmDirect" => {
+                                    "code" => "RealmDirect",
+                                    "flag" => "required",
+                                    "module" => undefined,
+                                    "module-options" => {"password-stacking" => "useFirstPass"}
+                                }
+                            }
+                        }},
+                        "authorization" => undefined,
+                        "identity-trust" => undefined,
+                        "jsse" => undefined,
+                        "mapping" => undefined
+                    },
+                    "jboss-web-policy" => {
+                        "cache-type" => "default",
+                        "acl" => undefined,
+                        "audit" => undefined,
+                        "authentication" => undefined,
+                        "authorization" => {"classic" => {
+                            "policy-modules" => [{
+                                "code" => "Delegating",
+                                "flag" => "required",
+                                "module" => undefined,
+                                "module-options" => undefined
+                            }],
+                            "policy-module" => {"Delegating" => {
+                                "code" => "Delegating",
+                                "flag" => "required",
+                                "module" => undefined,
+                                "module-options" => undefined
+                            }}
+                        }},
+                        "identity-trust" => undefined,
+                        "jsse" => undefined,
+                        "mapping" => undefined
+                    },
+                    "jboss-ejb-policy" => {
+                        "cache-type" => "default",
+                        "acl" => undefined,
+                        "audit" => undefined,
+                        "authentication" => undefined,
+                        "authorization" => {"classic" => {
+                            "policy-modules" => [{
+                                "code" => "Delegating",
+                                "flag" => "required",
+                                "module" => undefined,
+                                "module-options" => undefined
+                            }],
+                            "policy-module" => {"Delegating" => {
+                                "code" => "Delegating",
+                                "flag" => "required",
+                                "module" => undefined,
+                                "module-options" => undefined
+                            }}
+                        }},
+                        "identity-trust" => undefined,
+                        "jsse" => undefined,
+                        "mapping" => undefined
+                    }
+                },
+                "vault" => undefined
+            }
+        },
+        "system-property" => undefined
+    }
+}

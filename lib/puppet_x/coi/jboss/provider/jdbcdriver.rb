@@ -7,13 +7,13 @@ module PuppetX::Coi::Jboss::Provider::Jdbcdriver
     map = get_attribs_map
 
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{name}:add(#{cmdlize_attribs_map map})"
-    bringUp 'JDBC-Driver', cmd
+    bring_up 'JDBC-Driver', cmd
   end
 
   # Method to remove jdbc-driver from Jboss instance.
   def destroy
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:remove"
-    bringDown 'JDBC-Driver', cmd
+    bring_down 'JDBC-Driver', cmd
   end
 
   # Method to check if there is jdbc-driver.
@@ -21,7 +21,7 @@ module PuppetX::Coi::Jboss::Provider::Jdbcdriver
   def exists?
     @data = {}
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:read-resource(recursive=true)"
-    res = executeAndGet cmd
+    res = execute_and_get cmd
     if(res[:result] == false)
         Puppet.debug("JDBC Driver #{@resource[:name]} does NOT exist")
         return false
@@ -39,7 +39,7 @@ module PuppetX::Coi::Jboss::Provider::Jdbcdriver
   def setattrib name, value
     Puppet.debug(name + ' setting to ' + value)
     cmd = compilecmd "/subsystem=datasources/jdbc-driver=#{@resource[:name]}:write-attribute(name=#{name}, value=#{value})"
-    res = executeAndGet cmd
+    res = execute_and_get cmd
     Puppet.debug res.inspect
     if not res[:result]
       raise "Cannot set #{name}: #{res[:data]}"

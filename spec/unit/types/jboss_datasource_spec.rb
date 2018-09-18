@@ -4,7 +4,6 @@ describe 'jboss_datasource', :type => :type do
   let(:described_class) { Puppet::Type.type(:jboss_datasource) }
   subject { described_class }
   it { expect(subject).not_to be_nil }
-  let(:ex_class) { Puppet.version > '3.0.0' ? Puppet::ResourceError : Puppet::Error }
 
   def extend_params(given)
     {
@@ -19,7 +18,7 @@ describe 'jboss_datasource', :type => :type do
       let(:params) { extend_params({ :controller => :undef }) }
       it do
         expect { type }.to raise_error(
-          ex_class,
+          Puppet::Error,
           'Parameter controller failed on Jboss_datasource[spec-datasource]: Domain controller must be provided'
         )
       end
@@ -31,7 +30,7 @@ describe 'jboss_datasource', :type => :type do
       let(:params) { extend_params(:port => 'an invalid port') }
       it do
         expect { type }.to raise_error(
-          ex_class,
+          Puppet::Error,
           'Parameter port failed on Jboss_datasource[spec-datasource]: Datasource port is invalid, given "an invalid port"'
         )
       end
@@ -40,7 +39,7 @@ describe 'jboss_datasource', :type => :type do
       let(:params) { extend_params(:port => '5x45') }
       it do
         expect { type }.to raise_error(
-          ex_class,
+          Puppet::Error,
           'Parameter port failed on Jboss_datasource[spec-datasource]: Datasource port is invalid, given "5x45"'
         )
       end
@@ -63,7 +62,7 @@ describe 'jboss_datasource', :type => :type do
       let(:params) { extend_params(:host => ' ') }
       it do
         expect { type }.to raise_error(
-          ex_class,
+          Puppet::Error,
           'Parameter host failed on Jboss_datasource[spec-datasource]: Datasource host is invalid, given " "'
         )
       end
@@ -72,7 +71,7 @@ describe 'jboss_datasource', :type => :type do
       let(:params) { extend_params(:host => 'an invalid host') }
       it do
         expect { type }.to raise_error(
-          ex_class,
+          Puppet::Error,
           'Parameter host failed on Jboss_datasource[spec-datasource]: Datasource host is invalid, given "an invalid host"'
         )
       end
@@ -159,9 +158,10 @@ describe 'jboss_datasource', :type => :type do
       let(:options) { 'an invalid text' }
       it do
         expect { type }.to raise_error(
-          ex_class,
-          'Parameter options failed on Jboss_datasource[spec-datasource]: You can pass only hash-like' \
-          ' objects or absent and undef values, given "an invalid text"'
+          Puppet::Error,
+          'Parameter options failed on Jboss_datasource[spec-datasource]: ' \
+          'You can pass only hash-like objects or absent and undef values, ' \
+          'given "an invalid text"'
         )
       end
     end
@@ -169,7 +169,7 @@ describe 'jboss_datasource', :type => :type do
       let(:options) { true }
       it do
         expect { type }.to raise_error(
-          ex_class,
+          Puppet::Error,
           'Parameter options failed on Jboss_datasource[spec-datasource]: You can pass only hash-like' \
           ' objects or absent and undef values, given true'
         )

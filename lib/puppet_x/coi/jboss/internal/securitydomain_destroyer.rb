@@ -16,9 +16,11 @@ class PuppetX::Coi::Jboss::Internal::SecurityDomainDestroyer
   # @param {resource} resource standard Puppet resource
   def destroy(resource)
     Puppet.debug('Destroy method')
-    compiled_cmd = @compilator.compile(@resource[:runasdomain],
-                                       @resource[:profile],
-                                       "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:remove()")
-    @cli_executor.executeWithFail('SecurityDomain', compiled_cmd, 'to destroy', resource)
+    compiled_cmd = @compilator.compile(
+      @resource[:runasdomain],
+      @resource[:profile],
+      "/subsystem=security/security-domain=#{@resource[:name]}/authentication=classic:remove()"
+    )
+    @cli_executor.execute_with_fail('SecurityDomain', compiled_cmd, 'to destroy', resource)
   end
 end
