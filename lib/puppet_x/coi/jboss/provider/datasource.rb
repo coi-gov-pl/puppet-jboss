@@ -25,21 +25,21 @@ module PuppetX::Coi::Jboss::Provider::Datasource
       cmd.push "--#{attribute}=#{value.inspect}"
     end
 
-    bringUp 'Datasource', cmd.join(' ')
+    bring_up 'Datasource', cmd.join(' ')
     setenabled true
   end
 
   # Method that remove datasource from JBoss instance
   def destroy
     cmd = "#{create_delete_cmd} remove --name=#{@resource[:name]}"
-    bringDown 'Datasource', cmd
+    bring_down 'Datasource', cmd
   end
 
   # Method that control whether given data source should be enabled or not
   def setenabled setting
     Puppet.debug "setenabled #{setting.inspect}"
     cmd = compilecmd "#{datasource_path}:read-attribute(name=enabled)"
-    res = executeAndGet cmd
+    res = execute_and_get cmd
     enabled = res[:data]
     Puppet.debug "Enabling datasource #{@resource[:name]} = #{enabled}: #{setting}"
     if enabled != setting
@@ -48,7 +48,7 @@ module PuppetX::Coi::Jboss::Provider::Datasource
       else
         cmd = compilecmd "#{datasource_path}:disable(persistent=true)"
       end
-      bringUp "Datasource enable set to #{setting.to_s}", cmd
+      bring_up "Datasource enable set to #{setting.to_s}", cmd
     end
   end
 
@@ -84,7 +84,7 @@ module PuppetX::Coi::Jboss::Provider::Datasource
     end
     @data = nil
     cmd = compilecmd "#{datasource_path}:read-resource(recursive=true)"
-    res = executeAndGet cmd
+    res = execute_and_get cmd
     if(res[:result] == false)
         Puppet.debug "Datasorce (xa: #{xa?}) `#{@resource[:name]}` does NOT exist"
         return false
@@ -397,10 +397,10 @@ module PuppetX::Coi::Jboss::Provider::Datasource
     cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:read-resource()"
     if execute(cmd)[:result]
       cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:remove()"
-      bringDown "XA Datasource Property " + property.to_s, cmd
+      bring_down "XA Datasource Property " + property.to_s, cmd
     end
     cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{property.to_s}:add(value=#{escape value})"
-    bringUp "XA Datasource Property set " + property.to_s, cmd
+    bring_up "XA Datasource Property set " + property.to_s, cmd
     props = getattrib 'xa-datasource-properties'
     props = {} if props.nil?
     props[property.to_s] = {} if props[property.to_s].nil?
@@ -423,7 +423,7 @@ module PuppetX::Coi::Jboss::Provider::Datasource
     if readed.nil? or readed[key].nil? or bm.blank?
       name = @resource[:name]
       cmd = compilecmd "#{datasource_path}/xa-datasource-properties=#{key}:read-attribute(name=value)"
-      result = executeAndGet cmd
+      result = execute_and_get cmd
       readed[key]['value'] = result[:data]
     end
     return readed[key]['value']

@@ -65,7 +65,7 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
             :result => true,
             :data   => {}
           }
-          expect(provider).to receive(:executeAndGet).with(cmd).and_return(expected_output)
+          expect(provider).to receive(:execute_and_get).with(cmd).and_return(expected_output)
         end
         it { expect(subject).to eq(true) }
       end
@@ -77,7 +77,7 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
           expected_output = {
             :result => false
           }
-          expect(provider).to receive(:executeAndGet).with(cmd).and_return(expected_output)
+          expect(provider).to receive(:execute_and_get).with(cmd).and_return(expected_output)
         end
         it { expect(subject).to eq(false) }
       end
@@ -87,7 +87,7 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
       subject { provider.create }
       before :each do
         cmd = "#{clipath}/resource-adapter=genericconnector.rar:add(archive=\"genericconnector.rar\", transaction-support=\"XATransaction\")"
-        expect(provider).to receive(:executeWithFail).with(
+        expect(provider).to receive(:execute_with_fail).with(
           'Resource adapter',
           cmd,
           'to create'
@@ -101,12 +101,12 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
             'connection-definitions' => {}
           }
         }
-        expect(provider).to receive(:executeAndGet).with(cmd2).and_return(expected_output)
+        expect(provider).to receive(:execute_and_get).with(cmd2).and_return(expected_output)
         cmd3 = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-generic:read-resource()"
         expected_output = {
           :result => false
         }
-        expect(provider).to receive(:executeAndGet).with(cmd3).and_return(expected_output)
+        expect(provider).to receive(:execute_and_get).with(cmd3).and_return(expected_output)
         params = [
           'background-validation=true',
           'class-name="ch.maxant.generic_jca_adapter.ManagedTransactionAssistanceFactory"',
@@ -114,7 +114,7 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
           'security-application=true'
         ].join ', '
         cmd4 = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-generic:add(#{params})"
-        expect(provider).to receive(:executeWithFail).with(
+        expect(provider).to receive(:execute_with_fail).with(
           'Resource adapter connection-definition',
           cmd4,
           'to create'
@@ -127,7 +127,7 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
       subject { provider.destroy }
       before :each do
         cmd = "#{clipath}/resource-adapter=genericconnector.rar:remove()"
-        expect(provider).to receive(:executeWithFail).with(
+        expect(provider).to receive(:execute_with_fail).with(
           'Resource adapter',
           cmd,
           'to remove'
@@ -160,9 +160,9 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
       end
       before :each do
         cmd = "#{clipath}/resource-adapter=genericconnector.rar:read-resource(recursive=true)"
-        expect(provider).to receive(:executeAndGet).with(cmd).and_return({ :result => true })
+        expect(provider).to receive(:execute_and_get).with(cmd).and_return({ :result => true })
         cmd = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-generic:remove()"
-        expect(provider).to receive(:executeWithFail).with(
+        expect(provider).to receive(:execute_with_fail).with(
           'Resource adapter connection-definition',
           cmd,
           'to remove'
@@ -174,7 +174,7 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
           'security-application=true'
         ].join ', '
         cmd = "#{clipath}/resource-adapter=genericconnector.rar/connection-definitions=java\\:\\/jboss\\/jca-xtra:add(#{params})"
-        expect(provider).to receive(:executeWithFail).with(
+        expect(provider).to receive(:execute_with_fail).with(
           'Resource adapter connection-definition',
           cmd,
           'to create'
@@ -199,7 +199,7 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
       before :each do
         op = 'write-attribute(name="archive", value="xa-connector.rar")'
         cmd = "#{clipath}/resource-adapter=genericconnector.rar:#{op}"
-        expect(provider).to receive(:executeAndGet).with(cmd).and_return({ :result => true })
+        expect(provider).to receive(:execute_and_get).with(cmd).and_return({ :result => true })
       end
       it { expect(subject).to eq('xa-connector.rar') }
     end
@@ -274,17 +274,17 @@ describe 'Puppet::Type::Jboss_confignode::ProviderJbosscli' do
           op = 'write-attribute(name="security-application", value=true)'
           el = 'connection-definitions=java\:\/jboss\/jca-generic'
           cmd = "#{clipath}/resource-adapter=genericconnector.rar/#{el}:#{op}"
-          expect(provider).to receive(:executeAndGet).with(cmd).and_return({ :result => true })
+          expect(provider).to receive(:execute_and_get).with(cmd).and_return({ :result => true })
           op = 'undefine-attribute(name=security-domain-and-application)'
           cmd = "#{clipath}/resource-adapter=genericconnector.rar/#{el}:#{op}"
-          expect(provider).to receive(:executeWithFail).with(
+          expect(provider).to receive(:execute_with_fail).with(
             'Resource adapter connection definition attribute security-domain-and-application',
             cmd,
             'to remove'
           )
           op = 'undefine-attribute(name=security-domain)'
           cmd = "#{clipath}/resource-adapter=genericconnector.rar/#{el}:#{op}"
-          expect(provider).to receive(:executeWithFail).with(
+          expect(provider).to receive(:execute_with_fail).with(
             'Resource adapter connection definition attribute security-domain',
             cmd,
             'to remove'

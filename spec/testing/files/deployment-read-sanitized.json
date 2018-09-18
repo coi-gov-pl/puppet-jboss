@@ -1,0 +1,18 @@
+{
+    "outcome": "success",
+    "result": {
+        "content": [{"hash": [105, 210, 156, 65, 1, 248, 164, 239, 62, 198, 185, 35, 27, 236, 230, 45, 135, 122, 176, 80]}],
+        "enabled": true,
+        "enabled-time": 1537385544605,
+        "enabled-timestamp": "2018-09-19 19:32:24,605 UTC",
+        "name": "servlet3-webapp-2.22.2.war",
+        "owner": null,
+        "persistent": true,
+        "runtime-name": "servlet3-webapp-2.22.2.war",
+        "subdeployment": null,
+        "subsystem": {
+            "undertow": null,
+            "jaxrs": null
+        }
+    }
+}

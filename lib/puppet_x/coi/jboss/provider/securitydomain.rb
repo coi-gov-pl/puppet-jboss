@@ -16,14 +16,14 @@ module PuppetX::Coi::Jboss::Provider::SecurityDomain
     Puppet.debug("Commands: #{commands}")
 
     commands.each do |message, command|
-      bringUp(message, command)
+      bring_up(message, command)
     end
   end
 
   # Method to remove security-domain from Jboss instance
   def destroy
     destroyer = ensure_destroyer
-    destroyer.destroy(@resource)[:result]
+    destroyer.destroy(@resource).success?
   end
 
   private
@@ -32,9 +32,11 @@ module PuppetX::Coi::Jboss::Provider::SecurityDomain
   # @return {PuppetX::Coi::Jboss::Internal::SecurityDomainDestroyer} destroyer
   def ensure_destroyer
     cli_executor = ensure_cli_executor
-    @secdom_destroyer = PuppetX::Coi::Jboss::Internal::SecurityDomainDestroyer.new(cli_executor,
-                                                                                    @compilator,
-                                                                                    @resource) if @secdom_destroyer.nil?
+    if @secdom_destroyer.nil?
+      @secdom_destroyer = PuppetX::Coi::Jboss::Internal::SecurityDomainDestroyer.new(
+        cli_executor, @compilator, @resource
+      )
+    end
     @secdom_destroyer
   end
 
@@ -43,10 +45,11 @@ module PuppetX::Coi::Jboss::Provider::SecurityDomain
   def ensure_auditor
     destroyer = ensure_destroyer
     cli_executor = ensure_cli_executor
-    @auditor = PuppetX::Coi::Jboss::Internal::SecurityDomainAuditor.new(@resource,
-                                                                         cli_executor,
-                                                                         @compilator,
-                                                                         destroyer) if @auditor.nil?
+    if @auditor.nil?
+      @auditor = PuppetX::Coi::Jboss::Internal::SecurityDomainAuditor.new(
+        @resource, cli_executor, @compilator, destroyer
+      )
+    end
     @auditor
   end
 
@@ -55,7 +58,9 @@ module PuppetX::Coi::Jboss::Provider::SecurityDomain
   def fetch_commands
     auditor = ensure_auditor
     provider = provider_impl
-    logic_creator = PuppetX::Coi::Jboss::Internal::LogicCreator.new(auditor, @resource, provider, @compilator)
+    logic_creator = PuppetX::Coi::Jboss::Internal::LogicCreator.new(
+      auditor, @resource, provider, @compilator
+    )
     logic_creator.decide
   end
 
@@ -68,11 +73,12 @@ module PuppetX::Coi::Jboss::Provider::SecurityDomain
     require_relative 'securitydomain/post_wildfly_provider'
 
     if @impl.nil?
-      if PuppetX::Coi::Jboss::Configuration.pre_wildfly?
-        @impl = PuppetX::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider.new(@resource, @compilator)
-      else
-        @impl = PuppetX::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider.new(@resource, @compilator)
-      end
+      cls = if PuppetX::Coi::Jboss::Configuration.pre_wildfly?
+              PuppetX::Coi::Jboss::Provider::SecurityDomain::PreWildFlyProvider
+            else
+              PuppetX::Coi::Jboss::Provider::SecurityDomain::PostWildFlyProvider
+            end
+      @impl = cls.new(@resource, @compilator)
     end
     @impl
   end

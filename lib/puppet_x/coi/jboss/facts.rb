@@ -129,7 +129,7 @@ class PuppetX::Coi::Jboss::Facts
       end
       result = Hash[result]
       # array of pids
-      result.map { |k, v| k if v.match(pattern) }.compact.flatten
+      result.reject { |_k, v| v.nil? }.map { |k, v| k if v.match(pattern) }.compact.flatten
     end
 
     def define_facts_on_config(config)

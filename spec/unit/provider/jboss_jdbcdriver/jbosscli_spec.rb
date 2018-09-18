@@ -60,7 +60,7 @@ describe 'mocking default values' do
         bring_up_name = 'JDBC-Driver'
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
 
-        expect(provider).to receive(:bringUp).with(bring_up_name, compiledcmd).and_return(true)
+        expect(provider).to receive(:bring_up).with(bring_up_name, compiledcmd).and_return(true)
       end
 
       subject { provider.create }
@@ -74,7 +74,7 @@ describe 'mocking default values' do
         bring_down_name = 'JDBC-Driver'
 
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
-        expect(provider).to receive(:bringDown).with(bring_down_name, compiledcmd).and_return(true)
+        expect(provider).to receive(:bring_down).with(bring_down_name, compiledcmd).and_return(true)
       end
 
       subject { provider.destroy }
@@ -90,7 +90,7 @@ describe 'mocking default values' do
         }
 
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
-        expect(provider).to receive(:executeAndGet).with(compiledcmd).and_return(expected_output)
+        expect(provider).to receive(:execute_and_get).with(compiledcmd).and_return(expected_output)
       end
 
       subject { provider.exists? }
@@ -106,7 +106,7 @@ describe 'mocking default values' do
         }
 
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
-        expect(provider).to receive(:executeAndGet).with(compiledcmd).and_return(expected_output)
+        expect(provider).to receive(:execute_and_get).with(compiledcmd).and_return(expected_output)
       end
 
       subject { provider.exists? }
@@ -128,7 +128,7 @@ describe 'mocking default values' do
           :lines  => data
         }
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiledcmd)
-        expect(provider).to receive(:executeAndGet).with(compiledcmd).and_return(expected_res)
+        expect(provider).to receive(:execute_and_get).with(compiledcmd).and_return(expected_res)
       end
 
       subject { provider.setattrib 'super-name', 'driver-xa-datasource-class-name' }

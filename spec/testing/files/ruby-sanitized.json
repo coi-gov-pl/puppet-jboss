@@ -1,0 +1,18 @@
+"other": {
+  "acl": null,
+  "audit": null,
+  "authorization": null,
+  "cache-type": "default",
+  "identity-trust": null,
+  "jsse": null,
+  "mapping": null,
+  "authentication": {"classic": {"login-modules": [
+        {
+            "code": "Remoting",
+            "flag": "optional",
+            "module-options": [{"password-stacking": "useFirstPass"}]
+        }
+      ]
+    }
+  }
+}

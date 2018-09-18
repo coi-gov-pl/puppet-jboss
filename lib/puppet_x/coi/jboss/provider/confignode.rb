@@ -7,7 +7,7 @@ module PuppetX::Coi::Jboss::Provider::ConfigNode
     if exists?
       return
     end
-    ret = bringUp 'Configuration node', "#{compiledpath}:add(#{compileprops})"
+    ret = bring_up 'Configuration node', "#{compiledpath}:add(#{compileprops})"
     invalidate
     ret
   end
@@ -21,7 +21,7 @@ module PuppetX::Coi::Jboss::Provider::ConfigNode
     if status == :running
       doStop
     end
-    ret = bringDown 'Configuration node', "#{compiledpath}:remove()"
+    ret = bring_down 'Configuration node', "#{compiledpath}:remove()"
     invalidate
     ret
   end
@@ -42,7 +42,7 @@ module PuppetX::Coi::Jboss::Provider::ConfigNode
     end
 
     Puppet.debug 'Excute and get in config node'
-    res = executeAndGet "#{compiledpath}:read-resource(include-runtime=true, include-defaults=false)"
+    res = execute_and_get "#{compiledpath}:read-resource(include-runtime=true, include-defaults=false)"
     if res[:result]
       @data = {}
       res[:data].each do |key, value|
@@ -189,7 +189,7 @@ module PuppetX::Coi::Jboss::Provider::ConfigNode
     if status == :absent
       create
     end
-    ret = bringUp 'Configuration node START', "#{compiledpath}:start(blocking=true)"
+    ret = bring_up 'Configuration node START', "#{compiledpath}:start(blocking=true)"
     invalidate
     traceout 'doStart', ret
     return ret
@@ -201,7 +201,7 @@ module PuppetX::Coi::Jboss::Provider::ConfigNode
     if status == :absent
       create
     end
-    ret = bringDown 'Configuration node STOP', "#{compiledpath}:stop(blocking=true)"
+    ret = bring_down 'Configuration node STOP', "#{compiledpath}:stop(blocking=true)"
     invalidate
     return ret
   end
@@ -212,7 +212,7 @@ module PuppetX::Coi::Jboss::Provider::ConfigNode
     if status == :absent
       create
     end
-    ret = bringUp 'Configuration node ENABLE', "#{compiledpath}:enable()"
+    ret = bring_up 'Configuration node ENABLE', "#{compiledpath}:enable()"
     invalidate
     return ret
   end
@@ -223,7 +223,7 @@ module PuppetX::Coi::Jboss::Provider::ConfigNode
     if status == :absent
       create
     end
-    ret = bringDown 'Configuration node DISABLE', "#{compiledpath}:disable()"
+    ret = bring_down 'Configuration node DISABLE', "#{compiledpath}:disable()"
     invalidate
     return ret
   end
@@ -239,10 +239,10 @@ module PuppetX::Coi::Jboss::Provider::ConfigNode
 
     invalidate
     if value.nil?
-      bringDown 'Configuration node property', "#{compiledpath}:undefine-attribute(name=#{key})"
+      bring_down 'Configuration node property', "#{compiledpath}:undefine-attribute(name=#{key})"
     else
       preparedval = escape value
-      bringUp 'Configuration node property', "#{compiledpath}:write-attribute(name=#{key}, value=#{preparedval})"
+      bring_up 'Configuration node property', "#{compiledpath}:write-attribute(name=#{key}, value=#{preparedval})"
     end
   end
 

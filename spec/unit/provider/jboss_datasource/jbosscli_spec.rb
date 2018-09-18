@@ -124,7 +124,7 @@ describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =
         'testing;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE'
       end
       before :each do
-        expect(provider).to receive(:executeAndGet).
+        expect(provider).to receive(:execute_and_get).
           with('/subsystem=datasources/data-source=testing:read-resource(recursive=true)').and_return(result)
       end
 
@@ -170,7 +170,7 @@ describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =
       let(:datasource_options) { {} }
       before :each do
         cli = '/subsystem=datasources/xa-data-source=testing:read-resource(recursive=true)'
-        expect(provider).to receive(:executeAndGet).with(cli).at_least(:once).and_return(
+        expect(provider).to receive(:execute_and_get).with(cli).at_least(:once).and_return(
           :result => true,
           :data   => {
             'jta' => false
@@ -220,7 +220,7 @@ describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =
             before :each do
               new_options.each do |k, v|
                 next unless datasource_options[k] != v
-                expect(provider).to receive(:executeAndGet).
+                expect(provider).to receive(:execute_and_get).
                   with("/subsystem=datasources/xa-data-source=testing:write-attribute(name=\"#{k}\", value=#{v.inspect})").
                   and_return(datasource_options_setattrb_response)
               end
@@ -230,7 +230,7 @@ describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =
           describe 'for cases that undefines setted values' do
             before :each do
               datasource_options.each do |k, _v|
-                expect(provider).to receive(:executeAndGet).
+                expect(provider).to receive(:execute_and_get).
                   with("/subsystem=datasources/xa-data-source=testing:undefine-attribute(name=\"#{k}\")").
                   and_return(datasource_options_setattrb_response)
               end
@@ -266,7 +266,7 @@ describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =
         describe 'jta_opt(cmd)' do
           before :each do
             cli2 = '/subsystem=datasources/xa-data-source=testing:write-attribute(name="jta", value="true")'
-            expect(provider).to receive(:executeAndGet).with(cli2).and_return(
+            expect(provider).to receive(:execute_and_get).with(cli2).and_return(
               :result => true,
               :data   => {}
             )
@@ -284,9 +284,9 @@ describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =
                   '--driver-name=nil --min-pool-size=nil --max-pool-size=nil' \
                   ' --user-name=nil --password=nil --xa-datasource-properties=' \
                   '[ServerName=nil,PortNumber=nil,DatabaseName="testing"]'
-            expect(provider).to receive(:executeWithFail).with('Datasource', cmd, 'to create')
+            expect(provider).to receive(:execute_with_fail).with('Datasource', cmd, 'to create')
             cli = '/subsystem=datasources/xa-data-source=testing:read-attribute(name=enabled)'
-            expect(provider).to receive(:executeAndGet).with(cli).and_return(
+            expect(provider).to receive(:execute_and_get).with(cli).and_return(
               :result => true,
               :data   => true
             )
@@ -298,7 +298,7 @@ describe "While mocking facts :jboss_product => 'jboss-eap' and :jboss_version =
         describe 'destroy()' do
           before :each do
             cmd = 'xa-data-source remove --name=testing'
-            expect(provider).to receive(:executeWithFail).with('Datasource', cmd, 'to remove')
+            expect(provider).to receive(:execute_with_fail).with('Datasource', cmd, 'to remove')
           end
           subject { provider.destroy }
           it { expect { subject }.not_to raise_error }

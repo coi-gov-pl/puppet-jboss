@@ -13,6 +13,7 @@ describe 'jboss::deploy', :type => :define do
   end
 
   shared_examples 'containing self' do
+    it { is_expected.to compile }
     it {
       is_expected.to contain_jboss__deploy(title).with(
         :ensure => 'present',

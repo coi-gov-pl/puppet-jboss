@@ -4,11 +4,11 @@ module Testing
   module Mock end
 end
 
-require 'testing/acceptance/cleaner'
-require 'testing/acceptance/javaplatform'
+require_relative 'testing/acceptance/cleaner'
+require_relative 'testing/acceptance/javaplatform'
 
-require 'testing/rspec_puppet/shared_facts'
-require 'testing/rspec_puppet/shared_examples'
+require_relative 'testing/rspec_puppet/shared_facts'
+require_relative 'testing/rspec_puppet/shared_examples'
 
-require 'testing/mock/mocked_execution_state_wrapper'
-require 'testing/mock/mocked_shell_executor'
+require_relative 'testing/mock/mocked_execution_state_wrapper'
+require_relative 'testing/mock/mocked_shell_executor'

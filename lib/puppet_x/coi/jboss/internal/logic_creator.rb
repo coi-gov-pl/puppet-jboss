@@ -17,7 +17,7 @@ class PuppetX::Coi::Jboss::Internal::LogicCreator
   # @return [Hash] commands Hash with commands that will be executed, key is message that will
   # be displayed and value is command
   def decide
-    state = @auditor.fetch_securtydomain_state
+    state = @auditor.state
     commands = []
     unless state.cache_default?
       command = @compilator.compile(
