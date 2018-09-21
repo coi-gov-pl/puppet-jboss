@@ -11,7 +11,8 @@ describe 'mocking default values' do
     {
       :product    => 'jboss-eap',
       :version    => '6.4.0.GA',
-      :controller => '127.0.0.1:9999'
+      :controller => '127.0.0.1:9999',
+      :home       => '/usr/local/jboss-eap-6.4.0.GA'
     }
   end
 
@@ -71,13 +72,13 @@ describe 'mocking default values' do
         exec_cmd2 = '/extension=org.jboss.as.messaging:add()'
 
         # line 4
-        expect(provider).to receive(:is_runasdomain).and_return(true)
+        expect(provider).to receive(:runasdomain?).and_return(true)
 
         # line 17
         expect(provider).to receive(:execute).with(exec_cmd).and_return(exec_cmd_expected_output)
 
         # line 18
-        expect(provider).to receive(:bringUp).with(bring_up_name, exec_cmd2).and_return(true)
+        expect(provider).to receive(:bring_up).with(bring_up_name, exec_cmd2).and_return(true)
 
         # line 20
         cmd_compile = '/subsystem=messaging'
@@ -90,7 +91,7 @@ describe 'mocking default values' do
 
         # line 22
         cmd_subsystem = "#{compiled_cmd_subsystem}:add()"
-        expect(provider).to receive(:bringUp).with(bring_up_name_subsytem, cmd_subsystem).and_return(true)
+        expect(provider).to receive(:bring_up).with(bring_up_name_subsytem, cmd_subsystem).and_return(true)
 
         # line 24
         hornet_cmd = '/subsystem=messaging/hornetq-server=default'
@@ -101,13 +102,13 @@ describe 'mocking default values' do
 
         expect(provider).to receive(:compilecmd).with(hornet_cmd).and_return(compiled_hornet_cmd)
         expect(provider).to receive(:execute).with(exec_hornet_cmd).and_return(exec_cmd_expected_output)
-        expect(provider).to receive(:bringUp).with(hornet_bring_up_name, hornet_bring_up_cmd).and_return(true)
+        expect(provider).to receive(:bring_up).with(hornet_bring_up_name, hornet_bring_up_cmd).and_return(true)
 
         # line 28
         final_cmd = 'jms-queue --profile=full-ha add --queue-address=app-mails ' \
           '--entries=["queue/app-mails", "java:jboss/exported/jms/queue/app-mails"] --durable=true'
         final_bring_up_name = 'JMS Queue'
-        expect(provider).to receive(:bringUp).with(final_bring_up_name, final_cmd).and_return(true)
+        expect(provider).to receive(:bring_up).with(final_bring_up_name, final_cmd).and_return(true)
       end
 
       subject { provider.create }
@@ -116,10 +117,10 @@ describe 'mocking default values' do
 
     describe '#destroy' do
       before :each do
-        expect(provider).to receive(:is_runasdomain).and_return(true)
+        expect(provider).to receive(:runasdomain?).and_return(true)
         cmd = "jms-queue --profile=#{resource[:profile]} remove --queue-address=#{resource[:name]}"
         bring_down_name = 'JMS Queue'
-        expect(provider).to receive(:bringDown).with(bring_down_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_down).with(bring_down_name, cmd).and_return(true)
       end
 
       subject { provider.destroy }
@@ -137,7 +138,7 @@ describe 'mocking default values' do
         }
 
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiled_cmd)
-        expect(provider).to receive(:executeAndGet).with(compiled_cmd).and_return(expected_output)
+        expect(provider).to receive(:execute_and_get).with(compiled_cmd).and_return(expected_output)
       end
 
       subject { provider.exists? }
@@ -155,7 +156,7 @@ describe 'mocking default values' do
         }
 
         expect(provider).to receive(:compilecmd).with(cmd).and_return(compiled_cmd)
-        expect(provider).to receive(:executeAndGet).with(compiled_cmd).and_return(expected_output)
+        expect(provider).to receive(:execute_and_get).with(compiled_cmd).and_return(expected_output)
       end
 
       subject { provider.exists? }

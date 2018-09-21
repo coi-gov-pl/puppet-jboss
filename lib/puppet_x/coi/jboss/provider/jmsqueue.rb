@@ -12,14 +12,14 @@ module PuppetX::Coi::Jboss::Provider::Jmsqueue
     ensure_default_hornetq
     cmd = "jms-queue #{profile} add --queue-address=#{@resource[:name]} " \
       "--entries=#{entries} --durable=#{durable}"
-    bringUp 'JMS Queue', cmd
+    bring_up 'JMS Queue', cmd
   end
 
   # Method to remove jms-queue from Jboss instance.
   def destroy
     profile = calc_profile
     cmd = "jms-queue #{profile} remove --queue-address=#{@resource[:name]}"
-    bringDown 'JMS Queue', cmd
+    bring_down 'JMS Queue', cmd
   end
 
   # Method to check if there is jms-queue. Methods calls read-resource to validate if jms-queue is present.
@@ -69,7 +69,7 @@ module PuppetX::Coi::Jboss::Provider::Jmsqueue
   private
 
   def calc_profile
-    if is_runasdomain
+    if runasdomain?
       "--profile=#{@resource[:profile]}"
     else
       ''
@@ -83,14 +83,14 @@ module PuppetX::Coi::Jboss::Provider::Jmsqueue
   end
 
   def bring_up_if_needed(label, clipath)
-    bringUp label, "#{clipath}:add()" unless execute("#{clipath}:read-resource()")[:result]
+    bring_up label, "#{clipath}:add()" unless execute("#{clipath}:read-resource()")[:result]
   end
 
   def loaddata
     return unless @data.nil?
     @data = nil
     cmd = compilecmd "/subsystem=messaging/hornetq-server=default/jms-queue=#{@resource[:name]}:read-resource()"
-    res = executeAndGet cmd
+    res = execute_and_get cmd
     @data = res[:data]
     res
   end

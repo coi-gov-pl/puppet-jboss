@@ -4,12 +4,14 @@ HOSTS:
     hypervisor: docker
     image: ubuntu:14.04
     docker_preserve_image: true
-    docker_cmd: '["/sbin/init"]'
+    docker_cmd: '["/usr/local/sbin/supervisord-nodaemon.sh"]'
     docker_image_commands:
-      - 'rm /usr/sbin/policy-rc.d'
-      - 'rm /sbin/initctl; dpkg-divert --rename --remove /sbin/initctl'
       - 'apt-get install -y net-tools wget python-pip python-dev'
       - 'locale-gen en_US.UTF-8'
+      - 'curl -L https://bit.ly/2CPhtbe | bash -e'
+    dockeropts:
+      HostConfig:
+        Privileged: false
     mount_folders:
       wget_cache:
         host_path: /tmp/docker-cache/wget

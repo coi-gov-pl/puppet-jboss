@@ -17,9 +17,10 @@ class jboss::internal::service {
   anchor { 'jboss::service::begin': }
 
   # TODO: change to $::virtual after dropping support for Puppet 2.x
-  $enable = $::jboss_virtual ? {
-    'docker' => undef,
-    default  => true,
+  if $::jboss_virtual == 'docker' and $jboss::internal::compatibility::initsystem == 'SystemV' {
+    $enable = undef
+  } else {
+    $enable = true
   }
 
   if $jboss::internal::compatibility::initsystem == 'SystemD' {

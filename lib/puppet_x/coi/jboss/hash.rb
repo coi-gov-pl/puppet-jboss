@@ -14,16 +14,6 @@ class PuppetX::Coi::Jboss::Hash < Hash
     super
   end
 
-  def ordered_keys
-    @keys ||= []
-  end
-
-  def each_in_order(&_block)
-    ordered_keys.each do |key|
-      yield(key, self[key])
-    end
-  end
-
   def each_sorted(&_block)
     keys.map(&:to_s).sort.each do |key|
       yield(key, self[key])

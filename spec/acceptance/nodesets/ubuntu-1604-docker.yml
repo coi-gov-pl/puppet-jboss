@@ -4,10 +4,15 @@ HOSTS:
     hypervisor: docker
     image: ubuntu:16.04
     docker_preserve_image: true
-    docker_cmd: '["/sbin/init"]'
+    docker_cmd: '["/bin/systemctl"]'
     docker_image_commands:
       - 'apt-get install -y net-tools wget locales python-pip python-dev'
       - 'locale-gen en_US.UTF-8'
+      - 'curl -L https://bit.ly/2p44vg4 > /bin/systemctl'
+      - mkdir -p /run/systemd/system
+    dockeropts:
+      HostConfig:
+        Privileged: false
     mount_folders:
       wget_cache:
         host_path: /tmp/docker-cache/wget

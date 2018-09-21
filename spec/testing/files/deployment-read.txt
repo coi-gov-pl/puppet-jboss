@@ -1,0 +1,22 @@
+{
+    "outcome" => "success",
+    "result" => {
+        "content" => [{"hash" => bytes {
+            0x69, 0xd2, 0x9c, 0x41, 0x01, 0xf8, 0xa4, 0xef,
+            0x3e, 0xc6, 0xb9, 0x23, 0x1b, 0xec, 0xe6, 0x2d,
+            0x87, 0x7a, 0xb0, 0x50
+        }}],
+        "enabled" => true,
+        "enabled-time" => 1537385544605L,
+        "enabled-timestamp" => "2018-09-19 19:32:24,605 UTC",
+        "name" => "servlet3-webapp-2.22.2.war",
+        "owner" => undefined,
+        "persistent" => true,
+        "runtime-name" => "servlet3-webapp-2.22.2.war",
+        "subdeployment" => undefined,
+        "subsystem" => {
+            "undertow" => undefined,
+            "jaxrs" => undefined
+        }
+    }
+}

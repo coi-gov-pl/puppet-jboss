@@ -13,7 +13,6 @@ describe 'deploy smoke test' do
     expect(result.exit_code).to be(2)
   end
   describe 'verifing idempotency' do
-    before(:each) { skip('This not work, GH issue: coi-gov-pl/puppet-jboss#71') }
     it 'should work idempotently' do
       apply_manifest(pp, :catch_changes => true)
     end

@@ -10,7 +10,7 @@ class PuppetX::Coi::Jboss::Configuration
 
     # Gets the main config file
     def configfile
-      content = self.read_raw_profile_d.chomp
+      content = read_raw_profile_d.chomp
       re = /export JBOSS_CONF=\'([^\']+)\'/
       m = re.match(content)
       m[1]
@@ -22,26 +22,22 @@ class PuppetX::Coi::Jboss::Configuration
     #
     # @return [Hash] configuration in a hash object or nil if not avialable
     def read
-      require 'augeas'
-
       map = nil
-      cfgfile = self.configfile
+      cfgfile = configfile
       unless cfgfile.nil?
-        aug = Augeas::open('/', nil, Augeas::NO_MODL_AUTOLOAD)
-        aug.transform(:lens => 'Shellvars.lns', :incl => cfgfile, :name => 'jboss-as.conf')
-        aug.load
         is_bool = lambda { |value| !/^(true|false)$/.match(value).nil? }
-        to_bool = lambda { |value| if !/^true$/.match(value).nil? then true else false end }
+        to_bool = lambda { |value| !/^true$/.match(value).nil? }
         map = {}
+        aug = augeas_of(cfgfile)
         aug.match("/files#{cfgfile}/*").each do |key|
-            m = key[/(JBOSS_.+)$/]
-            if m
-                v = aug.get(key)
-                v = to_bool.call(v) if is_bool.call(v)
-                map[m.downcase.sub('jboss_', '')] = v
-            end
+          m = key[/(JBOSS_.+)$/]
+          next unless m
+          v = aug.get(key)
+          v = to_bool.call(v) if is_bool.call(v)
+          map[m.downcase.sub('jboss_', '')] = v
         end
         aug.close
+        map = unquote_hash_values(map)
       end
       map
     end
@@ -49,10 +45,10 @@ class PuppetX::Coi::Jboss::Configuration
     # Checks is this execution is taking place on pre wildfly server
     #
     # @return [Boolean] true if execution is taking place on pre wildfly server
-    def is_pre_wildfly?
-      product = self.config_value(:product)
-      version = self.config_value(:version)
-      product == 'jboss-as' or ( product == 'jboss-eap' and version < '6.3.0.GA' )
+    def pre_wildfly?
+      product = config_value(:product)
+      version = config_value(:version)
+      product == 'jboss-as' || (product == 'jboss-eap' && version < '6.3.0.GA')
     end
 
     # Resets configuration
@@ -69,12 +65,12 @@ class PuppetX::Coi::Jboss::Configuration
     # @param key [Symbol] a key in hash
     # @return [Object] configuration value
     def config_value(key)
-      @config = self.read if @config.nil?
+      @config = read if @config.nil?
       ret = nil
       unless @config.nil?
-        arr = @config.map { |k,v| [k.to_s.to_sym, v] }
-        h = Hash[arr]
-        ret = h[key]
+        arr = @config.map { |k, v| [k.to_s.to_sym, v] }
+        hash = Hash[arr]
+        ret = hash[key.to_s.to_sym]
       end
       ret
     end
@@ -84,5 +80,37 @@ class PuppetX::Coi::Jboss::Configuration
       File.read('/etc/profile.d/jboss.sh')
     end
 
+    private
+
+    def augeas_of(file)
+      require 'augeas'
+
+      aug = Augeas.open('/', nil, Augeas::NO_MODL_AUTOLOAD)
+      aug.transform(:lens => 'Shellvars.lns', :incl => file, :name => 'jboss-as.conf')
+      aug.load
+      aug
+    end
+
+    def unquote_hash_values(hash)
+      Hash[*hash.map do |key, value|
+        [key, value.respond_to?(:upcase) ? unquote(value) : value]
+      end.flatten]
+    end
+
+    def unquote(string)
+      result = string.dup
+
+      case string[0, 1]
+      when "'", '"', '`'
+        result[0] = ''
+      end
+
+      case string[-1, 1]
+      when "'", '"', '`'
+        result[-1] = ''
+      end
+
+      result
+    end
   end
 end

@@ -3,7 +3,7 @@ require 'spec_helper_puppet'
 describe 'jboss_confignode', :type => :type do
   let(:described_class) { Puppet::Type.type(:jboss_confignode) }
   subject { described_class }
-  let(:ex_class) { Puppet.version > '3.0.0' ? Puppet::ResourceError : Puppet::Error }
+  let(:ex_class) { Puppet::Error }
 
   def extend_params(given)
     {

@@ -1,3 +1,5 @@
+# == Class: jboss::internal::configure
+#
 class jboss::internal::configuration {
   include jboss
   include jboss::params
@@ -5,6 +7,7 @@ class jboss::internal::configuration {
   include jboss::internal::runtime
   include jboss::internal::augeas
   include jboss::internal::configure::interfaces
+  include jboss::internal::configure::environmental
 
   $home          = $jboss::home
   $user          = $jboss::jboss_user

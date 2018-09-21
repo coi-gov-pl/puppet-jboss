@@ -1,8 +1,7 @@
 # System executor responsible of executing provided commands
 class PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper
-
   # Standard constructor
-  # @param {PuppetX::Coi::Jboss::Internal::Executor::ShellExecutor} shell_executor
+  # @param shell_executor [PuppetX::Coi::Jboss::Internal::Executor::ShellExecutor]
   def initialize(shell_executor)
     @shell_executor = shell_executor
   end
@@ -11,21 +10,22 @@ class PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper
   attr_accessor :shell_executor
 
   # Method that handles delegation to system executor
-  # @param {String} cmd cmd to be executed
-  # @param {String} jbosscmd to be executed
-  # @param {Hash} environment hash that hold informations about configuration
-  # @return {PuppetX::Coi::Jboss::Internal::ExecutionState} execution state that hold
-  # information about result of execution
-  def execute(cmd, jbosscmd, environment)
-    lines = exec_command(cmd, environment)
+  # @param cmd [PuppetX::Coi::Jboss::Value::Command] command to be executed
+  # @param jbosscmd [String] to be executed
+  # @param environment [Hash] hash that hold informations about configuration
+  # @return [PuppetX::Coi::Jboss::Internal::ExecutionState] execution state that hold information about result of execution
+  def execute(cmd, jbosscmd)
+    lines = exec_command(cmd)
     result = last_execute_result
-
     code = result.exitstatus
     success = result.success?
 
-    Puppet.debug 'execution state begins'
-
-    exececution_state(jbosscmd, code, success, lines)
+    PuppetX::Coi::Jboss::Internal::State::ExecutionState.new(
+      code,
+      success,
+      lines,
+      jbosscmd
+    )
   end
 
   # Method that returns status of last command executed
@@ -37,25 +37,19 @@ class PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper
   private
 
   # Runs prepared commands
-  # @param {String} cmd command that will be executed
-  # @param {Hash} environment hash with proccess environment
+  # @param cmd [PuppetX::Coi::Jboss::Value::Command] command that will be executed
   # @return {String} output of executed command
-  # The location of withenv changed from Puppet 2.x to 3.x
-  def exec_command(cmd, environment)
+  def exec_command(cmd)
+    environment = cmd.environment
+    # The location of withenv changed from Puppet 2.x to 3.x
     withenv = Puppet::Util.method(:withenv) if Puppet::Util.respond_to?(:withenv)
     withenv = Puppet::Util::Execution.method(:withenv) if Puppet::Util::Execution.respond_to?(:withenv)
     raise("Cannot set custom environment #{environment}") if environment && !withenv
 
     withenv.call environment do
-      @output = @shell_executor.run_command(cmd)
+      @output = @shell_executor.run_command(cmd.command)
       @result = @shell_executor.child_status
     end
     @output
-  end
-
-  # Method that make and execution state object with given parameters
-  # @return {PuppetX::Coi::Jboss::Internal::ExecutionState} execution state that contains informations about result of command execution
-  def exececution_state(jbosscmd, code, success, lines)
-    PuppetX::Coi::Jboss::Internal::State::ExecutionState.new(code, success, lines, jbosscmd)
   end
 end

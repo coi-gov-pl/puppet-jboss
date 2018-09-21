@@ -13,3 +13,4 @@ Vagrantfile
 .DS_Store
 Gemfile.local
 .idea/
+.yardoc

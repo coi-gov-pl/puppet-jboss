@@ -1,3 +1,4 @@
+
 # Puppet Module for JBoss EAP and Wildfly application servers
 
 ### ...with configuration management of resources and deployment in domain and stand-alone modes
@@ -75,8 +76,8 @@ class { 'jboss':
 or use hiera:
 
 ```yaml
-jboss::params::product: 'jboss-as'
-jboss::params::version: '7.1.1.Final'
+jboss::params::product: 'wildfly'
+jboss::params::version: '10.1.0.Final'
 ```
 
 
@@ -99,6 +100,9 @@ or with parameters:
 ```puppet
 class { 'jboss':
   enableconsole => true,
+  environment   => {
+    'JAVA_OPTS' => "\${JAVA_OPTS} -XX:+UseG1GC",
+  },
 }
 ```
 
@@ -442,7 +446,25 @@ Supported Puppet versions:
 
 To contribute to this module please read carefully the [CONTRIBUTING.md](https://github.com/coi-gov-pl/puppet-jboss/blob/develop/CONTRIBUTING.md)
 
-## Release Notes
+## Changelog
+
+* `1.2.1` - PeachSplash
+  - Enchantment #99: Modernization of module structure
+  - Bugfix #101: Stabilization and diversification of tests
+* `1.2.0` - PoppySilver
+  - Feature #95 Adding support for JBoss EAP 7 and WildFly 10
+* `1.1.0` - RiverBlue
+  - Bug #88  Wrong order beetwen jboss::internal::module::assembly and jboss::user
+  - Bug #53 Problem with creating security domain on JBoss EAP 6.4 or Wildfly 9
+  - Bug #65 Improper handling of download_url parameter
+  - Bug #47 Idempotency breaks on Jboss::Internal::Service/Service[..] when running inside Docker container
+  - Bug #56 Fix ownership of layers.conf file
+  - Bug #14 Fix interface configuration for Wildfly 9 and EAP 7
+  - Tests #66 Make tests run quicker and make them more atomic
+  - Tests #44 Write rspec test to cover puppet resources (up to 50%)
+  - Tests #72 Acceptance tests uses real examples written in separete .pp files
+  - Quality #90, #83 Improve documentation level
+  - Enhancement #20 Trigger deployment on refresh and add runtime_name param
 
 * `1.0.3` - RubyCake
   * Bug: #9 Correct a way that options are validated and displyed for datasource type
