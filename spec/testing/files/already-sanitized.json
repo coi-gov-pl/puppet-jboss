@@ -1,0 +1,26 @@
+{
+  "acl": null,
+  "audit": null,
+  "authorization": null,
+  "cache-type": "default",
+  "identity-trust": null,
+  "jsse": null,
+  "mapping": null,
+  "authentication": {"classic": {"login-modules": [
+      {
+          "code": "Remoting",
+          "flag": "optional",
+          "module-options": [{"password-stacking": "useFirstPass"}]
+      },
+      {
+          "code": "RealmUsersRoles",
+          "flag": "required",
+          "module-options": [
+              {"usersProperties": "${jboss.server.config.dir}/application-users.properties"},
+              {"rolesProperties": "${jboss.server.config.dir}/application-roles.properties"},
+              {"realm": "ApplicationRealm"},
+              {"password-stacking": "useFirstPass"}
+          ]
+      }
+  ]}}
+}

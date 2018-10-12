@@ -1,5 +1,3 @@
-require 'puppet_x/coi/jboss'
-
 class Testing::Acceptance::JavaPlatform
   JAVA6_PLATFORMS = [
     'Ubuntu 14.04',

@@ -5,21 +5,21 @@ module PuppetX::Coi::Jboss::Provider::ResourceAdapter
     params = prepare_config
     basics_params = make_jboss_props(params[:basics])
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}:add(#{basics_params})"
-    bringUp 'Resource adapter', cmd
+    bring_up 'Resource adapter', cmd
     create_connections
     :created
   end
 
   def destroy
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}:remove()"
-    bringDown 'Resource adapter', cmd
+    bring_down 'Resource adapter', cmd
     :destroyed
   end
 
   def exists?
     @data = nil
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{@resource[:name]}:read-resource(recursive=true)"
-    res = executeAndGet(cmd)
+    res = execute_and_get(cmd)
     unless res[:result]
       Puppet.debug 'Resource Adapter is not set'
       return false
@@ -141,7 +141,7 @@ module PuppetX::Coi::Jboss::Provider::ResourceAdapter
     name = @resource[:name]
     connection_name = escape_jboss_name(jndi)
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{connection_name}:read-resource()"
-    res = executeAndGet cmd
+    res = execute_and_get cmd
     @data['connection-definitions'][jndi] = res[:data] if res[:result]
     res[:result]
   end
@@ -151,14 +151,14 @@ module PuppetX::Coi::Jboss::Provider::ResourceAdapter
     conn_params = make_jboss_props(config)
     connection_name = escape_jboss_name(jndi)
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{connection_name}:add(#{conn_params})"
-    bringUp 'Resource adapter connection-definition', cmd
+    bring_up 'Resource adapter connection-definition', cmd
   end
 
   def destroyconn(jndi)
     name = @resource[:name]
     connection_name = escape_jboss_name(jndi)
     cmd = compilecmd "/subsystem=resource-adapters/resource-adapter=#{name}/connection-definitions=#{connection_name}:remove()"
-    bringDown 'Resource adapter connection-definition', cmd
+    bring_down 'Resource adapter connection-definition', cmd
   end
 
   def prepare_config
@@ -237,7 +237,7 @@ module PuppetX::Coi::Jboss::Provider::ResourceAdapter
     path = "#{basepath}/#{conndesc}"
     if value.nil?
       cmd = compilecmd "#{path}:undefine-attribute(name=#{name})"
-      bringDown "Resource adapter connection definition attribute #{name}", cmd
+      bring_down "Resource adapter connection definition attribute #{name}", cmd
     else
       setattribute path, name, value
     end

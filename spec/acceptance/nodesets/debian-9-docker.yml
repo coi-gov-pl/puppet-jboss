@@ -4,10 +4,14 @@ HOSTS:
     hypervisor: docker
     image: debian:9
     docker_preserve_image: true
-    docker_cmd: ["/bin/systemd"]
+    docker_cmd: '["/bin/systemctl"]'
     docker_image_commands:
       - apt-get install -y wget net-tools python-pip python-dev
-      - rm /lib/systemd/system/getty.target
+      - 'curl -L https://bit.ly/2p44vg4 > /bin/systemctl'
+      - mkdir -p /run/systemd/system
+    dockeropts:
+      HostConfig:
+        Privileged: false
     mount_folders:
       wget_cache:
         host_path: /tmp/wget_cache

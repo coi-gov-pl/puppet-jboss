@@ -1,37 +1,47 @@
-require 'spec_helper'
 require 'ostruct'
 
 class Testing::Mock::ExecutionStateWrapper < PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper
+  EMPTY_OUTPUT = {
+    'outcome' => 'success',
+    'result'  => {}
+  }.inspect
+
+  EMPTY_FAILURE_OUTPUT = {
+    'outcome'             => 'failure',
+    'failure-description' => 'some fatal error'
+  }.inspect
+
   def initialize
     @commands = {}
-    @last_excuted_command = nil
+    @shell = Testing::Mock::MockedShellExecutor.new
+    super(@shell)
   end
 
-  def register_command(command, expected_status, expected_lines, expected_result)
-    execution_state = PuppetX::Coi::Jboss::Internal::State::ExecutionState.new(
-      expected_result,
-      expected_status,
-      expected_lines,
-      command
+  def execute(cmd, jbosscmd)
+    raise ArgumentError, "Command #{jbosscmd.inspect} is not registered" if @commands[jbosscmd].nil?
+    mockcmd = PuppetX::Coi::Jboss::Value::Command.new(
+      @commands[jbosscmd], cmd.environment
     )
-    @commands[command] = execution_state
+    super(mockcmd, jbosscmd)
   end
 
-  def execute(_cmd, jbosscmd, _environment)
-    get_command_outcome(jbosscmd)
-    @last_excuted_command = jbosscmd
-    @commands[jbosscmd]
+  def register_command(jbosscmd, output = EMPTY_OUTPUT, exitstatus = 0)
+    cmd = "jboss-cli-mock run #{jbosscmd.inspect}"
+    @commands[jbosscmd] = cmd
+    @shell.register_command(cmd, repr(output), exitstatus)
+  end
+
+  def register_failing_command(jbosscmd, output = EMPTY_FAILURE_OUTPUT, exitstatus = 5)
+    register_command(jbosscmd, output, exitstatus)
   end
 
   def verify_commands_executed
-    @commands.each do |command, outcome|
-      raise ArgumentError, "Command #{command} was not executed but was expected" unless outcome[:executed]
-    end
+    @shell.verify_commands_executed
   end
 
   private
 
-  def get_command_outcome(command)
-    raise ArgumentError, "Commmand #{command} has not been registered in mocked execution stack" unless @commands.include? command
+  def repr(output)
+    output.is_a?(String) ? output : output.inspect
   end
 end

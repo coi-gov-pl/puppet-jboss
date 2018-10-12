@@ -10,4 +10,7 @@ class { 'jboss':
   product      => 'wildfly',
   version      => '10.1.0.Final',
   java_package => $java_package,
+  environment  => {
+    'JAVA_OPTS' => "\${JAVA_OPTS} -XX:+UseG1GC"
+  },
 }

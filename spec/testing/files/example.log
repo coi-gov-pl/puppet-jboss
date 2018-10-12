@@ -1,0 +1,54 @@
+17:52:00,610 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0010: Deployed "servlet3-webapp-2.22.2.war" (runtime-name : "servlet3-webapp-2.22.2.war")
+17:52:00,914 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://0.0.0.0:9990/management
+17:52:00,914 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://0.0.0.0:9990
+17:52:00,915 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.2.Final (WildFly Core 1.0.2.Final) started in 5313ms - Started 323 of 502 services (233 services are lazy, passive or on-demand)
+[root@354bfe36c291 modules]# tail -n 50 /var/log/wildfly/console.log
+17:51:57,904 INFO  [org.jboss.as.webservices] (ServerService Thread Pool -- 62) WFLYWS0002: Activating WebServices Extension
+17:51:57,934 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-6) WFLYUT0003: Undertow 1.2.9.Final starting
+17:51:57,951 INFO  [org.jboss.as.naming] (MSC service thread 1-7) WFLYNAM0003: Starting Naming Service
+17:51:57,955 INFO  [org.wildfly.extension.undertow] (ServerService Thread Pool -- 61) WFLYUT0003: Undertow 1.2.9.Final starting
+17:51:57,957 INFO  [org.jboss.as.mail.extension] (MSC service thread 1-1) WFLYMAIL0001: Bound mail session [java:jboss/mail/Default]
+17:51:58,091 INFO  [org.wildfly.extension.undertow] (ServerService Thread Pool -- 61) WFLYUT0014: Creating file handler for path /usr/lib/wildfly-9.0.2.Final/welcome-content
+17:51:58,092 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-5) WFLYUT0012: Started server default-server.
+17:51:58,111 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-8) WFLYUT0018: Host default-host starting
+17:51:58,230 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-5) WFLYUT0006: Undertow HTTP listener default listening on /0.0.0.0:8080
+17:51:58,473 INFO  [org.wildfly.iiop.openjdk] (MSC service thread 1-3) WFLYIIOP0009: CORBA ORB Service started
+17:51:58,535 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-8) WFLYJCA0001: Bound data source [java:jboss/datasources/test-datasource]
+17:51:58,535 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-8) WFLYJCA0001: Bound data source [java:jboss/datasources/ExampleDS]
+17:51:58,551 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-2) WFLYJCA0001: Bound data source [java:jboss/datasources/test-xa-datasource]
+17:51:58,843 WARN  [org.jboss.as.messaging] (MSC service thread 1-5) WFLYMSG0075: AIO wasn't located on this platform, it will fall back to using pure Java NIO. Your platform is Linux, install LibAIO to enable the AIO journal.
+17:51:58,884 INFO  [org.jboss.as.server.deployment] (MSC service thread 1-7) WFLYSRV0027: Starting deployment of "servlet3-webapp-2.22.2.war" (runtime-name: "servlet3-webapp-2.22.2.war")
+17:51:58,902 INFO  [org.jboss.as.server.deployment.scanner] (MSC service thread 1-2) WFLYDS0013: Started FileSystemDeploymentService for directory /usr/lib/wildfly-9.0.2.Final/standalone/deployments
+17:51:58,934 INFO  [org.jboss.ws.common.management] (MSC service thread 1-4) JBWS022052: Starting JBoss Web Services - Stack CXF Server 5.0.0.Final
+17:51:58,933 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221000: live server is starting with configuration HornetQ Configuration (clustered=false,backup=false,sharedStore=true,journalDirectory=/usr/lib/wildfly-9.0.2.Final/standalone/data/messagingjournal,bindingsDirectory=/usr/lib/wildfly-9.0.2.Final/standalone/data/messagingbindings,largeMessagesDirectory=/usr/lib/wildfly-9.0.2.Final/standalone/data/messaginglargemessages,pagingDirectory=/usr/lib/wildfly-9.0.2.Final/standalone/data/messagingpaging)
+17:51:58,935 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221006: Waiting to obtain live lock
+17:51:58,954 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221013: Using NIO Journal
+17:51:58,989 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221043: Adding protocol support CORE
+17:51:58,994 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221043: Adding protocol support AMQP
+17:51:58,997 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221043: Adding protocol support STOMP
+17:51:59,060 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221034: Waiting to obtain live lock
+17:51:59,061 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221035: Live Server Obtained live lock
+17:51:59,235 INFO  [org.jboss.messaging] (MSC service thread 1-6) WFLYMSG0016: Registered HTTP upgrade for hornetq-remoting protocol handled by http-acceptor-throughput acceptor
+17:51:59,235 INFO  [org.jboss.messaging] (MSC service thread 1-3) WFLYMSG0016: Registered HTTP upgrade for hornetq-remoting protocol handled by http-acceptor acceptor
+17:51:59,343 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221007: Server is now live
+17:51:59,344 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221001: HornetQ Server version 2.4.7.Final (2.4.7.Final, 124) [b86dd862-bc42-11e8-8d0a-ad9228f0e85e]
+17:51:59,348 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 64) HQ221003: trying to deploy queue jms.queue.ExpiryQueue
+17:51:59,396 INFO  [org.jboss.as.messaging] (ServerService Thread Pool -- 66) WFLYMSG0002: Bound messaging object to jndi name java:/ConnectionFactory
+17:51:59,400 INFO  [org.hornetq.jms.server] (ServerService Thread Pool -- 67) HQ121005: Invalid "host" value "0.0.0.0" detected for "http-connector" connector. Switching to "354bfe36c291". If this new address is incorrect please manually configure the connector to use the proper one.
+17:51:59,401 INFO  [org.jboss.as.messaging] (ServerService Thread Pool -- 67) WFLYMSG0002: Bound messaging object to jndi name java:jboss/exported/jms/RemoteConnectionFactory
+17:51:59,402 INFO  [org.hornetq.core.server] (ServerService Thread Pool -- 65) HQ221003: trying to deploy queue jms.queue.DLQ
+17:51:59,458 INFO  [org.jboss.as.connector.deployment] (MSC service thread 1-3) WFLYJCA0007: Registered connection factory java:/JmsXA
+17:51:59,480 INFO  [org.hornetq.ra] (MSC service thread 1-3) HornetQ resource adaptor started
+17:51:59,480 INFO  [org.jboss.as.connector.services.resourceadapters.ResourceAdapterActivatorService$ResourceAdapterActivator] (MSC service thread 1-3) IJ020002: Deployed: file://RaActivatorhornetq-ra
+17:51:59,481 INFO  [org.jboss.as.connector.deployment] (MSC service thread 1-3) WFLYJCA0002: Bound JCA ConnectionFactory [java:/JmsXA]
+17:51:59,481 INFO  [org.jboss.as.messaging] (MSC service thread 1-6) WFLYMSG0002: Bound messaging object to jndi name java:jboss/DefaultJMSConnectionFactory
+17:51:59,943 WARN  [org.jboss.weld.deployer] (MSC service thread 1-3) WFLYWELD0013: Deployment deployment "servlet3-webapp-2.22.2.war" contains CDI annotations but no bean archive was not found. (No beans.xml nor class with bean defining annotations)
+17:52:00,507 INFO  [org.jboss.resteasy.spi.ResteasyDeployment] (ServerService Thread Pool -- 65) Deploying javax.ws.rs.core.Application: class org.glassfish.jersey.examples.servlet3.webapp.App
+17:52:00,509 INFO  [org.jboss.resteasy.spi.ResteasyDeployment] (ServerService Thread Pool -- 65) Adding class resource org.glassfish.jersey.examples.servlet3.webapp.DogResource from Application class org.glassfish.jersey.examples.servlet3.webapp.App
+17:52:00,510 INFO  [org.jboss.resteasy.spi.ResteasyDeployment] (ServerService Thread Pool -- 65) Adding class resource org.glassfish.jersey.examples.servlet3.webapp.CatResource from Application class org.glassfish.jersey.examples.servlet3.webapp.App
+17:52:00,537 INFO  [org.hibernate.validator.internal.util.Version] (ServerService Thread Pool -- 65) HV000001: Hibernate Validator 5.1.3.Final
+17:52:00,566 INFO  [org.wildfly.extension.undertow] (ServerService Thread Pool -- 65) WFLYUT0021: Registered web context: /servlet3-webapp-2.22.2
+17:52:00,610 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0010: Deployed "servlet3-webapp-2.22.2.war" (runtime-name : "servlet3-webapp-2.22.2.war")
+17:52:00,914 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://0.0.0.0:9990/management
+17:52:00,914 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://0.0.0.0:9990
+17:52:00,915 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.2.Final (WildFly Core 1.0.2.Final) started in 5313ms - Started 323 of 502 services (233 services are lazy, passive or on-demand)

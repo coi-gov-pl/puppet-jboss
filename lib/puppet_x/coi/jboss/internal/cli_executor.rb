@@ -1,97 +1,64 @@
+require 'json'
+
 # Class that will handle executions of commands
 class PuppetX::Coi::Jboss::Internal::CliExecutor
+  include PuppetX::Coi::Jboss::Checks
+
   # Constructor
-  # @param {PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper} execution_state_wrapper handles command execution
-  def initialize(execution_state_wrapper)
-    @execution_state_wrapper = execution_state_wrapper
+  # @param executor [PuppetX::Coi::Jboss::Internal::ExecutionStateWrapper] handles command execution
+  # @param execlogic [PuppetX::Coi::Jboss::Internal::ExecuteLogic]         a logic for execution
+  def initialize(executor, execlogic)
+    @executor  = executor
+    @execlogic = execlogic
     @sanitizer = PuppetX::Coi::Jboss::Internal::Sanitizer.new
   end
 
-  # Standard settter for execution_state_wrapper
-  attr_writer :execution_state_wrapper
+  # Standard settter for executor
+  attr_writer :executor
 
   # Method that allows us to setup shell executor, used in tests
   def shell_executor=(shell_executor)
-    @execution_state_wrapper.shell_executor = shell_executor
+    @executor.shell_executor = shell_executor
   end
 
   # Standard getter for shell_executor
   def shell_executor
-    @execution_state_wrapper.shell_executor
+    @executor.shell_executor
   end
 
   # Method that executes command, if method fails it prints log message
-  # @param {String} typename name of resource
-  # @param {String} cmd command that will be executed
-  # @param {String} way bring up|bring down to for logging
-  # @param {Hash} resource standard puppet resource object
-  def executeWithFail(typename, cmd, way, resource)
-    executed = wrap_execution(cmd, resource)
-    unless executed[:result]
-      ex = "\n#{typename} failed #{way}:\n[CLI command]: #{executed[:cmd]}\n[Error message]: #{executed[:lines]}"
-      unless $add_log.nil? and $add_log > 0
-        ex = "#{ex}\n#{printlog $add_log}"
-      end
-      raise ex
-    end
-    executed
+  #
+  # @param typename [String] name of resource
+  # @param cmd [String]      command that will be executed
+  # @param way [String]      bring up|bring down to for logging
+  # @param resource [Hash]   standard puppet resource object
+  def execute_with_fail(typename, cmd, way, resource)
+    executor_proc = proc { |compiled| wrap_execution(compiled, resource) }
+    @execlogic.execute_with_fail(typename, cmd, way, executor_proc)
   end
 
   # Method that executes command and returns outut
-  # @param {String} cmd command that will be executed
-  # @param {Boolean} runasdomain if command will be executen in comain instance
-  # @param {Hash} ctrlcfg hash with configuration
-  # @param {Number} retry_count number of retry after failed command
-  # @param {Number} retry_timeout timeout after failed command
-  def executeAndGet(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
-    ret = run_command(cmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
-    unless ret[:result]
-      return {
-        :result => false,
-        :data => ret[:lines]
-      }
+  # @param cmd [String]          command that will be executed
+  # @param runasdomain [Boolean] if command will be executen in comain instance
+  # @param ctrlcfg [Hash]        hash with configuration
+  # @param try [PuppetX::Coi::Jboss::Value::Try] the try object
+  # @return [Hash] a hash of `:result` as `Boolean`, and `:data` as `Hash`
+  def execute_and_get(cmd, runasdomain, ctrlcfg, try)
+    state = run_jboss_command(cmd, runasdomain, ctrlcfg, try)
+    if state.success?
+      read_output state.output
+    else
+      final_result false, state.output
     end
-
-    begin
-      evaluated_output = @sanitizer.sanitize(ret[:lines])
-      undefined = nil
-      evalines = eval(evaluated_output)
-      return {
-        :result => evalines['outcome'] == 'success',
-        :data => (evalines['outcome'] == 'success' ? evalines['result'] : evalines['failure-description'])
-      }
-
-    rescue Exception => e
-      Puppet.err e
-      return {
-        :result => false,
-        :data => ret[:lines]
-      }
-    end
-  end
-
-  # Method that prepares command to be executed
-  # @param {String} path path for execution
-  # @param {Hash} ctrlcfg  hash with configuration that is need to execute command
-  def prepare_command(path, ctrlcfg)
-    home = PuppetX::Coi::Jboss::Configuration.config_value :home
-    ENV['JBOSS_HOME'] = home
-
-    jboss_home = "#{home}/bin/jboss-cli.sh"
-
-    cmd = "#{jboss_home} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
-    cmd += " --user=#{ctrlcfg[:ctrluser]}" unless ctrlcfg[:ctrluser].nil?
-    cmd
   end
 
   # Method that will prepare and delegate execution of command
-  # @param {String} jbosscmd command to be executeAndGet
-  # @param {Boolean} runasdomain if jboss is run in domain mode
-  # @param {Hash} ctrlcfg configuration Hash
-  # @param {Integer} retry_count number of retries after command failure-description
-  # @param {Integer} retry_timeout time after command is timeouted
-  # @return {Hash} hash with result of command executed, output and command
-  def run_command(jbosscmd, runasdomain, ctrlcfg, retry_count, retry_timeout)
+  # @param jbosscmd     [String]  command to be execute_and_get
+  # @param _runasdomain [Boolean] if jboss is run in domain mode
+  # @param ctrlcfg      [Hash]    configuration Hash
+  # @param try [PuppetX::Coi::Jboss::Value::Try] the try object
+  # @return [PuppetX::Coi::Jboss::Internal::State::ExecutionState] a state of execution
+  def run_jboss_command(jbosscmd, _runasdomain, ctrlcfg, try)
     file = Tempfile.new 'jbosscli'
     path = file.path
     file.close
@@ -101,54 +68,83 @@ class PuppetX::Coi::Jboss::Internal::CliExecutor
 
     cmd = prepare_command(path, ctrlcfg)
 
-    environment = ENV.to_hash
-
-    unless ctrlcfg[:ctrlpasswd].nil?
-      environment['__PASSWD'] = ctrlcfg[:ctrlpasswd]
-      cmd += ' --password=$__PASSWD'
-    end
-
     retries = 0
-    result = ''
-    lines = ''
-    begin
+    result = nil
+    loop do
       if retries > 0
-        Puppet.warning "JBoss CLI command failed, try #{retries}/#{retry_count}, last status: #{result}, message: #{lines}"
-        sleep retry_timeout.to_i
+        Puppet.warning "JBoss CLI command failed, try #{retries}/#{try.count}, last status: #{result}, message: #{result.output}"
+        sleep try.timeout
       end
+      Puppet.debug "OS command to be executed #{cmd.command}"
+      Puppet.debug "JBoss CLI command to be executed: #{jbosscmd}"
 
-      Puppet.debug 'Command send to JBoss CLI: ' + jbosscmd
-      Puppet.debug('Cmd to be executed %s' % cmd)
-
-      execution_state = @execution_state_wrapper.execute(cmd, jbosscmd, environment)
-      result = execution_state.ret_code
-      lines = execution_state.output
-
+      result = @executor.execute(cmd, jbosscmd)
       retries += 1
-    end while (result != 0 && retries <= retry_count)
-    Puppet.debug('Output from JBoss CLI [%s]: %s' % [result.inspect, lines])
+      break if result.success? || retries > try.count
+    end
+    Puppet.debug "Output from JBoss CLI [#{result.retcode}]: #{result.output}"
+    result
+  ensure
     # deletes the temp file
     File.unlink path
-    {
-      :cmd => jbosscmd,
-      :result => result,
-      :lines => lines
-    }
   end
 
   private
 
+  # Method that prepares command to be executed
+  #
+  # @param path [String]  path for execution
+  # @param ctrlcfg [Hash] hash with configuration that is need to execute command
+  # @return [PuppetX::Coi::Jboss::Value::Command] a command with environment
+  def prepare_command(path, ctrlcfg)
+    home = check_not_empty PuppetX::Coi::Jboss::Configuration.config_value(:home)
+    jboss_cli = "#{home}/bin/jboss-cli.sh"
+    environment = ENV.to_hash
+    environment['JBOSS_HOME'] = home
+
+    cmd = "#{jboss_cli} #{timeout_cli} --connect --file=#{path} --controller=#{ctrlcfg[:controller]}"
+    cmd += " --user=#{ctrlcfg[:ctrluser]}" unless ctrlcfg[:ctrluser].nil?
+    unless ctrlcfg[:ctrlpasswd].nil?
+      environment['__PASSWD'] = ctrlcfg[:ctrlpasswd]
+      cmd += ' --password=$__PASSWD'
+    end
+    PuppetX::Coi::Jboss::Value::Command.new cmd, environment
+  end
+
+  def read_output(lines)
+    json = @sanitizer.sanitize(lines)
+    Puppet.debug("Output from JBoss CLI JSON'ized: #{json}")
+    value = JSON.parse(json)
+    final_result success_from(value), data_of(value)
+  rescue StandardError => ex
+    Puppet.err ex
+    Puppet.err ex.backtrace
+    final_result false, lines
+  end
+
+  def final_result(success, data)
+    { :result => success, :data => data }
+  end
+
+  def success_from(value)
+    value['outcome'] == 'success'
+  end
+
+  def data_of(value)
+    value['outcome'] == 'success' ? value['result'] : value['failure-description']
+  end
+
   # Method that deletes execution of command by aading configurion
-  # @param {String} cmd jbosscmd
-  # @param {resource} standard Puppet resource
+  # @param cmd [String] jbosscmd
+  # @param standard [resource] Puppet resource
   def wrap_execution(cmd, resource)
     conf = {
       :controller => resource[:controller],
-      :ctrluser => resource[:ctrluser],
+      :ctrluser   => resource[:ctrluser],
       :ctrlpasswd => resource[:ctrlpasswd]
     }
-
-    run_command(cmd, resource[:runasdomain], conf, 0, 0)
+    try = PuppetX::Coi::Jboss::Value::Try::ZERO
+    run_jboss_command(cmd, resource[:runasdomain], conf, try)
   end
 
   # method that return timeout parameter if we are running Jboss AS
@@ -170,20 +166,5 @@ class PuppetX::Coi::Jboss::Internal::CliExecutor
   # Method that return value of fact jboss_product
   def jboss_product
     Facter.value(:jboss_product)
-  end
-
-  $add_log = nil
-
-  # Standard setter for isprintinglog
-  def isprintinglog=(setting)
-    $add_log = setting
-  end
-  
-  def getlog(lines)
-    last_lines = `tail -n #{lines} #{jbosslog}`
-  end
-
-  def printlog(lines)
-    " ---\n JBoss AS log (last #{lines} lines): \n#{getlog lines}"
   end
 end

@@ -1,0 +1,38 @@
+{
+  "outcome" => "success",
+  "result" => {
+      "deep-copy-subject-mode" => false,
+      "security-domain" => {
+          "db-auth-default" => {
+              "cache-type" => "default",
+              "acl" => undefined,
+              "audit" => undefined,
+              "authentication" => {"classic" => {
+                  "login-modules" => [{
+                      "code" => "asdasd",
+                      "flag" => "required",
+                      "module" => undefined,
+                      "module-options" => undefined,
+                  }],
+                  "login-module" => {"db-auth-default" => {
+                      "code" => "asdasd",
+                      "flag" => "required",
+                      "module" => undefined,
+                      "module-options" => {
+                          "dsJndiName" => ":jboss/datasources/default-db",
+                          "hashStorePassword" => "false",
+                          "hashUserPassword" => "true",
+                          "principalsQuery" => "select 'password' from users u where u.login = ?",
+                          "rolesQuery" => "select r.name, 'Roles' from users"
+                      }
+                  }}
+              }},
+              "authorization" => undefined,
+              "identity-trust" => undefined,
+              "jsse" => undefined,
+              "mapping" => undefined
+          }
+      },
+      "vault" => undefined
+  }
+}

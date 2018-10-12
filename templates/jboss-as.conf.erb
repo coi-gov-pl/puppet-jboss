@@ -3,40 +3,40 @@
 
 # The Jboss home directory.
 #
-JBOSS_HOME=<%= @home %>
+export JBOSS_HOME='<%= @home %>'
 
 # The JBoss product name.
 #
-JBOSS_PRODUCT=<%= @product %>
+export JBOSS_PRODUCT='<%= @product %>'
 
 # The JBoss version.
 #
-JBOSS_VERSION=<%= @version %>
+export JBOSS_VERSION='<%= @version %>'
 
 # The JBoss configuration file
 #
-JBOSS_CONFIG=<%= @configfile %>
+export JBOSS_CONFIG='<%= @configfile %>'
 
 # The username who should own the process.
 #
-JBOSS_USER=<%= @user %>
+export JBOSS_USER='<%= @user %>'
 
 # The amount of time to wait for startup
 #
-STARTUP_WAIT=<%= @startup_wait %>
+export STARTUP_WAIT=<%= @startup_wait %>
 
 # Location to keep the console log
 #
-JBOSS_CONSOLE_LOG=<%= @logfile %>
+export JBOSS_CONSOLE_LOG='<%= @logfile %>'
 
 # Runs JBoss in domain mode?
-JBOSS_RUNASDOMAIN=<%= @runasdomain.inspect %>
+export JBOSS_RUNASDOMAIN=<%= @runasdomain.inspect %>
 
 # JBoss running mode: domain or standalone
-JBOSS_MODE=<%= @runasdomain ? 'domain' : 'standalone' %>
+export JBOSS_MODE='<%= @runasdomain ? 'domain' : 'standalone' %>'
 
 # Default JBoss domain controller
-JBOSS_CONTROLLER=<%= @controller %>
+export JBOSS_CONTROLLER='<%= @controller %>'
 
 # Default JBoss domain profile
-JBOSS_PROFILE=<%= @profile %>
+export JBOSS_PROFILE='<%= @profile %>'

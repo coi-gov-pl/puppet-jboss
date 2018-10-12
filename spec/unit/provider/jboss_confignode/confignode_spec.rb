@@ -62,7 +62,7 @@ describe 'mocking default values' do
         expected_output = {
           :result => false
         }
-        expect(provider).to receive(:executeAndGet).with(cmd).and_return(expected_output)
+        expect(provider).to receive(:execute_and_get).with(cmd).and_return(expected_output)
       end
 
       subject { provider.exists? }
@@ -84,7 +84,7 @@ describe 'mocking default values' do
           }
         }
 
-        expect(provider).to receive(:executeAndGet).with(cmd).and_return(expected_output)
+        expect(provider).to receive(:execute_and_get).with(cmd).and_return(expected_output)
       end
 
       subject { provider.exists? }
@@ -120,8 +120,8 @@ describe 'mocking default values' do
         expect(provider).to receive(:exists?).and_return(true)
         expect(provider).to receive(:status).and_return(:running)
         expect(provider).to receive(:status).and_return(:ensure)
-        expect(provider).to receive(:bringDown).with(bring_down_name, cmd).and_return(true)
-        expect(provider).to receive(:bringDown).with(bring_down_name_destroy, cmd_destroy).and_return(true)
+        expect(provider).to receive(:bring_down).with(bring_down_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_down).with(bring_down_name_destroy, cmd_destroy).and_return(true)
       end
 
       subject { provider.destroy }
@@ -133,7 +133,7 @@ describe 'mocking default values' do
         bring_down_name = 'Configuration node'
         cmd = '/profile=full/subsystem=messaging/hornetq-server=default:remove()'
 
-        expect(provider).to receive(:bringDown).with(bring_down_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_down).with(bring_down_name, cmd).and_return(true)
         expect(provider).to receive(:exists?).and_return(true, true)
       end
 
@@ -156,7 +156,7 @@ describe 'mocking default values' do
         cmd = '/profile=full/subsystem=messaging/hornetq-server=default:add(security-enabled=false)'
 
         expect(provider).to receive(:exists?).and_return(false)
-        expect(provider).to receive(:bringUp).with(bring_up_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_up).with(bring_up_name, cmd).and_return(true)
       end
 
       subject { provider.create }
@@ -311,7 +311,7 @@ describe 'mocking default values' do
         cmd = '/profile=full/subsystem=messaging/hornetq-server=default:enable()'
 
         expect(provider).to receive(:status).and_return(:ensure)
-        expect(provider).to receive(:bringUp).with(bring_up_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_up).with(bring_up_name, cmd).and_return(true)
       end
 
       subject { provider.ensure = :enabled }
@@ -324,7 +324,7 @@ describe 'mocking default values' do
         cmd = '/profile=full/subsystem=messaging/hornetq-server=default:enable()'
 
         expect(provider).to receive(:status).and_return(:ensure)
-        expect(provider).to receive(:bringUp).with(bring_up_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_up).with(bring_up_name, cmd).and_return(true)
       end
 
       subject { provider.ensure = :enabled }
@@ -338,7 +338,7 @@ describe 'mocking default values' do
 
         expect(provider).to receive(:status).and_return(:absent)
         expect(provider).to receive(:create).and_return(true)
-        expect(provider).to receive(:bringUp).with(bring_up_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_up).with(bring_up_name, cmd).and_return(true)
       end
 
       subject { provider.ensure = :running }
@@ -361,7 +361,7 @@ describe 'mocking default values' do
 
         expect(provider).to receive(:status).and_return(:absent)
         expect(provider).to receive(:create).and_return(true)
-        expect(provider).to receive(:bringDown).with(bring_up_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_down).with(bring_up_name, cmd).and_return(true)
       end
 
       subject { provider.ensure = :stopped }
@@ -375,7 +375,7 @@ describe 'mocking default values' do
 
         expect(provider).to receive(:status).and_return(:absent)
         expect(provider).to receive(:create).and_return(true)
-        expect(provider).to receive(:bringUp).with(bring_up_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_up).with(bring_up_name, cmd).and_return(true)
       end
 
       subject { provider.ensure = :enabled }
@@ -389,7 +389,7 @@ describe 'mocking default values' do
 
         expect(provider).to receive(:status).and_return(:absent)
         expect(provider).to receive(:create).and_return(true)
-        expect(provider).to receive(:bringDown).with(bring_up_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_down).with(bring_up_name, cmd).and_return(true)
       end
 
       subject { provider.ensure = :disabled }
@@ -439,7 +439,7 @@ describe 'mocking default values' do
         bring_up_name = 'Configuration node property'
         cmd = '/profile=full/subsystem=messaging/hornetq-server=default:write-attribute(name=security-enabled, value=:false)'
 
-        expect(provider).to receive(:bringUp).with(bring_up_name, cmd).and_return(true)
+        expect(provider).to receive(:bring_up).with(bring_up_name, cmd).and_return(true)
       end
 
       props = {
