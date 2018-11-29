@@ -86,9 +86,42 @@ run the integration tests against any other configuration specified in directory
 
     RS_SET=ubuntu-14.04-x86_64-vagrant bundle exec rake acceptance
 
-**Caution!** To run Vagrant boxes when you have installed Vagrant in version 1.5 or above, you need to have `bundler` in version range: >= 1.5.2 <= 1.10.5. This is due to fact of invalid version in vagrant-wrapper gem package.
-
 If you don't want to have to recreate the virtual machine every time you
 can use `BEAKER_DESTROY=no` and `BEAKER_PROVISION=no`. On the first run you will
 at least need `BEAKER_PROVISION` set to yes (the default). The Vagrantfile
 for the created virtual machines will be in `.vagrant/beaker_vagrant_files`.
+
+## Release Management
+
+This paragraph applies mostly to COI staff. `coi/jboss` module follows a Git Flow standard. To make a release make sure you got:
+
+ * sign in inforamation for Puppet Forge website for COI account
+ * all PR an issues for given milestone are completed
+ * you have GPG signing enabled for Git by default
+
+To perform a release:
+
+1. Switch to `develop` branch: `git checkout develop`, and sync it to upstream with: `git pull`
+1. Clean all temporary files with: `git clean -fdx`
+1. Ensure git flow is initialized with defaults: `git flow init -fd`
+1. Start a release: `git flow release start vX.X.X` with version of completed milestone
+1. Being on release branch, update `metadata.json` file by removing `"-pre"` from version, for ex.: `"1.3.0-pre"` -> `"1.3.0"`
+1. Also update `README.md` with all appopriate changes, at least write an entry for "Changelog" section for new release
+1. Commit changes.
+1. Perform a release with: `git flow release finish vX.X.X`
+1. Now you should be on `develop` branch, update `metadata.json` file by setting version to next candidate as PRE release, for ex.: `"1.3.0"` -> `"1.3.1-pre"`
+1. Commit changes
+1. Switch to master branch, and check proper taging: `git describe` should returns simply `v1.3.0`
+1. Sign a tag with: `git tag v1.3.0 --force --sign` (`--sign` in not needed if you have GPG signing enabled for Git by default)
+1. Perform a tests, unit and acceptance
+1. If everything is ok, clean all temporary files, again, with: `git clean -fdx`
+1. Build a package with: `bundle exec rake build`, tarball package should be located in `pkg/` directory
+1. Login to Puppet Forge and upload a built tarball package.
+1. Push git changes to upstream with: `git push origin master develop --tags`
+1. Go to Github, releases tab. Click new release, select tag. Write a description, should be quite same as changelog entry (you can add links to resolved issues and PR). Upload a tarball as attachment. Save.
+1. Done 😅
+
+If something wasn't okey, in some step, don't go further. Especially if uploaded to Puppet Forge tarball is invalid, you will be forced to release additional version, as it's not possible to override version on Puppet Forge.
+
+Watch out!
+
