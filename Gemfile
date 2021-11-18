@@ -26,7 +26,7 @@ group :test do
   gem "puppet-module-win-default-r#{minor_version}",   VER, :require => false, :platforms => %w[mswin mingw x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       VER, :require => false, :platforms => %w[mswin mingw x64_mingw]
   gem 'coveralls',                                     :require => false
-  gem 'rspec-puppet-facts-unsupported', '~> 0',        :require => false
+  gem 'rspec-puppet-facts-unsupported', '~> 0', '>= 0.1.1', :require => false
   gem 'ruby-augeas',                                   :require => false
   gem 'safe_yaml',                                     :require => false
 end
@@ -52,7 +52,7 @@ group :development do
   gem 'pry-byebug', :require => false
 end
 
-gem 'puppet', *location_for(ENV['PUPPET_GEM_VERSION'] || '~> 3')
+gem 'puppet', '>= 6.25.1', *location_for(ENV['PUPPET_GEM_VERSION'] || '~> 3')
 
 # Only explicitly specify Facter/Hiera if a version has been specified.
 # Otherwise it can lead to strange bundler behavior. If you are seeing weird
