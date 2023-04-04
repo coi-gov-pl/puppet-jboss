@@ -26,7 +26,7 @@ group :test do
   gem "puppet-module-win-default-r#{minor_version}",   VER, :require => false, :platforms => %w[mswin mingw x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       VER, :require => false, :platforms => %w[mswin mingw x64_mingw]
   gem 'coveralls',                                     :require => false
-  gem 'rspec-puppet-facts-unsupported', '~> 0',        :require => false
+  gem 'rspec-puppet-facts-unsupported', '~> 0', '>= 0.1.1', :require => false
   gem 'ruby-augeas',                                   :require => false
   gem 'safe_yaml',                                     :require => false
 end
@@ -36,7 +36,7 @@ group :system_test do
   gem "puppet-module-posix-system-r#{minor_version}",  VER, :require => false, :platforms => 'ruby'
   gem "puppet-module-win-system-r#{minor_version}",    VER, :require => false, :platforms => %w[mswin mingw x64_mingw]
   beakerver = RVERSION < ver('2.2.0') ? ['>= 3.13.0', '< 4.0.0'] : nil
-  gem 'beaker',                                        *location_for(ENV['BEAKER_VERSION'] || beakerver)
+  gem 'beaker', '>= 3.36.0', *location_for(ENV['BEAKER_VERSION'] || beakerver)
   gem 'beaker-abs',                                    *location_for(ENV['BEAKER_ABS_VERSION'])
   gem 'beaker-hostgenerator',                          *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'])
   gem 'beaker-pe',                                     :require => false
@@ -52,7 +52,7 @@ group :development do
   gem 'pry-byebug', :require => false
 end
 
-gem 'puppet', *location_for(ENV['PUPPET_GEM_VERSION'] || '~> 3')
+gem 'puppet', '>= 6.25.1', *location_for(ENV['PUPPET_GEM_VERSION'] || '~> 3')
 
 # Only explicitly specify Facter/Hiera if a version has been specified.
 # Otherwise it can lead to strange bundler behavior. If you are seeing weird
